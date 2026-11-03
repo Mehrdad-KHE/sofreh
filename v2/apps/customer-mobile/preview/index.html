@@ -1,0 +1,2181 @@
+<!DOCTYPE html>
+<html lang="en-CA" dir="ltr" data-theme="forest">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sofreh — Home-Cooked Persian Food</title>
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <style>
+    @font-face {
+      font-family: 'SofrehNastaliq';
+      src: url('/assets/fonts/NotoNastaliqUrdu.ttf') format('truetype');
+      font-weight: 400 700;
+      font-display: swap;
+    }
+    #appTitle[data-wordmark="fa"] {
+      font-family: 'SofrehNastaliq', serif;
+      font-size: 28px; font-weight: 600; line-height: 1.8;
+      letter-spacing: normal; overflow: visible; margin-block: 0;
+    }
+    :root,
+    [data-theme="forest"],
+    [data-theme="default"] {
+      --body-bg: #d8e2dc;
+      --bg: #f7f5ec;
+      --card: #fffefb;
+      --surface-subtle: #eef3ef;
+      --primary: #1b4332;
+      --primary-text: #ffffff;
+      --cta-primary-bg: #1b4332;
+      --cta-primary-text: #ffffff;
+      --cta-primary-border: #081c15;
+      --cta-secondary-bg: #2d4a3e;
+      --cta-secondary-text: #ecfdf5;
+      --cta-secondary-border: #1b4332;
+      --accent: #40916c;
+      --frame-border: #1b4332;
+      --text: #14241b;
+      --muted: #3f5247;
+      --border: #cfe0d5;
+      --attr-bg: #e9efe9;
+      --attr-border: #cdd9ce;
+      --badge-bg: #fef3c7;
+      --badge-border: #b45309;
+      --badge-text: #78350f;
+      --theme-Name: "Forest / Cream";
+    }
+    [data-theme="terracotta"] {
+      --body-bg: #e8dccb;
+      --bg: #fbf5ec;
+      --card: #fffdf9;
+      --surface-subtle: #f6ece0;
+      --primary: #9a3412;
+      --primary-text: #ffffff;
+      --cta-primary-bg: #9a3412;
+      --cta-primary-text: #ffffff;
+      --cta-primary-border: #7c2d12;
+      --cta-secondary-bg: #432818;
+      --cta-secondary-text: #fef3c7;
+      --cta-secondary-border: #2a180d;
+      --accent: #d97706;
+      --frame-border: #5c2410;
+      --text: #231710;
+      --muted: #574133;
+      --border: #e2d1be;
+      --attr-bg: #f2e5d5;
+      --attr-border: #decbb4;
+      --badge-bg: #fef3c7;
+      --badge-border: #b45309;
+      --badge-text: #78350f;
+    }
+    [data-theme="navy-saffron"] {
+      --body-bg: #d6deeb;
+      --bg: #fdfaf2;
+      --card: #ffffff;
+      --surface-subtle: #f3f6fb;
+      --primary: #13294b;
+      --primary-text: #ffffff;
+      --cta-primary-bg: #13294b;
+      --cta-primary-text: #ffffff;
+      --cta-primary-border: #d97706;
+      --cta-secondary-bg: #78350f;
+      --cta-secondary-text: #fef3c7;
+      --cta-secondary-border: #b45309;
+      --accent: #d97706;
+      --frame-border: #13294b;
+      --text: #0f172a;
+      --muted: #334155;
+      --border: #cbd5e1;
+      --attr-bg: #eef2f9;
+      --attr-border: #cbd5e1;
+      --badge-bg: #fffbeb;
+      --badge-border: #d97706;
+      --badge-text: #78350f;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, "Vazirmatn", Tahoma, sans-serif;
+      background: var(--body-bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      padding: 12px;
+      line-height: 1.42;
+      -webkit-font-smoothing: antialiased;
+    }
+    .phone-frame {
+      width: 100%;
+      max-width: 468px;
+      background: var(--bg);
+      color: var(--text);
+      border-radius: 28px;
+      box-shadow: 0 20px 46px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      border: 3px solid var(--frame-border);
+      display: flex;
+      flex-direction: column;
+    }
+    .demo-notice {
+      background: var(--surface-subtle);
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 10.5px;
+      padding: 4px 12px;
+      text-align: center;
+    }
+    .app-header {
+      background: var(--primary);
+      color: var(--primary-text);
+      border-bottom: 2px solid var(--accent);
+      padding: 8px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .app-header-brand {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      min-width: 0;
+    }
+    .app-header h1 {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .app-header p {
+      margin: 0;
+      font-size: 11px;
+      font-weight: 500;
+      opacity: 0.9;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .locale-btn {
+      background: #ffffff;
+      color: var(--primary);
+      border: 1.5px solid var(--accent);
+      border-radius: 8px;
+      padding: 4px 9px;
+      font-weight: 800;
+      cursor: pointer;
+      font-size: 11px;
+      min-width: 34px;
+      text-align: center;
+    }
+    .menu-dots-btn {
+      background: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+      border: 1.5px solid rgba(255, 255, 255, 0.45);
+      border-radius: 8px;
+      padding: 3px 9px;
+      font-size: 16px;
+      line-height: 1.1;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .settings-drawer {
+      background: var(--card);
+      border-bottom: 2px solid var(--primary);
+      padding: 12px 14px;
+      font-size: 12px;
+    }
+    .settings-section {
+      border: 1px solid var(--border);
+      background: var(--surface-subtle);
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+    }
+    .settings-section h4 {
+      margin: 0 0 6px;
+      font-size: 12.5px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .ue-search-strip {
+      background: var(--card);
+      padding: 8px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .ue-search-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface-subtle);
+      border: 1.5px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 12px;
+    }
+    .ue-search-box input {
+      border: none;
+      background: transparent;
+      width: 100%;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      outline: none;
+    }
+    .map-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      font-size: 11px;
+    }
+    .locate-btn {
+      background: var(--surface-subtle);
+      color: var(--primary);
+      border: 1.5px solid var(--primary);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .map-stage { position: relative; }
+    .map-stage .locate-btn {
+      position: absolute; top: 10px; inset-inline-end: 10px; z-index: 3;
+      display: inline-flex; align-items: center; gap: 7px;
+      min-height: 40px; padding: 8px 12px; background: var(--card);
+      box-shadow: 0 2px 7px #0002;
+    }
+    .location-target {
+      width: 16px; height: 16px; border: 2px solid currentColor;
+      border-radius: 50%; display: inline-grid; place-items: center;
+      flex: 0 0 16px;
+    }
+    .location-target::after { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+    .user-location-dot {
+      width: 22px; height: 22px; border: 4px solid white; border-radius: 50%;
+      background: #0284c7; box-shadow: 0 0 0 7px #0284c733, 0 1px 5px #0004;
+    }
+    .locate-btn:focus-visible { outline: 3px solid #0284c7; outline-offset: 2px; }
+    #map {
+      width: 100%;
+      height: 280px;
+      min-height: 180px;
+      max-height: 520px;
+      background: #dde5e9;
+      position: relative;
+    }
+    .map-resize-handle {
+      width: 100%;
+      height: 18px;
+      background: var(--surface-subtle);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: ns-resize;
+      user-select: none;
+      touch-action: none;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+    .map-resize-handle:focus {
+      outline: 2px solid var(--primary);
+      background: #dcfce7;
+    }
+    .map-pickup-info {
+      background: var(--surface-subtle);
+      border-bottom: 1px solid var(--border);
+      padding: 6px 14px;
+      font-size: 11px;
+      color: var(--text);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .map-attribution {
+      position: absolute; bottom: 7px; inset-inline-end: 7px; z-index: 3;
+      max-width: calc(100% - 14px); border-radius: 5px;
+      font-size: 10px;
+      padding: 4px 14px;
+      background: var(--attr-bg);
+      color: var(--text);
+      border-bottom: 1px solid var(--attr-border);
+    }
+    .section {
+      padding: 10px 14px 14px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+    }
+    .cook-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .cook-card-tile {
+      border: 1.5px solid var(--border);
+      background: var(--surface-subtle);
+      border-radius: 12px;
+      padding: 8px;
+      cursor: pointer;
+      text-align: start;
+      font-size: 11px;
+    }
+    .cook-card-tile[data-active-cook="true"] {
+      border-color: var(--primary);
+      background: var(--card);
+      box-shadow: 0 2px 8px rgba(27, 67, 50, 0.14);
+    }
+    .ue-section-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+      gap: 8px;
+    }
+    .ue-section-title {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      overflow-wrap: anywhere;
+    }
+    .storefront-heading { flex: 1 1 220px; min-width: 0; }
+    .storefront-identity { display: flex; gap: 10px; align-items: center; min-width: 0; }
+    .kitchen-logo { width: 44px; height: 44px; flex: 0 0 44px; border-radius: 12px; }
+    .cook-card-tile .kitchen-logo { width: 32px; height: 32px; margin-bottom: 5px; }
+    .asset-credit { font-size: 9px; line-height: 1.3; text-align: center; color: var(--muted); }
+    #cookSelect { flex: 0 1 230px; width: 100%; max-width: 100%; min-width: 0; }
+    .storefront-bio { margin: 6px 0; font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; }
+    .ue-meta-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 6px 0;
+    }
+    .ue-chip {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .ue-dish-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .ue-dish-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: 12px;
+      border: 1.5px solid var(--border);
+      background: var(--surface-subtle);
+    }
+    .ue-dish-row[data-unavailable="true"] {
+      opacity: 0.78;
+      background: #f3f4f6;
+      border-style: dashed;
+    }
+    .ue-dish-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .ue-dish-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text);
+      margin: 0 0 2px;
+    }
+    .ue-dish-desc {
+      font-size: 11px;
+      color: var(--muted);
+      margin: 0 0 5px;
+    }
+    .ue-dish-price-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      font-size: 11.5px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+    }
+    .dish-photo-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      width: 100px;
+      min-width: 100px;
+    }
+    .dish-photo {
+      width: 98px;
+      height: 78px;
+      object-fit: cover;
+      border-radius: 9px;
+      border: 1px solid var(--border);
+      background: #e5e7eb;
+    }
+    .qty-stepper {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .qty-btn {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      padding: 3px 7px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .qty-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .ue-mode-toggle-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .ue-mode-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 1.5px solid var(--border);
+      background: var(--surface-subtle);
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .ue-mode-option[data-disabled="true"] {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .ue-receipt-box {
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 9px 11px;
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+    }
+    .ue-receipt-line {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .ue-receipt-total {
+      display: flex;
+      justify-content: space-between;
+      border-top: 1.5px dashed var(--border);
+      padding-top: 6px;
+      margin-top: 6px;
+      font-size: 13.5px;
+      font-weight: 800;
+    }
+    .primary-btn {
+      width: 100%;
+      background: var(--cta-primary-bg);
+      color: var(--cta-primary-text);
+      border: 2px solid var(--cta-primary-border);
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 9px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+    .primary-btn:disabled {
+      opacity: 0.52;
+      cursor: not-allowed;
+    }
+    .secondary-btn {
+      width: 100%;
+      background: var(--cta-secondary-bg);
+      color: var(--cta-secondary-text);
+      border: 1.5px solid var(--cta-secondary-border);
+      border-radius: 10px;
+      padding: 7px 11px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 6px;
+      font-size: 11.5px;
+    }
+    .order-item-box {
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 10px 12px;
+      margin-top: 9px;
+      background: var(--surface-subtle);
+      font-size: 12px;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 10.5px;
+      background: #e0f2fe;
+      color: #0c4a6e;
+      border: 1.5px solid #0284c7;
+    }
+    .status-badge[data-status-code="PENDING"] {
+      background: #fef3c7;
+      color: #78350f;
+      border: 1.5px dashed #b45309;
+    }
+    .status-badge[data-status-code="ACCEPTED"],
+    .status-badge[data-status-code="PREPARING"],
+    .status-badge[data-status-code="READY"],
+    .status-badge[data-status-code="COMPLETED"] {
+      background: #dcfce7;
+      color: #14532d;
+      border: 1.5px solid #15803d;
+    }
+    .status-badge[data-status-code="REJECTED"],
+    .status-badge[data-status-code="CANCELLED"] {
+      background: #fee2e2;
+      color: #7f1d1d;
+      border: 2px double #b91c1c;
+    }
+    .ue-stepper {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      margin: 7px 0 5px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+    .ue-step {
+      padding: 3px 4px;
+      border-radius: 6px;
+      text-align: center;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .ue-step.done {
+      background: #dcfce7;
+      border-color: #15803d;
+      color: #14532d;
+      font-weight: 800;
+    }
+    .ue-bottom-nav {
+      background: var(--card);
+      border-top: 1.5px solid var(--border);
+      padding: 7px 12px 9px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .ue-bottom-nav button.ue-nav-item { border: 0; background: none; font-family: inherit; cursor: pointer; }
+    .ue-nav-item:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
+    #mapStage, #checkoutCard, #ordersCard { scroll-margin-top: 12px; }
+    .ue-nav-item {
+      padding: 5px 8px;
+      border-radius: 10px;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid transparent;
+    }
+    .ue-nav-item[data-active="true"] {
+      background: var(--surface-subtle);
+      color: var(--primary);
+      border-color: var(--border);
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-frame" id="appRoot" data-app-id="ca.sofreh.customer" data-theme="forest">
+    <div class="demo-notice" id="testBanner">Demo preview — synthetic kitchens &amp; simulated checkout (no real charges)</div>
+
+    <div class="app-header">
+      <div class="app-header-brand">
+        <h1 id="appTitle">Sofreh</h1>
+        <p id="appSubtitle">Home-Cooked Persian Kitchens</p>
+      </div>
+      <div class="header-actions">
+        <button class="locale-btn" id="localeToggleBtn" type="button" aria-label="Toggle Language FA/EN">FA</button>
+        <button class="menu-dots-btn" id="customerTopMenuBtn" type="button" aria-label="Settings and Simulated Payment Menu" aria-expanded="false">⋮</button>
+      </div>
+    </div>
+
+    <div class="settings-drawer" id="customerSettingsPanel" data-open="false" hidden></div>
+
+    <div class="ue-search-strip">
+      <div class="ue-search-box">
+        <span aria-hidden="true">⌕</span>
+        <input id="kitchenSearchInput" type="search" placeholder="Search home kitchens, dishes, saffron tahchin, herbs..." aria-label="Search home kitchens or dishes" />
+      </div>
+      <div class="map-toolbar">
+
+        <span id="geolocationStatus" data-geo-state="idle" style="color:var(--muted);font-weight:600;">Location not requested (approximate kitchen areas shown)</span>
+      </div>
+    </div>
+
+    <div class="map-stage" id="mapStage">
+      <button class="locate-btn" id="locateMeBtn" type="button" aria-label="My Location">
+        <span class="location-target" aria-hidden="true"></span><span id="locateMeLabel">My Location</span>
+      </button>
+    <div id="map" style="height:280px;" data-map-height="280" aria-label="MapLibre + OpenFreeMap Discovery Map" data-map-style="https://tiles.openfreemap.org/styles/liberty">
+      <div id="currentUserMarker" data-user-marker-active="false" hidden></div>
+    </div>
+    <div class="map-attribution" id="mapAttribution">
+      MapLibre GL • © <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> • © <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a> • Data from <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>
+    </div>
+    </div>
+    <div
+      class="map-resize-handle"
+      id="mapResizeHandle"
+      role="separator"
+      tabindex="0"
+      aria-orientation="horizontal"
+      aria-label="Drag or press Up/Down arrows to resize map height"
+      aria-valuemin="180"
+      aria-valuemax="520"
+      aria-valuenow="280"
+    >
+      ══ <span id="mapResizeLabel">Drag or use ↑/↓ keys to resize map (280px)</span> ══
+    </div>
+    <div class="map-pickup-info" id="mapPickupInfoBar"></div>
+
+    <div class="section">
+      <div id="cookCardsList" class="cook-cards-grid"></div>
+      <div class="card" id="cookListCard"></div>
+      <div class="card" id="checkoutCard"></div>
+      <div class="card" id="ordersCard"></div>
+    </div>
+
+    <nav class="ue-bottom-nav" id="customerBottomNav" aria-label="Customer App Navigation">
+      <button type="button" class="ue-nav-item" data-active="true" id="navTabDiscover" aria-controls="mapStage">Home</button>
+      <button type="button" class="ue-nav-item" data-active="false" id="navTabCart" aria-controls="checkoutCard">Cart</button>
+      <button type="button" class="ue-nav-item" data-active="false" id="navTabOrders" aria-controls="ordersCard">Orders</button>
+    </nav>
+  </div>
+
+  <script>
+    const OPENFREEMAP_STYLE = 'https://tiles.openfreemap.org/styles/liberty';
+    const API_BASE =
+      window.__SOFREH_API_BASE__ ||
+      new URLSearchParams(window.location.search).get('apiBase') ||
+      (window.location.origin && window.location.origin.startsWith('http')
+        ? window.location.origin
+        : 'http://127.0.0.1:4120');
+
+    const STATUS_GLYPHS = {
+      PENDING: '◷',
+      ACCEPTED: '●',
+      PREPARING: '⚙',
+      READY: '★',
+      COMPLETED: '✔',
+      REJECTED: '✕',
+      CANCELLED: '⊘'
+    };
+
+    const STATUS_LABELS = {
+      'en-CA': {
+        PENDING: 'Pending Cook Acceptance',
+        ACCEPTED: 'Accepted by Cook',
+        PREPARING: 'Preparing in Kitchen',
+        READY: 'Ready for Pickup / Handoff',
+        COMPLETED: 'Completed',
+        REJECTED: 'Declined (Simulated Refund Issued)',
+        CANCELLED: 'Cancelled (Simulated Refund Issued)'
+      },
+      'fa-IR': {
+        PENDING: 'در انتظار تایید آشپز',
+        ACCEPTED: 'تاییدشده توسط آشپز',
+        PREPARING: 'در حال پخت و آماده‌سازی',
+        READY: 'آماده تحویل',
+        COMPLETED: 'تکمیل‌شده',
+        REJECTED: 'رد شده (بازگشت وجه آزمایشی)',
+        CANCELLED: 'لغو شده (بازگشت وجه آزمایشی)'
+      }
+    };
+
+    const DEFAULT_DEMO_PAYMENT_METHODS = [
+      {
+        id: 'pm-demo-visa-4242',
+        backendMethod: 'SIMULATED_CARD',
+        labelEn: 'DEMO Masked Card •••• 4242 (Synthetic Visa — No Real Charge)',
+        labelFa: 'کارت آزمایشی •••• 4242 (ویزا مصنوعی — بدون تراکنش واقعی)'
+      },
+      {
+        id: 'pm-demo-interac-fake',
+        backendMethod: 'SIMULATED_INTERAC',
+        labelEn: 'DEMO Fake Interac Alias (demo.payer@example.invalid — Simulated)',
+        labelFa: 'حساب آزمایشی اینتراک (demo.payer@example.invalid — شبیه‌سازی‌شده)'
+      }
+    ];
+
+    let currentLocale = 'en-CA';
+    let customerToken = 'test-token-customer-nima';
+    let savedAddresses = [];
+    let selectedSavedAddressId = '';
+    function settingsText(value) {
+      return String(value ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+    async function loadSavedAddresses() {
+      const res = await fetch(`${API_BASE}/api/customer/addresses`, { headers: { Authorization: `Bearer ${customerToken}` } });
+      if (!res.ok) throw new Error('Saved addresses unavailable');
+      savedAddresses = (await res.json()).addresses;
+      if (!selectedSavedAddressId && savedAddresses.length) {
+        selectedSavedAddressId = savedAddresses[0].id;
+        deliveryAddress = savedAddresses[0].address;
+      }
+    }
+    async function persistSavedAddress(remove = false) {
+      try {
+        const id = selectedSavedAddressId;
+        if (remove && !id) return;
+        const address = document.getElementById('settingsDeliveryAddressInput').value;
+        const label = document.getElementById('settingsAddressLabelInput').value;
+        const res = await fetch(`${API_BASE}/api/customer/addresses${id ? '/' + encodeURIComponent(id) : ''}`, {
+          method: remove ? 'DELETE' : id ? 'PUT' : 'POST',
+          headers: { Authorization: `Bearer ${customerToken}`, 'Content-Type': 'application/json' },
+          ...(remove ? {} : { body: JSON.stringify({ label, address }) })
+        });
+        const result = await res.json();
+        if (!res.ok) throw new Error(result.error?.message || 'Address update failed');
+        selectedSavedAddressId = remove ? '' : result.address.id;
+        if (!remove) deliveryAddress = address;
+        await loadSavedAddresses();
+        lastStatusBanner = currentLocale === 'fa-IR' ? 'آدرس ذخیره شد' : 'Saved addresses updated';
+      } catch (error) { lastStatusBanner = settingsText(error.message); }
+      renderUI();
+    }
+    let cooks = [];
+    let selectedCookId = 'cook-test-pari';
+    let selectedDishId = 'dish-test-ghormeh-1';
+    let fulfillment = 'pickup';
+    let deliveryAddress = '120 Empress Ave, North York, ON';
+    let persistedCart = null;
+    let persistedOrders = [];
+    let lastStatusBanner = '';
+    let searchFilterText = '';
+
+    // Settings & Demo payment state
+    let settingsMenuOpen = false;
+    let demoPaymentMethods = DEFAULT_DEMO_PAYMENT_METHODS.map((m) => ({ ...m }));
+    let selectedDemoPaymentId = 'pm-demo-visa-4242';
+
+    // Map resize state (180px - 520px)
+    let currentMapHeightPx = 280;
+    let isDraggingMapResize = false;
+    let dragStartY = 0;
+    let dragStartHeight = 280;
+
+    // Permission-gated client-only user location state (never sent to backend)
+    let userLocationState = 'idle'; // 'idle' | 'granted' | 'denied' | 'unavailable'
+    let clientOnlyUserCoords = null; // { lat, lng } kept strictly in browser memory
+
+    let mapInstance = null;
+    let mapMarkers = [];
+    let mapUserMarker = null;
+
+    function cleanDisplayKitchenName(name) {
+      return String(name || '')
+        .replace(/\s*[\[(][^\])]*(?:TEST ONLY|فقط آزمایشی)[^\])]*[\])]/gi, '')
+        .replace(/^(?:SYNTHETIC TEST FIXTURE|داده آزمایشی مصنوعی)\s*(?:\([^)]*\))?\s*[—–-]?\s*/i, '')
+        .trim();
+    }
+
+    function kitchenLogo(cookId) {
+      const key = ({'cook-test-pari':'pari','cook-test-kambiz':'kambiz','cook-test-golnar':'golnar'})[cookId];
+      return key ? `<img class="kitchen-logo" src="/assets/kitchens/${key}.svg" alt="Demo kitchen logo" width="44" height="44" />` : '';
+    }
+    function foodCredit(dish) {
+      return `<small class="asset-credit">${dish.isSamplePhoto ? (currentLocale === 'fa-IR' ? 'عکس نمونه' : 'Sample photo') : (currentLocale === 'fa-IR' ? 'تصویر نمایشی' : 'Demo illustration')} · <a href="/assets/credits.html" target="_blank" rel="noopener">${currentLocale === 'fa-IR' ? 'منبع' : 'Credits'}</a></small>`;
+    }
+    function getSelectedCook() {
+      return cooks.find((c) => c.id === selectedCookId) || cooks[0] || null;
+    }
+
+    function getSelectedDish(cook) {
+      if (!cook || !Array.isArray(cook.dishes)) return null;
+      const todayDishes = cook.dishes.filter((d) => d.availabilityMode !== 'REGULAR_UNAVAILABLE');
+      return (
+        todayDishes.find((d) => d.id === selectedDishId) ||
+        todayDishes[0] ||
+        cook.dishes[0] ||
+        null
+      );
+    }
+
+    function enforceCookFulfillmentSupport(cook) {
+      if (!cook) return;
+      if (fulfillment === 'pickup' && !cook.supportsPickup && cook.supportsDelivery) {
+        fulfillment = 'delivery';
+      } else if (fulfillment === 'delivery' && !cook.supportsDelivery && cook.supportsPickup) {
+        fulfillment = 'pickup';
+      }
+    }
+
+    function setMapHeight(nextPx) {
+      const clamped = Math.max(180, Math.min(520, Math.round(Number(nextPx) || 280)));
+      currentMapHeightPx = clamped;
+      const mapEl = document.getElementById('map');
+      if (mapEl) {
+        mapEl.style.height = `${clamped}px`;
+        mapEl.setAttribute('data-map-height', String(clamped));
+      }
+      const handleEl = document.getElementById('mapResizeHandle');
+      if (handleEl) {
+        handleEl.setAttribute('aria-valuenow', String(clamped));
+      }
+      const labelEl = document.getElementById('mapResizeLabel');
+      if (labelEl) {
+        labelEl.textContent =
+          currentLocale === 'fa-IR'
+            ? `تغییر ارتفاع نقشه با کشیدن یا کلیدهای ↑/↓ (${clamped}px)`
+            : `Drag or use ↑/↓ keys to resize map (${clamped}px)`;
+      }
+      if (mapInstance && typeof mapInstance.resize === 'function') {
+        mapInstance.resize();
+      }
+    }
+
+    function requestBrowserGeolocation() {
+      const statusEl = document.getElementById('geolocationStatus');
+      const markerEl = document.getElementById('currentUserMarker');
+      const nav = window.navigator;
+
+      if (!nav || !nav.geolocation || typeof nav.geolocation.getCurrentPosition !== 'function') {
+        userLocationState = 'unavailable';
+        clientOnlyUserCoords = null;
+        if (markerEl) {
+          markerEl.setAttribute('data-user-marker-active', 'false');
+          markerEl.setAttribute('hidden', '');
+          markerEl.textContent = '';
+        }
+        if (statusEl) {
+          statusEl.setAttribute('data-geo-state', 'unavailable');
+          statusEl.textContent =
+            currentLocale === 'fa-IR'
+              ? 'موقعیت‌یاب مرورگر در دسترس نیست — نمایش محدوده تقریبی آشپزخانه‌ها'
+              : 'Location unavailable in this browser — showing approximate kitchen areas only';
+        }
+        syncMapMarkers();
+        return;
+      }
+
+      userLocationState = 'requesting';
+      if (statusEl) {
+        statusEl.setAttribute('data-geo-state', 'requesting');
+        statusEl.textContent = currentLocale === 'fa-IR' ? 'در حال دریافت موقعیت…' : 'Finding your location…';
+      }
+      nav.geolocation.getCurrentPosition(
+        (pos) => {
+          const lat = Number(pos?.coords?.latitude);
+          const lng = Number(pos?.coords?.longitude);
+          if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+            userLocationState = 'unavailable';
+            clientOnlyUserCoords = null;
+            if (statusEl) {
+              statusEl.setAttribute('data-geo-state', 'unavailable');
+              statusEl.textContent =
+                currentLocale === 'fa-IR'
+                  ? 'مختصات معتبر دریافت نشد'
+                  : 'Location coordinates unavailable';
+            }
+            return;
+          }
+          userLocationState = 'granted';
+          // Stored only in browser memory; never transmitted to backend
+          clientOnlyUserCoords = { lat, lng };
+          if (markerEl) {
+            markerEl.setAttribute('data-user-marker-active', 'true');
+            markerEl.setAttribute('data-user-lat', lat.toFixed(4));
+            markerEl.setAttribute('data-user-lng', lng.toFixed(4));
+            markerEl.removeAttribute('hidden');
+            markerEl.textContent =
+              currentLocale === 'fa-IR'
+                ? `نشانگر موقعیت شما (فقط در مرورگر)`
+                : `Current User Marker (Browser-Only)`;
+          }
+          if (statusEl) {
+            statusEl.setAttribute('data-geo-state', 'granted');
+            statusEl.textContent =
+              currentLocale === 'fa-IR'
+                ? 'نشانگر موقعیت شما فعال شد (فقط در حافظه مرورگر؛ به سرور ارسال نمی‌شود)'
+                : 'Current-user marker active (kept in browser only; never sent to backend)';
+          }
+          syncMapMarkers();
+          if (mapInstance && typeof mapInstance.easeTo === 'function') {
+            mapInstance.easeTo({ center: [lng, lat], zoom: Math.max(mapInstance.getZoom(), 13), duration: 600 });
+          }
+        },
+        (err) => {
+          clientOnlyUserCoords = null;
+          if (markerEl) {
+            markerEl.setAttribute('data-user-marker-active', 'false');
+            markerEl.setAttribute('hidden', '');
+            markerEl.textContent = '';
+          }
+          if (err && Number(err.code) === 1) {
+            userLocationState = 'denied';
+            if (statusEl) {
+              statusEl.setAttribute('data-geo-state', 'denied');
+              statusEl.textContent =
+                currentLocale === 'fa-IR'
+                  ? 'دسترسی به موقعیت مکانی رد شد — فقط محدوده تقریبی آشپزخانه‌ها نمایش داده می‌شود'
+                  : 'Location permission denied — showing approximate kitchen areas only';
+            }
+          } else if (err && Number(err.code) === 3) {
+            userLocationState = 'unavailable';
+            if (statusEl) {
+              statusEl.setAttribute('data-geo-state', 'unavailable');
+              statusEl.textContent = currentLocale === 'fa-IR' ? 'دریافت موقعیت طول کشید؛ دوباره تلاش کنید.' : 'Location timed out — please try again.';
+            }
+          } else {
+            userLocationState = 'unavailable';
+            if (statusEl) {
+              statusEl.setAttribute('data-geo-state', 'unavailable');
+              statusEl.textContent =
+                currentLocale === 'fa-IR'
+                  ? 'موقعیت مکانی در دسترس نیست — نمایش محدوده تقریبی آشپزخانه‌ها'
+                  : 'Location unavailable — showing approximate kitchen areas only';
+            }
+          }
+          syncMapMarkers();
+        },
+        { enableHighAccuracy: false, timeout: 6000, maximumAge: 60000 }
+      );
+    }
+
+    function syncMapMarkers() {
+      const activeCook = getSelectedCook();
+      const mapInfoEl = document.getElementById('mapPickupInfoBar');
+      if (mapInfoEl && activeCook) {
+        const isFa = currentLocale === 'fa-IR';
+        mapInfoEl.innerHTML = `
+          <span><strong>📍 ${cleanDisplayKitchenName(activeCook.kitchenName)}</strong> • ${activeCook.pickupSummaryLabel || activeCook.neighborhood}</span>
+          <span>🕒 ${activeCook.pickupWindowLabel || ''}</span>
+        `;
+      }
+
+      if (!window.maplibregl) return;
+      if (!mapInstance) {
+        try {
+          mapInstance = new maplibregl.Map({
+            container: 'map',
+            style: OPENFREEMAP_STYLE,
+            center: [-79.4152, 43.7798],
+            zoom: 12.2,
+            attributionControl: false
+          });
+        } catch {
+          return;
+        }
+      }
+      for (const m of mapMarkers) {
+        m.remove();
+      }
+      mapMarkers = [];
+      for (const cook of cooks) {
+        const marker = new maplibregl.Marker({
+          color: cook.id === selectedCookId ? '#1b4332' : '#5c6460'
+        })
+          .setLngLat([Number(cook.publicLng), Number(cook.publicLat)])
+          .setPopup(
+            new maplibregl.Popup().setHTML(
+              `<strong>${cleanDisplayKitchenName(cook.kitchenName)}</strong><br/><small>${cook.pickupSummaryLabel || cook.neighborhood}</small><br/><small>${cook.pickupWindowLabel || ''}</small>`
+            )
+          )
+          .addTo(mapInstance);
+        mapMarkers.push(marker);
+      }
+
+      if (mapUserMarker) {
+        mapUserMarker.remove();
+        mapUserMarker = null;
+      }
+      if (userLocationState === 'granted' && clientOnlyUserCoords) {
+        const userDot = document.createElement('div');
+        userDot.className = 'user-location-dot';
+        userDot.setAttribute('role', 'img');
+        userDot.setAttribute('aria-label', currentLocale === 'fa-IR' ? 'موقعیت من' : 'My Location');
+        mapUserMarker = new maplibregl.Marker({ element: userDot })
+          .setLngLat([clientOnlyUserCoords.lng, clientOnlyUserCoords.lat])
+          .setPopup(new maplibregl.Popup().setHTML('<strong>Your Location (Browser-Only)</strong>'))
+          .addTo(mapInstance);
+      }
+    }
+
+    async function loadCustomerBackendState() {
+      try {
+        await loadSavedAddresses();
+        const [discRes, cartRes, ordRes] = await Promise.all([
+          fetch(`${API_BASE}/api/discovery/cooks?locale=${encodeURIComponent(currentLocale)}`, {
+            headers: { 'X-Sofreh-Locale': currentLocale }
+          }),
+          fetch(`${API_BASE}/api/customer/cart?locale=${encodeURIComponent(currentLocale)}`, {
+            headers: {
+              Authorization: `Bearer ${customerToken}`,
+              'X-Sofreh-Locale': currentLocale
+            }
+          }),
+          fetch(`${API_BASE}/api/customer/orders?locale=${encodeURIComponent(currentLocale)}`, {
+            headers: {
+              Authorization: `Bearer ${customerToken}`,
+              'X-Sofreh-Locale': currentLocale
+            }
+          })
+        ]);
+
+        if (discRes.ok) {
+          const discData = await discRes.json();
+          cooks = discData.cooks || [];
+          if (cooks.length > 0 && !cooks.some((c) => c.id === selectedCookId)) {
+            selectedCookId = cooks[0].id;
+          }
+          const activeCook = getSelectedCook();
+          enforceCookFulfillmentSupport(activeCook);
+          const activeDish = getSelectedDish(activeCook);
+          if (activeDish) {
+            selectedDishId = activeDish.id;
+          }
+        }
+
+        if (cartRes.ok) {
+          const cartData = await cartRes.json();
+          persistedCart = cartData.cart || null;
+          if (persistedCart && persistedCart.cookId && persistedCart.items && persistedCart.items.length > 0) {
+            selectedCookId = persistedCart.cookId;
+            fulfillment = persistedCart.fulfillmentType || fulfillment;
+            if (persistedCart.deliveryAddress) {
+              deliveryAddress = persistedCart.deliveryAddress;
+            }
+          }
+        }
+
+        if (ordRes.ok) {
+          const ordData = await ordRes.json();
+          persistedOrders = ordData.orders || [];
+        }
+      } catch (err) {
+        lastStatusBanner = `Connection error: ${err.message}`;
+      }
+      renderUI();
+      syncMapMarkers();
+    }
+
+    async function updateCartDishQuantity(dishId, nextQuantity) {
+      const cook = getSelectedCook();
+      if (!cook) return;
+      enforceCookFulfillmentSupport(cook);
+
+      try {
+        const res = await fetch(`${API_BASE}/api/customer/cart/items`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${customerToken}`,
+            'X-Sofreh-Locale': currentLocale
+          },
+          body: JSON.stringify({
+            cookId: cook.id,
+            dishId,
+            quantity: Number(nextQuantity),
+            fulfillmentType: fulfillment,
+            deliveryAddress: fulfillment === 'delivery' ? deliveryAddress : null
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          lastStatusBanner = `Error (${data.error?.code || res.status}): ${data.error?.message || 'Cart update failed'}`;
+          renderUI();
+          return;
+        }
+        persistedCart = data.cart;
+        lastStatusBanner = '';
+        renderUI();
+      } catch (err) {
+        lastStatusBanner = `Network error: ${err.message}`;
+        renderUI();
+      }
+    }
+
+    async function syncCartFulfillmentMode(nextMode) {
+      const cook = getSelectedCook();
+      if (!cook) return;
+      fulfillment = nextMode;
+      enforceCookFulfillmentSupport(cook);
+
+      if (persistedCart && persistedCart.items && persistedCart.items.length > 0) {
+        try {
+          const res = await fetch(`${API_BASE}/api/customer/cart/items`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${customerToken}`,
+              'X-Sofreh-Locale': currentLocale
+            },
+            body: JSON.stringify({
+              cookId: cook.id,
+              fulfillmentType: fulfillment,
+              deliveryAddress: fulfillment === 'delivery' ? deliveryAddress : null
+            })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            persistedCart = data.cart;
+          }
+        } catch {
+          // ignore sync error
+        }
+      }
+      renderUI();
+    }
+
+    async function submitCustomerOrder() {
+      const cook = getSelectedCook();
+      if (!cook) return;
+      enforceCookFulfillmentSupport(cook);
+
+      const activePay =
+        demoPaymentMethods.find((m) => m.id === selectedDemoPaymentId) || demoPaymentMethods[0];
+      if (!activePay) {
+        lastStatusBanner =
+          currentLocale === 'fa-IR'
+            ? 'لطفاً یک روش پرداخت آزمایشی در منوی تنظیمات انتخاب کنید.'
+            : 'Please select or restore a simulated payment method in Settings.';
+        renderUI();
+        return;
+      }
+
+      const cartHasItems =
+        persistedCart &&
+        persistedCart.cookId === cook.id &&
+        Array.isArray(persistedCart.items) &&
+        persistedCart.items.length > 0;
+
+      const fallbackDish = getSelectedDish(cook);
+      const orderItems = cartHasItems
+        ? persistedCart.items.map((it) => ({ dishId: it.dishId, quantity: Number(it.quantity) }))
+        : fallbackDish
+          ? [{ dishId: fallbackDish.id, quantity: 1 }]
+          : [];
+
+      if (orderItems.length === 0) return;
+
+      const idempotencyKey = `idem-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
+      try {
+        const payload = {
+          cookId: cook.id,
+          fulfillmentType: fulfillment,
+          deliveryAddress: fulfillment === 'delivery' ? deliveryAddress : undefined,
+          simulatedPaymentMethod: activePay.backendMethod,
+          idempotencyKey,
+          items: orderItems
+        };
+
+        const res = await fetch(`${API_BASE}/api/customer/orders`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${customerToken}`,
+            'X-Sofreh-Locale': currentLocale,
+            'Idempotency-Key': idempotencyKey
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          lastStatusBanner = `Error (${data.error?.code || res.status}): ${data.error?.message || 'Failed'}`;
+          renderUI();
+          return;
+        }
+
+        lastStatusBanner =
+          currentLocale === 'fa-IR'
+            ? `سفارش ${data.order.id} ثبت شد (${data.order.simulatedPaymentStatus}).`
+            : `Order ${data.order.id} placed (${data.order.simulatedPaymentStatus}).`;
+
+        await loadCustomerBackendState();
+      } catch (err) {
+        lastStatusBanner = `Network error: ${err.message}`;
+        renderUI();
+      }
+    }
+
+    async function submitCustomerReview(orderId) {
+      const ratingEl = document.getElementById(`review-rating-${orderId}`);
+      const commentEl = document.getElementById(`review-comment-${orderId}`);
+      const rating = Number(ratingEl ? ratingEl.value : 5);
+      const comment = String(commentEl ? commentEl.value : '').trim();
+
+      try {
+        const res = await fetch(`${API_BASE}/api/orders/${encodeURIComponent(orderId)}/reviews`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${customerToken}`,
+            'X-Sofreh-Locale': currentLocale
+          },
+          body: JSON.stringify({ rating, comment })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          lastStatusBanner = `Review error (${data.error?.code || res.status}): ${data.error?.message}`;
+          renderUI();
+          return;
+        }
+        lastStatusBanner =
+          currentLocale === 'fa-IR'
+            ? `امتیاز و نظر شما برای سفارش ${orderId} ثبت شد.`
+            : `Review submitted for order ${orderId}.`;
+        await loadCustomerBackendState();
+      } catch (err) {
+        lastStatusBanner = `Network error: ${err.message}`;
+        renderUI();
+      }
+    }
+
+    function renderSettingsDrawer(isFa) {
+      const panelEl = document.getElementById('customerSettingsPanel');
+      const btnEl = document.getElementById('customerTopMenuBtn');
+      if (!panelEl) return;
+
+      if (btnEl) {
+        btnEl.setAttribute('aria-expanded', settingsMenuOpen ? 'true' : 'false');
+      }
+      panelEl.setAttribute('data-open', settingsMenuOpen ? 'true' : 'false');
+      if (!settingsMenuOpen) {
+        panelEl.setAttribute('hidden', '');
+      } else {
+        panelEl.removeAttribute('hidden');
+      }
+
+      const paymentRowsHtml =
+        demoPaymentMethods.length === 0
+          ? `<p style="margin:4px 0;color:#991b1b;font-weight:700;">${
+              isFa
+                ? 'همه روش‌های پرداخت آزمایشی حذف شده‌اند.'
+                : 'All simulated payment methods removed.'
+            }</p>`
+          : demoPaymentMethods
+              .map((pm) => {
+                const isSelected = pm.id === selectedDemoPaymentId;
+                return `
+                  <div data-demo-payment-row="${pm.id}" data-selected="${isSelected ? 'true' : 'false'}" style="display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:var(--card);margin-bottom:6px;">
+                    <div>
+                      <strong style="font-size:11.5px;">${isFa ? pm.labelFa : pm.labelEn}</strong>
+                      ${
+                        isSelected
+                          ? `<span data-testid="active-demo-payment-badge" style="margin-inline-start:6px;font-size:10px;font-weight:800;color:#14532d;background:#dcfce7;padding:2px 6px;border-radius:999px;">${
+                              isFa ? '✓ انتخاب‌شده' : '✓ Selected'
+                            }</span>`
+                          : ''
+                      }
+                    </div>
+                    <div style="display:flex;gap:4px;">
+                      <button type="button" class="qty-btn" id="select-pay-${pm.id}" data-demo-pay-select="${pm.id}" ${isSelected ? 'disabled' : ''}>${
+                        isFa ? 'انتخاب' : 'Select'
+                      }</button>
+                      <button type="button" class="qty-btn" id="remove-pay-${pm.id}" data-demo-pay-remove="${pm.id}" style="background:#991b1b;">${
+                        isFa ? 'حذف' : 'Remove'
+                      }</button>
+                    </div>
+                  </div>
+                `;
+              })
+              .join('');
+
+      panelEl.innerHTML = `
+        <div class="settings-section" id="profileSettingsSection">
+          <h4>👤 ${isFa ? 'پروفایل و حساب آزمایشی' : 'Profile & Demo Session'}</h4>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+            <label id="accountLabel" style="font-weight:700;">${
+              isFa ? 'مشتری فعال:' : 'Active Demo Customer:'
+            }</label>
+            <span id="currentDemoCustomer">Nima Tehrani · ${isFa ? 'حساب نمایشی' : 'Demo customer'}</span>
+          </div>
+          <div style="margin-top:4px;font-size:10.5px;color:var(--muted);">
+            ${
+              isFa
+                ? 'محدودیت دمو: احراز هویت با توکن‌های مصنوعی انجام می‌شود و حساب واقعی بانکی یا کاربری وجود ندارد.'
+                : 'Demo Auth Notice: Uses pre-seeded synthetic tokens; no real user credentials or personal data stored.'
+            }
+          </div>
+        </div>
+
+        <div class="settings-section" id="addressesSettingsSection">
+          <h4>📍 ${isFa ? 'آدرس‌ها و حریم خصوصی مکان' : 'Addresses & Location Privacy'}</h4>
+          <label for="settingsDeliveryAddressInput" style="font-size:11px;font-weight:700;display:block;margin-bottom:4px;">${
+            isFa ? 'آدرس پیش‌فرض تحویل با پیک:' : 'Saved Delivery Address (Demo):'
+          }</label>
+          <select id="savedAddressSelect" aria-label="Saved addresses">
+            <option value="">${isFa ? 'آدرس جدید' : 'New address'}</option>
+            ${savedAddresses.map((a) => `<option value="${a.id}" ${a.id === selectedSavedAddressId ? 'selected' : ''}>${settingsText(a.label)}</option>`).join('')}
+          </select>
+          <input id="settingsAddressLabelInput" aria-label="Address label" maxlength="60" value="${settingsText(savedAddresses.find((a) => a.id === selectedSavedAddressId)?.label || 'Demo address')}" />
+          <input id="settingsDeliveryAddressInput" type="text" maxlength="500" value="${settingsText(deliveryAddress)}" style="width:100%;padding:6px 8px;border-radius:8px;border:1px solid var(--border);font-size:11.5px;" />
+          <button type="button" id="saveSavedAddressBtn">${isFa ? 'ذخیره آدرس' : 'Save address'}</button>
+          <button type="button" id="deleteSavedAddressBtn" ${!selectedSavedAddressId ? 'disabled' : ''}>${isFa ? 'حذف آدرس' : 'Delete address'}</button>
+          <div style="margin-top:5px;font-size:10.5px;color:var(--muted);">
+            ${
+              isFa
+                ? 'حریم خصوصی سرور: فهرست عمومی فقط محله تقریبی آشپز را نشان می‌دهد. مشتریان ارسال با پیک هرگز آدرس منزل آشپز را دریافت نمی‌کنند. آدرس دقیق تحویل حضوری فقط پس از تایید سفارش تحویل حضوری و تایید پرداخت آزمایشی به همان مشتری نمایش داده می‌شود.'
+                : 'Server Privacy Policy: Public listings expose approximate cook areas only. Delivery orders never receive the cook home address. Consented pickup address is released only to the owning customer of an accepted pickup order with simulated authorization.'
+            }
+          </div>
+        </div>
+
+        <div class="settings-section" id="demoPaymentSettingsPanel">
+          <h4>💳 ${isFa ? 'روش‌های پرداخت آزمایشی / شبیه‌سازی‌شده (DEMO)' : 'DEMO / Simulated Payment Methods'}</h4>
+          <div style="font-size:10.5px;color:#78350f;background:#fef3c7;border:1px solid #d97706;border-radius:8px;padding:5px 8px;margin-bottom:6px;font-weight:700;">
+            ${
+              isFa
+                ? 'شبیه‌سازی دمو: ورود شماره کارت واقعی یا CVV وجود ندارد. هیچ مبلغ واقعی دریافت نمی‌شود و به درگاه بانکی متصل نیست.'
+                : 'DEMO SIMULATION ONLY: No real card-number (PAN) or CVV entry/storage, no real charge, and no payment-provider integration.'
+            }
+          </div>
+          <div id="demoPaymentMethodsList">${paymentRowsHtml}</div>
+          <button type="button" class="secondary-btn" id="restoreDemoPaymentMethodsBtn" style="margin-top:4px;">${
+            isFa ? 'بازگردانی کارت‌های آزمایشی پیش‌فرض (4242)' : 'Restore Default Demo Payment Methods (4242)'
+          }</button>
+        </div>
+
+        <div class="settings-section" id="appInfoSettingsSection" style="margin-bottom:0;">
+          <h4>ℹ️ ${isFa ? 'اطلاعات برنامه' : 'App Information'}</h4>
+          <div style="font-size:11px;color:var(--muted);">
+            ${
+              isFa
+                ? 'اپلیکیشن مشتری سفره (ca.sofreh.customer) • پوسته ثابت سبز جنگلی و کرم • نقشه MapLibre و OpenFreeMap'
+                : 'Sofreh Customer App (ca.sofreh.customer) • Forest / Cream palette • MapLibre + OpenFreeMap • Client-only geolocation'
+            }
+          </div>
+        </div>
+      `;
+
+      const payListEl = document.getElementById('demoPaymentMethodsList');
+      if (payListEl) {
+        payListEl.innerHTML = paymentRowsHtml;
+      }
+
+      document.getElementById('savedAddressSelect').addEventListener('change', (e) => {
+        selectedSavedAddressId = e.target.value;
+        deliveryAddress = savedAddresses.find((a) => a.id === selectedSavedAddressId)?.address || '';
+        renderUI();
+      });
+      document.getElementById('saveSavedAddressBtn').addEventListener('click', () => persistSavedAddress());
+      document.getElementById('deleteSavedAddressBtn').addEventListener('click', () => persistSavedAddress(true));
+
+      const settingsAddrInput = document.getElementById('settingsDeliveryAddressInput');
+      if (settingsAddrInput) {
+        settingsAddrInput.addEventListener('input', (e) => {
+          deliveryAddress = e.target.value;
+        });
+      }
+
+      document.querySelectorAll('[data-demo-pay-select]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const pid = btn.getAttribute('data-demo-pay-select');
+          if (pid) {
+            selectedDemoPaymentId = pid;
+            renderUI();
+          }
+        });
+      });
+
+      document.querySelectorAll('[data-demo-pay-remove]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const pid = btn.getAttribute('data-demo-pay-remove');
+          demoPaymentMethods = demoPaymentMethods.filter((m) => m.id !== pid);
+          if (selectedDemoPaymentId === pid) {
+            selectedDemoPaymentId = demoPaymentMethods[0] ? demoPaymentMethods[0].id : '';
+          }
+          renderUI();
+        });
+      });
+
+      const restoreBtn = document.getElementById('restoreDemoPaymentMethodsBtn');
+      if (restoreBtn) {
+        restoreBtn.addEventListener('click', () => {
+          demoPaymentMethods = DEFAULT_DEMO_PAYMENT_METHODS.map((m) => ({ ...m }));
+          selectedDemoPaymentId = 'pm-demo-visa-4242';
+          renderUI();
+        });
+      }
+    }
+
+    function renderOrderStepper(status, isFa) {
+      if (status === 'REJECTED' || status === 'CANCELLED') {
+        return '';
+      }
+      const steps = [
+        { code: 'PENDING', en: '1. Placed', fa: '۱. ثبت‌شده' },
+        { code: 'ACCEPTED', en: '2. Accepted', fa: '۲. تایید آشپز' },
+        { code: 'PREPARING', en: '3. Preparing', fa: '۳. پخت' },
+        { code: 'READY', en: '4. Ready', fa: '۴. آماده' }
+      ];
+      const rank = { PENDING: 0, ACCEPTED: 1, PREPARING: 2, READY: 3, COMPLETED: 4 };
+      const currentIdx = rank[status] ?? 0;
+      return `<div class="ue-stepper" aria-label="Order progress">${steps
+        .map((st, idx) => {
+          const cls = idx < currentIdx || status === 'COMPLETED' ? 'done' : idx === currentIdx ? 'active' : '';
+          return `<span class="ue-step ${cls}">${isFa ? st.fa : st.en}</span>`;
+        })
+        .join('')}</div>`;
+    }
+
+    function renderUI() {
+      const isFa = currentLocale === 'fa-IR';
+      document.documentElement.lang = currentLocale;
+      document.documentElement.dir = isFa ? 'rtl' : 'ltr';
+      document.documentElement.setAttribute('data-theme', 'forest');
+      const rootEl = document.getElementById('appRoot');
+      if (rootEl) rootEl.setAttribute('data-theme', 'forest');
+
+      // Compact language button shows FA when in English, EN when in Persian
+      document.getElementById('localeToggleBtn').textContent = isFa ? 'EN' : 'FA';
+      document.getElementById('appTitle').textContent = isFa ? 'سفره' : 'Sofreh';
+      document.getElementById('appTitle').setAttribute('data-wordmark', isFa ? 'fa' : 'en');
+      document.getElementById('appTitle').setAttribute('aria-label', isFa ? 'سفره' : 'Sofreh');
+      document.getElementById('appSubtitle').textContent = isFa
+        ? 'غذای خانگی ایرانی در محله شما'
+        : 'Home-Cooked Persian Kitchens';
+      document.getElementById('testBanner').textContent = isFa
+        ? 'پیش‌نمایش آزمایشی — آشپزخانه‌های نمونه و پرداخت شبیه‌سازی‌شده (بدون کسر وجه واقعی)'
+        : 'Demo preview — synthetic kitchens & simulated checkout (no real charges)';
+
+      const locateBtn = document.getElementById('locateMeBtn');
+      const locateLabel = document.getElementById('locateMeLabel');
+      if (locateLabel) locateLabel.textContent = isFa ? 'موقعیت من' : 'My Location';
+      if (locateBtn) locateBtn.setAttribute('aria-label', isFa ? 'موقعیت من' : 'My Location');
+      const attrEl = document.getElementById('mapAttribution');
+      if (attrEl) {
+        attrEl.innerHTML =
+          'MapLibre GL • © <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> • © <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a> • Data from <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>';
+      }
+      setMapHeight(currentMapHeightPx);
+
+      const searchInputEl = document.getElementById('kitchenSearchInput');
+      if (searchInputEl) {
+        searchInputEl.placeholder = isFa
+          ? 'جستجوی قورمه‌سبزی، تهچین، آش رشته یا آشپزخانه...'
+          : 'Search home-cooked Persian dishes, saffron tahchin, herbs...';
+      }
+
+      document.getElementById('navTabDiscover').textContent = isFa ? 'خانه' : 'Home';
+      document.getElementById('navTabCart').textContent = isFa ? 'سبد' : 'Cart';
+      document.getElementById('navTabOrders').textContent = isFa ? 'سفارش‌ها' : 'Orders';
+
+      renderSettingsDrawer(isFa);
+
+      const cook = getSelectedCook();
+      const dish = getSelectedDish(cook);
+
+      if (!cook || !dish) {
+        document.getElementById('cookListCard').innerHTML = `<p>${
+          isFa ? 'در حال بارگذاری آشپزخانه‌ها...' : 'Loading kitchens...'
+        }</p>`;
+        return;
+      }
+
+      // Render clickable Cook Cards for storefront selection
+      const cookCardsHtml = cooks
+        .map((c) => {
+          const isActive = c.id === cook.id;
+          const revCount = Number(c.reviewSummary?.reviewCount || 0);
+          const avgRating = c.reviewSummary?.averageRating;
+          const ratingLabel =
+            revCount > 0 && avgRating !== null
+              ? `★ ${Number(avgRating).toFixed(1)} (${revCount})`
+              : isFa
+                ? 'بدون امتیاز ثبت‌شده'
+                : 'No ratings yet';
+          const modeBadge =
+            c.supportsPickup && c.supportsDelivery
+              ? isFa
+                ? 'حضوری و پیک'
+                : 'Pickup & Delivery'
+              : c.supportsPickup
+                ? isFa
+                  ? 'فقط تحویل حضوری'
+                  : 'Pickup Only'
+                : isFa
+                  ? 'فقط ارسال با پیک'
+                  : 'Delivery Only';
+          return `
+            <button type="button" class="cook-card-tile" id="cook-card-${c.id}" data-cook-card-id="${c.id}" data-active-cook="${isActive ? 'true' : 'false'}">
+              ${kitchenLogo(c.id)}
+              <div style="font-weight:800;color:var(--primary);margin-bottom:2px;">${cleanDisplayKitchenName(c.kitchenName)}</div>
+              <div style="font-size:10px;color:var(--muted);">${c.neighborhood}</div>
+              <div style="font-size:10px;font-weight:700;margin-top:3px;">${ratingLabel}</div>
+              <div style="font-size:9.5px;margin-top:2px;color:var(--text);">${modeBadge}</div>
+            </button>
+          `;
+        })
+        .join('');
+      const cookCardsListEl = document.getElementById('cookCardsList');
+      if (cookCardsListEl) {
+        cookCardsListEl.innerHTML = cookCardsHtml;
+      }
+
+      const cookOptionsHtml = cooks
+        .map(
+          (c) =>
+            `<option value="${c.id}" ${c.id === cook.id ? 'selected' : ''}>${cleanDisplayKitchenName(c.kitchenName)} (${c.neighborhood})</option>`
+        )
+        .join('');
+
+      const cartItemsByDish = new Map();
+      if (persistedCart && persistedCart.cookId === cook.id && Array.isArray(persistedCart.items)) {
+        for (const ci of persistedCart.items) {
+          cartItemsByDish.set(ci.dishId, Number(ci.quantity));
+        }
+      }
+
+      const qNorm = searchFilterText.trim().toLowerCase();
+      const todayDishes = (cook.todayAvailableDishes && cook.todayAvailableDishes.length > 0)
+        ? cook.todayAvailableDishes
+        : cook.dishes.filter((d) => d.availabilityMode !== 'REGULAR_UNAVAILABLE');
+      const regularUnavailableDishes = (cook.regularUnavailableDishes && cook.regularUnavailableDishes.length > 0)
+        ? cook.regularUnavailableDishes
+        : cook.dishes.filter((d) => d.availabilityMode === 'REGULAR_UNAVAILABLE');
+
+      const renderDishCardHtml = (d, isRegularUnavailable) => {
+        const matchesSearch =
+          !qNorm ||
+          String(d.title || '').toLowerCase().includes(qNorm) ||
+          String(d.description || '').toLowerCase().includes(qNorm) ||
+          String(cook.kitchenName || '').toLowerCase().includes(qNorm);
+        const dimStyle = matchesSearch ? '' : 'opacity:0.4;';
+        const inCartQty = cartItemsByDish.get(d.id) || 0;
+        const allergensHtml = Array.isArray(d.allergens) && d.allergens.length > 0
+          ? `<div style="font-size:10px;color:var(--muted);margin-bottom:4px;">${isFa ? 'آلرژن‌ها:' : 'Allergens:'} ${d.allergens.join(', ')}</div>`
+          : '';
+
+        if (isRegularUnavailable) {
+          return `
+            <div class="ue-dish-row" data-dish-card-id="${d.id}" data-availability-mode="REGULAR_UNAVAILABLE" data-unavailable="true" style="${dimStyle}">
+              <div class="ue-dish-info">
+                <p class="ue-dish-title">${settingsText(cleanDisplayKitchenName(d.title))}</p>
+                <p class="ue-dish-desc">${d.description || ''}</p>
+                ${allergensHtml}
+                <div class="ue-dish-price-row">
+                  <span>CA$${(d.priceCents / 100).toFixed(2)}</span>
+                  <span style="color:#92400e;background:#fef3c7;padding:1px 6px;border-radius:999px;font-size:10px;">${
+                    isFa ? 'تمام شد' : 'Sold out'
+                  }</span>
+                </div>
+              </div>
+              <div class="dish-photo-wrap">
+                <img class="dish-photo" src="${d.photoUrl || ''}" alt="${settingsText(cleanDisplayKitchenName(d.title))}" />
+                ${foodCredit(d)}
+                <button type="button" class="qty-btn" id="unavailable-btn-${d.id}" data-unavailable-today="true" disabled>${
+                  isFa ? 'تمام شد' : 'Sold out'
+                }</button>
+              </div>
+            </div>
+          `;
+        }
+
+        return `
+          <div class="ue-dish-row" data-dish-card-id="${d.id}" data-availability-mode="TODAY_AVAILABLE" style="${dimStyle}">
+            <div class="ue-dish-info">
+              <p class="ue-dish-title">${settingsText(cleanDisplayKitchenName(d.title))}</p>
+              <p class="ue-dish-desc">${d.description || ''}</p>
+              ${allergensHtml}
+              <div class="ue-dish-price-row">
+                <span>CA$${(d.priceCents / 100).toFixed(2)}</span>
+                <span data-testid="stock-${d.id}">${d.remainingPortions} ${isFa ? 'پرس باقی‌مانده' : 'left'}</span>
+              </div>
+            </div>
+            <div class="dish-photo-wrap">
+              <img class="dish-photo" src="${d.photoUrl || ''}" alt="${settingsText(cleanDisplayKitchenName(d.title))}" />
+              ${foodCredit(d)}
+              <div class="qty-stepper">
+                ${
+                  inCartQty > 0
+                    ? `
+                      <button type="button" class="qty-btn" id="cart-dec-${d.id}" data-cart-dec="${d.id}" data-next-qty="${inCartQty - 1}">−</button>
+                      <span id="cart-qty-${d.id}" style="font-size:11.5px;font-weight:800;min-width:16px;text-align:center;">${inCartQty}</span>
+                      <button type="button" class="qty-btn" id="cart-inc-${d.id}" data-cart-inc="${d.id}" data-next-qty="${inCartQty + 1}" ${inCartQty >= d.remainingPortions ? 'disabled' : ''}>+</button>
+                    `
+                    : `
+                      <button type="button" class="qty-btn" id="cart-add-${d.id}" data-cart-inc="${d.id}" data-next-qty="1" ${d.remainingPortions <= 0 ? 'disabled' : ''}>${
+                        isFa ? '+ افزودن' : '+ Add'
+                      }</button>
+                    `
+                }
+              </div>
+            </div>
+          </div>
+        `;
+      };
+
+      const todayDishesHtml = todayDishes.map((d) => renderDishCardHtml(d, false)).join('');
+      const regularDishesHtml = regularUnavailableDishes
+        .map((d) => renderDishCardHtml(d, true))
+        .join('');
+
+      const revCount = Number(cook.reviewSummary?.reviewCount || 0);
+      const avgRating = cook.reviewSummary?.averageRating;
+      const storefrontRatingBadge =
+        revCount > 0 && avgRating !== null
+          ? `<span class="ue-chip" data-testid="storefront-rating">★ ${Number(avgRating).toFixed(2)} (${revCount} ${isFa ? 'نظر واقعی' : 'completed-order reviews'})</span>`
+          : `<span class="ue-chip" data-testid="storefront-rating">${isFa ? 'بدون امتیاز ثبت‌شده' : 'No ratings yet'}</span>`;
+
+      const cookReviewsHtml =
+        Array.isArray(cook.reviews) && cook.reviews.length > 0
+          ? `<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:11px;">
+              <strong>${isFa ? 'نظرات سفارش‌های تکمیل‌شده:' : 'Completed-Order Reviews:'}</strong>
+              ${cook.reviews
+                .map(
+                  (rv) =>
+                    `<div style="margin-top:4px;padding:5px 8px;background:var(--surface-subtle);border-radius:8px;">
+                      <strong>★ ${rv.rating}/5</strong> — <span>${rv.commentEscaped}</span>
+                    </div>`
+                )
+                .join('')}
+            </div>`
+          : '';
+
+      document.getElementById('cookListCard').innerHTML = `
+        <div class="ue-section-header">
+          <div class="storefront-heading storefront-identity">
+            ${kitchenLogo(cook.id)}
+            <div style="min-width:0;">
+            <h3 class="ue-section-title" id="storefrontTitle">${settingsText(cleanDisplayKitchenName(cook.kitchenName))}</h3>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px;">📍 ${cook.pickupSummaryLabel || cook.neighborhood}</div>
+          </div>
+            </div>
+          <select id="cookSelect" aria-label="Switch Storefront" style="font-size:11px;padding:4px 8px;border-radius:8px;border:1px solid var(--border);">${cookOptionsHtml}</select>
+        </div>
+        <p class="storefront-bio">${settingsText(cleanDisplayKitchenName(cook.bio))}</p>
+        <div class="ue-meta-chips">
+          ${todayDishes.some((d) => d.isAvailableToday && Number(d.remainingPortions) > 0) ? `<span class="ue-chip" data-testid="fresh-today">${isFa ? 'تازه برای امروز' : 'Cooked Fresh Today'}</span>` : ''}
+          ${storefrontRatingBadge}
+          ${
+            cook.supportsPickup
+              ? `<span class="ue-chip">${isFa ? 'تحویل حضوری: رایگان (CA$0.00)' : 'Pickup: CA$0.00'}</span>`
+              : ''
+          }
+          ${
+            cook.supportsDelivery
+              ? `<span class="ue-chip">${isFa ? `ارسال با پیک: CA$${(cook.deliveryFeeCents / 100).toFixed(2)}` : `Delivery: CA$${(cook.deliveryFeeCents / 100).toFixed(2)}`}</span>`
+              : ''
+          }
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">
+          🕒 ${cook.pickupWindowLabel || ''}
+        </div>
+
+        <div id="todayAvailableDishesSection">
+          <h4 style="margin:8px 0 4px;font-size:12.5px;font-weight:800;color:var(--primary);">
+            ${isFa ? 'غذاهای آماده سفارش امروز (پخت روز)' : 'Available Today (Fresh Batch)'}
+          </h4>
+          <div class="ue-dish-list">${todayDishesHtml}</div>
+        </div>
+
+        ${
+          regularUnavailableDishes.length > 0
+            ? `<div id="regularUnavailableDishesSection" style="margin-top:12px;padding-top:8px;border-top:1px dashed var(--border);">
+                <h4 style="margin:0 0 4px;font-size:12px;font-weight:800;color:var(--muted);">
+                  ${isFa ? 'منوی ثابت' : 'Regular Menu'}
+                </h4>
+                <div class="ue-dish-list">${regularDishesHtml}</div>
+              </div>`
+            : ''
+        }
+        ${cookReviewsHtml}
+      `;
+
+      // Cart & Checkout Section
+      const activeCartItems =
+        persistedCart && persistedCart.cookId === cook.id && Array.isArray(persistedCart.items)
+          ? persistedCart.items
+          : [];
+
+      const subtotal =
+        activeCartItems.length > 0
+          ? Number(persistedCart.subtotalCents)
+          : dish.priceCents;
+      const deliveryFee =
+        fulfillment === 'delivery' ? Number(cook.deliveryFeeCents) : 0;
+      const total = subtotal + deliveryFee;
+
+      const cartLinesHtml =
+        activeCartItems.length > 0
+          ? `<div id="persistedCartItemsList" style="margin-bottom:10px;">
+              ${activeCartItems
+                .map(
+                  (ci) => `
+                  <div data-cart-item-row="${ci.dishId}" style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;background:var(--surface-subtle);border:1px solid var(--border);border-radius:8px;margin-bottom:5px;font-size:11.5px;">
+                    <span><strong>${ci.quantity}x</strong> ${ci.title} (CA$${(ci.lineTotalCents / 100).toFixed(2)})</span>
+                    <div class="qty-stepper">
+                      <button type="button" class="qty-btn" data-cart-dec="${ci.dishId}" data-next-qty="${ci.quantity - 1}">−</button>
+                      <button type="button" class="qty-btn" data-cart-inc="${ci.dishId}" data-next-qty="${ci.quantity + 1}" ${ci.quantity >= ci.remainingPortions ? 'disabled' : ''}>+</button>
+                      <button type="button" class="qty-btn" data-cart-remove="${ci.dishId}" data-next-qty="0" style="background:#991b1b;">✕</button>
+                    </div>
+                  </div>
+                `
+                )
+                .join('')}
+            </div>`
+          : `<div id="persistedCartItemsList" style="font-size:11.5px;color:var(--muted);margin-bottom:8px;">
+              ${
+                isFa
+                  ? `سفارش سریع: ۱ پرس ${dish.title} (یا با دکمه + چند غذا به سبد اضافه کنید)`
+                  : `Quick selection: 1x ${dish.title} (or click + Add on dishes above to build a multi-item cart)`
+              }
+            </div>`;
+
+      const activePayObj =
+        demoPaymentMethods.find((m) => m.id === selectedDemoPaymentId) || demoPaymentMethods[0];
+
+      document.getElementById('checkoutCard').innerHTML = `
+        <div class="ue-section-header">
+          <h4 class="ue-section-title">${isFa ? 'سبد خرید و ثبت سفارش' : 'Cart & Checkout'}</h4>
+          <span style="font-size:11px;font-weight:700;color:var(--muted);">${
+            activeCartItems.length > 0
+              ? `${activeCartItems.reduce((acc, i) => acc + i.quantity, 0)} ${isFa ? 'پرس در سبد' : 'items in cart'}`
+              : isFa
+                ? '۱ پرس انتخابی'
+                : '1 item selected'
+          }</span>
+        </div>
+        ${cartLinesHtml}
+        <div class="ue-mode-toggle-grid">
+          <label class="ue-mode-option" data-disabled="${!cook.supportsPickup ? 'true' : 'false'}">
+            <input type="radio" id="fulfillmentPickupRadio" name="fulfillment" value="pickup" ${
+              fulfillment === 'pickup' ? 'checked' : ''
+            } ${!cook.supportsPickup ? 'disabled' : ''} />
+            <div>
+              <div style="font-weight:800;">${isFa ? 'تحویل حضوری (CA$0.00)' : 'Pickup (CA$0.00)'}</div>
+              <div style="font-size:10.5px;opacity:0.85;">${
+                cook.supportsPickup
+                  ? isFa
+                    ? 'آدرس پس از تایید آشپز نمایش داده می‌شود'
+                    : 'Address shared after cook accepts'
+                  : isFa
+                    ? 'این آشپزخانه تحویل حضوری ندارد'
+                    : 'Not offered by this cook'
+              }</div>
+            </div>
+          </label>
+          <label class="ue-mode-option" data-disabled="${!cook.supportsDelivery ? 'true' : 'false'}">
+            <input type="radio" id="fulfillmentDeliveryRadio" name="fulfillment" value="delivery" ${
+              fulfillment === 'delivery' ? 'checked' : ''
+            } ${!cook.supportsDelivery ? 'disabled' : ''} />
+            <div>
+              <div style="font-weight:800;">${
+                cook.supportsDelivery
+                  ? isFa
+                    ? `ارسال با پیک (CA$${(cook.deliveryFeeCents / 100).toFixed(2)})`
+                    : `Delivery (CA$${(cook.deliveryFeeCents / 100).toFixed(2)})`
+                  : isFa
+                    ? 'ارسال با پیک غیرفعال'
+                    : 'Delivery Unavailable'
+              }</div>
+              <div style="font-size:10.5px;opacity:0.85;">${
+                cook.supportsDelivery
+                  ? isFa
+                    ? 'ارسال به آدرس شما؛ آدرس منزل آشپز محرمانه می‌ماند'
+                    : 'To your address; cook home address stays private'
+                  : isFa
+                    ? 'فقط تحویل حضوری'
+                    : 'Pickup only kitchen'
+              }</div>
+            </div>
+          </label>
+        </div>
+        ${
+          fulfillment === 'delivery'
+            ? `<div style="margin-bottom:8px;">
+                <label for="deliveryAddressInput" style="font-size:11px;font-weight:700;display:block;margin-bottom:3px;">${
+                  isFa ? 'آدرس تحویل سفارش:' : 'Delivery Street Address:'
+                }</label>
+                <input id="deliveryAddressInput" type="text" value="${settingsText(deliveryAddress)}" style="width:100%;padding:7px 9px;font-size:12px;border-radius:8px;border:1px solid var(--border);" />
+              </div>`
+            : ''
+        }
+        <div class="ue-receipt-box">
+          <div class="ue-receipt-line" data-testid="customer-subtotal">
+            <span>${isFa ? 'جمع غذاها (محاسبه سرور):' : 'Items Subtotal (Server):'}</span>
+            <strong>CA$${(subtotal / 100).toFixed(2)}</strong>
+          </div>
+          <div class="ue-receipt-line" data-testid="customer-delivery-fee">
+            <span>${isFa ? 'هزینه ارسال آشپز:' : 'Cook-Set Delivery Fee:'}</span>
+            <strong>CA$${(deliveryFee / 100).toFixed(2)}</strong>
+          </div>
+          <div class="ue-receipt-total">
+            <strong data-testid="customer-total">${isFa ? 'مبلغ کل:' : 'Total (CAD):'} CA$${(total / 100).toFixed(2)}</strong>
+          </div>
+        </div>
+        <div style="font-size:11px;margin-top:6px;color:var(--muted);">
+          💳 ${
+            activePayObj
+              ? isFa
+                ? activePayObj.labelFa
+                : activePayObj.labelEn
+              : isFa
+                ? 'هیچ روش پرداخت آزمایشی انتخاب نشده است'
+                : 'No simulated payment method selected'
+          }
+        </div>
+        <button class="primary-btn" id="placeOrderBtn" type="button" ${
+          (activeCartItems.length === 0 && dish.remainingPortions <= 0) || !activePayObj
+            ? 'disabled'
+            : ''
+        }>
+          <span>${isFa ? 'ثبت سفارش (پرداخت شبیه‌سازی‌شده)' : 'Place Order (Simulated Pay)'}</span>
+          <span>• CA$${(total / 100).toFixed(2)}</span>
+        </button>
+        ${
+          lastStatusBanner
+            ? `<div id="customerOrderFeedback" style="margin-top:7px;font-size:11.5px;font-weight:700;color:var(--primary);">${lastStatusBanner}</div>`
+            : `<div id="customerOrderFeedback"></div>`
+        }
+      `;
+
+      const ordersListHtml =
+        persistedOrders.length === 0
+          ? `<p style="font-size:12px;color:#666;margin:6px 0 0;">${
+              isFa ? 'هنوز سفارشی ثبت نشده است.' : 'No orders persisted yet.'
+            }</p>`
+          : persistedOrders
+              .map((ord) => {
+                const statusLabel =
+                  (STATUS_LABELS[currentLocale] && STATUS_LABELS[currentLocale][ord.status]) ||
+                  ord.status;
+                const pickupLine =
+                  ord.fulfillmentType === 'pickup'
+                    ? ord.pickupAddressReleased
+                      ? `<div data-testid="pickup-released-${ord.id}" style="color:#166534;font-weight:700;margin-top:6px;">${
+                          isFa ? 'آدرس تاییدشده تحویل حضوری:' : 'Confirmed Pickup Address:'
+                        } ${ord.pickupAddressReleased}</div>`
+                      : `<div data-testid="pickup-hidden-${ord.id}" style="color:#92400e;margin-top:6px;">${
+                          isFa
+                            ? 'آدرس دقیق تحویل حضوری تا زمان تایید سفارش توسط آشپز محرمانه است.'
+                            : 'Exact pickup address is protected until the cook accepts your pickup order.'
+                        }</div>`
+                    : `<div data-testid="delivery-address-${ord.id}" style="margin-top:6px;">${
+                        isFa ? 'آدرس ارسال به مشتری:' : 'Delivery Address:'
+                      } ${settingsText(ord.deliveryAddress || '')} <span style="color:var(--muted);font-size:10.5px;">(${
+                        isFa ? 'آدرس منزل آشپز هرگز ارسال نمی‌شود' : 'Cook home address never shared on delivery'
+                      })</span></div>`;
+
+                const statusGlyph = STATUS_GLYPHS[ord.status] || '•';
+                const orderReviews = Array.isArray(ord.reviews) ? ord.reviews : [];
+                const hasCustomerReview = orderReviews.some(
+                  (r) => r.direction === 'CUSTOMER_TO_COOK'
+                );
+
+                const reviewsDisplayHtml =
+                  orderReviews.length > 0
+                    ? `<div style="margin-top:6px;padding-top:6px;border-top:1px dashed var(--border);font-size:11px;">
+                        ${orderReviews
+                          .map(
+                            (rv) =>
+                              `<div data-review-id="${rv.id}" data-review-direction="${rv.direction}">
+                                <strong>${rv.direction === 'CUSTOMER_TO_COOK' ? (isFa ? 'نظر مشتری به آشپز' : 'Customer → Cook') : (isFa ? 'نظر آشپز به مشتری' : 'Cook → Customer')} (★ ${rv.rating}/5):</strong>
+                                <span>${rv.commentEscaped}</span>
+                              </div>`
+                          )
+                          .join('')}
+                      </div>`
+                    : '';
+
+                const reviewFormHtml =
+                  ord.status === 'COMPLETED' && !hasCustomerReview
+                    ? `<div style="margin-top:8px;padding:8px;background:var(--card);border:1px solid var(--border);border-radius:8px;">
+                        <div style="font-size:11px;font-weight:800;margin-bottom:4px;">${
+                          isFa ? 'ثبت امتیاز و نظر برای آشپز (سفارش تکمیل‌شده):' : 'Rate & Review Cook (Completed Order):'
+                        }</div>
+                        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+                          <select id="review-rating-${ord.id}" style="padding:4px 6px;font-size:11px;">
+                            <option value="5">★★★★★ (5)</option>
+                            <option value="4">★★★★☆ (4)</option>
+                            <option value="3">★★★☆☆ (3)</option>
+                            <option value="2">★★☆☆☆ (2)</option>
+                            <option value="1">★☆☆☆☆ (1)</option>
+                          </select>
+                          <input id="review-comment-${ord.id}" type="text" placeholder="${
+                            isFa ? 'نظر خود را بنویسید...' : 'Write your review...'
+                          }" value="Delicious fresh Persian food!" style="flex:1;padding:4px 8px;font-size:11px;border:1px solid var(--border);border-radius:6px;" />
+                          <button type="button" class="qty-btn" id="submit-review-btn-${ord.id}" data-review-submit="${ord.id}">${
+                            isFa ? 'ثبت نظر' : 'Submit Review'
+                          }</button>
+                        </div>
+                      </div>`
+                    : '';
+
+                return `
+                  <div class="order-item-box" data-order-id="${ord.id}" data-order-status="${ord.status}" data-payment-status="${ord.simulatedPaymentStatus}">
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+                      <strong style="font-size:13px;">${ord.id}</strong>
+                      <span class="status-badge" data-status-code="${ord.status}" data-testid="order-status-${ord.id}">[${statusGlyph} ${ord.status}] — ${statusLabel}</span>
+                    </div>
+                    <div style="margin-top:5px;font-weight:700;">
+                      ${cleanDisplayKitchenName(isFa ? ord.kitchenNameFa : ord.kitchenNameEn)} • ${ord.fulfillmentType.toUpperCase()}
+                    </div>
+                    <div style="margin-top:3px;">
+                      Total: <strong>CA$${(ord.totalCents / 100).toFixed(2)}</strong> (Fee: CA$${(
+                  ord.deliveryFeeCents / 100
+                ).toFixed(2)}) • <span data-testid="order-payment-${ord.id}">${ord.simulatedPaymentStatus}</span> (${ord.simulatedPaymentReference})
+                    </div>
+                    ${renderOrderStepper(ord.status, isFa)}
+                    ${pickupLine}
+                    ${reviewsDisplayHtml}
+                    ${reviewFormHtml}
+                  </div>
+                `;
+              })
+              .join('');
+
+      document.getElementById('ordersCard').innerHTML = `
+        <div class="ue-section-header">
+          <h4 class="ue-section-title" id="ordersSectionTitle">${isFa ? 'سفارشهای من' : 'My Orders'}</h4>
+          <span style="font-size:11px;font-weight:700;color:var(--muted);">${persistedOrders.length}</span>
+        </div>
+        <button class="secondary-btn" id="reloadCustomerStateBtn" type="button">
+          ${isFa ? 'بازخوانی سفارشهای من' : 'Refresh My Orders'}
+        </button>
+        <div id="customerOrdersList">${ordersListHtml}</div>
+      `;
+      const ordersTitleEl = document.getElementById('ordersSectionTitle');
+      if (ordersTitleEl) {
+        ordersTitleEl.textContent = isFa ? 'سفارشهای من' : 'My Orders';
+      }
+
+      // Wire dynamic event listeners
+      document.querySelectorAll('[data-cook-card-id]').forEach((tile) => {
+        tile.addEventListener('click', () => {
+          const cid = tile.getAttribute('data-cook-card-id');
+          if (cid) {
+            selectedCookId = cid;
+            const nextCook = getSelectedCook();
+            enforceCookFulfillmentSupport(nextCook);
+            const nextDish = getSelectedDish(nextCook);
+            if (nextDish) selectedDishId = nextDish.id;
+            renderUI();
+            syncMapMarkers();
+          }
+        });
+      });
+
+      const cookSelectEl = document.getElementById('cookSelect');
+      if (cookSelectEl) {
+        cookSelectEl.addEventListener('change', (e) => {
+          selectedCookId = e.target.value;
+          const nextCook = getSelectedCook();
+          enforceCookFulfillmentSupport(nextCook);
+          const nextDish = getSelectedDish(nextCook);
+          if (nextDish) selectedDishId = nextDish.id;
+          renderUI();
+          syncMapMarkers();
+        });
+      }
+
+      document.querySelectorAll('[data-cart-inc]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const did = btn.getAttribute('data-cart-inc');
+          const nextQ = Number(btn.getAttribute('data-next-qty') || 1);
+          if (did) updateCartDishQuantity(did, nextQ);
+        });
+      });
+
+      document.querySelectorAll('[data-cart-dec]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const did = btn.getAttribute('data-cart-dec');
+          const nextQ = Number(btn.getAttribute('data-next-qty') || 0);
+          if (did) updateCartDishQuantity(did, nextQ);
+        });
+      });
+
+      document.querySelectorAll('[data-cart-remove]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const did = btn.getAttribute('data-cart-remove');
+          if (did) updateCartDishQuantity(did, 0);
+        });
+      });
+
+      const pickupRadio = document.getElementById('fulfillmentPickupRadio');
+      if (pickupRadio) {
+        pickupRadio.addEventListener('change', () => {
+          syncCartFulfillmentMode('pickup');
+        });
+      }
+
+      const deliveryRadio = document.getElementById('fulfillmentDeliveryRadio');
+      if (deliveryRadio) {
+        deliveryRadio.addEventListener('change', () => {
+          syncCartFulfillmentMode('delivery');
+        });
+      }
+
+      const addrInput = document.getElementById('deliveryAddressInput');
+      if (addrInput) {
+        addrInput.addEventListener('input', (e) => {
+          deliveryAddress = e.target.value;
+        });
+      }
+
+      const placeBtn = document.getElementById('placeOrderBtn');
+      if (placeBtn) {
+        placeBtn.addEventListener('click', () => {
+          submitCustomerOrder();
+        });
+      }
+
+      const reloadBtn = document.getElementById('reloadCustomerStateBtn');
+      if (reloadBtn) {
+        reloadBtn.addEventListener('click', () => {
+          loadCustomerBackendState();
+        });
+      }
+
+      document.querySelectorAll('[data-review-submit]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const oid = btn.getAttribute('data-review-submit');
+          if (oid) submitCustomerReview(oid);
+        });
+      });
+    }
+
+    // Header actions
+    document.getElementById('localeToggleBtn').addEventListener('click', () => {
+      currentLocale = currentLocale === 'en-CA' ? 'fa-IR' : 'en-CA';
+      loadCustomerBackendState();
+    });
+
+    document.getElementById('customerTopMenuBtn').addEventListener('click', () => {
+      settingsMenuOpen = !settingsMenuOpen;
+      renderUI();
+    });
+
+    const customerNavTargets = { navTabDiscover: 'mapStage', navTabCart: 'checkoutCard', navTabOrders: 'ordersCard' };
+    for (const [navId, sectionId] of Object.entries(customerNavTargets)) {
+      document.getElementById(navId).addEventListener('click', () => {
+        if (settingsMenuOpen) { settingsMenuOpen = false; renderUI(); }
+        for (const id of Object.keys(customerNavTargets)) {
+          document.getElementById(id).setAttribute('data-active', String(id === navId));
+        }
+        document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+
+    document.getElementById('locateMeBtn').addEventListener('click', () => {
+      requestBrowserGeolocation();
+    });
+
+    const kitchenSearchEl = document.getElementById('kitchenSearchInput');
+    if (kitchenSearchEl) {
+      kitchenSearchEl.addEventListener('input', (e) => {
+        searchFilterText = e.target.value || '';
+        renderUI();
+      });
+    }
+
+    // Map bottom-edge resize handle: mouse, touch, and keyboard
+    const mapResizeHandleEl = document.getElementById('mapResizeHandle');
+    if (mapResizeHandleEl) {
+      mapResizeHandleEl.addEventListener('mousedown', (e) => {
+        isDraggingMapResize = true;
+        dragStartY = Number(e.clientY ?? 0);
+        dragStartHeight = currentMapHeightPx;
+      });
+
+      mapResizeHandleEl.addEventListener('touchstart', (e) => {
+        isDraggingMapResize = true;
+        const firstTouch = e.touches && e.touches[0] ? e.touches[0] : e;
+        dragStartY = Number(firstTouch.clientY ?? 0);
+        dragStartHeight = currentMapHeightPx;
+      });
+
+      mapResizeHandleEl.addEventListener('keydown', (e) => {
+        const key = e.key || '';
+        if (key === 'ArrowDown') {
+          if (e.preventDefault) e.preventDefault();
+          setMapHeight(currentMapHeightPx + 24);
+        } else if (key === 'ArrowUp') {
+          if (e.preventDefault) e.preventDefault();
+          setMapHeight(currentMapHeightPx - 24);
+        } else if (key === 'Home') {
+          if (e.preventDefault) e.preventDefault();
+          setMapHeight(180);
+        } else if (key === 'End') {
+          if (e.preventDefault) e.preventDefault();
+          setMapHeight(520);
+        }
+      });
+    }
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDraggingMapResize) return;
+      const deltaY = Number(e.clientY ?? dragStartY) - dragStartY;
+      setMapHeight(dragStartHeight + deltaY);
+    });
+
+    window.addEventListener('mouseup', () => {
+      isDraggingMapResize = false;
+    });
+
+    window.addEventListener('touchmove', (e) => {
+      if (!isDraggingMapResize) return;
+      const firstTouch = e.touches && e.touches[0] ? e.touches[0] : e;
+      const deltaY = Number(firstTouch.clientY ?? dragStartY) - dragStartY;
+      setMapHeight(dragStartHeight + deltaY);
+    });
+
+    window.addEventListener('touchend', () => {
+      isDraggingMapResize = false;
+    });
+
+    window.setMapHeight = setMapHeight;
+    window.requestBrowserGeolocation = requestBrowserGeolocation;
+    window.loadCustomerBackendState = loadCustomerBackendState;
+    window.submitCustomerOrder = submitCustomerOrder;
+
+    loadCustomerBackendState();
+  </script>
+</body>
+</html>

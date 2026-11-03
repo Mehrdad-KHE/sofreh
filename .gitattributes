@@ -1,0 +1,2 @@
+# Preserve exact reviewed bytes on every platform; MANIFEST.sha256 is byte-based.
+* -text

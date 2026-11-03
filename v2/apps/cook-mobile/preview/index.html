@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en-CA" dir="ltr" data-theme="forest">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sofreh Cook Studio</title>
+  <style>
+    @font-face {
+      font-family: 'SofrehNastaliq';
+      src: url('/assets/fonts/NotoNastaliqUrdu.ttf') format('truetype');
+      font-weight: 400 700;
+      font-display: swap;
+    }
+    #appTitle[data-wordmark="fa"] {
+      font-family: 'SofrehNastaliq', serif;
+      font-size: 28px; font-weight: 600; line-height: 1.8;
+      letter-spacing: normal; overflow: visible; margin-block: 0;
+    }
+    :root,
+    [data-theme="forest"],
+    [data-theme="default"] {
+      --body-bg: #d8e2dc;
+      --bg: #f7f5ec;
+      --card: #fffefb;
+      --surface-subtle: #eef3ef;
+      --primary: #1b4332;
+      --primary-text: #ffffff;
+      --cta-primary-bg: #1b4332;
+      --cta-primary-text: #ffffff;
+      --cta-primary-border: #081c15;
+      --cta-secondary-bg: #2d4a3e;
+      --cta-secondary-text: #ecfdf5;
+      --cta-secondary-border: #1b4332;
+      --accent: #40916c;
+      --frame-border: #1b4332;
+      --text: #14241b;
+      --muted: #3f5247;
+      --border: #cfe0d5;
+      --badge-bg: #fef3c7;
+      --badge-border: #b45309;
+      --badge-text: #78350f;
+      --theme-Name: "Forest / Cream";
+    }
+    [data-theme="terracotta"] {
+      --body-bg: #e8dccb;
+      --bg: #fbf5ec;
+      --card: #fffdf9;
+      --surface-subtle: #f6ece0;
+      --primary: #9a3412;
+      --primary-text: #ffffff;
+      --cta-primary-bg: #9a3412;
+      --cta-primary-text: #ffffff;
+      --cta-primary-border: #7c2d12;
+      --cta-secondary-bg: #432818;
+      --cta-secondary-text: #fef3c7;
+      --cta-secondary-border: #2a180d;
+      --accent: #d97706;
+      --frame-border: #5c2410;
+      --text: #231710;
+      --muted: #574133;
+      --border: #e2d1be;
+      --badge-bg: #fef3c7;
+      --badge-border: #b45309;
+      --badge-text: #78350f;
+    }
+    [data-theme="navy-saffron"] {
+      --body-bg: #d6deeb;
+      --bg: #fdfaf2;
+      --card: #ffffff;
+      --surface-subtle: #f3f6fb;
+      --primary: #13294b;
+      --primary-text: #ffffff;
+      --cta-primary-bg: #13294b;
+      --cta-primary-text: #ffffff;
+      --cta-primary-border: #d97706;
+      --cta-secondary-bg: #78350f;
+      --cta-secondary-text: #fef3c7;
+      --cta-secondary-border: #b45309;
+      --accent: #d97706;
+      --frame-border: #13294b;
+      --text: #0f172a;
+      --muted: #334155;
+      --border: #cbd5e1;
+      --badge-bg: #fffbeb;
+      --badge-border: #d97706;
+      --badge-text: #78350f;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Inter", "Vazirmatn", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Tahoma, sans-serif;
+      background: var(--body-bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      padding: 12px;
+      line-height: 1.44;
+      -webkit-font-smoothing: antialiased;
+    }
+    .phone-frame {
+      width: 100%;
+      max-width: 452px;
+      background: var(--bg);
+      color: var(--text);
+      border-radius: 28px;
+      box-shadow: 0 20px 46px rgba(15, 23, 42, 0.22);
+      overflow: hidden;
+      border: 3px solid var(--frame-border);
+      display: flex;
+      flex-direction: column;
+    }
+    .demo-notice {
+      background: var(--surface-subtle);
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 10.5px;
+      padding: 4px 12px;
+      text-align: center;
+    }
+    .app-header {
+      background: var(--primary);
+      color: var(--primary-text);
+      border-bottom: 2px solid var(--accent);
+      padding: 8px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .app-header-brand {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      min-width: 0;
+    }
+    .app-header h1 {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .app-header p {
+      margin: 0;
+      font-size: 11px;
+      opacity: 0.9;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .locale-btn {
+      background: #fff;
+      color: var(--primary);
+      border: 1.5px solid var(--accent);
+      border-radius: 8px;
+      padding: 4px 9px;
+      font-weight: 800;
+      cursor: pointer;
+      font-size: 11px;
+      min-width: 34px;
+      text-align: center;
+    }
+    .menu-dots-btn {
+      background: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+      border: 1.5px solid rgba(255, 255, 255, 0.45);
+      border-radius: 8px;
+      padding: 3px 9px;
+      font-size: 16px;
+      line-height: 1.1;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .settings-drawer {
+      background: var(--card);
+      border-bottom: 2px solid var(--primary);
+      padding: 12px 14px;
+      font-size: 12px;
+    }
+    .ue-kpi-strip {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 8px 14px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .ue-kpi-pill {
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 6px 8px;
+      text-align: center;
+    }
+    .ue-kpi-label {
+      display: block;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .ue-kpi-value {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 800;
+      color: var(--primary);
+      margin-top: 2px;
+      font-variant-numeric: tabular-nums;
+    }
+    .section {
+      padding: 10px 14px 10px;
+      flex: 1;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      box-shadow: 0 3px 10px rgba(15, 23, 42, 0.04);
+    }
+    .ue-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .ue-section-title {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -0.015em;
+      color: var(--text);
+    }
+    .ue-section-caption {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+    .ue-inventory-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .ue-inventory-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface-subtle);
+      font-size: 11.5px;
+    }
+    .ue-inventory-count {
+      background: var(--badge-bg);
+      color: var(--badge-text);
+      border: 1px solid var(--badge-border);
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 10.5px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .btn {
+      background: var(--cta-primary-bg);
+      color: var(--cta-primary-text);
+      border: 2px solid var(--cta-primary-border);
+      border-radius: 10px;
+      padding: 7px 12px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 6px;
+      margin-inline-end: 6px;
+      font-size: 11.5px;
+    }
+    .btn-danger {
+      background: #991b1b;
+      color: #ffffff;
+      border: 2px solid #7f1d1d;
+    }
+    .btn-secondary {
+      width: 100%;
+      background: var(--cta-secondary-bg);
+      color: var(--cta-secondary-text);
+      border: 1.5px solid var(--cta-secondary-border);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 8px;
+      font-size: 11.5px;
+    }
+    .order-box {
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 11px;
+      margin-top: 9px;
+      background: var(--surface-subtle);
+      font-size: 12px;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 10.5px;
+      background: #e0f2fe;
+      color: #0c4a6e;
+      border: 1.5px solid #0284c7;
+    }
+    .status-badge[data-status-code="PENDING"] {
+      background: #fef3c7;
+      color: #78350f;
+      border: 1.5px dashed #b45309;
+    }
+    .status-badge[data-status-code="ACCEPTED"],
+    .status-badge[data-status-code="PREPARING"],
+    .status-badge[data-status-code="READY"],
+    .status-badge[data-status-code="COMPLETED"] {
+      background: #dcfce7;
+      color: #14532d;
+      border: 1.5px solid #15803d;
+    }
+    .status-badge[data-status-code="REJECTED"],
+    .status-badge[data-status-code="CANCELLED"] {
+      background: #fee2e2;
+      color: #7f1d1d;
+      border: 2px double #b91c1c;
+    }
+    .ue-stepper {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      margin: 7px 0 5px;
+    }
+    .ue-step {
+      font-size: 10px;
+      font-weight: 700;
+      text-align: center;
+      padding: 3px 2px;
+      border-radius: 6px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .ue-step.done {
+      background: #dcfce7;
+      border-color: #15803d;
+      color: #14532d;
+    }
+    .ue-step.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: var(--primary-text);
+    }
+    .ue-bottom-nav {
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      padding: 7px 14px 9px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+    .ue-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+    .ue-nav-item.active {
+      color: var(--primary);
+      font-weight: 800;
+    }
+    select, input[type="number"], input[type="text"] {
+      border-radius: 8px;
+      border: 1.5px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      font-family: inherit;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-frame" id="cookAppRoot" data-app-id="ca.sofreh.cook" data-theme="forest">
+    <div class="demo-notice" id="testBanner">Demo preview — synthetic kitchens &amp; simulated payment (no real charges)</div>
+
+    <div class="app-header">
+      <div class="app-header-brand">
+        <h1 id="appTitle">Sofreh Cook</h1>
+        <p id="appSubtitle">Kitchen, Menu &amp; Order Dispatch</p>
+      </div>
+      <div class="header-actions">
+        <button class="locale-btn" id="localeToggleBtn" type="button" aria-label="Toggle Language FA/EN">FA</button>
+        <button class="menu-dots-btn" id="cookTopMenuBtn" type="button" aria-label="Cook Settings Menu" aria-expanded="false">⋮</button>
+      </div>
+    </div>
+
+    <div class="settings-drawer" id="cookSettingsPanel" data-open="false" hidden>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+        <label for="cookAccountSelect" id="cookSessionLabel" style="font-size:12px;font-weight:700;">Active Demo Kitchen:</label>
+        <select id="cookAccountSelect" style="font-size:12px;padding:4px 6px;">
+          <option value="cook-test-pari|test-token-cook-pari">Maman Pari (cook-test-pari)</option>
+          <option value="cook-test-kambiz|test-token-cook-kambiz">Chef Kambiz (cook-test-kambiz)</option>
+          <option value="cook-test-golnar|test-token-cook-golnar">Khanoom Golnar (cook-test-golnar)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="ue-kpi-strip" id="cookKpiStrip">
+      <div class="ue-kpi-pill">
+        <span class="ue-kpi-label" id="kpiFeeLabel">Delivery Fee</span>
+        <span class="ue-kpi-value" id="kpiFeeValue">CA$4.50</span>
+      </div>
+      <div class="ue-kpi-pill">
+        <span class="ue-kpi-label" id="kpiQueueLabel">My Orders</span>
+        <span class="ue-kpi-value" id="kpiQueueValue">0 orders</span>
+      </div>
+      <div class="ue-kpi-pill">
+        <span class="ue-kpi-label" id="kpiStoreLabel">Rating</span>
+        <span class="ue-kpi-value" id="kpiStoreValue">No ratings yet</span>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="card" id="feeCard"></div>
+      <div class="card" id="ordersCard"></div>
+    </div>
+
+    <nav class="ue-bottom-nav" id="cookBottomNav" aria-label="Cook Navigation">
+      <div class="ue-nav-item active">
+        <span>📋</span>
+        <span id="cookNavDispatch">My Orders</span>
+      </div>
+      <div class="ue-nav-item">
+        <span>🍲</span>
+        <span id="cookNavMenu">Menu &amp; Portions</span>
+      </div>
+      <div class="ue-nav-item" id="cookNavSettingsBtn">
+        <span>⚙️</span>
+        <span id="cookNavSettings">Settings</span>
+      </div>
+    </nav>
+  </div>
+  <script>
+    const API_BASE =
+      window.__SOFREH_API_BASE__ ||
+      new URLSearchParams(window.location.search).get('apiBase') ||
+      (window.location.origin && window.location.origin.startsWith('http')
+        ? window.location.origin
+        : 'http://127.0.0.1:4120');
+
+    const STATUS_GLYPHS = {
+      PENDING: '◷',
+      ACCEPTED: '●',
+      PREPARING: '⚙',
+      READY: '★',
+      COMPLETED: '✔',
+      REJECTED: '✕',
+      CANCELLED: '⊘'
+    };
+
+    const STATUS_LABELS = {
+      'en-CA': {
+        PENDING: 'Pending Cook Acceptance',
+        ACCEPTED: 'Accepted by Cook',
+        PREPARING: 'Preparing in Kitchen',
+        READY: 'Ready for Pickup / Handoff',
+        COMPLETED: 'Completed',
+        REJECTED: 'Declined (Simulated Refund Issued)',
+        CANCELLED: 'Cancelled (Simulated Refund Issued)'
+      },
+      'fa-IR': {
+        PENDING: 'در انتظار تایید آشپز',
+        ACCEPTED: 'تاییدشده توسط آشپز',
+        PREPARING: 'در حال پخت و آماده‌سازی',
+        READY: 'آماده تحویل',
+        COMPLETED: 'تکمیل‌شده',
+        REJECTED: 'رد شده (بازگشت وجه آزمایشی)',
+        CANCELLED: 'لغو شده (بازگشت وجه آزمایشی)'
+      }
+    };
+
+    let currentLocale = 'en-CA';
+    let activeCookId = 'cook-test-pari';
+    let cookToken = 'test-token-cook-pari';
+    let activeKitchen = null;
+    let deliveryFeeCents = 450;
+    let cookOrders = [];
+    let cookActionMessage = '';
+    let cookSettingsOpen = false;
+
+    function cleanDisplayKitchenName(name) {
+      return String(name || '')
+        .replace(/\s*[\[(][^\])]*(?:TEST ONLY|فقط آزمایشی)[^\])]*[\])]/gi, '')
+        .replace(/^(?:SYNTHETIC TEST FIXTURE|داده آزمایشی مصنوعی)\s*(?:\([^)]*\))?\s*[—–-]?\s*/i, '')
+        .trim();
+    }
+
+    async function loadCookBackendState() {
+      try {
+        const [discRes, ordRes] = await Promise.all([
+          fetch(`${API_BASE}/api/discovery/cooks?locale=${encodeURIComponent(currentLocale)}`, {
+            headers: { 'X-Sofreh-Locale': currentLocale }
+          }),
+          fetch(
+            `${API_BASE}/api/cook/kitchen/${encodeURIComponent(activeCookId)}/orders?locale=${encodeURIComponent(currentLocale)}`,
+            {
+              headers: {
+                Authorization: `Bearer ${cookToken}`,
+                'X-Sofreh-Locale': currentLocale
+              }
+            }
+          )
+        ]);
+
+        if (discRes.ok) {
+          const discData = await discRes.json();
+          activeKitchen = (discData.cooks || []).find((c) => c.id === activeCookId) || null;
+          if (activeKitchen) {
+            deliveryFeeCents = Number(activeKitchen.deliveryFeeCents);
+          }
+        }
+
+        if (ordRes.ok) {
+          const ordData = await ordRes.json();
+          cookOrders = ordData.orders || [];
+        }
+      } catch (err) {
+        cookActionMessage = `Connection error: ${err.message}`;
+      }
+      renderCookPreview();
+    }
+
+    async function saveCookDeliveryFee() {
+      const inputEl = document.getElementById('feeInput');
+      const nextFee = Number(inputEl ? inputEl.value : deliveryFeeCents);
+      try {
+        const res = await fetch(
+          `${API_BASE}/api/cook/kitchen/${encodeURIComponent(activeCookId)}/delivery-settings`,
+          {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${cookToken}`,
+              'X-Sofreh-Locale': currentLocale
+            },
+            body: JSON.stringify({ deliveryFeeCents: nextFee, fulfillmentMode: document.getElementById('cookFulfillmentMode').value })
+          }
+        );
+        const data = await res.json();
+        if (!res.ok) {
+          cookActionMessage = `Error (${data.error?.code || res.status}): ${data.error?.message}`;
+          renderCookPreview();
+          return;
+        }
+        cookActionMessage =
+          currentLocale === 'fa-IR'
+            ? `هزینه ارسال ذخیره شد: CA$${(data.cook.deliveryFeeCents / 100).toFixed(2)}`
+            : `Cook-set delivery fee saved: CA$${(data.cook.deliveryFeeCents / 100).toFixed(2)}`;
+        await loadCookBackendState();
+      } catch (err) {
+        cookActionMessage = `Network error: ${err.message}`;
+        renderCookPreview();
+      }
+    }
+
+    function cookAddressText(value) {
+      return String(value ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+    async function saveCookDish(dishId) {
+      try {
+        const value = (field) => document.getElementById(`${field}-${dishId}`).value;
+        const res = await fetch(`${API_BASE}/api/cook/kitchen/${encodeURIComponent(activeCookId)}/dishes/${encodeURIComponent(dishId)}`, {
+          method: 'PATCH', headers: { Authorization: `Bearer ${cookToken}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ availabilityMode: value('availability'), priceCents: Number(value('price')),
+            totalPortions: Number(value('total')), remainingPortions: Number(value('remaining')) })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error?.message || 'Menu update failed');
+        cookActionMessage = currentLocale === 'fa-IR' ? 'منو ذخیره شد' : 'Menu updated';
+        await loadCookBackendState();
+      } catch (error) { cookActionMessage = error.message; renderCookPreview(); }
+    }
+
+    async function transitionCookOrder(orderId, nextStatus) {
+      try {
+        const res = await fetch(`${API_BASE}/api/cook/orders/${encodeURIComponent(orderId)}/status`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${cookToken}`,
+            'X-Sofreh-Locale': currentLocale
+          },
+          body: JSON.stringify({ nextStatus })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          cookActionMessage = `Error (${data.error?.code || res.status}): ${data.error?.message}`;
+          renderCookPreview();
+          return;
+        }
+        cookActionMessage =
+          currentLocale === 'fa-IR'
+            ? `وضعیت سفارش ${orderId} به ${data.order.status} تغییر یافت (${data.order.simulatedPaymentStatus}).`
+            : `Order ${orderId} transitioned to ${data.order.status} (${data.order.simulatedPaymentStatus}).`;
+        await loadCookBackendState();
+      } catch (err) {
+        cookActionMessage = `Network error: ${err.message}`;
+        renderCookPreview();
+      }
+    }
+
+    async function submitCookReviewForCustomer(orderId) {
+      const ratingEl = document.getElementById(`cook-review-rating-${orderId}`);
+      const commentEl = document.getElementById(`cook-review-comment-${orderId}`);
+      const rating = Number(ratingEl ? ratingEl.value : 5);
+      const comment = String(commentEl ? commentEl.value : '').trim();
+
+      try {
+        const res = await fetch(`${API_BASE}/api/orders/${encodeURIComponent(orderId)}/reviews`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${cookToken}`,
+            'X-Sofreh-Locale': currentLocale
+          },
+          body: JSON.stringify({ rating, comment })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          cookActionMessage = `Review error (${data.error?.code || res.status}): ${data.error?.message}`;
+          renderCookPreview();
+          return;
+        }
+        cookActionMessage =
+          currentLocale === 'fa-IR'
+            ? `نظر آشپز برای مشتری سفارش ${orderId} ثبت شد.`
+            : `Cook review submitted for order ${orderId}.`;
+        await loadCookBackendState();
+      } catch (err) {
+        cookActionMessage = `Network error: ${err.message}`;
+        renderCookPreview();
+      }
+    }
+
+    function getOrderButtonsHtml(ord, isFa) {
+      const btns = [];
+      if (ord.status === 'PENDING') {
+        btns.push(
+          `<button class="btn" type="button" id="accept-btn-${ord.id}" data-order-id="${ord.id}" data-next-status="ACCEPTED">${
+            isFa ? 'قبول سفارش (Accept)' : 'Accept Order'
+          }</button>`
+        );
+        btns.push(
+          `<button class="btn btn-danger" type="button" id="reject-btn-${ord.id}" data-order-id="${ord.id}" data-next-status="REJECTED">${
+            isFa ? 'رد سفارش و بازگردانی ظرفیت (Reject)' : 'Reject & Restore Portions'
+          }</button>`
+        );
+      } else if (ord.status === 'ACCEPTED') {
+        btns.push(
+          `<button class="btn" type="button" id="preparing-btn-${ord.id}" data-order-id="${ord.id}" data-next-status="PREPARING">${
+            isFa ? 'شروع آماده‌سازی' : 'Start Preparing'
+          }</button>`
+        );
+        btns.push(
+          `<button class="btn" type="button" id="ready-btn-${ord.id}" data-order-id="${ord.id}" data-next-status="READY">${
+            isFa ? 'آماده تحویل' : 'Mark Ready'
+          }</button>`
+        );
+      } else if (ord.status === 'PREPARING') {
+        btns.push(
+          `<button class="btn" type="button" id="ready-btn-${ord.id}" data-order-id="${ord.id}" data-next-status="READY">${
+            isFa ? 'آماده تحویل' : 'Mark Ready'
+          }</button>`
+        );
+      } else if (ord.status === 'READY') {
+        btns.push(
+          `<button class="btn" type="button" id="complete-btn-${ord.id}" data-order-id="${ord.id}" data-next-status="COMPLETED">${
+            isFa ? 'تکمیل سفارش' : 'Complete Order'
+          }</button>`
+        );
+      }
+      return btns.join('');
+    }
+
+    function renderCookOrderStepper(status, isFa) {
+      if (status === 'REJECTED' || status === 'CANCELLED') {
+        return '';
+      }
+      const steps = [
+        { code: 'PENDING', en: '1. Queue', fa: '۱. در صف' },
+        { code: 'ACCEPTED', en: '2. Accepted', fa: '۲. تایید' },
+        { code: 'PREPARING', en: '3. Prep', fa: '۳. پخت' },
+        { code: 'READY', en: '4. Ready', fa: '۴. آماده' }
+      ];
+      const rank = { PENDING: 0, ACCEPTED: 1, PREPARING: 2, READY: 3, COMPLETED: 4 };
+      const currentIdx = rank[status] ?? 0;
+      return `<div class="ue-stepper" aria-label="Cook dispatch progress">${steps
+        .map((st, idx) => {
+          const cls = idx < currentIdx || status === 'COMPLETED' ? 'done' : idx === currentIdx ? 'active' : '';
+          return `<span class="ue-step ${cls}">${isFa ? st.fa : st.en}</span>`;
+        })
+        .join('')}</div>`;
+    }
+
+    function renderCookPreview() {
+      const isFa = currentLocale === 'fa-IR';
+      document.documentElement.lang = currentLocale;
+      document.documentElement.dir = isFa ? 'rtl' : 'ltr';
+      document.documentElement.setAttribute('data-theme', 'forest');
+      const rootEl = document.getElementById('cookAppRoot');
+      if (rootEl) rootEl.setAttribute('data-theme', 'forest');
+
+      document.getElementById('localeToggleBtn').textContent = isFa ? 'EN' : 'FA';
+      document.getElementById('appTitle').textContent = isFa ? 'سفره' : 'Sofreh Cook';
+      document.getElementById('appTitle').setAttribute('data-wordmark', isFa ? 'fa' : 'en');
+      document.getElementById('appTitle').setAttribute('aria-label', isFa ? 'سفره، پنل آشپز' : 'Sofreh Cook');
+      document.getElementById('appSubtitle').textContent = isFa
+        ? 'مدیریت آشپزخانه، منو و سفارشهای من'
+        : 'Kitchen, Menu & Order Dispatch';
+      document.getElementById('testBanner').textContent = isFa
+        ? 'پیش‌نمایش آزمایشی — آشپزخانه‌های نمونه و پرداخت شبیه‌سازی‌شده (بدون کسر وجه واقعی)'
+        : 'Demo preview — synthetic kitchens & simulated payment (no real charges)';
+      document.getElementById('cookSessionLabel').textContent = isFa
+        ? 'آشپزخانه فعال:'
+        : 'Active Demo Kitchen:';
+
+      const panelEl = document.getElementById('cookSettingsPanel');
+      if (panelEl) {
+        panelEl.setAttribute('data-open', cookSettingsOpen ? 'true' : 'false');
+        if (cookSettingsOpen) panelEl.removeAttribute('hidden');
+        else panelEl.setAttribute('hidden', '');
+      }
+
+      const kpiFeeLabel = document.getElementById('kpiFeeLabel');
+      const kpiFeeValue = document.getElementById('kpiFeeValue');
+      const kpiQueueLabel = document.getElementById('kpiQueueLabel');
+      const kpiQueueValue = document.getElementById('kpiQueueValue');
+      const kpiStoreLabel = document.getElementById('kpiStoreLabel');
+      const kpiStoreValue = document.getElementById('kpiStoreValue');
+      if (kpiFeeLabel) kpiFeeLabel.textContent = isFa ? 'هزینه ارسال' : 'Delivery Fee';
+      if (kpiFeeValue) kpiFeeValue.textContent = `CA$${(deliveryFeeCents / 100).toFixed(2)}`;
+      if (kpiQueueLabel) kpiQueueLabel.textContent = isFa ? 'سفارشهای من' : 'My Orders';
+      if (kpiQueueValue) {
+        kpiQueueValue.textContent = isFa ? `${cookOrders.length} سفارش` : `${cookOrders.length} orders`;
+      }
+      if (kpiStoreLabel) kpiStoreLabel.textContent = isFa ? 'امتیاز آشپزخانه' : 'Rating';
+      if (kpiStoreValue) {
+        const revCount = Number(activeKitchen?.reviewSummary?.reviewCount || 0);
+        const avg = activeKitchen?.reviewSummary?.averageRating;
+        kpiStoreValue.textContent =
+          revCount > 0 && avg !== null
+            ? `★ ${Number(avg).toFixed(1)} (${revCount})`
+            : isFa
+              ? 'بدون امتیاز'
+              : 'No ratings yet';
+      }
+
+      const cookNavDispatch = document.getElementById('cookNavDispatch');
+      const cookNavMenu = document.getElementById('cookNavMenu');
+      const cookNavSettings = document.getElementById('cookNavSettings');
+      if (cookNavDispatch) cookNavDispatch.textContent = isFa ? 'سفارشهای من' : 'My Orders';
+      if (cookNavMenu) cookNavMenu.textContent = isFa ? 'منو و ظرفیت' : 'Menu & Portions';
+      if (cookNavSettings) cookNavSettings.textContent = isFa ? 'تنظیمات' : 'Settings';
+
+      const dishesHtml =
+        activeKitchen && Array.isArray(activeKitchen.dishes)
+          ? activeKitchen.dishes
+              .map((d) => {
+                const isReg = d.availabilityMode === 'REGULAR_UNAVAILABLE';
+                return `<div class="ue-inventory-row" data-dish-remaining="${d.id}:${d.remainingPortions}">
+                  <span>• ${cookAddressText(cleanDisplayKitchenName(d.title))} ${isReg ? `<small style="color:var(--muted);">(${isFa ? 'منوی ثابت — تمام شد' : 'Regular menu — Sold out'})</small>` : ''}</span>
+                  <span class="ue-inventory-count"><strong>${d.remainingPortions}/${d.totalPortions}</strong> ${
+                    isFa ? 'پرس باقی‌مانده' : 'portions left'
+                  }</span>
+                  <div>
+                    <label>${isFa ? 'دسترسی' : 'Availability'} <select id="availability-${d.id}">
+                      <option value="TODAY_AVAILABLE" ${!isReg ? 'selected' : ''}>${isFa ? 'آماده امروز' : 'Available today'}</option>
+                      <option value="REGULAR_UNAVAILABLE" ${isReg ? 'selected' : ''}>${isFa ? 'تمام شد' : 'Sold out'}</option>
+                    </select></label>
+                    <label>${isFa ? 'قیمت (سنت)' : 'Price (cents)'} <input id="price-${d.id}" type="number" min="1" step="1" value="${d.priceCents}" /></label>
+                    <label>${isFa ? 'کل پرس' : 'Total portions'} <input id="total-${d.id}" type="number" min="0" step="1" value="${d.totalPortions}" /></label>
+                    <label>${isFa ? 'باقی‌مانده' : 'Remaining'} <input id="remaining-${d.id}" type="number" min="0" step="1" value="${d.remainingPortions}" /></label>
+                    <button type="button" data-save-dish="${d.id}">${isFa ? 'ذخیره' : 'Save menu item'}</button>
+                  </div>
+                </div>`;
+              })
+              .join('')
+          : '';
+
+      document.getElementById('feeCard').innerHTML = `
+        <div class="ue-section-header">
+          <h3 class="ue-section-title">${
+            isFa ? 'تعیین هزینه ارسال آشپزخانه (دلار کانادا)' : 'Set Your Kitchen Delivery Fee (CAD)'
+          }</h3>
+          <span class="ue-section-caption" style="display:flex;align-items:center;gap:8px;">
+            <img src="/assets/kitchens/${({'cook-test-pari':'pari','cook-test-kambiz':'kambiz','cook-test-golnar':'golnar'})[activeCookId] || 'pari'}.svg" alt="Demo kitchen logo" width="40" height="40" />
+            ${activeKitchen ? cookAddressText(cleanDisplayKitchenName(activeKitchen.kitchenName)) : ''}
+          </span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <input id="feeInput" type="number" min="0" max="5000" step="25" value="${deliveryFeeCents}" style="padding:7px 10px;width:115px;font-size:13px;" />
+          <span style="font-size:12px;font-weight:700;">cents (CA$${(deliveryFeeCents / 100).toFixed(2)})</span>
+          <label>${isFa ? 'روش تحویل' : 'Fulfillment'} <select id="cookFulfillmentMode">
+            ${[['BOTH','Pickup & delivery'],['PICKUP_ONLY','Pickup only'],['DELIVERY_ONLY','Delivery only']].map(([value,label]) => `<option value="${value}" ${(value === (activeKitchen?.supportsPickup ? activeKitchen?.supportsDelivery ? 'BOTH' : 'PICKUP_ONLY' : 'DELIVERY_ONLY')) ? 'selected' : ''}>${isFa ? ({BOTH:'دریافت و ارسال',PICKUP_ONLY:'فقط دریافت',DELIVERY_ONLY:'فقط ارسال'}[value]) : label}</option>`).join('')}
+          </select></label>
+          <button class="btn" id="saveFeeBtn" type="button" style="margin-top:0;">${
+            isFa ? 'ذخیره هزینه ارسال' : 'Save Delivery Fee'
+          }</button>
+        </div>
+        <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:10px;">
+          <strong style="font-size:12px;">${
+            isFa ? 'موجودی غذاهای امروز و منوی ثابت:' : 'Kitchen Menu & Live Portions:'
+          }</strong>
+          <div class="ue-inventory-list">${dishesHtml}</div>
+        </div>
+      `;
+
+      const ordersListHtml =
+        cookOrders.length === 0
+          ? `<p style="font-size:12px;color:#555;margin:6px 0 0;">${
+              isFa ? 'هیچ سفارشی در صف این آشپزخانه نیست.' : 'No incoming customer orders in queue.'
+            }</p>`
+          : cookOrders
+              .map((ord) => {
+                const itemsSummary = (ord.items || [])
+                  .map((it) => `${it.quantity}x ${cookAddressText(cleanDisplayKitchenName(isFa ? it.titleFa : it.titleEn))}`)
+                  .join(', ');
+                const deliveryLine = ord.deliveryAddressForFulfillment
+                  ? `<div data-testid="cook-delivery-address-${ord.id}" style="color:#1b4332;font-weight:700;margin-top:6px;">${
+                      isFa ? 'آدرس ارسال مشتری:' : 'Customer Delivery Address:'
+                    } ${cookAddressText(ord.deliveryAddressForFulfillment)}</div>`
+                  : `<div data-testid="cook-delivery-hidden-${ord.id}" style="color:#6b7280;margin-top:6px;">${
+                      isFa
+                        ? 'حریم خصوصی: سفارش حضوری (آدرس منزل مشتری نمایش داده نمی‌شود).'
+                        : 'Privacy Protected: Pickup order (customer home address not shared).'
+                    }</div>`;
+                const statusGlyph = STATUS_GLYPHS[ord.status] || '•';
+                const statusLabel =
+                  (STATUS_LABELS[currentLocale] && STATUS_LABELS[currentLocale][ord.status]) ||
+                  ord.status;
+
+                const orderReviews = Array.isArray(ord.reviews) ? ord.reviews : [];
+                const hasCookReview = orderReviews.some(
+                  (r) => r.direction === 'COOK_TO_CUSTOMER'
+                );
+
+                const reviewsDisplayHtml =
+                  orderReviews.length > 0
+                    ? `<div style="margin-top:6px;padding-top:6px;border-top:1px dashed var(--border);font-size:11px;">
+                        ${orderReviews
+                          .map(
+                            (rv) =>
+                              `<div data-cook-review-id="${rv.id}" data-review-direction="${rv.direction}">
+                                <strong>${rv.direction === 'COOK_TO_CUSTOMER' ? (isFa ? 'نظر آشپز به مشتری' : 'Cook → Customer') : (isFa ? 'نظر مشتری به آشپز' : 'Customer → Cook')} (★ ${rv.rating}/5):</strong>
+                                <span>${rv.commentEscaped}</span>
+                              </div>`
+                          )
+                          .join('')}
+                      </div>`
+                    : '';
+
+                const cookReviewFormHtml =
+                  ord.status === 'COMPLETED' && !hasCookReview
+                    ? `<div style="margin-top:8px;padding:8px;background:var(--card);border:1px solid var(--border);border-radius:8px;">
+                        <div style="font-size:11px;font-weight:800;margin-bottom:4px;">${
+                          isFa ? 'ثبت امتیاز برای مشتری (سفارش تکمیل‌شده):' : 'Rate & Review Customer (Completed Order):'
+                        }</div>
+                        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+                          <select id="cook-review-rating-${ord.id}" style="padding:4px 6px;font-size:11px;">
+                            <option value="5">★★★★★ (5)</option>
+                            <option value="4">★★★★☆ (4)</option>
+                            <option value="3">★★★☆☆ (3)</option>
+                            <option value="2">★★☆☆☆ (2)</option>
+                            <option value="1">★☆☆☆☆ (1)</option>
+                          </select>
+                          <input id="cook-review-comment-${ord.id}" type="text" value="Polite and punctual customer!" style="flex:1;padding:4px 8px;font-size:11px;" />
+                          <button type="button" class="btn" id="cook-submit-review-btn-${ord.id}" data-cook-review-submit="${ord.id}" style="margin-top:0;">${
+                            isFa ? 'ثبت نظر آشپز' : 'Submit Review'
+                          }</button>
+                        </div>
+                      </div>`
+                    : '';
+
+                return `
+                  <div class="order-box" data-cook-order-id="${ord.id}" data-cook-order-status="${ord.status}">
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
+                      <strong>${ord.id} • ${ord.customerDisplayName}</strong>
+                      <span class="status-badge" data-status-code="${ord.status}" data-testid="cook-order-status-${ord.id}">[${statusGlyph} ${ord.status}] — ${statusLabel}</span>
+                    </div>
+                    <div style="margin-top:5px;font-weight:700;">
+                      ${ord.fulfillmentType.toUpperCase()} • Total: CA$${(
+                  ord.totalCents / 100
+                ).toFixed(2)} (${ord.simulatedPaymentStatus})
+                    </div>
+                    <div style="margin-top:4px;font-weight:600;">${itemsSummary}</div>
+                    ${renderCookOrderStepper(ord.status, isFa)}
+                    ${deliveryLine}
+                    <div style="margin-top:8px;">
+                      ${getOrderButtonsHtml(ord, isFa)}
+                    </div>
+                    ${reviewsDisplayHtml}
+                    ${cookReviewFormHtml}
+                  </div>
+                `;
+              })
+              .join('');
+
+      document.getElementById('ordersCard').innerHTML = `
+        <div class="ue-section-header">
+          <h3 class="ue-section-title" id="cookOrdersSectionTitle">${isFa ? 'سفارشهای من' : 'My Orders'}</h3>
+          <span class="ue-section-caption">${cookOrders.length} ${isFa ? 'در صف' : 'in queue'}</span>
+        </div>
+        <button class="btn-secondary" id="refreshCookOrdersBtn" type="button">
+          ${isFa ? 'بازخوانی سفارشهای من (Refresh Queue)' : 'Refresh Queue from Shared Backend'}
+        </button>
+        ${
+          cookActionMessage
+            ? `<div id="cookActionFeedback" style="font-size:12px;font-weight:700;color:#1b4332;margin-bottom:6px;">${cookActionMessage}</div>`
+            : `<div id="cookActionFeedback"></div>`
+        }
+        <div id="cookOrdersList">${ordersListHtml}</div>
+      `;
+      const cookOrdersTitleEl = document.getElementById('cookOrdersSectionTitle');
+      if (cookOrdersTitleEl) {
+        cookOrdersTitleEl.textContent = isFa ? 'سفارشهای من' : 'My Orders';
+      }
+
+      const saveFeeBtnEl = document.getElementById('saveFeeBtn');
+      document.querySelectorAll('[data-save-dish]').forEach((button) => {
+        button.addEventListener('click', () => saveCookDish(button.getAttribute('data-save-dish')));
+      });
+      if (saveFeeBtnEl) {
+        saveFeeBtnEl.addEventListener('click', () => {
+          saveCookDeliveryFee();
+        });
+      }
+
+      const refreshBtnEl = document.getElementById('refreshCookOrdersBtn');
+      if (refreshBtnEl) {
+        refreshBtnEl.addEventListener('click', () => {
+          loadCookBackendState();
+        });
+      }
+
+      const actionButtons = document.querySelectorAll('[data-order-id][data-next-status]');
+      actionButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const orderId = btn.getAttribute('data-order-id');
+          const nextStatus = btn.getAttribute('data-next-status');
+          transitionCookOrder(orderId, nextStatus);
+        });
+      });
+
+      document.querySelectorAll('[data-cook-review-submit]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const oid = btn.getAttribute('data-cook-review-submit');
+          if (oid) submitCookReviewForCustomer(oid);
+        });
+      });
+    }
+
+    document.getElementById('localeToggleBtn').addEventListener('click', () => {
+      currentLocale = currentLocale === 'en-CA' ? 'fa-IR' : 'en-CA';
+      loadCookBackendState();
+    });
+
+    document.getElementById('cookTopMenuBtn').addEventListener('click', () => {
+      cookSettingsOpen = !cookSettingsOpen;
+      renderCookPreview();
+    });
+
+    document.getElementById('cookAccountSelect').addEventListener('change', (e) => {
+      const [cid, tok] = String(e.target.value).split('|');
+      activeCookId = cid;
+      cookToken = tok;
+      loadCookBackendState();
+    });
+
+    window.loadCookBackendState = loadCookBackendState;
+    window.saveCookDeliveryFee = saveCookDeliveryFee;
+    window.transitionCookOrder = transitionCookOrder;
+
+    loadCookBackendState();
+  </script>
+</body>
+</html>

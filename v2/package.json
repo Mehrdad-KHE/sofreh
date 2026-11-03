@@ -1,0 +1,18 @@
+{
+  "name": "sofreh-stage1-v2",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sofreh Stage 1: Separate Customer & Cook Mobile Apps, Shared SQLite WAL/BEGIN IMMEDIATE Backend, MapLibre + OpenFreeMap Discovery, en-CA LTR & fa-IR RTL Localization",
+  "type": "module",
+  "workspaces": [
+    "packages/shared",
+    "packages/backend",
+    "apps/customer-mobile",
+    "apps/cook-mobile"
+  ],
+  "scripts": {
+    "start:backend": "node --experimental-sqlite packages/backend/src/server.mjs",
+    "test": "node --experimental-sqlite --test tests/stage1.test.mjs",
+    "verify:typecheck": "node scripts/verify-stage1.mjs"
+  }
+}
