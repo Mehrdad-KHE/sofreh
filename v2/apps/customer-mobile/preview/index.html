@@ -313,13 +313,14 @@
     .locate-btn:focus-visible { outline: 3px solid #0284c7; outline-offset: 2px; }
     #map {
       width: 100%;
-      height: 280px;
-      min-height: 180px;
+      height: 300px;
+      min-height: 300px;
       max-height: 520px;
       background: #dde5e9;
       position: relative;
     }
     .map-resize-handle {
+      display: none;
       width: 100%;
       height: 18px;
       background: var(--surface-subtle);
@@ -777,7 +778,7 @@
       <button hidden class="locate-btn" id="locateMeBtn" type="button" aria-label="My Location">
         <span class="location-target" aria-hidden="true"></span><span id="locateMeLabel">My Location</span>
       </button>
-    <div id="map" style="height:280px;" data-map-height="280" aria-label="MapLibre + OpenFreeMap Discovery Map" data-map-style="https://tiles.openfreemap.org/styles/liberty">
+    <div id="map" style="height:300px;" data-map-height="300" aria-label="MapLibre + OpenFreeMap Discovery Map" data-map-style="https://tiles.openfreemap.org/styles/liberty">
       <div id="currentUserMarker" data-user-marker-active="false" hidden></div>
     </div>
     <div class="map-attribution" id="mapAttribution">
@@ -791,9 +792,9 @@
       tabindex="0"
       aria-orientation="horizontal"
       aria-label="Drag or press Up/Down arrows to resize map height"
-      aria-valuemin="180"
+      aria-valuemin="300"
       aria-valuemax="520"
-      aria-valuenow="280"
+      aria-valuenow="300"
     >
       ══ <span id="mapResizeLabel">Drag or use ↑/↓ keys to resize map (280px)</span> ══
     </div>
@@ -934,7 +935,7 @@
     let selectedDemoPaymentId = 'pm-demo-visa-4242';
 
     // Map resize state (180px - 520px)
-    let currentMapHeightPx = 280;
+    let currentMapHeightPx = 300;
     let isDraggingMapResize = false;
     let dragStartY = 0;
     let dragStartHeight = 280;
@@ -988,7 +989,7 @@
     }
 
     function setMapHeight(nextPx) {
-      const clamped = Math.max(180, Math.min(520, Math.round(Number(nextPx) || 280)));
+      const clamped = Math.max(300, Math.min(520, Math.round(Number(nextPx) || 300)));
       currentMapHeightPx = clamped;
       const mapEl = document.getElementById('map');
       if (mapEl) {
