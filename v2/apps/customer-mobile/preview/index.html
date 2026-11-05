@@ -114,6 +114,7 @@
       padding: 12px;
       line-height: 1.42;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
     .phone-frame {
       width: 100%;
@@ -126,6 +127,15 @@
       border: 3px solid var(--frame-border);
       display: flex;
       flex-direction: column;
+    }
+    @media (max-width: 600px) {
+      html, body { width: 100%; min-width: 0; }
+      body { padding: 0; }
+      .phone-frame { max-width: none; min-height: 100vh; border-radius: 0; border-left: 0; border-right: 0; box-shadow: none; }
+    }
+    @media (min-width: 601px) and (max-width: 900px) {
+      body { padding: 16px; }
+      .phone-frame { max-width: 640px; }
     }
     .demo-notice {
       background: var(--surface-subtle);
@@ -638,6 +648,7 @@
   </style>
 </head>
 <body>
+  <div id="muiRuntime" aria-hidden="true"></div>
   <div class="phone-frame" id="appRoot" data-app-id="ca.sofreh.customer" data-theme="forest">
     <div class="demo-notice" id="testBanner">Demo preview — synthetic kitchens &amp; simulated checkout (no real charges)</div>
 
@@ -705,6 +716,7 @@
     </nav>
   </div>
 
+  <script type="module" src="/assets/mui-responsive.js"></script>
   <script>
     const OPENFREEMAP_STYLE = 'https://tiles.openfreemap.org/styles/liberty';
     const API_BASE =

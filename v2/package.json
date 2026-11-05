@@ -18,5 +18,13 @@
     "start:backend": "node --experimental-sqlite packages/backend/src/server.mjs",
     "test": "node --experimental-sqlite --test tests/stage1.test.mjs",
     "verify:typecheck": "node scripts/verify-stage1.mjs"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/material": "^7.3.11",
+    "esbuild": "^0.25.12",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
   }
 }
