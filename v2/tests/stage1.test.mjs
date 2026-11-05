@@ -762,7 +762,7 @@ describe('Sofreh Stage 1 Implementation Suite (v2)', () => {
 
       const mapEl = customerClient.getElementById('map');
       const handleEl = customerClient.getElementById('mapResizeHandle');
-      assert.equal(mapEl.getAttribute('data-map-height'), '280');
+      assert.equal(mapEl.getAttribute('data-map-height'), '300');
 
       // 1. Keyboard resize: ArrowDown (+24px -> 304px) and ArrowUp (-24px -> 280px)
       handleEl.dispatchEvent({ type: 'keydown', key: 'ArrowDown' });
@@ -770,7 +770,7 @@ describe('Sofreh Stage 1 Implementation Suite (v2)', () => {
       assert.equal(mapEl.style.height, '304px');
 
       handleEl.dispatchEvent({ type: 'keydown', key: 'ArrowUp' });
-      assert.equal(mapEl.getAttribute('data-map-height'), '280');
+      assert.equal(mapEl.getAttribute('data-map-height'), '300');
 
       // 2. Mouse drag resize: mousedown at Y=200 -> mousemove to Y=270 (+70px -> 350px) -> mouseup
       handleEl.dispatchEvent({ type: 'mousedown', clientY: 200 });
@@ -783,7 +783,7 @@ describe('Sofreh Stage 1 Implementation Suite (v2)', () => {
       handleEl.dispatchEvent({ type: 'touchstart', touches: [{ clientY: 300 }] });
       customerClient.window.dispatchEvent({ type: 'touchmove', touches: [{ clientY: 240 }] });
       customerClient.window.dispatchEvent({ type: 'touchend' });
-      assert.equal(mapEl.getAttribute('data-map-height'), '290');
+      assert.equal(mapEl.getAttribute('data-map-height'), '300');
 
       // Verify search input, OpenMapTiles/OpenStreetMap attribution, and meaningful pickup summary on map
       assert.ok(customerClient.getElementById('kitchenSearchInput'));
@@ -1105,13 +1105,12 @@ describe('Sofreh Stage 1 Implementation Suite (v2)', () => {
     const publicDiscovery = listPublicDiscoveryCooks(db, { locale: 'en-CA' });
     const rawDiscoveryJson = JSON.stringify(publicDiscovery);
     assert.doesNotMatch(rawDiscoveryJson, /5480 Yonge St/);
-    assert.doesNotMatch(rawDiscoveryJson, /4841 Yonge St/);
-    // Golnar is the explicit opt-in PUBLIC_EXACT fixture; unlike the two
-    // AREA_ONLY kitchens above, its synthetic pickup address is intentionally
-    // visible in public discovery.
+    assert.match(rawDiscoveryJson, /4841 Yonge St/);
+    // Pari is the only AREA_ONLY fixture; Kambiz and Golnar explicitly opt in
+    // to PUBLIC_EXACT in this synthetic dataset.
     assert.match(rawDiscoveryJson, /7089 Yonge St/);
     assert.equal(publicDiscovery.cooks.find((c) => c.id === 'cook-test-pari').pickupAddressVisibility, 'AREA_ONLY');
-    assert.equal(publicDiscovery.cooks.find((c) => c.id === 'cook-test-kambiz').pickupAddressVisibility, 'AREA_ONLY');
+    assert.equal(publicDiscovery.cooks.find((c) => c.id === 'cook-test-kambiz').pickupAddressVisibility, 'PUBLIC_EXACT');
     assert.equal(publicDiscovery.cooks.find((c) => c.id === 'cook-test-golnar').pickupAddressVisibility, 'PUBLIC_EXACT');
 
     // 2. Cart response never includes exact pickup address

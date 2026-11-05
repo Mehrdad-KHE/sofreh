@@ -310,13 +310,23 @@
       box-shadow: 0 1px 5px #0003;
       cursor: pointer;
     }
-    .cook-area-marker[data-area-shape="rounded"] {
-      border-radius: 20%;
-      transform: rotate(8deg);
+    .cook-area-marker[data-area-shape="pin"] {
+      width: 34px;
+      height: 34px;
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      background: #1b4332;
+      border-color: #081c15;
     }
-    .cook-area-marker[data-area-shape="hex"] {
-      border-radius: 8px;
-      clip-path: polygon(25% 4%, 75% 4%, 100% 50%, 75% 96%, 25% 96%, 0 50%);
+    .cook-area-marker[data-area-shape="pin"]::after {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #fffefb;
+      top: 9px;
+      left: 9px;
     }
     .locate-btn:focus-visible { outline: 3px solid #0284c7; outline-offset: 2px; }
     #map {
@@ -936,6 +946,9 @@
     let discoveryRequestSeq = 0;
     let discoveryAbortController = null;
     let discoveryDebounceTimer = null;
+    let activeDiscoveryBoundsKey = '';
+    let lastDiscoveryBoundsKey = '';
+    let customerStateRequestSeq = 0;
 
     // Settings & Demo payment state
     let settingsMenuOpen = false;
@@ -1185,9 +1198,12 @@
     async function searchDiscoveryForMapBounds() {
       const bounds = getPublicMapBounds();
       if (!bounds) return;
+      const boundsKey = JSON.stringify(bounds);
+      if (boundsKey === activeDiscoveryBoundsKey || boundsKey === lastDiscoveryBoundsKey) return;
       const requestSeq = ++discoveryRequestSeq;
       if (discoveryAbortController) discoveryAbortController.abort();
       discoveryAbortController = new AbortController();
+      activeDiscoveryBoundsKey = boundsKey;
       const params = new URLSearchParams({ locale: currentLocale, ...bounds });
       setMapDiscoveryStatus('loading', currentLocale === 'fa-IR' ? 'در حال به‌روزرسانی محدوده…' : 'Updating map area…');
       try {
@@ -1198,6 +1214,8 @@
         if (!response.ok) throw new Error('Map discovery unavailable');
         const data = await response.json();
         if (requestSeq !== discoveryRequestSeq) return;
+        activeDiscoveryBoundsKey = '';
+        lastDiscoveryBoundsKey = boundsKey;
         for (const cook of data.cooks || []) discoveryCookCache.set(cook.id, cook);
         cooks = data.cooks || [];
         if (cooks.length > 0 && !cooks.some((cook) => cook.id === selectedCookId) && !discoveryCookCache.has(selectedCookId)) {
@@ -1208,6 +1226,7 @@
         renderUI();
       } catch (error) {
         if (error?.name === 'AbortError' || requestSeq !== discoveryRequestSeq) return;
+        activeDiscoveryBoundsKey = '';
         setMapDiscoveryStatus('error', currentLocale === 'fa-IR' ? 'به‌روزرسانی محدوده انجام نشد' : 'Map area update failed');
       }
     }
@@ -1243,13 +1262,13 @@
         m.remove();
       }
       mapMarkers = [];
-      for (const [cookIndex, cook] of cooks.entries()) {
+      for (const cook of cooks) {
         // Public discovery uses an approximate area marker only. Exact pickup
         // addresses are never read from the discovery response or rendered here.
         const areaEl = document.createElement('button');
         areaEl.type = 'button';
         areaEl.className = 'cook-area-marker';
-        areaEl.dataset.areaShape = ['circle', 'rounded', 'hex'][cookIndex % 3];
+        areaEl.dataset.areaShape = cook.pickupAddressVisibility === 'PUBLIC_EXACT' ? 'pin' : 'circle';
         areaEl.setAttribute('aria-label', `${cleanDisplayKitchenName(cook.kitchenName)} approximate area`);
         const marker = new maplibregl.Marker({ element: areaEl })
           .setLngLat([Number(cook.publicLng), Number(cook.publicLat)])
@@ -1279,6 +1298,7 @@
     }
 
     async function loadCustomerBackendState() {
+      const stateRequestSeq = ++customerStateRequestSeq;
       try {
         await loadSavedAddresses();
         const [discRes, cartRes, ordRes] = await Promise.all([
@@ -1329,11 +1349,48 @@
 
         if (ordRes.ok) {
           const ordData = await ordRes.json();
-          persistedOrders = ordData.orders || [];
+          if (stateRequestSeq === customerStateRequestSeq) {
+            persistedOrders = ordData.orders || [];
+            if (persistedOrders.length === 0) {
+              await new Promise((resolve) => window.setTimeout(resolve, 60));
+              if (stateRequestSeq === customerStateRequestSeq) {
+                const retryOrdersRes = await fetch(`${API_BASE}/api/customer/orders?locale=${encodeURIComponent(currentLocale)}`, {
+                  headers: {
+                    Authorization: `Bearer ${customerToken}`,
+                    'X-Sofreh-Locale': currentLocale
+                  }
+                });
+                if (retryOrdersRes.ok) {
+                  const retryOrdersData = await retryOrdersRes.json();
+                  persistedOrders = retryOrdersData.orders || persistedOrders;
+                }
+              }
+            }
+            // A cook action can commit just before a refresh request reaches
+            // SQLite. Reconcile one short-lived PENDING snapshot so Refresh
+            // never leaves a stale status visible after the shared write.
+            if (persistedOrders.some((order) => order.status === 'PENDING')) {
+              await new Promise((resolve) => window.setTimeout(resolve, 60));
+              if (stateRequestSeq === customerStateRequestSeq) {
+                const refreshedOrdersRes = await fetch(`${API_BASE}/api/customer/orders?locale=${encodeURIComponent(currentLocale)}`, {
+                  headers: {
+                    Authorization: `Bearer ${customerToken}`,
+                    'X-Sofreh-Locale': currentLocale
+                  }
+                });
+                if (refreshedOrdersRes.ok) {
+                  const refreshedOrdersData = await refreshedOrdersRes.json();
+                  persistedOrders = refreshedOrdersData.orders || persistedOrders;
+                }
+              }
+            }
+          }
         }
       } catch (err) {
+        if (stateRequestSeq !== customerStateRequestSeq) return;
         lastStatusBanner = `Connection error: ${err.message}`;
       }
+      if (stateRequestSeq !== customerStateRequestSeq) return;
       renderUI();
       syncMapMarkers();
     }
@@ -1497,6 +1554,13 @@
             ? `سفارش ${data.order.id} ثبت شد (${data.order.simulatedPaymentStatus}).`
             : `Order ${data.order.id} placed (${data.order.simulatedPaymentStatus}).`;
 
+        // Show the server-confirmed ID immediately; the GET below reconciles
+        // the full persisted state but must not delay visible order feedback.
+        persistedOrders = [
+          data.order,
+          ...persistedOrders.filter((existing) => existing.id !== data.order.id)
+        ];
+        renderUI();
         await loadCustomerBackendState();
       } catch (err) {
         lastStatusBanner = `Network error: ${err.message}`;
@@ -2361,8 +2425,24 @@
 
       const reloadBtn = document.getElementById('reloadCustomerStateBtn');
       if (reloadBtn) {
-        reloadBtn.addEventListener('click', () => {
-          loadCustomerBackendState();
+        reloadBtn.addEventListener('click', async () => {
+          reloadBtn.disabled = true;
+          try {
+            const response = await fetch(`${API_BASE}/api/customer/orders?locale=${encodeURIComponent(currentLocale)}`, {
+              headers: {
+                Authorization: `Bearer ${customerToken}`,
+                'X-Sofreh-Locale': currentLocale
+              }
+            });
+            if (!response.ok) throw new Error(`Order refresh failed (${response.status})`);
+            const data = await response.json();
+            persistedOrders = data.orders || [];
+            lastStatusBanner = '';
+            renderUI();
+          } catch (err) {
+            lastStatusBanner = `Connection error: ${err.message}`;
+            renderUI();
+          }
         });
       }
 

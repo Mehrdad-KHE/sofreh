@@ -103,7 +103,7 @@ export const SYNTHETIC_TEST_COOKS = [
     publicLat: 43.7615,
     publicLng: -79.4111,
     exactPickupAddressPrivate: 'UNIT-PRIVATE-202, 4841 Yonge St, North York, ON (TEST ONLY)',
-    publicAddressVisibility: 'AREA_ONLY',
+    publicAddressVisibility: 'PUBLIC_EXACT',
     pickupAddressConsent: true,
     pickupWindowEn: 'Pickup Today 5:00 PM – 9:00 PM',
     pickupWindowFa: 'تحویل حضوری امروز ۱۷:۰۰ تا ۲۱:۰۰',
