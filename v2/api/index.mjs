@@ -1,12 +1,23 @@
-import { createSofrehHttpServer } from '../packages/backend/src/server.mjs';
+let serverPromise;
 
-// Vercel's Node runtime supplies a compatible IncomingMessage/ServerResponse pair.
-// Keep the demo database in /tmp: Vercel storage is ephemeral and this app is
-// explicitly a synthetic review fixture, not a production data store.
-const server = createSofrehHttpServer({
-  dbFilePath: '/tmp/sofreh-stage1.sqlite'
-});
+async function getServer() {
+  if (!serverPromise) {
+    serverPromise = import('../packages/backend/src/server.mjs').then(({ createSofrehHttpServer }) =>
+      // Vercel's filesystem is ephemeral; this is synthetic review data only.
+      createSofrehHttpServer({ dbFilePath: '/tmp/sofreh-stage1.sqlite' })
+    );
+  }
+  return serverPromise;
+}
 
-export default function handler(req, res) {
-  server.emit('request', req, res);
+export default async function handler(req, res) {
+  try {
+    const server = await getServer();
+    server.emit('request', req, res);
+  } catch (error) {
+    console.error('Sofreh runtime initialization failed', error);
+    res.statusCode = 500;
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.end(JSON.stringify({ error: { code: 'RUNTIME_INIT_FAILED' } }));
+  }
 }
