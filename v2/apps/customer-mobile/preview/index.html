@@ -310,6 +310,14 @@
       box-shadow: 0 1px 5px #0003;
       cursor: pointer;
     }
+    .cook-area-marker[data-area-shape="rounded"] {
+      border-radius: 20%;
+      transform: rotate(8deg);
+    }
+    .cook-area-marker[data-area-shape="hex"] {
+      border-radius: 8px;
+      clip-path: polygon(25% 4%, 75% 4%, 100% 50%, 75% 96%, 25% 96%, 0 50%);
+    }
     .locate-btn:focus-visible { outline: 3px solid #0284c7; outline-offset: 2px; }
     #map {
       width: 100%;
@@ -1234,12 +1242,13 @@
         m.remove();
       }
       mapMarkers = [];
-      for (const cook of cooks) {
+      for (const [cookIndex, cook] of cooks.entries()) {
         // Public discovery uses an approximate area marker only. Exact pickup
         // addresses are never read from the discovery response or rendered here.
         const areaEl = document.createElement('button');
         areaEl.type = 'button';
         areaEl.className = 'cook-area-marker';
+        areaEl.dataset.areaShape = ['circle', 'rounded', 'hex'][cookIndex % 3];
         areaEl.setAttribute('aria-label', `${cleanDisplayKitchenName(cook.kitchenName)} approximate area`);
         const marker = new maplibregl.Marker({ element: areaEl })
           .setLngLat([Number(cook.publicLng), Number(cook.publicLat)])
