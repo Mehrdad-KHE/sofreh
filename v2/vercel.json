@@ -1,8 +1,5 @@
 {
   "version": 2,
-  "env": {
-    "NODE_OPTIONS": "--experimental-sqlite"
-  },
   "rewrites": [
     { "source": "/(.*)", "destination": "/api/index.mjs" }
   ]
