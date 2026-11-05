@@ -1,6 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AppBar, Box, Button, CssBaseline, FormControl, GlobalStyles, InputLabel, MenuItem, Radio, Select, TextField, ThemeProvider, Toolbar, createTheme } from '@mui/material';
+import HomeRounded from '@mui/icons-material/HomeRounded';
+import LanguageRounded from '@mui/icons-material/LanguageRounded';
+import ListAltRounded from '@mui/icons-material/ListAltRounded';
+import LocalShippingRounded from '@mui/icons-material/LocalShippingRounded';
+import MoreVertRounded from '@mui/icons-material/MoreVertRounded';
+import MyLocationRounded from '@mui/icons-material/MyLocationRounded';
+import ReceiptLongRounded from '@mui/icons-material/ReceiptLongRounded';
+import RestaurantMenuRounded from '@mui/icons-material/RestaurantMenuRounded';
+import SearchRounded from '@mui/icons-material/SearchRounded';
+import SettingsRounded from '@mui/icons-material/SettingsRounded';
+import ShoppingBagRounded from '@mui/icons-material/ShoppingBagRounded';
+import ShoppingCartRounded from '@mui/icons-material/ShoppingCartRounded';
 
 const theme = createTheme({
   direction: 'rtl',
@@ -29,6 +41,17 @@ const inputSelectorConfigs = { ca: ['input[id^="review-comment-"]'], cook: ['inp
 const selectSelectorConfigs = { ca: ['select[id^="review-rating-"]'], cook: ['select[id^="availability-"]', 'select[id^="cook-review-rating-"]'] };
 const radioSelectorConfigs = { ca: ['input[type="radio"][name="fulfillment"]'], cook: [] };
 
+function iconForNative(native) {
+  const id = native.id || '';
+  if (id === 'localeToggleBtn') return <LanguageRounded fontSize="small" />;
+  if (id === 'customerTopMenuBtn' || id === 'cookTopMenuBtn') return <MoreVertRounded fontSize="small" />;
+  if (id === 'locateMeBtn') return <MyLocationRounded fontSize="small" />;
+  if (id === 'navTabDiscover') return <HomeRounded fontSize="small" />;
+  if (id === 'navTabCart') return <ShoppingCartRounded fontSize="small" />;
+  if (id === 'navTabOrders') return <ReceiptLongRounded fontSize="small" />;
+  return null;
+}
+
 function MUIProxyButton({ native }) {
   const read = () => ({ label: native.textContent?.trim() || native.getAttribute('aria-label') || 'Button', disabled: native.disabled });
   const [state, setState] = useState(read);
@@ -38,7 +61,8 @@ function MUIProxyButton({ native }) {
     observer.observe(native, { childList: true, characterData: true, attributes: true });
     return () => observer.disconnect();
   }, [native]);
-  return <Button size="small" variant="outlined" disabled={state.disabled} aria-label={native.getAttribute('aria-label') || state.label} onClick={() => native.click()} sx={{ minWidth: 0, px: 1.1, py: 0.45, borderRadius: 2, fontFamily: 'inherit', fontSize: '0.72rem', lineHeight: 1.3, textTransform: 'none', color: 'var(--text)', borderColor: 'var(--border)', backgroundColor: 'var(--bg)', '&:hover': { borderColor: 'var(--primary)', backgroundColor: 'var(--surface-subtle)' } }}>{state.label}</Button>;
+  const isHeaderButton = ['localeToggleBtn', 'customerTopMenuBtn', 'cookTopMenuBtn'].includes(native.id);
+  return <Button size="small" variant={isHeaderButton ? 'text' : 'outlined'} startIcon={iconForNative(native)} disabled={state.disabled} aria-label={native.getAttribute('aria-label') || state.label} onClick={() => native.click()} sx={{ minWidth: 0, px: 1.1, py: 0.45, borderRadius: 2, fontFamily: 'inherit', fontSize: '0.72rem', lineHeight: 1.3, textTransform: 'none', color: isHeaderButton ? '#fff' : 'var(--text)', borderColor: isHeaderButton ? 'transparent' : 'var(--border)', '&:hover': { backgroundColor: isHeaderButton ? 'rgba(255,255,255,0.12)' : 'var(--surface-subtle)', borderColor: 'var(--primary)' } }}>{state.label}</Button>;
 }
 
 function MUIProxyInput({ native }) {
@@ -50,7 +74,11 @@ function MUIProxyInput({ native }) {
     return () => { native.removeEventListener('input', sync); native.removeEventListener('change', sync); };
   }, [native]);
   const label = native.getAttribute('aria-label') || native.getAttribute('placeholder') || '';
-  return <TextField size="small" fullWidth type={native.type === 'number' ? 'number' : 'text'} label={label} placeholder={native.placeholder || undefined} value={value} onChange={(event) => { native.value = event.target.value; native.dispatchEvent(new Event('input', { bubbles: true })); native.dispatchEvent(new Event('change', { bubbles: true })); setValue(event.target.value); }} inputProps={{ min: native.min || undefined, max: native.max || undefined, step: native.step || undefined }} sx={{ '& .MuiInputBase-input, & .MuiInputLabel-root': { fontFamily: 'inherit', fontSize: '0.78rem' }, '& .MuiOutlinedInput-root': { borderRadius: 2, backgroundColor: 'var(--bg)' } }} />;
+  return <TextField size="small" fullWidth type={native.type === 'search' ? 'search' : native.type === 'number' ? 'number' : 'text'} label={label} placeholder={native.placeholder || undefined} value={value} onChange={(event) => { native.value = event.target.value; native.dispatchEvent(new Event('input', { bubbles: true })); native.dispatchEvent(new Event('change', { bubbles: true })); setValue(event.target.value); }} inputProps={{ min: native.min || undefined, max: native.max || undefined, step: native.step || undefined }} sx={{ '& .MuiInputBase-input, & .MuiInputLabel-root': { fontFamily: 'inherit', fontSize: native.type === 'search' ? '18px' : '0.78rem' }, '& .MuiOutlinedInput-root': { borderRadius: 2, backgroundColor: 'transparent' }, ...(native.type === 'search' ? { '& .MuiOutlinedInput-notchedOutline': { border: 0 }, '& .MuiInputLabel-root': { display: 'none' } } : {}) }} />;
+}
+
+function MUIProxySearchIcon() {
+  return <SearchRounded fontSize="small" />;
 }
 
 function MUIProxySelect({ native }) {
@@ -75,9 +103,13 @@ function MUIProxyRadio({ native }) {
   return <Radio size="small" checked={checked} inputProps={{ 'aria-label': label }} onChange={() => { native.checked = true; native.dispatchEvent(new Event('change', { bubbles: true })); setChecked(true); }} sx={{ position: 'absolute', insetInlineStart: 6, top: 6, width: 1, height: 1, p: 0, opacity: 0, overflow: 'hidden' }} />;
 }
 
+function MUIIcon({ type }) {
+  return type === 'delivery' ? <LocalShippingRounded fontSize="small" /> : <ShoppingBagRounded fontSize="small" />;
+}
+
 function MUIBottomAppBar({ nativeNav }) {
   const getNativeItems = () => [...nativeNav.children].filter((item) => !item.classList.contains('mui-visible-control'));
-  const readItems = () => getNativeItems().map((item) => ({ label: item.innerText.trim(), active: item.classList.contains('active') || item.dataset.active === 'true' }));
+  const readItems = () => getNativeItems().map((item) => ({ label: item.innerText.trim().replace(/^[^\p{L}\p{N}]+/u, ''), active: item.classList.contains('active') || item.dataset.active === 'true' }));
   const [items, setItems] = useState(readItems);
   useEffect(() => {
     const sync = () => setItems(readItems());
@@ -85,7 +117,8 @@ function MUIBottomAppBar({ nativeNav }) {
     observer.observe(nativeNav, { childList: true, subtree: true, characterData: true, attributes: true });
     return () => observer.disconnect();
   }, [nativeNav]);
-  return <AppBar position="static" color="transparent" elevation={0} component="nav" aria-label={nativeNav.getAttribute('aria-label') || undefined} sx={{ borderTop: '1.5px solid var(--border)', backgroundColor: 'var(--card)', color: 'var(--text)', paddingBottom: 'env(safe-area-inset-bottom)', boxShadow: 'none' }}><Toolbar variant="dense" sx={{ minHeight: 56, px: 1, gap: 0.5, justifyContent: 'space-around' }}>{items.map((item, index) => <Button key={`${item.label}-${index}`} size="small" onClick={() => getNativeItems()[index]?.click()} sx={{ minWidth: 0, flex: 1, minHeight: 44, borderRadius: 2, px: 0.5, fontFamily: 'inherit', fontSize: '0.72rem', lineHeight: 1.2, textTransform: 'none', color: item.active ? 'var(--primary)' : 'var(--muted)', fontWeight: item.active ? 800 : 600, '&:focus-visible': { outline: '2px solid var(--primary)', outlineOffset: '-2px' } }}>{item.label}</Button>)}</Toolbar></AppBar>;
+  const icons = nativeNav.id === 'customerBottomNav' ? [<HomeRounded fontSize="small" />, <ShoppingCartRounded fontSize="small" />, <ReceiptLongRounded fontSize="small" />] : [<ListAltRounded fontSize="small" />, <RestaurantMenuRounded fontSize="small" />, <SettingsRounded fontSize="small" />];
+  return <AppBar position="static" color="transparent" elevation={0} component="nav" aria-label={nativeNav.getAttribute('aria-label') || undefined} sx={{ borderTop: '1.5px solid var(--border)', backgroundColor: 'var(--card)', color: 'var(--text)', paddingBottom: 'env(safe-area-inset-bottom)', boxShadow: 'none' }}><Toolbar variant="dense" sx={{ minHeight: 56, px: 1, gap: 0.5, justifyContent: 'space-around' }}>{items.map((item, index) => <Button key={`${item.label}-${index}`} size="small" startIcon={icons[index]} onClick={() => getNativeItems()[index]?.click()} sx={{ minWidth: 0, flex: 1, minHeight: 44, borderRadius: 2, px: 0.5, fontFamily: 'inherit', fontSize: '0.72rem', lineHeight: 1.2, textTransform: 'none', color: item.active ? 'var(--primary)' : 'var(--muted)', fontWeight: item.active ? 800 : 600, '&:focus-visible': { outline: '2px solid var(--primary)', outlineOffset: '-2px' } }}>{item.label}</Button>)}</Toolbar></AppBar>;
 }
 
 function enhanceNativeControls(appId) {
@@ -125,6 +158,7 @@ function enhanceNativeFormControls(appId) {
     native.hidden = true;
     const host = document.createElement('span');
     host.className = 'mui-visible-form-control';
+    host.dataset.muiFor = id;
     host.style.display = 'block';
     host.style.width = '100%';
     native.parentElement.insertBefore(host, native);
@@ -137,6 +171,7 @@ function enhanceNativeFormControls(appId) {
     native.hidden = true;
     const host = document.createElement('span');
     host.className = 'mui-visible-form-control';
+    host.dataset.muiFor = id;
     host.style.display = 'block';
     host.style.width = '100%';
     native.parentElement.insertBefore(host, native);
@@ -182,12 +217,27 @@ function enhanceBottomAppBar() {
   }
 }
 
+function enhanceModeIcons() {
+  document.querySelectorAll('[data-mode-icon]').forEach((node) => {
+    if (node.dataset.muiEnhanced === 'true') return;
+    node.dataset.muiEnhanced = 'true';
+    createRoot(node).render(<MUIIcon type={node.dataset.modeIcon} />);
+  });
+}
+
+function enhanceSearchIcon() {
+  const node = document.querySelector('[data-search-icon="true"]');
+  if (!node || node.dataset.muiEnhanced === 'true') return;
+  node.dataset.muiEnhanced = 'true';
+  createRoot(node).render(<MUIProxySearchIcon />);
+}
+
 const mount = document.getElementById('muiRuntime');
 if (mount) {
   const appId = document.querySelector('[data-app-id]')?.dataset.appId?.endsWith('.cook') ? 'cook' : 'ca';
   createRoot(mount).render(<ThemeProvider theme={theme}><CssBaseline /><GlobalStyles styles={globalStyles} /><Box component="span" aria-hidden="true" sx={{ display: 'none' }} /></ThemeProvider>);
   const enhance = () => enhanceNativeControls(appId);
-  const enhanceAll = () => { enhance(); enhanceNativeFormControls(appId); enhanceBottomAppBar(); };
+  const enhanceAll = () => { enhance(); enhanceNativeFormControls(appId); enhanceBottomAppBar(); enhanceModeIcons(); enhanceSearchIcon(); };
   enhanceAll();
   new MutationObserver(enhanceAll).observe(document.body, { childList: true, subtree: true });
 }

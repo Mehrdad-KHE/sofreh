@@ -245,10 +245,26 @@
       border: none;
       background: transparent;
       width: 100%;
-      font-size: 12px;
+      font-size: 18px;
       font-weight: 600;
       color: var(--text);
       outline: none;
+    }
+    .ue-search-box .mui-visible-form-control[data-mui-for="kitchenSearchInput"] {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    .ue-search-box .mui-visible-form-control[data-mui-for="kitchenSearchInput"] .MuiOutlinedInput-root,
+    .ue-search-box .mui-visible-form-control[data-mui-for="kitchenSearchInput"] .MuiOutlinedInput-notchedOutline {
+      border: 0 !important;
+    }
+    .ue-search-box .mui-visible-form-control[data-mui-for="kitchenSearchInput"] .MuiInputBase-root {
+      min-width: 0;
+      width: 100%;
+    }
+    .ue-search-box:focus-within {
+      outline: 2px solid var(--primary);
+      outline-offset: 1px;
     }
     .map-toolbar {
       display: flex;
@@ -284,6 +300,15 @@
     .user-location-dot {
       width: 22px; height: 22px; border: 4px solid white; border-radius: 50%;
       background: #0284c7; box-shadow: 0 0 0 7px #0284c733, 0 1px 5px #0004;
+    }
+    .cook-area-marker {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      border: 2px solid #1b4332aa;
+      background: #95d5b866;
+      box-shadow: 0 1px 5px #0003;
+      cursor: pointer;
     }
     .locate-btn:focus-visible { outline: 3px solid #0284c7; outline-offset: 2px; }
     #map {
@@ -705,8 +730,8 @@
         <p id="appSubtitle">Home-Cooked Persian Kitchens</p>
       </div>
       <div class="header-actions">
-        <button class="locale-btn" id="localeToggleBtn" type="button" aria-label="Toggle Language FA/EN">FA</button>
-        <button class="menu-dots-btn" id="customerTopMenuBtn" type="button" aria-label="Settings and Simulated Payment Menu" aria-expanded="false">⋮</button>
+        <button hidden class="locale-btn" id="localeToggleBtn" type="button" aria-label="Toggle Language FA/EN">FA</button>
+        <button hidden class="menu-dots-btn" id="customerTopMenuBtn" type="button" aria-label="Settings and Simulated Payment Menu" aria-expanded="false">⋮</button>
       </div>
     </div>
 
@@ -714,7 +739,7 @@
 
     <div class="ue-search-strip">
       <div class="ue-search-box">
-        <span aria-hidden="true">⌕</span>
+        <span aria-hidden="true" data-search-icon="true"></span>
         <input id="kitchenSearchInput" type="search" placeholder="Search home kitchens, dishes, saffron tahchin, herbs..." aria-label="Search home kitchens or dishes" />
       </div>
       <div class="map-toolbar">
@@ -724,7 +749,7 @@
     </div>
 
     <div class="map-stage" id="mapStage">
-      <button class="locate-btn" id="locateMeBtn" type="button" aria-label="My Location">
+      <button hidden class="locate-btn" id="locateMeBtn" type="button" aria-label="My Location">
         <span class="location-target" aria-hidden="true"></span><span id="locateMeLabel">My Location</span>
       </button>
     <div id="map" style="height:280px;" data-map-height="280" aria-label="MapLibre + OpenFreeMap Discovery Map" data-map-style="https://tiles.openfreemap.org/styles/liberty">
@@ -776,7 +801,7 @@
     const STATUS_GLYPHS = {
       PENDING: '◷',
       ACCEPTED: '●',
-      PREPARING: '⚙',
+      PREPARING: 'Preparing',
       READY: '★',
       COMPLETED: '✔',
       REJECTED: '✕',
@@ -875,6 +900,8 @@
     let isDraggingMapResize = false;
     let dragStartY = 0;
     let dragStartHeight = 280;
+    let parallaxBaseMapHeightPx = null;
+    let parallaxFramePending = false;
 
     // Permission-gated client-only user location state (never sent to backend)
     let userLocationState = 'idle'; // 'idle' | 'granted' | 'denied' | 'unavailable'
@@ -944,6 +971,25 @@
       if (mapInstance && typeof mapInstance.resize === 'function') {
         mapInstance.resize();
       }
+    }
+
+    function applyMapParallax() {
+      if (isDraggingMapResize) return;
+      if (parallaxBaseMapHeightPx === null) {
+        parallaxBaseMapHeightPx = Math.max(360, Math.min(520, Math.round((window.innerHeight || 720) * 0.78)));
+        setMapHeight(parallaxBaseMapHeightPx);
+      }
+      const collapse = Math.min(Math.max(window.scrollY || 0, 0) * 0.72, parallaxBaseMapHeightPx - 300);
+      setMapHeight(parallaxBaseMapHeightPx - collapse);
+    }
+
+    function scheduleMapParallax() {
+      if (parallaxFramePending) return;
+      parallaxFramePending = true;
+      window.requestAnimationFrame(() => {
+        parallaxFramePending = false;
+        applyMapParallax();
+      });
     }
 
     function requestBrowserGeolocation() {
@@ -1060,8 +1106,8 @@
       if (mapInfoEl && activeCook) {
         const isFa = currentLocale === 'fa-IR';
         mapInfoEl.innerHTML = `
-          <span><strong>📍 ${cleanDisplayKitchenName(activeCook.kitchenName)}</strong> • ${activeCook.pickupSummaryLabel || activeCook.neighborhood}</span>
-          <span>🕒 ${activeCook.pickupWindowLabel || ''}</span>
+          <span><strong>${cleanDisplayKitchenName(activeCook.kitchenName)}</strong> • ${activeCook.pickupSummaryLabel || activeCook.neighborhood}</span>
+          <span>${activeCook.pickupWindowLabel || ''}</span>
         `;
       }
 
@@ -1084,9 +1130,13 @@
       }
       mapMarkers = [];
       for (const cook of cooks) {
-        const marker = new maplibregl.Marker({
-          color: cook.id === selectedCookId ? '#1b4332' : '#5c6460'
-        })
+        // Public discovery uses an approximate area marker only. Exact pickup
+        // addresses are never read from the discovery response or rendered here.
+        const areaEl = document.createElement('button');
+        areaEl.type = 'button';
+        areaEl.className = 'cook-area-marker';
+        areaEl.setAttribute('aria-label', `${cleanDisplayKitchenName(cook.kitchenName)} approximate area`);
+        const marker = new maplibregl.Marker({ element: areaEl })
           .setLngLat([Number(cook.publicLng), Number(cook.publicLat)])
           .setPopup(
             new maplibregl.Popup().setHTML(
@@ -1439,7 +1489,7 @@
         </div>
 
         <div class="settings-section" id="addressesSettingsSection">
-          <h4>📍 ${isFa ? 'آدرس‌ها و حریم خصوصی مکان' : 'Addresses & Location Privacy'}</h4>
+          <h4>${isFa ? 'آدرس‌ها و حریم خصوصی مکان' : 'Addresses & Location Privacy'}</h4>
           <label for="settingsDeliveryAddressInput" style="font-size:11px;font-weight:700;display:block;margin-bottom:4px;">${
             isFa ? 'آدرس پیش‌فرض تحویل با پیک:' : 'Saved Delivery Address (Demo):'
           }</label>
@@ -1461,7 +1511,7 @@
         </div>
 
         <div class="settings-section" id="demoPaymentSettingsPanel">
-          <h4>💳 ${isFa ? 'روش‌های پرداخت آزمایشی / شبیه‌سازی‌شده (DEMO)' : 'DEMO / Simulated Payment Methods'}</h4>
+          <h4>${isFa ? 'روش‌های پرداخت آزمایشی / شبیه‌سازی‌شده (DEMO)' : 'DEMO / Simulated Payment Methods'}</h4>
           <div style="font-size:10.5px;color:#78350f;background:#fef3c7;border:1px solid #d97706;border-radius:8px;padding:5px 8px;margin-bottom:6px;font-weight:700;">
             ${
               isFa
@@ -1476,7 +1526,7 @@
         </div>
 
         <div class="settings-section" id="appInfoSettingsSection" style="margin-bottom:0;">
-          <h4>ℹ️ ${isFa ? 'اطلاعات برنامه' : 'App Information'}</h4>
+          <h4>${isFa ? 'اطلاعات برنامه' : 'App Information'}</h4>
           <div style="font-size:11px;color:var(--muted);">
             ${
               isFa
@@ -1780,7 +1830,7 @@
             ${kitchenLogo(cook.id)}
             <div style="min-width:0;">
             <h3 class="ue-section-title" id="storefrontTitle">${settingsText(cleanDisplayKitchenName(cook.kitchenName))}</h3>
-            <div style="font-size:11px;color:var(--muted);margin-top:2px;">📍 ${cook.pickupSummaryLabel || cook.neighborhood}</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px;">${cook.pickupSummaryLabel || cook.neighborhood}</div>
           </div>
             </div>
           <select id="cookSelect" aria-label="Switch Storefront" style="font-size:11px;padding:4px 8px;border-radius:8px;border:1px solid var(--border);">${cookOptionsHtml}</select>
@@ -1801,7 +1851,7 @@
           }
         </div>
         <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">
-          🕒 ${cook.pickupWindowLabel || ''}
+          ${cook.pickupWindowLabel || ''}
         </div>
 
         <div id="todayAvailableDishesSection">
@@ -1884,7 +1934,7 @@
             <input type="radio" id="fulfillmentPickupRadio" name="fulfillment" value="pickup" ${
               fulfillment === 'pickup' ? 'checked' : ''
             } ${!cook.supportsPickup ? 'disabled' : ''} />
-            <span class="ue-mode-icon" aria-hidden="true">🛍️</span>
+            <span class="ue-mode-icon" data-mode-icon="pickup" aria-hidden="true"></span>
             <div class="ue-mode-copy">
               <div style="font-weight:800;">${isFa ? 'تحویل حضوری (CA$0.00)' : 'Pickup (CA$0.00)'}</div>
               <div style="font-size:10.5px;opacity:0.85;">${
@@ -1902,7 +1952,7 @@
             <input type="radio" id="fulfillmentDeliveryRadio" name="fulfillment" value="delivery" ${
               fulfillment === 'delivery' ? 'checked' : ''
             } ${!cook.supportsDelivery ? 'disabled' : ''} />
-            <span class="ue-mode-icon" aria-hidden="true">🚚</span>
+            <span class="ue-mode-icon" data-mode-icon="delivery" aria-hidden="true"></span>
             <div class="ue-mode-copy">
               <div style="font-weight:800;">${
                 cook.supportsDelivery
@@ -1949,7 +1999,7 @@
           </div>
         </div>
         <div style="font-size:11px;margin-top:6px;color:var(--muted);">
-          💳 ${
+          ${
             activePayObj
               ? isFa
                 ? activePayObj.labelFa
@@ -2276,6 +2326,15 @@
     window.requestBrowserGeolocation = requestBrowserGeolocation;
     window.loadCustomerBackendState = loadCustomerBackendState;
     window.submitCustomerOrder = submitCustomerOrder;
+
+    // Scroll-driven map collapse: the map starts tall, eases down to 300px,
+    // then the rest of the page scrolls normally. Map gestures remain native.
+    window.addEventListener('scroll', scheduleMapParallax, { passive: true });
+    window.addEventListener('resize', () => {
+      parallaxBaseMapHeightPx = null;
+      scheduleMapParallax();
+    }, { passive: true });
+    scheduleMapParallax();
 
     loadCustomerBackendState();
   </script>

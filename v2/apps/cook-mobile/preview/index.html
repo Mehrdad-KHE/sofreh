@@ -427,8 +427,8 @@
         <p id="appSubtitle">Kitchen, Menu &amp; Order Dispatch</p>
       </div>
       <div class="header-actions">
-        <button class="locale-btn" id="localeToggleBtn" type="button" aria-label="Toggle Language FA/EN">FA</button>
-        <button class="menu-dots-btn" id="cookTopMenuBtn" type="button" aria-label="Cook Settings Menu" aria-expanded="false">⋮</button>
+        <button hidden class="locale-btn" id="localeToggleBtn" type="button" aria-label="Toggle Language FA/EN">FA</button>
+        <button hidden class="menu-dots-btn" id="cookTopMenuBtn" type="button" aria-label="Cook Settings Menu" aria-expanded="false">⋮</button>
       </div>
     </div>
 
@@ -465,15 +465,15 @@
 
     <nav class="ue-bottom-nav" id="cookBottomNav" aria-label="Cook Navigation">
       <div class="ue-nav-item active">
-        <span>📋</span>
+        <span aria-hidden="true"></span>
         <span id="cookNavDispatch">My Orders</span>
       </div>
       <div class="ue-nav-item">
-        <span>🍲</span>
+        <span aria-hidden="true"></span>
         <span id="cookNavMenu">Menu &amp; Portions</span>
       </div>
       <div class="ue-nav-item" id="cookNavSettingsBtn">
-        <span>⚙️</span>
+        <span aria-hidden="true"></span>
         <span id="cookNavSettings">Settings</span>
       </div>
     </nav>
@@ -490,7 +490,7 @@
     const STATUS_GLYPHS = {
       PENDING: '◷',
       ACCEPTED: '●',
-      PREPARING: '⚙',
+      PREPARING: 'Preparing',
       READY: '★',
       COMPLETED: '✔',
       REJECTED: '✕',
