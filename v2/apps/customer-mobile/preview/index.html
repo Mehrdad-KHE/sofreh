@@ -645,6 +645,13 @@
       font-size: 10px;
       font-weight: 700;
     }
+    .ue-stepper-current {
+      grid-column: 1 / -1;
+      color: var(--primary);
+      font-size: 10.5px;
+      font-weight: 800;
+      text-align: start;
+    }
     .ue-step {
       padding: 3px 4px;
       border-radius: 6px;
@@ -1543,7 +1550,9 @@
       ];
       const rank = { PENDING: 0, ACCEPTED: 1, PREPARING: 2, READY: 3, COMPLETED: 4 };
       const currentIdx = rank[status] ?? 0;
-      return `<div class="ue-stepper" aria-label="Order progress">${steps
+      const currentStage = steps[Math.min(currentIdx, steps.length - 1)];
+      const currentLabel = status === 'COMPLETED' ? (isFa ? 'تکمیل‌شده' : 'Completed') : (currentStage ? (isFa ? currentStage.fa : currentStage.en.replace(/^\d+\.\s*/, '')) : status);
+      return `<div class="ue-stepper" aria-label="${isFa ? 'پیشرفت سفارش' : 'Order progress'}"><span class="ue-stepper-current">${isFa ? 'مرحله فعلی' : 'Current stage'}: ${currentLabel}</span>${steps
         .map((st, idx) => {
           const cls = idx < currentIdx || status === 'COMPLETED' ? 'done' : idx === currentIdx ? 'active' : '';
           return `<span class="ue-step ${cls}">${isFa ? st.fa : st.en}</span>`;
@@ -1993,6 +2002,10 @@
                       })</span></div>`;
 
                 const statusGlyph = STATUS_GLYPHS[ord.status] || '•';
+                const compactStatusLabels = isFa
+                  ? { PENDING: 'در انتظار', ACCEPTED: 'تایید شد', PREPARING: 'در حال آماده‌سازی', READY: 'آماده تحویل', COMPLETED: 'تکمیل‌شده', REJECTED: 'رد شد', CANCELLED: 'لغو شد' }
+                  : { PENDING: 'Pending', ACCEPTED: 'Accepted', PREPARING: 'Preparing', READY: 'Ready', COMPLETED: 'Completed', REJECTED: 'Rejected', CANCELLED: 'Cancelled' };
+                const compactStatusLabel = compactStatusLabels[ord.status] || ord.status;
                 const orderReviews = Array.isArray(ord.reviews) ? ord.reviews : [];
                 const hasCustomerReview = orderReviews.some(
                   (r) => r.direction === 'CUSTOMER_TO_COOK'
@@ -2041,7 +2054,7 @@
                   <div class="order-item-box" data-order-id="${ord.id}" data-order-status="${ord.status}" data-payment-status="${ord.simulatedPaymentStatus}">
                     <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
                       <strong style="font-size:13px;">${ord.id}</strong>
-                      <span class="status-badge" data-status-code="${ord.status}" data-testid="order-status-${ord.id}">[${statusGlyph} ${ord.status}] — ${statusLabel}</span>
+                      <span class="status-badge" data-status-code="${ord.status}" data-testid="order-status-${ord.id}" aria-label="${settingsText(statusLabel)}"><span aria-hidden="true">${statusGlyph}</span> ${compactStatusLabel}</span>
                     </div>
                     <div style="margin-top:5px;font-weight:700;">
                       ${cleanDisplayKitchenName(isFa ? ord.kitchenNameFa : ord.kitchenNameEn)} • ${ord.fulfillmentType.toUpperCase()}
