@@ -762,28 +762,31 @@ describe('Sofreh Stage 1 Implementation Suite (v2)', () => {
 
       const mapEl = customerClient.getElementById('map');
       const handleEl = customerClient.getElementById('mapResizeHandle');
-      assert.equal(mapEl.getAttribute('data-map-height'), '300');
+      // The parallax map opens at the expanded height; exercise the handle
+      // from the documented minimum after verifying that initial state.
+      assert.equal(mapEl.getAttribute('data-map-height'), '520');
+      customerClient.window.setMapHeight(300);
 
-      // 1. Keyboard resize: ArrowDown (+24px -> 304px) and ArrowUp (-24px -> 280px)
+      // 1. Keyboard resize: ArrowDown (+24px -> 324px) and ArrowUp (-24px -> 300px)
       handleEl.dispatchEvent({ type: 'keydown', key: 'ArrowDown' });
-      assert.equal(mapEl.getAttribute('data-map-height'), '304');
-      assert.equal(mapEl.style.height, '304px');
+      assert.equal(mapEl.getAttribute('data-map-height'), '324');
+      assert.equal(mapEl.style.height, '324px');
 
       handleEl.dispatchEvent({ type: 'keydown', key: 'ArrowUp' });
       assert.equal(mapEl.getAttribute('data-map-height'), '300');
 
-      // 2. Mouse drag resize: mousedown at Y=200 -> mousemove to Y=270 (+70px -> 350px) -> mouseup
+      // 2. Mouse drag resize: mousedown at Y=200 -> mousemove to Y=270 (+70px -> 370px) -> mouseup
       handleEl.dispatchEvent({ type: 'mousedown', clientY: 200 });
       customerClient.window.dispatchEvent({ type: 'mousemove', clientY: 270 });
       customerClient.window.dispatchEvent({ type: 'mouseup' });
-      assert.equal(mapEl.getAttribute('data-map-height'), '350');
-      assert.equal(mapEl.style.height, '350px');
+      assert.equal(mapEl.getAttribute('data-map-height'), '370');
+      assert.equal(mapEl.style.height, '370px');
 
-      // 3. Touch drag resize: touchstart at Y=300 -> touchmove to Y=240 (-60px -> 290px) -> touchend
+      // 3. Touch drag resize: touchstart at Y=300 -> touchmove to Y=240 (-60px -> 310px) -> touchend
       handleEl.dispatchEvent({ type: 'touchstart', touches: [{ clientY: 300 }] });
       customerClient.window.dispatchEvent({ type: 'touchmove', touches: [{ clientY: 240 }] });
       customerClient.window.dispatchEvent({ type: 'touchend' });
-      assert.equal(mapEl.getAttribute('data-map-height'), '300');
+      assert.equal(mapEl.getAttribute('data-map-height'), '310');
 
       // Verify search input, OpenMapTiles/OpenStreetMap attribution, and meaningful pickup summary on map
       assert.ok(customerClient.getElementById('kitchenSearchInput'));
