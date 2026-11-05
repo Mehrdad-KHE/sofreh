@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Box, Button, CssBaseline, FormControl, GlobalStyles, InputLabel, MenuItem, Select, TextField, ThemeProvider, createTheme } from '@mui/material';
+import { Box, Button, CssBaseline, FormControl, FormControlLabel, GlobalStyles, InputLabel, MenuItem, Radio, Select, TextField, ThemeProvider, createTheme } from '@mui/material';
 
 const theme = createTheme({
   direction: 'rtl',
@@ -24,6 +24,9 @@ const proxyConfigs = {
 const selectorConfigs = { ca: ['button.qty-btn'], cook: ['button[data-save-dish]', 'button[data-order-id]'] };
 const inputConfigs = { ca: ['kitchenSearchInput'], cook: ['feeInput'] };
 const selectConfigs = { ca: ['cookSelect'], cook: ['cookFulfillmentMode'] };
+const inputSelectorConfigs = { ca: [], cook: ['input[id^="price-"], input[id^="total-"], input[id^="remaining-"]'] };
+const selectSelectorConfigs = { ca: [], cook: ['select[id^="availability-"]'] };
+const radioSelectorConfigs = { ca: ['input[type="radio"][name="fulfillment"]'], cook: [] };
 
 function MUIProxyButton({ native }) {
   const read = () => ({ label: native.textContent?.trim() || native.getAttribute('aria-label') || 'Button', disabled: native.disabled });
@@ -58,6 +61,17 @@ function MUIProxySelect({ native }) {
   }, [native]);
   const label = native.getAttribute('aria-label') || '';
   return <FormControl size="small" fullWidth sx={{ minWidth: 0 }}><InputLabel sx={{ fontFamily: 'inherit', fontSize: '0.78rem' }}>{label}</InputLabel><Select value={value} label={label} onChange={(event) => { native.value = event.target.value; native.dispatchEvent(new Event('change', { bubbles: true })); setValue(event.target.value); }} sx={{ borderRadius: 2, backgroundColor: 'var(--bg)', fontFamily: 'inherit', fontSize: '0.78rem' }}>{[...native.options].map((option) => <MenuItem key={option.value} value={option.value} sx={{ fontFamily: 'inherit', fontSize: '0.78rem' }}>{option.textContent}</MenuItem>)}</Select></FormControl>;
+}
+
+function MUIProxyRadio({ native }) {
+  const [checked, setChecked] = useState(native.checked);
+  useEffect(() => {
+    const sync = () => setChecked(native.checked);
+    native.addEventListener('change', sync);
+    return () => native.removeEventListener('change', sync);
+  }, [native]);
+  const label = native.parentElement?.innerText?.trim() || native.getAttribute('aria-label') || '';
+  return <FormControlLabel sx={{ margin: 0, fontFamily: 'inherit', '& .MuiFormControlLabel-label': { fontFamily: 'inherit', fontSize: '0.75rem' } }} control={<Radio size="small" checked={checked} onChange={() => { native.checked = true; native.dispatchEvent(new Event('change', { bubbles: true })); setChecked(true); }} />} label={label} />;
 }
 
 function enhanceNativeControls(appId) {
@@ -113,6 +127,30 @@ function enhanceNativeFormControls(appId) {
     host.style.width = '100%';
     native.parentElement.insertBefore(host, native);
     createRoot(host).render(<MUIProxySelect native={native} />);
+  }
+  for (const selector of inputSelectorConfigs[appId] || []) {
+    for (const native of document.querySelectorAll(selector)) {
+      if (native.dataset.muiEnhanced === 'true' || !native.parentElement) continue;
+      native.dataset.muiEnhanced = 'true'; native.hidden = true;
+      const host = document.createElement('span'); host.className = 'mui-visible-form-control'; host.style.display = 'block'; host.style.width = '100%';
+      native.parentElement.insertBefore(host, native); createRoot(host).render(<MUIProxyInput native={native} />);
+    }
+  }
+  for (const selector of selectSelectorConfigs[appId] || []) {
+    for (const native of document.querySelectorAll(selector)) {
+      if (native.dataset.muiEnhanced === 'true' || !native.parentElement) continue;
+      native.dataset.muiEnhanced = 'true'; native.hidden = true;
+      const host = document.createElement('span'); host.className = 'mui-visible-form-control'; host.style.display = 'block'; host.style.width = '100%';
+      native.parentElement.insertBefore(host, native); createRoot(host).render(<MUIProxySelect native={native} />);
+    }
+  }
+  for (const selector of radioSelectorConfigs[appId] || []) {
+    for (const native of document.querySelectorAll(selector)) {
+      if (native.dataset.muiEnhanced === 'true' || !native.parentElement) continue;
+      native.dataset.muiEnhanced = 'true'; native.hidden = true;
+      const host = document.createElement('span'); host.className = 'mui-visible-form-control'; host.style.display = 'inline-flex'; host.style.alignItems = 'center';
+      native.parentElement.insertBefore(host, native); createRoot(host).render(<MUIProxyRadio native={native} />);
+    }
   }
 }
 
