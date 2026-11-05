@@ -34,7 +34,7 @@ const proxyConfigs = {
   ca: ['localeToggleBtn', 'customerTopMenuBtn', 'locateMeBtn', 'placeOrderBtn'],
   cook: ['localeToggleBtn', 'cookTopMenuBtn', 'saveFeeBtn', 'refreshCookOrdersBtn']
 };
-const selectorConfigs = { ca: ['button.qty-btn', 'button[data-review-submit]'], cook: ['button[data-save-dish]', 'button[data-order-id]', 'button[data-cook-review-submit]'] };
+const selectorConfigs = { ca: ['button.qty-btn', 'button[data-review-submit]', 'button.category-btn'], cook: ['button[data-save-dish]', 'button[data-order-id]', 'button[data-cook-review-submit]'] };
 const inputConfigs = { ca: ['kitchenSearchInput', 'settingsAddressLabelInput', 'settingsDeliveryAddressInput'], cook: ['feeInput'] };
 const selectConfigs = { ca: ['cookSelect'], cook: ['cookFulfillmentMode'] };
 const inputSelectorConfigs = { ca: ['input[id^="review-comment-"]'], cook: ['input[id^="price-"], input[id^="total-"], input[id^="remaining-"], input[id^="cook-review-comment-"]'] };
