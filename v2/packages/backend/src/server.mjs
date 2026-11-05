@@ -229,6 +229,17 @@ export function createSofrehHttpServer({ dbFilePath } = {}) {
         return;
       }
 
+      if (req.method === 'GET' && pathname === '/preview/classroom') {
+        const htmlPath = path.join(
+          path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..',
+          'apps', 'classroom-preview', 'index.html'
+        );
+        const html = fs.readFileSync(htmlPath, 'utf8');
+        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
+        res.end(html);
+        return;
+      }
+
       // GET /api/health
       if (req.method === 'GET' && pathname === '/api/health') {
         const pragmas = getDatabasePragmas(db);
