@@ -143,6 +143,8 @@ export function createSofrehHttpServer({ dbFilePath } = {}) {
         'demo-food/ash-reshteh.jpg': 'image/jpeg',
         'fonts/NotoNastaliqUrdu.ttf': 'font/ttf',
         'fonts/OFL-NotoNastaliqUrdu.txt': 'text/plain; charset=utf-8',
+        'fonts/Vazirmatn-wght.woff2': 'font/woff2',
+        'fonts/Vazirmatn-OFL.txt': 'text/plain; charset=utf-8',
         'brand/wordmark-fa.png': 'image/png',
         'brand/wordmark-fa.html': 'text/html; charset=utf-8',
         'kitchens/pari.svg': 'image/svg+xml',
