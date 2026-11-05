@@ -486,11 +486,12 @@
     }
     .ue-mode-toggle-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 8px;
       margin-bottom: 10px;
     }
     .ue-mode-option {
+      position: relative;
       display: flex;
       align-items: flex-start;
       gap: 6px;
@@ -501,12 +502,49 @@
       font-size: 11.5px;
       font-weight: 700;
       cursor: pointer;
+      min-width: 0;
+      overflow: hidden;
+      transition: border-color 120ms ease, background-color 120ms ease, box-shadow 120ms ease;
+    }
+    .ue-mode-option:has(input:checked) {
+      border-color: var(--primary);
+      background: #ecfdf3;
+      box-shadow: 0 0 0 2px rgba(27, 67, 50, 0.12);
+    }
+    .ue-mode-option:has(input:focus-visible) {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    .ue-mode-icon {
+      flex: 0 0 auto;
+      width: 24px;
+      height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      background: #d9f3e5;
+      font-size: 15px;
+    }
+    .ue-mode-copy { min-width: 0; overflow-wrap: anywhere; }
+    .ue-mode-copy > div:first-child { line-height: 1.3; }
+    .ue-mode-copy > div:last-child { line-height: 1.35; }
+    .ue-mode-option > .mui-visible-form-control {
+      position: absolute;
+      inset-inline-start: 5px;
+      top: 5px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
     }
     .ue-mode-option[data-disabled="true"] {
       opacity: 0.5;
       cursor: not-allowed;
     }
     .ue-receipt-box {
+      min-width: 0;
+      max-width: 100%;
+      overflow-wrap: anywhere;
       background: var(--surface-subtle);
       border: 1px solid var(--border);
       border-radius: 12px;
@@ -530,6 +568,8 @@
     }
     .primary-btn {
       width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
       background: var(--cta-primary-bg);
       color: var(--cta-primary-text);
       border: 2px solid var(--cta-primary-border);
@@ -1148,16 +1188,41 @@
         const data = await res.json();
         if (!res.ok) {
           lastStatusBanner = `Error (${data.error?.code || res.status}): ${data.error?.message || 'Cart update failed'}`;
-          renderUI();
+          renderUIKeepingStorefrontSelector();
           return;
         }
         persistedCart = data.cart;
         lastStatusBanner = '';
-        renderUI();
+        renderUIKeepingStorefrontSelector();
       } catch (err) {
         lastStatusBanner = `Network error: ${err.message}`;
-        renderUI();
+        renderUIKeepingStorefrontSelector();
       }
+    }
+
+    function renderUIKeepingStorefrontSelector() {
+      const nativeSelect = document.getElementById('cookSelect');
+      const selectHost = nativeSelect?.previousElementSibling?.classList.contains('mui-visible-form-control')
+        ? nativeSelect.previousElementSibling
+        : null;
+      const hadFocus = Boolean(selectHost && selectHost.contains(document.activeElement));
+      const preservedSelect = selectHost && nativeSelect ? document.createElement('span') : null;
+      if (preservedSelect) {
+        preservedSelect.append(selectHost, nativeSelect);
+      }
+
+      renderUI();
+
+      const nextNativeSelect = document.getElementById('cookSelect');
+      if (!preservedSelect || !selectHost || !nativeSelect || !nextNativeSelect) return;
+      const nextHost = nextNativeSelect.previousElementSibling?.classList.contains('mui-visible-form-control')
+        ? nextNativeSelect.previousElementSibling
+        : null;
+      if (nextHost) nextHost.replaceWith(selectHost);
+      else nextNativeSelect.before(selectHost);
+      nextNativeSelect.replaceWith(nativeSelect);
+      preservedSelect.remove();
+      if (hadFocus) selectHost.querySelector('button, [role="combobox"]')?.focus();
     }
 
     async function syncCartFulfillmentMode(nextMode) {
@@ -1801,7 +1866,7 @@
               ? `${activeCartItems.reduce((acc, i) => acc + i.quantity, 0)} ${isFa ? 'پرس در سبد' : 'items in cart'}`
               : isFa
                 ? '۱ پرس انتخابی'
-                : '1 item selected'
+                : ''
           }</span>
         </div>
         ${cartLinesHtml}
@@ -1810,7 +1875,8 @@
             <input type="radio" id="fulfillmentPickupRadio" name="fulfillment" value="pickup" ${
               fulfillment === 'pickup' ? 'checked' : ''
             } ${!cook.supportsPickup ? 'disabled' : ''} />
-            <div>
+            <span class="ue-mode-icon" aria-hidden="true">🛍️</span>
+            <div class="ue-mode-copy">
               <div style="font-weight:800;">${isFa ? 'تحویل حضوری (CA$0.00)' : 'Pickup (CA$0.00)'}</div>
               <div style="font-size:10.5px;opacity:0.85;">${
                 cook.supportsPickup
@@ -1827,7 +1893,8 @@
             <input type="radio" id="fulfillmentDeliveryRadio" name="fulfillment" value="delivery" ${
               fulfillment === 'delivery' ? 'checked' : ''
             } ${!cook.supportsDelivery ? 'disabled' : ''} />
-            <div>
+            <span class="ue-mode-icon" aria-hidden="true">🚚</span>
+            <div class="ue-mode-copy">
               <div style="font-weight:800;">${
                 cook.supportsDelivery
                   ? isFa

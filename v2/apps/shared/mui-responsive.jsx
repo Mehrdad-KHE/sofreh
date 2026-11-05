@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Box, Button, CssBaseline, FormControl, FormControlLabel, GlobalStyles, InputLabel, MenuItem, Radio, Select, TextField, ThemeProvider, createTheme } from '@mui/material';
+import { Box, Button, CssBaseline, FormControl, GlobalStyles, InputLabel, MenuItem, Radio, Select, TextField, ThemeProvider, createTheme } from '@mui/material';
 
 const theme = createTheme({
   direction: 'rtl',
@@ -11,6 +11,7 @@ const theme = createTheme({
 const globalStyles = {
   '*, *::before, *::after': { boxSizing: 'border-box' },
   'html, body': { margin: 0, width: '100%', minWidth: 0 },
+  '[data-mui-enhanced="true"][hidden]': { display: 'none !important' },
   '@media (max-width: 600px)': {
     body: { padding: '0 !important' },
     '.phone-frame': { width: '100% !important', maxWidth: 'none !important', minHeight: '100vh', borderRadius: '0 !important', borderLeft: '0 !important', borderRight: '0 !important', boxShadow: 'none !important' }
@@ -71,7 +72,7 @@ function MUIProxyRadio({ native }) {
     return () => native.removeEventListener('change', sync);
   }, [native]);
   const label = native.parentElement?.innerText?.trim() || native.getAttribute('aria-label') || '';
-  return <FormControlLabel sx={{ margin: 0, fontFamily: 'inherit', '& .MuiFormControlLabel-label': { fontFamily: 'inherit', fontSize: '0.75rem' } }} control={<Radio size="small" checked={checked} onChange={() => { native.checked = true; native.dispatchEvent(new Event('change', { bubbles: true })); setChecked(true); }} />} label={label} />;
+  return <Radio size="small" checked={checked} inputProps={{ 'aria-label': label }} onChange={() => { native.checked = true; native.dispatchEvent(new Event('change', { bubbles: true })); setChecked(true); }} sx={{ position: 'absolute', insetInlineStart: 6, top: 6, width: 1, height: 1, p: 0, opacity: 0, overflow: 'hidden' }} />;
 }
 
 function enhanceNativeControls(appId) {
