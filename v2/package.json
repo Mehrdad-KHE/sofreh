@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "main": "api/index.mjs",
+  "engines": {
+    "node": "22.x"
+  },
   "description": "Sofreh Stage 1: Separate Customer & Cook Mobile Apps, Shared SQLite WAL/BEGIN IMMEDIATE Backend, MapLibre + OpenFreeMap Discovery, en-CA LTR & fa-IR RTL Localization",
   "type": "module",
   "workspaces": [
