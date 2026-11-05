@@ -4,7 +4,7 @@ async function getServer() {
   if (!serverPromise) {
     serverPromise = import('../packages/backend/src/server.mjs').then(({ createSofrehHttpServer }) =>
       // Vercel's filesystem is ephemeral; this is synthetic review data only.
-      createSofrehHttpServer({ dbFilePath: '/tmp/sofreh-stage1.sqlite' })
+      createSofrehHttpServer({ dbFilePath: '/tmp/sofreh-stage1.sqlite' }).server
     );
   }
   return serverPromise;
