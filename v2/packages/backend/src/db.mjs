@@ -117,6 +117,7 @@ export function initializeSchema(db) {
       public_lat REAL NOT NULL,
       public_lng REAL NOT NULL,
       exact_pickup_address_private TEXT NOT NULL,
+      public_address_visibility TEXT NOT NULL DEFAULT 'AREA_ONLY',
       pickup_address_consent INTEGER NOT NULL DEFAULT 1 CHECK (pickup_address_consent IN (0, 1)),
       pickup_window_en TEXT NOT NULL DEFAULT '',
       pickup_window_fa TEXT NOT NULL DEFAULT '',
@@ -223,6 +224,12 @@ export function initializeSchema(db) {
   `);
 
   // Safe non-destructive migrations for existing SQLite databases (such as sofreh-stage1.sqlite)
+  ensureColumnExists(
+    db,
+    'cook_profiles',
+    'public_address_visibility',
+    "TEXT NOT NULL DEFAULT 'AREA_ONLY'"
+  );
   ensureColumnExists(
     db,
     'cook_profiles',

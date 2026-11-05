@@ -112,6 +112,8 @@ export interface PublicCookDiscoveryItem {
   deliveryRadiusKm: number;
   pickupWindowLabel?: string;
   pickupSummaryLabel?: string;
+  pickupAddressVisibility?: 'AREA_ONLY' | 'PUBLIC_EXACT';
+  pickupAddress?: string;
   reviewSummary?: HonestReviewAggregate;
   reviews?: OrderReviewView[];
   isSyntheticTestFixture: true;

@@ -46,6 +46,10 @@ export function buildCookDiscoveryGeoJSON(cooks, locale = 'en-CA') {
         neighborhood: cook.neighborhood,
         pickupWindowLabel: cook.pickupWindowLabel || '',
         pickupSummaryLabel: cook.pickupSummaryLabel || cook.neighborhood,
+        pickupAddressVisibility: cook.pickupAddressVisibility || 'AREA_ONLY',
+        ...(cook.pickupAddressVisibility === 'PUBLIC_EXACT' && cook.pickupAddress
+          ? { pickupAddress: cook.pickupAddress }
+          : {}),
         deliveryFeeCents: cook.deliveryFeeCents,
         supportsPickup: Boolean(cook.supportsPickup),
         supportsDelivery: Boolean(cook.supportsDelivery),

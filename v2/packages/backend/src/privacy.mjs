@@ -149,8 +149,17 @@ export function sanitizeCookForPublicDiscovery(
 
   const supportsPickup = Boolean(cookRow.supports_pickup);
   const supportsDelivery = Boolean(cookRow.supports_delivery);
+  const exposesPublicExactAddress =
+    supportsPickup &&
+    Boolean(cookRow.pickup_address_consent) &&
+    String(cookRow.public_address_visibility || 'AREA_ONLY') === 'PUBLIC_EXACT';
+  const publicPickupAddress = exposesPublicExactAddress ? cookRow.exact_pickup_address_private : null;
   const pickupSummaryLabel =
-    norm === 'fa-IR'
+    exposesPublicExactAddress
+      ? norm === 'fa-IR'
+        ? `آدرس تحویل حضوری: ${publicPickupAddress}`
+        : `Pickup address: ${publicPickupAddress}`
+      : norm === 'fa-IR'
       ? supportsPickup && supportsDelivery
         ? `محدوده تقریبی: ${cookRow.neighborhood} • تحویل حضوری و ارسال`
         : supportsPickup
@@ -183,6 +192,8 @@ export function sanitizeCookForPublicDiscovery(
     deliveryFeeCents: Number(cookRow.delivery_fee_cents),
     supportsPickup,
     supportsDelivery,
+    pickupAddressVisibility: exposesPublicExactAddress ? 'PUBLIC_EXACT' : 'AREA_ONLY',
+    ...(exposesPublicExactAddress ? { pickupAddress: publicPickupAddress } : {}),
     deliveryRadiusKm: Number(cookRow.delivery_radius_km),
     isSyntheticTestFixture: true,
     syntheticBadgeLabel: 'TEST ONLY',

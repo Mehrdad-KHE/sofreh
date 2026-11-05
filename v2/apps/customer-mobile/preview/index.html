@@ -745,6 +745,7 @@
       <div class="map-toolbar">
 
         <span id="geolocationStatus" data-geo-state="idle" style="color:var(--muted);font-weight:600;">Location not requested (approximate kitchen areas shown)</span>
+        <span id="mapDiscoveryStatus" data-map-search-state="idle" style="color:var(--muted);font-weight:600;">Map area results update automatically</span>
       </div>
     </div>
 
@@ -889,6 +890,10 @@
     let persistedOrders = [];
     let lastStatusBanner = '';
     let searchFilterText = '';
+    const discoveryCookCache = new Map();
+    let discoveryRequestSeq = 0;
+    let discoveryAbortController = null;
+    let discoveryDebounceTimer = null;
 
     // Settings & Demo payment state
     let settingsMenuOpen = false;
@@ -926,7 +931,7 @@
       return `<small class="asset-credit">${dish.isSamplePhoto ? (currentLocale === 'fa-IR' ? 'عکس نمونه' : 'Sample photo') : (currentLocale === 'fa-IR' ? 'تصویر نمایشی' : 'Demo illustration')} · <a href="/assets/credits.html" target="_blank" rel="noopener">${currentLocale === 'fa-IR' ? 'منبع' : 'Credits'}</a></small>`;
     }
     function getSelectedCook() {
-      return cooks.find((c) => c.id === selectedCookId) || cooks[0] || null;
+      return cooks.find((c) => c.id === selectedCookId) || discoveryCookCache.get(selectedCookId) || cooks[0] || null;
     }
 
     function getSelectedDish(cook) {
@@ -1100,6 +1105,70 @@
       );
     }
 
+    function setMapDiscoveryStatus(state, message) {
+      const statusEl = document.getElementById('mapDiscoveryStatus');
+      if (!statusEl) return;
+      statusEl.dataset.mapSearchState = state;
+      statusEl.textContent = message;
+    }
+
+    function getPublicMapBounds() {
+      if (!mapInstance || typeof mapInstance.getBounds !== 'function') return null;
+      const bounds = mapInstance.getBounds();
+      const southWest = bounds?.getSouthWest?.();
+      const northEast = bounds?.getNorthEast?.();
+      if (!southWest || !northEast) return null;
+      // Round and pad viewport bounds so discovery never transmits a precise
+      // browser location; only the user-visible map area is queried.
+      const pad = 0.01;
+      return {
+        minLat: Math.max(-90, Number((southWest.lat - pad).toFixed(2))),
+        maxLat: Math.min(90, Number((northEast.lat + pad).toFixed(2))),
+        minLng: Math.max(-180, Number((southWest.lng - pad).toFixed(2))),
+        maxLng: Math.min(180, Number((northEast.lng + pad).toFixed(2)))
+      };
+    }
+
+    function queueMapDiscoverySearch(immediate = false) {
+      if (discoveryDebounceTimer) window.clearTimeout(discoveryDebounceTimer);
+      const run = () => {
+        discoveryDebounceTimer = null;
+        searchDiscoveryForMapBounds();
+      };
+      if (immediate) run();
+      else discoveryDebounceTimer = window.setTimeout(run, 350);
+    }
+
+    async function searchDiscoveryForMapBounds() {
+      const bounds = getPublicMapBounds();
+      if (!bounds) return;
+      const requestSeq = ++discoveryRequestSeq;
+      if (discoveryAbortController) discoveryAbortController.abort();
+      discoveryAbortController = new AbortController();
+      const params = new URLSearchParams({ locale: currentLocale, ...bounds });
+      setMapDiscoveryStatus('loading', currentLocale === 'fa-IR' ? 'در حال به‌روزرسانی محدوده…' : 'Updating map area…');
+      try {
+        const response = await fetch(`${API_BASE}/api/discovery/cooks?${params.toString()}`, {
+          headers: { 'X-Sofreh-Locale': currentLocale },
+          signal: discoveryAbortController.signal
+        });
+        if (!response.ok) throw new Error('Map discovery unavailable');
+        const data = await response.json();
+        if (requestSeq !== discoveryRequestSeq) return;
+        for (const cook of data.cooks || []) discoveryCookCache.set(cook.id, cook);
+        cooks = data.cooks || [];
+        if (cooks.length > 0 && !cooks.some((cook) => cook.id === selectedCookId) && !discoveryCookCache.has(selectedCookId)) {
+          selectedCookId = cooks[0].id;
+        }
+        setMapDiscoveryStatus('ready', currentLocale === 'fa-IR' ? `${cooks.length} آشپزخانه در این محدوده` : `${cooks.length} kitchens in this area`);
+        syncMapMarkers();
+        renderUI();
+      } catch (error) {
+        if (error?.name === 'AbortError' || requestSeq !== discoveryRequestSeq) return;
+        setMapDiscoveryStatus('error', currentLocale === 'fa-IR' ? 'به‌روزرسانی محدوده انجام نشد' : 'Map area update failed');
+      }
+    }
+
     function syncMapMarkers() {
       const activeCook = getSelectedCook();
       const mapInfoEl = document.getElementById('mapPickupInfoBar');
@@ -1121,6 +1190,8 @@
             zoom: 12.2,
             attributionControl: false
           });
+          mapInstance.on('moveend', () => queueMapDiscoverySearch());
+          mapInstance.once('load', () => queueMapDiscoverySearch(true));
         } catch {
           return;
         }
@@ -1187,6 +1258,8 @@
         if (discRes.ok) {
           const discData = await discRes.json();
           cooks = discData.cooks || [];
+          for (const cook of cooks) discoveryCookCache.set(cook.id, cook);
+          setMapDiscoveryStatus('ready', currentLocale === 'fa-IR' ? `${cooks.length} آشپزخانه در این محدوده` : `${cooks.length} kitchens in this area`);
           if (cooks.length > 0 && !cooks.some((c) => c.id === selectedCookId)) {
             selectedCookId = cooks[0].id;
           }

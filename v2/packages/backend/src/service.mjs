@@ -55,15 +55,16 @@ export function seedSyntheticStage1Data(db) {
       INSERT INTO cook_profiles (
         id, user_id, kitchen_name_en, kitchen_name_fa, bio_en, bio_fa,
         neighborhood, public_lat, public_lng, exact_pickup_address_private,
-        pickup_address_consent, pickup_window_en, pickup_window_fa,
+        public_address_visibility, pickup_address_consent, pickup_window_en, pickup_window_fa,
         delivery_fee_cents, supports_pickup, supports_delivery, delivery_radius_km,
         is_synthetic_test_fixture, synthetic_badge_label, updated_at_iso
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 'TEST ONLY', ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 'TEST ONLY', ?)
       ON CONFLICT(id) DO UPDATE SET
         kitchen_name_en = excluded.kitchen_name_en,
         kitchen_name_fa = excluded.kitchen_name_fa,
         bio_en = excluded.bio_en,
         bio_fa = excluded.bio_fa,
+        public_address_visibility = excluded.public_address_visibility,
         pickup_address_consent = excluded.pickup_address_consent,
         pickup_window_en = excluded.pickup_window_en,
         pickup_window_fa = excluded.pickup_window_fa,
@@ -85,6 +86,7 @@ export function seedSyntheticStage1Data(db) {
         c.publicLat,
         c.publicLng,
         c.exactPickupAddressPrivate,
+        c.publicAddressVisibility || 'AREA_ONLY',
         c.pickupAddressConsent === false ? 0 : 1,
         c.pickupWindowEn || '',
         c.pickupWindowFa || '',
