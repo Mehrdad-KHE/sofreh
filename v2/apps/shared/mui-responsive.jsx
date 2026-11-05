@@ -21,11 +21,11 @@ const proxyConfigs = {
   ca: ['localeToggleBtn', 'customerTopMenuBtn', 'locateMeBtn', 'navTabDiscover', 'navTabCart', 'navTabOrders', 'placeOrderBtn'],
   cook: ['localeToggleBtn', 'cookTopMenuBtn', 'saveFeeBtn', 'refreshCookOrdersBtn']
 };
-const selectorConfigs = { ca: ['button.qty-btn'], cook: ['button[data-save-dish]', 'button[data-order-id]'] };
-const inputConfigs = { ca: ['kitchenSearchInput'], cook: ['feeInput'] };
+const selectorConfigs = { ca: ['button.qty-btn', 'button[data-review-submit]'], cook: ['button[data-save-dish]', 'button[data-order-id]', 'button[data-cook-review-submit]'] };
+const inputConfigs = { ca: ['kitchenSearchInput', 'settingsAddressLabelInput', 'settingsDeliveryAddressInput'], cook: ['feeInput'] };
 const selectConfigs = { ca: ['cookSelect'], cook: ['cookFulfillmentMode'] };
-const inputSelectorConfigs = { ca: [], cook: ['input[id^="price-"], input[id^="total-"], input[id^="remaining-"]'] };
-const selectSelectorConfigs = { ca: [], cook: ['select[id^="availability-"]'] };
+const inputSelectorConfigs = { ca: ['input[id^="review-comment-"]'], cook: ['input[id^="price-"], input[id^="total-"], input[id^="remaining-"], input[id^="cook-review-comment-"]'] };
+const selectSelectorConfigs = { ca: ['select[id^="review-rating-"]'], cook: ['select[id^="availability-"]', 'select[id^="cook-review-rating-"]'] };
 const radioSelectorConfigs = { ca: ['input[type="radio"][name="fulfillment"]'], cook: [] };
 
 function MUIProxyButton({ native }) {
