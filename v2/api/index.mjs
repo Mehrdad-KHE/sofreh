@@ -12,6 +12,12 @@ async function getServer() {
 
 export default async function handler(req, res) {
   try {
+    const routedUrl = new URL(req.url || '/', 'http://127.0.0.1');
+    const originalPath = routedUrl.searchParams.get('path');
+    if (routedUrl.pathname === '/api/index.mjs' && originalPath) {
+      routedUrl.searchParams.delete('path');
+      req.url = `${originalPath}${routedUrl.search ? `?${routedUrl.searchParams}` : ''}`;
+    }
     const server = await getServer();
     server.emit('request', req, res);
   } catch (error) {
