@@ -1106,7 +1106,13 @@ describe('Sofreh Stage 1 Implementation Suite (v2)', () => {
     const rawDiscoveryJson = JSON.stringify(publicDiscovery);
     assert.doesNotMatch(rawDiscoveryJson, /5480 Yonge St/);
     assert.doesNotMatch(rawDiscoveryJson, /4841 Yonge St/);
-    assert.doesNotMatch(rawDiscoveryJson, /7089 Yonge St/);
+    // Golnar is the explicit opt-in PUBLIC_EXACT fixture; unlike the two
+    // AREA_ONLY kitchens above, its synthetic pickup address is intentionally
+    // visible in public discovery.
+    assert.match(rawDiscoveryJson, /7089 Yonge St/);
+    assert.equal(publicDiscovery.cooks.find((c) => c.id === 'cook-test-pari').pickupAddressVisibility, 'AREA_ONLY');
+    assert.equal(publicDiscovery.cooks.find((c) => c.id === 'cook-test-kambiz').pickupAddressVisibility, 'AREA_ONLY');
+    assert.equal(publicDiscovery.cooks.find((c) => c.id === 'cook-test-golnar').pickupAddressVisibility, 'PUBLIC_EXACT');
 
     // 2. Cart response never includes exact pickup address
     const cartView = upsertCustomerCart(db, customerNima, {
@@ -1655,7 +1661,8 @@ describe('Sofreh Stage 1 Implementation Suite (v2)', () => {
         });
         return { status: response.status, body: await response.json() };
       }
-      const homes = privacyDb.prepare('SELECT exact_pickup_address_private FROM cook_profiles').all()
+      const homes = privacyDb.prepare('SELECT exact_pickup_address_private, public_address_visibility FROM cook_profiles').all()
+        .filter((row) => row.public_address_visibility !== 'PUBLIC_EXACT')
         .map((row) => row.exact_pickup_address_private);
       const discovery = await request('/api/discovery/cooks');
       assert.equal(discovery.status, 200);
@@ -1935,7 +1942,7 @@ describe('Sofreh Stage 1 Implementation Suite (v2)', () => {
       const discovery = await (await fetch(baseUrl + '/api/discovery/cooks')).json();
       assert.equal(discovery.categories, undefined);
       const dishes = discovery.cooks.flatMap((cook) => cook.dishes);
-      assert.equal(dishes.length, 8);
+      assert.equal(dishes.length, 12);
       assert.ok(dishes.every((dish) => dish.isSamplePhoto && dish.photoUrl.startsWith('/assets/demo-food/')));
       for (const dish of dishes) {
         const response = await fetch(baseUrl + dish.photoUrl);

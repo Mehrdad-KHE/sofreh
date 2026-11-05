@@ -1033,7 +1033,8 @@
     function scheduleMapParallax() {
       if (parallaxFramePending) return;
       parallaxFramePending = true;
-      window.requestAnimationFrame(() => {
+      const scheduleFrame = window.requestAnimationFrame || ((callback) => callback());
+      scheduleFrame(() => {
         parallaxFramePending = false;
         applyMapParallax();
       });
