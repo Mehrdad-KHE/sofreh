@@ -18,9 +18,10 @@ const globalStyles = {
 };
 
 const proxyConfigs = {
-  ca: ['localeToggleBtn', 'customerTopMenuBtn', 'locateMeBtn', 'navTabDiscover', 'navTabCart', 'navTabOrders'],
+  ca: ['localeToggleBtn', 'customerTopMenuBtn', 'locateMeBtn', 'navTabDiscover', 'navTabCart', 'navTabOrders', 'placeOrderBtn'],
   cook: ['localeToggleBtn', 'cookTopMenuBtn', 'saveFeeBtn', 'refreshCookOrdersBtn']
 };
+const selectorConfigs = { ca: [], cook: ['button[data-save-dish]'] };
 const inputConfigs = { ca: ['kitchenSearchInput'], cook: ['feeInput'] };
 const selectConfigs = { ca: ['cookSelect'], cook: ['cookFulfillmentMode'] };
 
@@ -72,6 +73,19 @@ function enhanceNativeControls(appId) {
     host.style.alignItems = 'center';
     native.parentElement.insertBefore(host, native);
     createRoot(host).render(<MUIProxyButton native={native} />);
+  }
+  for (const selector of selectorConfigs[appId] || []) {
+    for (const native of document.querySelectorAll(selector)) {
+      if (native.dataset.muiEnhanced === 'true' || !native.parentElement) continue;
+      native.dataset.muiEnhanced = 'true';
+      native.hidden = true;
+      const host = document.createElement('span');
+      host.className = 'mui-visible-control';
+      host.style.display = 'inline-flex';
+      host.style.alignItems = 'center';
+      native.parentElement.insertBefore(host, native);
+      createRoot(host).render(<MUIProxyButton native={native} />);
+    }
   }
 }
 
