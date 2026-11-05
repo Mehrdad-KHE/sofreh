@@ -948,6 +948,7 @@
     let discoveryDebounceTimer = null;
     let activeDiscoveryBoundsKey = '';
     let lastDiscoveryBoundsKey = '';
+    let discoveryLoadingTimer = null;
     let customerStateRequestSeq = 0;
 
     // Settings & Demo payment state
@@ -1205,7 +1206,12 @@
       discoveryAbortController = new AbortController();
       activeDiscoveryBoundsKey = boundsKey;
       const params = new URLSearchParams({ locale: currentLocale, ...bounds });
-      setMapDiscoveryStatus('loading', currentLocale === 'fa-IR' ? 'در حال به‌روزرسانی محدوده…' : 'Updating map area…');
+      if (discoveryLoadingTimer) window.clearTimeout(discoveryLoadingTimer);
+      discoveryLoadingTimer = window.setTimeout(() => {
+        if (requestSeq === discoveryRequestSeq) {
+          setMapDiscoveryStatus('loading', currentLocale === 'fa-IR' ? 'در حال به‌روزرسانی محدوده…' : 'Updating map area…');
+        }
+      }, 180);
       try {
         const response = await fetch(`${API_BASE}/api/discovery/cooks?${params.toString()}`, {
           headers: { 'X-Sofreh-Locale': currentLocale },
@@ -1214,6 +1220,10 @@
         if (!response.ok) throw new Error('Map discovery unavailable');
         const data = await response.json();
         if (requestSeq !== discoveryRequestSeq) return;
+        if (discoveryLoadingTimer) {
+          window.clearTimeout(discoveryLoadingTimer);
+          discoveryLoadingTimer = null;
+        }
         activeDiscoveryBoundsKey = '';
         lastDiscoveryBoundsKey = boundsKey;
         for (const cook of data.cooks || []) discoveryCookCache.set(cook.id, cook);
@@ -1223,9 +1233,15 @@
         }
         setMapDiscoveryStatus('ready', currentLocale === 'fa-IR' ? `${cooks.length} آشپزخانه در این محدوده` : `${cooks.length} kitchens in this area`);
         syncMapMarkers();
+        const preservedScrollY = Number(window.scrollY || 0);
         renderUI();
+        if (typeof window.scrollTo === 'function') window.scrollTo(0, preservedScrollY);
       } catch (error) {
         if (error?.name === 'AbortError' || requestSeq !== discoveryRequestSeq) return;
+        if (discoveryLoadingTimer) {
+          window.clearTimeout(discoveryLoadingTimer);
+          discoveryLoadingTimer = null;
+        }
         activeDiscoveryBoundsKey = '';
         setMapDiscoveryStatus('error', currentLocale === 'fa-IR' ? 'به‌روزرسانی محدوده انجام نشد' : 'Map area update failed');
       }
