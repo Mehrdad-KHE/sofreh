@@ -21,7 +21,7 @@ const proxyConfigs = {
   ca: ['localeToggleBtn', 'customerTopMenuBtn', 'locateMeBtn', 'navTabDiscover', 'navTabCart', 'navTabOrders', 'placeOrderBtn'],
   cook: ['localeToggleBtn', 'cookTopMenuBtn', 'saveFeeBtn', 'refreshCookOrdersBtn']
 };
-const selectorConfigs = { ca: [], cook: ['button[data-save-dish]'] };
+const selectorConfigs = { ca: ['button.qty-btn'], cook: ['button[data-save-dish]', 'button[data-order-id]'] };
 const inputConfigs = { ca: ['kitchenSearchInput'], cook: ['feeInput'] };
 const selectConfigs = { ca: ['cookSelect'], cook: ['cookFulfillmentMode'] };
 
