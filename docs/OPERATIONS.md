@@ -20,14 +20,14 @@ The legacy `npm run start:backend` invokes `server.mjs` directly and defaults to
 
 ## Isolated verification
 
-The test suite contains database paths relative to its source tree. Run a disposable source copy under `%LOCALAPPDATA%\ElegantRuntime\Sofreh`, excluding databases, credentials, caches and generated output. From that copy's `v2` directory:
+From the source `v2` directory:
 
 ```powershell
-node --experimental-sqlite --test tests/stage1.test.mjs
-node scripts/verify-stage1.mjs
+npm test
+npm run verify:typecheck
 ```
 
-`verify:typecheck` is a structural/contract validator, not the TypeScript compiler or a native build. Test outputs and databases stay in the disposable runtime copy. Do not copy them back into the repository.
+`npm test` copies the relevant source into a unique `%LOCALAPPDATA%\ElegantRuntime\Sofreh\tests\run-*` directory and runs every `*.test.mjs` there with SQLite enabled. Test databases stay in that disposable runtime copy. `verify:typecheck` is a structural/contract validator, not the TypeScript compiler or a native build. Do not copy generated output back into the repository.
 
 Package installation and build caches must also be local runtime data. Do not create `node_modules`, caches, browser profiles, logs or temporary test artifacts in synced source folders.
 

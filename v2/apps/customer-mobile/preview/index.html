@@ -906,7 +906,8 @@
       }
     ];
 
-    let currentLocale = 'en-CA';
+    const requestedLocale = new URLSearchParams(window.location.search).get('locale');
+    let currentLocale = requestedLocale === 'fa-IR' ? 'fa-IR' : 'en-CA';
     let customerToken = 'test-token-customer-nima';
     let savedAddresses = [];
     let selectedSavedAddressId = '';

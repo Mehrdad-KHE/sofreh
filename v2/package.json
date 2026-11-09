@@ -16,7 +16,7 @@
   ],
   "scripts": {
     "start:backend": "node --experimental-sqlite packages/backend/src/server.mjs",
-    "test": "node --experimental-sqlite --test tests/stage1.test.mjs tests/discoveryDistance.test.mjs",
+    "test": "node scripts/test-local.mjs",
     "verify:typecheck": "node scripts/verify-stage1.mjs"
   },
   "dependencies": {

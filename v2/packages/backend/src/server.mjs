@@ -23,6 +23,7 @@ import {
 } from './service.mjs';
 import { SofrehGuardError } from './privacy.mjs';
 import { listSavedAddresses, saveAddress, getSavedAddress, deleteSavedAddress } from './savedAddresses.mjs';
+import { renderShowcase, renderSitemap, renderRobots } from './showcase.mjs';
 import {
   SUPPORTED_LOCALES,
   normalizeLocale,
@@ -131,6 +132,23 @@ export function createSofrehHttpServer({ dbFilePath } = {}) {
     const pathname = reqUrl.pathname;
 
     try {
+      if (req.method === 'GET' && ['/', '/showcase', '/showcase/index.html'].includes(pathname)) {
+        res.writeHead(308, { Location: '/en' });
+        res.end();
+        return;
+      }
+      if (req.method === 'GET' && ['/en', '/fa', '/en/', '/fa/'].includes(pathname)) {
+        const language = pathname.startsWith('/fa') ? 'fa' : 'en';
+        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Content-Language': language, 'Cache-Control': 'public, max-age=0, s-maxage=300' });
+        res.end(renderShowcase(language));
+        return;
+      }
+      if (req.method === 'GET' && ['/robots.txt', '/sitemap.xml'].includes(pathname)) {
+        const xml = pathname === '/sitemap.xml';
+        res.writeHead(200, { 'Content-Type': xml ? 'application/xml; charset=utf-8' : 'text/plain; charset=utf-8' });
+        res.end(xml ? renderSitemap() : renderRobots());
+        return;
+      }
       const demoAssetTypes = {
         'demo-food/ghormeh-sabzi.jpg': 'image/jpeg',
         'demo-food/ghormeh-sabzi-majidi.jpg': 'image/jpeg',
@@ -153,6 +171,14 @@ export function createSofrehHttpServer({ dbFilePath } = {}) {
         'kitchens/golnar.svg': 'image/svg+xml',
         'credits.html': 'text/html; charset=utf-8'
       };
+      // Browsers request this automatically for every preview page. A
+      // no-content response keeps the synthetic preview console clean without
+      // inventing a brand asset or exposing a filesystem path.
+      if (req.method === 'GET' && pathname === '/favicon.ico') {
+        res.writeHead(204, { 'Cache-Control': 'no-store' });
+        res.end();
+        return;
+      }
       if (req.method === 'GET' && pathname.startsWith('/assets/')) {
         const assetName = pathname.slice('/assets/'.length);
         if (!Object.hasOwn(demoAssetTypes, assetName)) {
