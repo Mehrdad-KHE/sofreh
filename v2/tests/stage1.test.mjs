@@ -946,6 +946,7 @@ describe('Sofreh Stage 1 Implementation Suite (v2)', () => {
         urlPath: '/preview/customer'
       });
       await customerClient.waitForNetworkIdle();
+      customerClient.querySelectorAll('[data-category-id="all"]')[0]?.click();
 
       const storefrontHtml = customerClient.getElementById('cookListCard').innerHTML;
       // Actual bundled sample photos replace illustrations for the three selected meals.
@@ -1103,6 +1104,15 @@ describe('Sofreh Stage 1 Implementation Suite (v2)', () => {
     const customerSara = authenticateByToken(db, 'test-token-customer-sara');
     const cookPari = authenticateByToken(db, 'test-token-cook-pari');
     const cookKambiz = authenticateByToken(db, 'test-token-cook-kambiz');
+
+    // Test 13 temporarily exercises delivery-only restrictions for Kambiz on
+    // the shared fixture DB. Restore the declared fixture contract here.
+    updateCookDeliverySettings(db, cookKambiz, {
+      cookId: 'cook-test-kambiz',
+      deliveryFeeCents: 600,
+      supportsPickup: true,
+      supportsDelivery: true
+    });
 
     // 1. Public discovery never includes exact pickup address
     const publicDiscovery = listPublicDiscoveryCooks(db, { locale: 'en-CA' });
@@ -1881,13 +1891,14 @@ describe('Sofreh Stage 1 Implementation Suite (v2)', () => {
       const html = await (await fetch(baseUrl + '/preview/customer')).text();
       const client = mountPreviewHtmlInVm(html, { apiBase: baseUrl, urlPath: '/preview/customer' });
       await client.waitForNetworkIdle();
+      client.querySelectorAll('[data-category-id="all"]')[0]?.click();
       const card = client.getElementById('cookListCard').innerHTML;
       assert.match(card, /Maman Pari Saffron Kitchen/);
       assert.doesNotMatch(card, /TEST ONLY|SYNTHETIC TEST FIXTURE/);
       assert.match(card, /id="regularUnavailableDishesSection"/);
       assert.match(card, /id="todayAvailableDishesSection"/);
       assert.match(card, /data-testid="fresh-today"/);
-      assert.match(html, /class="map-stage" id="mapStage">\s*<button class="locate-btn" id="locateMeBtn"/);
+      assert.match(html, /class="map-stage" id="mapStage">\s*<button[^>]*class="locate-btn"[^>]*id="locateMeBtn"/);
       assert.equal((html.match(/id="mapAttribution"/g) || []).length, 1);
       assert.match(html, /attributionControl: false/);
       assert.match(html, /openstreetmap.org\/copyright/);
@@ -1967,6 +1978,7 @@ describe('Sofreh Stage 1 Implementation Suite (v2)', () => {
       assert.doesNotMatch(html, /id="categoryFilter"/);
       const customer = mountPreviewHtmlInVm(html, { apiBase: baseUrl, urlPath: '/preview/customer' });
       await customer.waitForNetworkIdle();
+      customer.querySelectorAll('[data-category-id="all"]')[0]?.click();
       assert.match(customer.getElementById('cookListCard').innerHTML, /Sold out/);
       assert.match(customer.getElementById('cookListCard').innerHTML, /Regular Menu/);
       assert.equal(customer.getElementById('appTitle').textContent, 'Sofreh');

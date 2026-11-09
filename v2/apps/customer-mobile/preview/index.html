@@ -274,6 +274,11 @@
       flex-wrap: wrap;
       font-size: 11px;
     }
+    .discovery-controls { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;width:100%;margin-top:8px; }
+    .discovery-control { display:flex;flex-direction:column;gap:5px;min-width:0;text-align:start; }
+    .discovery-control label { font-size:14px;font-weight:700;color:var(--primary); }
+    .discovery-control select { width:100%;min-height:46px;min-width:0;padding:8px;border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--text);font:inherit;font-size:16px; }
+    .discovery-control select:focus-visible { outline:2px solid var(--primary);outline-offset:2px; }
     .locate-btn {
       background: var(--surface-subtle);
       color: var(--primary);
@@ -786,9 +791,22 @@
         <input id="kitchenSearchInput" type="search" placeholder="Search home kitchens, dishes, saffron tahchin, herbs..." aria-label="Search home kitchens or dishes" />
       </div>
       <div class="map-toolbar">
-
+        <div class="discovery-controls">
+        <div class="discovery-control">
+        <label for="distanceOriginSelect" id="distanceOriginLabel">Distance from</label>
+        <select id="distanceOriginSelect"></select>
+        </div>
+        <div class="discovery-control">
+        <label for="discoverySortSelect" id="discoverySortLabel">Sort kitchens</label>
+        <select id="discoverySortSelect">
+          <option value="recommended">Recommended</option>
+          <option value="nearest">Nearest area</option>
+        </select>
+        </div>
+        </div>
         <span id="geolocationStatus" data-geo-state="idle" style="color:var(--muted);font-weight:600;">Location not requested (approximate kitchen areas shown)</span>
         <span id="mapDiscoveryStatus" data-map-search-state="idle" style="color:var(--muted);font-weight:600;">Map area results update automatically</span>
+        <span id="distanceMethodNote" style="flex-basis:100%;font-size:12px;color:var(--muted);">Straight-line estimate to the public kitchen area, not road distance or delivery time.</span>
       </div>
     </div>
 
@@ -967,6 +985,45 @@
     // Permission-gated client-only user location state (never sent to backend)
     let userLocationState = 'idle'; // 'idle' | 'granted' | 'denied' | 'unavailable'
     let clientOnlyUserCoords = null; // { lat, lng } kept strictly in browser memory
+    let geolocationTimedOut = false;
+    let manualDistanceArea = '';
+    let discoverySort = 'recommended';
+    const DISTANCE_AREAS = [
+      { id: 'downtown', en: 'Downtown Toronto', fa: 'مرکز تورنتو', lat: 43.6532, lng: -79.3832 },
+      { id: 'north-york', en: 'North York — Yonge & Finch', fa: 'نورث‌یورک — یانگ و فینچ', lat: 43.7798, lng: -79.4152 },
+      { id: 'willowdale', en: 'Willowdale — Sheppard', fa: 'ویلودیل — شپرد', lat: 43.7615, lng: -79.4111 },
+      { id: 'thornhill', en: 'Thornhill — Yonge & Steeles', fa: 'تورنهیل — یانگ و استیلز', lat: 43.7984, lng: -79.4205 }
+    ];
+
+    function validDistancePoint(point) {
+      return Boolean(point && typeof point.lat === 'number' && typeof point.lng === 'number' &&
+        Number.isFinite(point.lat) && Number.isFinite(point.lng) &&
+        Math.abs(point.lat) <= 90 && Math.abs(point.lng) <= 180);
+    }
+
+    function discoveryOrigin() {
+      const area = DISTANCE_AREAS.find((item) => item.id === manualDistanceArea);
+      return area || (validDistancePoint(clientOnlyUserCoords) ? clientOnlyUserCoords : null);
+    }
+
+    function kitchenDistanceKm(cook) {
+      const origin = discoveryOrigin();
+      const destination = { lat: cook?.publicLat, lng: cook?.publicLng };
+      if (!validDistancePoint(origin) || !validDistancePoint(destination)) return null;
+      const radians = (degrees) => degrees * Math.PI / 180;
+      const a = Math.sin(radians(destination.lat - origin.lat) / 2) ** 2 +
+        Math.cos(radians(origin.lat)) * Math.cos(radians(destination.lat)) *
+        Math.sin(radians(destination.lng - origin.lng) / 2) ** 2;
+      return 6371.0088 * 2 * Math.asin(Math.sqrt(Math.max(0, Math.min(1, a))));
+    }
+
+    function kitchenDistanceLabel(cook) {
+      const km = kitchenDistanceKm(cook);
+      const fa = currentLocale === 'fa-IR';
+      if (km === null) return fa ? 'برای دیدن فاصله، مبدأ را انتخاب کنید' : 'Choose an origin to see distance';
+      const value = new Intl.NumberFormat(fa ? 'fa-IR' : 'en-CA', { maximumFractionDigits: 1 }).format(km);
+      return fa ? `حدود ${value} کیلومتر تا محدوده آشپز` : `Approx. ${value} km to kitchen area`;
+    }
 
     let mapInstance = null;
     let mapMarkers = [];
@@ -1055,6 +1112,7 @@
     }
 
     function requestBrowserGeolocation() {
+      geolocationTimedOut = false;
       const statusEl = document.getElementById('geolocationStatus');
       const markerEl = document.getElementById('currentUserMarker');
       const nav = window.navigator;
@@ -1075,6 +1133,7 @@
               : 'Location unavailable in this browser — showing approximate kitchen areas only';
         }
         syncMapMarkers();
+        renderUI();
         return;
       }
 
@@ -1085,9 +1144,9 @@
       }
       nav.geolocation.getCurrentPosition(
         (pos) => {
-          const lat = Number(pos?.coords?.latitude);
-          const lng = Number(pos?.coords?.longitude);
-          if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+          const lat = pos?.coords?.latitude;
+          const lng = pos?.coords?.longitude;
+          if (!validDistancePoint({ lat, lng })) {
             userLocationState = 'unavailable';
             clientOnlyUserCoords = null;
             if (statusEl) {
@@ -1097,11 +1156,14 @@
                   ? 'مختصات معتبر دریافت نشد'
                   : 'Location coordinates unavailable';
             }
+            syncMapMarkers();
+            renderUI();
             return;
           }
           userLocationState = 'granted';
           // Stored only in browser memory; never transmitted to backend
           clientOnlyUserCoords = { lat, lng };
+          manualDistanceArea = '';
           if (markerEl) {
             markerEl.setAttribute('data-user-marker-active', 'true');
             markerEl.setAttribute('data-user-lat', lat.toFixed(4));
@@ -1120,6 +1182,7 @@
                 : 'Current-user marker active (kept in browser only; never sent to backend)';
           }
           syncMapMarkers();
+          renderUI();
           if (mapInstance && typeof mapInstance.easeTo === 'function') {
             mapInstance.easeTo({ center: [lng, lat], zoom: Math.max(mapInstance.getZoom(), 13), duration: 600 });
           }
@@ -1141,6 +1204,7 @@
                   : 'Location permission denied — showing approximate kitchen areas only';
             }
           } else if (err && Number(err.code) === 3) {
+            geolocationTimedOut = true;
             userLocationState = 'unavailable';
             if (statusEl) {
               statusEl.setAttribute('data-geo-state', 'unavailable');
@@ -1157,6 +1221,7 @@
             }
           }
           syncMapMarkers();
+          renderUI();
         },
         { enableHighAccuracy: false, timeout: 6000, maximumAge: 60000 }
       );
@@ -1368,7 +1433,10 @@
           if (stateRequestSeq === customerStateRequestSeq) {
             persistedOrders = ordData.orders || [];
             if (persistedOrders.length === 0) {
-              await new Promise((resolve) => window.setTimeout(resolve, 60));
+              // A brand-new tab can receive the first read while the previous
+              // acceptance request is still crossing the shared connection.
+              // Re-read immediately so a fresh customer session never keeps a
+              // false empty state after the backend has committed the order.
               if (stateRequestSeq === customerStateRequestSeq) {
                 const retryOrdersRes = await fetch(`${API_BASE}/api/customer/orders?locale=${encodeURIComponent(currentLocale)}`, {
                   headers: {
@@ -1809,6 +1877,36 @@
 
     function renderUI() {
       const isFa = currentLocale === 'fa-IR';
+      const originSelect = document.getElementById('distanceOriginSelect');
+      const originLabel = document.getElementById('distanceOriginLabel');
+      const sortSelect = document.getElementById('discoverySortSelect');
+      const sortLabel = document.getElementById('discoverySortLabel');
+      const distanceNote = document.getElementById('distanceMethodNote');
+      const geoStatus = document.getElementById('geolocationStatus');
+      if (geoStatus) {
+        const messages = {
+          idle: [manualDistanceArea ? 'فاصله از مرکز منطقه انتخاب‌شده' : 'مبدأ فاصله را انتخاب کنید یا موقعیت من را بزنید', manualDistanceArea ? 'Distance from the selected area centre' : 'Choose an area or use My Location'],
+          requesting: ['در حال دریافت موقعیت…', 'Finding your location…'],
+          granted: ['فاصله از موقعیت شما؛ مکان دقیق به سرور ارسال نمی‌شود', 'Distance from your location; precise coordinates stay in your browser'],
+          denied: ['مجوز مکان رد شد؛ می‌توانید منطقه را دستی انتخاب کنید', 'Location denied; you can choose an area manually'],
+          unavailable: geolocationTimedOut
+            ? ['دریافت موقعیت طول کشید؛ دوباره تلاش کنید یا منطقه را انتخاب کنید', 'Location timed out; try again or choose an area']
+            : ['مکان در دسترس نیست؛ منطقه را دستی انتخاب کنید', 'Location unavailable; choose an area manually']
+        };
+        geoStatus.textContent = (messages[userLocationState] || messages.idle)[isFa ? 0 : 1];
+      }
+      if (distanceNote) distanceNote.textContent = isFa ? 'فاصله مستقیم تا محدوده عمومی آشپز است؛ مسافت رانندگی یا زمان تحویل نیست.' : 'Straight-line estimate to the public kitchen area, not road distance or delivery time.';
+      if (originLabel) originLabel.textContent = isFa ? 'مبدأ فاصله' : 'Distance from';
+      if (sortLabel) sortLabel.textContent = isFa ? 'ترتیب آشپزخانه‌ها' : 'Sort kitchens';
+      if (originSelect) {
+        originSelect.innerHTML = `<option value="">${clientOnlyUserCoords ? (isFa ? 'موقعیت فعلی من' : 'My current location') : (isFa ? 'انتخاب منطقه' : 'Choose an area')}</option>` +
+          DISTANCE_AREAS.map((area) => `<option value="${area.id}" ${manualDistanceArea === area.id ? 'selected' : ''}>${isFa ? area.fa : area.en}</option>`).join('');
+        originSelect.value = manualDistanceArea;
+      }
+      if (sortSelect) {
+        sortSelect.innerHTML = `<option value="recommended">${isFa ? 'پیشنهادی' : 'Recommended'}</option><option value="nearest">${isFa ? 'نزدیک‌ترین محدوده' : 'Nearest area'}</option>`;
+        sortSelect.value = discoverySort;
+      }
       document.documentElement.lang = currentLocale;
       document.documentElement.dir = isFa ? 'rtl' : 'ltr';
       document.documentElement.setAttribute('data-theme', 'forest');
@@ -1862,7 +1960,11 @@
       }
 
       // Render clickable Cook Cards for storefront selection
-      const cookCardsHtml = cooks
+      const orderedCooks = [...cooks];
+      if (discoverySort === 'nearest' && discoveryOrigin()) {
+        orderedCooks.sort((a, b) => (kitchenDistanceKm(a) ?? Infinity) - (kitchenDistanceKm(b) ?? Infinity));
+      }
+      const cookCardsHtml = orderedCooks
         .map((c) => {
           const isActive = c.id === cook.id;
           const revCount = Number(c.reviewSummary?.reviewCount || 0);
@@ -1890,6 +1992,7 @@
               ${kitchenLogo(c.id)}
               <div style="font-weight:800;color:var(--primary);margin-bottom:2px;">${cleanDisplayKitchenName(c.kitchenName)}</div>
               <div style="font-size:10px;color:var(--muted);">${c.neighborhood}</div>
+              <div data-distance-cook-id="${c.id}" style="font-size:12px;font-weight:700;margin-top:5px;">${kitchenDistanceLabel(c)}</div>
               <div style="font-size:10px;font-weight:700;margin-top:3px;">${ratingLabel}</div>
               <div style="font-size:9.5px;margin-top:2px;color:var(--text);">${modeBadge}</div>
             </button>
@@ -2049,6 +2152,7 @@
         </div>
         <p class="storefront-bio">${settingsText(cleanDisplayKitchenName(cook.bio))}</p>
         <div class="ue-meta-chips">
+          <span class="ue-chip" data-testid="selected-kitchen-distance">${kitchenDistanceLabel(cook)}</span>
           ${todayDishes.some((d) => d.isAvailableToday && Number(d.remainingPortions) > 0) ? `<span class="ue-chip" data-testid="fresh-today">${isFa ? 'تازه برای امروز' : 'Cooked Fresh Today'}</span>` : ''}
           ${storefrontRatingBadge}
           ${
@@ -2444,17 +2548,11 @@
         reloadBtn.addEventListener('click', async () => {
           reloadBtn.disabled = true;
           try {
-            const response = await fetch(`${API_BASE}/api/customer/orders?locale=${encodeURIComponent(currentLocale)}`, {
-              headers: {
-                Authorization: `Bearer ${customerToken}`,
-                'X-Sofreh-Locale': currentLocale
-              }
-            });
-            if (!response.ok) throw new Error(`Order refresh failed (${response.status})`);
-            const data = await response.json();
-            persistedOrders = data.orders || [];
+            // Reconcile orders, cart, discovery stock, and privacy labels
+            // together so a cook-side accept/reject cannot leave stale menu
+            // quantities in a customer's refreshed session.
+            await loadCustomerBackendState();
             lastStatusBanner = '';
-            renderUI();
           } catch (err) {
             lastStatusBanner = `Connection error: ${err.message}`;
             renderUI();
@@ -2503,6 +2601,15 @@
         renderUI();
       });
     }
+
+    document.getElementById('distanceOriginSelect').addEventListener('change', (event) => {
+      manualDistanceArea = DISTANCE_AREAS.some((area) => area.id === event.target.value) ? event.target.value : '';
+      renderUI();
+    });
+    document.getElementById('discoverySortSelect').addEventListener('change', (event) => {
+      discoverySort = event.target.value === 'nearest' ? 'nearest' : 'recommended';
+      renderUI();
+    });
 
     // Map bottom-edge resize handle: mouse, touch, and keyboard
     const mapResizeHandleEl = document.getElementById('mapResizeHandle');

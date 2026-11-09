@@ -17,6 +17,8 @@ Recommended patterns come from public product documentation, not independent con
 
 Label a distance computed from a public kitchen area as approximate. Do not present straight-line distance as road distance or travel time. Time until a meal arrives also includes preparation and fulfillment; routing duration alone does not establish it.
 
+Customer discovery offers a manual area origin, permission-gated device location and nearest-area sorting. Distances use the public kitchen coordinates and are calculated in browser memory. This is an approximate straight-line estimate, not a delivery-coverage decision.
+
 Provide manual area selection when device location is denied or unavailable. Keep the current prohibition on transmitting precise device coordinates unless a reviewed privacy contract explicitly changes it. Public map markers, API responses and SEO metadata must not disclose a private pickup address without the applicable consent and access rules.
 
 ## Accessibility and performance

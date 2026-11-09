@@ -26,6 +26,17 @@ export function mountPreviewHtmlInVm(
       this.disabled = Object.prototype.hasOwnProperty.call(attrs, 'disabled');
       this.hidden = Object.prototype.hasOwnProperty.call(attrs, 'hidden');
       this.style = {};
+      this.dataset = {};
+      for (const [name, value] of Object.entries(this.attributes)) {
+        if (name.startsWith('data-')) {
+          const key = name
+            .slice(5)
+            .split('-')
+            .map((part, index) => (index === 0 ? part : part.charAt(0).toUpperCase() + part.slice(1)))
+            .join('');
+          this.dataset[key] = String(value ?? '');
+        }
+      }
       if (attrs.style) {
         for (const part of String(attrs.style).split(';')) {
           const [k, v] = part.split(':').map((s) => (s ? s.trim() : ''));
@@ -65,6 +76,14 @@ export function mountPreviewHtmlInVm(
 
     setAttribute(name, val) {
       this.attributes[name] = String(val);
+      if (name.startsWith('data-')) {
+        const key = name
+          .slice(5)
+          .split('-')
+          .map((part, index) => (index === 0 ? part : part.charAt(0).toUpperCase() + part.slice(1)))
+          .join('');
+        this.dataset[key] = String(val);
+      }
       if (name === 'id') {
         this.id = String(val);
         elementsById.set(this.id, this);
