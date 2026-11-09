@@ -1,0 +1,52 @@
+name: Internal mobile builds
+
+on:
+  workflow_dispatch:
+    inputs:
+      origin:
+        description: HTTPS origin of the account workspace
+        required: true
+        default: https://sofreh-v2.vercel.app
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sofreh-native-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: ${{ matrix.role }} / ${{ matrix.platform }}
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        role: [CUSTOMER, COOK]
+        platform: [android, ios]
+        include:
+          - platform: android
+            runner: ubuntu-24.04
+          - platform: ios
+            runner: macos-26
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    env:
+      SOFREH_APP_ROLE: ${{ matrix.role }}
+      SOFREH_APP_ORIGIN: ${{ inputs.origin }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 24.22.2
+          package-manager-cache: false
+      - name: Compile and verify application identity
+        run: node v2/scripts/build-native-ci.mjs ${{ matrix.platform }}
+      - uses: actions/upload-artifact@v7.0.2
+        with:
+          name: internal-${{ matrix.role }}-${{ matrix.platform }}-${{ github.sha }}
+          path: ${{ runner.temp }}/ElegantRuntime/Sofreh/artifacts/*
+          retention-days: 1
+          if-no-files-found: error

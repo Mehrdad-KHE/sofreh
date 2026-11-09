@@ -35,6 +35,8 @@ Hermes exports and generated Gradle identifiers verify bundling/configuration. T
 
 ## Binary and device acceptance
 
+The manually dispatched `Internal mobile builds` GitHub workflow compiles both roles on standard Linux/macOS runners. It uses no Expo/Apple account or signing secret, keeps build/cache output under the runner's temporary `ElegantRuntime/Sofreh` directory and retains internal build artifacts for one day. The Android artifact uses the generated development signing key for testing; the iOS artifact targets a simulator and cannot be installed on a physical iPhone. A successful workflow is build evidence only. Its default Vercel origin must still pass the hosted-account journey before the resulting apps are useful for acceptance.
+
 Android compilation requires an appropriate Android SDK/JDK toolchain. Keep Gradle caches, Android user state and generated binaries under the same local runtime root. Install both variants on the agreed Galaxy S22 and exercise registration, permission denial/grant, ordering, cook acceptance, completion, reload and reconnect.
 
 iOS compilation requires a supported macOS/Xcode environment. The Windows CLI can export iOS JavaScript but does not generate the iOS native project. An unsigned simulator build can cover navigation and layout without an iPhone. Actual-device cloud testing then requires a compatible device build and an available testing/signing flow; no Apple membership, cloud account, signed IPA or completed device test is implied by these source files.
