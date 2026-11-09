@@ -7,6 +7,7 @@ import {
 import { buildCookDiscoveryGeoJSON } from '../../shared/src/mapConfig.mjs';
 import { normalizeLocale } from '../../shared/src/i18n.mjs';
 import { withImmediateTransaction } from './db.mjs';
+import { enqueueOrderNotification } from './notifications.mjs';
 import {
   SofrehGuardError,
   requireRole,
@@ -146,6 +147,21 @@ export function seedSyntheticStage1Data(db) {
         hasExistingOrders ? 1 : 0
       );
     }
+
+    // Repair synthetic order snapshots when a previous fixture was written with
+    // a broken Persian encoding. New orders already snapshot from dish_slots;
+    // Repair only demonstrably corrupted Persian text; valid snapshots remain
+    // historical even when a fixture's current title changes.
+    db.prepare(`
+      UPDATE order_items
+      SET title_fa_snapshot = (SELECT title_fa FROM dish_slots WHERE dish_slots.id = order_items.dish_id)
+      WHERE (instr(title_fa_snapshot,char(65533)) > 0 OR instr(title_fa_snapshot,'Ø') > 0 OR instr(title_fa_snapshot,'Ù') > 0)
+      AND EXISTS (
+        SELECT 1 FROM orders
+        WHERE orders.id = order_items.order_id
+          AND orders.is_synthetic_test_order = 1
+      )
+    `).run();
 
     return {
       seededUsers: SYNTHETIC_TEST_USERS.length,
@@ -634,6 +650,9 @@ export function upsertCustomerCart(
           409
         );
       }
+      if (!cookRow.is_synthetic_test_fixture && Date.parse(dishRow.service_window_end_iso) <= Date.now()) {
+        throw new SofrehGuardError('DISH_WINDOW_CLOSED', 'The service window has ended.', 409);
+      }
       if (Number(dishRow.remaining_portions) < qty) {
         throw new SofrehGuardError(
           'INSUFFICIENT_PORTIONS',
@@ -747,6 +766,9 @@ export function updateCustomerCartItemQuantity(
     }
 
     if (qty > 0) {
+      if (!cookRow.is_synthetic_test_fixture && Date.parse(dishRow.service_window_end_iso) <= Date.now()) {
+        throw new SofrehGuardError('DISH_WINDOW_CLOSED', 'The service window has ended.', 409);
+      }
       if (dishRow.availability_mode === 'REGULAR_UNAVAILABLE') {
         throw new SofrehGuardError(
           'DISH_UNAVAILABLE_TODAY',
@@ -1027,6 +1049,9 @@ export function createOrderTransactional(db, authUser, orderInput) {
         );
       }
 
+      if (!cookRow.is_synthetic_test_fixture && Date.parse(dishRow.service_window_end_iso) <= Date.now()) {
+        throw new SofrehGuardError('DISH_WINDOW_CLOSED', 'The service window has ended.', 409);
+      }
       const updateResult = decrementDishStmt.run(qty, nowIso, dishRow.id, cookId, qty);
       if (updateResult.changes !== 1) {
         throw new SofrehGuardError(
@@ -1067,7 +1092,7 @@ export function createOrderTransactional(db, authUser, orderInput) {
         delivery_address_private, customer_notes, idempotency_key,
         is_synthetic_test_order, synthetic_badge_label,
         created_at_iso, updated_at_iso
-      ) VALUES (?, ?, ?, 'PENDING', ?, ?, ?, ?, ?, 'SIMULATED_AUTHORIZED', ?, ?, ?, ?, 1, 'TEST ONLY', ?, ?)`
+      ) VALUES (?, ?, ?, 'PENDING', ?, ?, ?, ?, ?, 'SIMULATED_AUTHORIZED', ?, ?, ?, ?, ?, ?, ?, ?)`
     ).run(
       orderId,
       authUser.id,
@@ -1081,6 +1106,8 @@ export function createOrderTransactional(db, authUser, orderInput) {
       fulfillmentType === 'delivery' ? String(deliveryAddress).trim() : null,
       customerNotes ? String(customerNotes).trim() : null,
       idempotencyKey,
+      Number(cookRow.is_synthetic_test_fixture),
+      cookRow.is_synthetic_test_fixture ? 'TEST ONLY' : '',
       nowIso,
       nowIso
     );
@@ -1128,6 +1155,7 @@ export function createOrderTransactional(db, authUser, orderInput) {
       .get(orderId);
     const itemRows = db.prepare(`SELECT * FROM order_items WHERE order_id = ?`).all(orderId);
 
+    enqueueOrderNotification(db,cookRow.user_id,orderId,'PENDING');
     return sanitizeOrderForCustomer(authUser, joinedOrder, itemRows, []);
   });
 }
@@ -1209,6 +1237,7 @@ export function transitionOrderStatusTransactional(db, authUser, { orderId, next
     const itemRows = db.prepare(`SELECT * FROM order_items WHERE order_id = ?`).all(orderId);
     const reviews = listOrderReviewsForOrder(db, orderId);
 
+    enqueueOrderNotification(db,orderRow.customer_user_id,orderId,nextStatus);
     return sanitizeOrderForCook(authUser, cookRow, updatedOrder, itemRows, reviews);
   });
 }

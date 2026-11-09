@@ -24,6 +24,9 @@ import {
 import { SofrehGuardError } from './privacy.mjs';
 import { listSavedAddresses, saveAddress, getSavedAddress, deleteSavedAddress } from './savedAddresses.mjs';
 import { renderShowcase, renderSitemap, renderRobots } from './showcase.mjs';
+import { getOwnKitchen, saveOwnKitchen, saveOwnDish, KITCHEN_AREAS } from './kitchen.mjs';
+import { uploadDishPhoto } from './photos.mjs';
+import { savePushSubscription, removePushSubscription } from './notifications.mjs';
 import {
   SUPPORTED_LOCALES,
   normalizeLocale,
@@ -53,16 +56,21 @@ function assertNoPreciseDeviceLocationInPayload(body) {
   }
 }
 
-function readJsonBody(req) {
+function readJsonBody(req, limit = 1024 * 256) {
   return new Promise((resolve, reject) => {
     let raw = '';
+    let exceeded = false;
     req.on('data', (chunk) => {
+      if(exceeded)return;
       raw += chunk;
-      if (raw.length > 1024 * 256) {
+      if (raw.length > limit) {
+        exceeded = true;
+        raw = '';
         reject(new SofrehGuardError('PAYLOAD_TOO_LARGE', 'Request body too large.', 413));
       }
     });
     req.on('end', () => {
+      if(exceeded)return;
       if (!raw.trim()) {
         resolve({});
         return;
@@ -82,15 +90,15 @@ function readJsonBody(req) {
   });
 }
 
-function sendJson(res, statusCode, payload, locale = 'en-CA') {
+function sendJson(res, statusCode, payload, locale = 'en-CA', contentType = 'application/json; charset=utf-8') {
   const normLocale = normalizeLocale(locale);
   const body = JSON.stringify(payload);
   res.writeHead(statusCode, {
-    'Content-Type': 'application/json; charset=utf-8',
+    'Content-Type': contentType,
+    'Cache-Control': 'no-store',
     'Content-Language': normLocale,
     'X-Sofreh-Direction': getDirection(normLocale),
     'X-Sofreh-Stage': 'Stage-1-Test-Only',
-    'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
     'Access-Control-Allow-Headers':
       'Content-Type, Authorization, X-Sofreh-Token, X-Sofreh-Locale, Idempotency-Key'
@@ -108,13 +116,13 @@ function extractAuthToken(req) {
   return null;
 }
 
-export function createSofrehHttpServer({ dbFilePath } = {}) {
+export function createSofrehHttpServer({ dbFilePath, database, seedFixtures = true, identityProvider = null, pushPublicKey = null } = {}) {
   const resolvedDbPath =
     dbFilePath ||
     path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'data', 'sofreh-stage1.sqlite');
 
-  const db = openSofrehDatabase(resolvedDbPath);
-  seedSyntheticStage1Data(db);
+  const db = database || openSofrehDatabase(resolvedDbPath);
+  if (seedFixtures) seedSyntheticStage1Data(db);
 
   const server = http.createServer(async (req, res) => {
     const reqUrl = new URL(req.url || '/', 'http://127.0.0.1');
@@ -128,10 +136,86 @@ export function createSofrehHttpServer({ dbFilePath } = {}) {
     }
 
     const token = extractAuthToken(req);
-    const authUser = authenticateByToken(db, token);
     const pathname = reqUrl.pathname;
 
     try {
+      if (identityProvider && pathname.startsWith('/api/auth/')) {
+        await identityProvider.handle(req, res);
+        return;
+      }
+      const authUser = identityProvider ? await identityProvider.userFor(req) : authenticateByToken(db, token);
+      if (identityProvider && !['GET','HEAD','OPTIONS'].includes(req.method) && req.headers.origin !== identityProvider.origin) {
+        throw new SofrehGuardError('ORIGIN_FORBIDDEN', 'Request origin is not allowed.', 403);
+      }
+      if (identityProvider && pathname === '/api/account' && req.method === 'GET') {
+        sendJson(res, 200, await identityProvider.profile(req), locale); return;
+      }
+      if (identityProvider && req.method === 'GET' && ['/app/workspace.css','/app/workspace.js'].includes(pathname)) {
+        const css = pathname.endsWith('.css');
+        const assetPath = path.join(path.dirname(fileURLToPath(import.meta.url)), '../../../apps/workspace', css ? 'style.css' : 'app.js');
+        res.writeHead(200, {'Content-Type':css?'text/css; charset=utf-8':'text/javascript; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});
+        res.end(fs.readFileSync(assetPath)); return;
+      }
+      if (identityProvider && pathname === '/api/account/setup' && req.method === 'POST') {
+        sendJson(res, 200, await identityProvider.setup(req, await readJsonBody(req)), locale); return;
+      }
+      if (identityProvider && pathname === '/api/cook/kitchen' && req.method === 'GET') {
+        sendJson(res, 200, { kitchen: getOwnKitchen(db, authUser), areas: KITCHEN_AREAS }, locale); return;
+      }
+      if (identityProvider && pathname === '/api/cook/kitchen' && req.method === 'PUT') {
+        const body = await readJsonBody(req); assertNoPreciseDeviceLocationInPayload(body);
+        sendJson(res, 200, { kitchen: saveOwnKitchen(db, authUser, body) }, locale); return;
+      }
+      const ownDish = pathname.match(/^\/api\/cook\/dishes(?:\/([^/]+))?$/);
+      if(identityProvider && pathname === '/api/notifications/config' && req.method === 'GET') {
+        sendJson(res,200,{publicKey:pushPublicKey,enabled:Boolean(pushPublicKey)},locale);return;
+      }
+      if(identityProvider && pathname === '/api/notifications/subscription' && ['POST','DELETE'].includes(req.method)) {
+        const body=await readJsonBody(req);
+        sendJson(res,200,req.method==='POST'?savePushSubscription(db,authUser,body):removePushSubscription(db,authUser,body.endpoint),locale);return;
+      }
+      if(identityProvider && pathname === '/sw.js' && req.method === 'GET') {
+        res.writeHead(200,{'Content-Type':'text/javascript; charset=utf-8','Cache-Control':'no-cache','Service-Worker-Allowed':'/'});
+        res.end(fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)),'../../../apps/workspace/sw.js')));return;
+      }
+      if (identityProvider && ownDish && req.method === 'PUT') {
+        const body = await readJsonBody(req); assertNoPreciseDeviceLocationInPayload(body);
+        sendJson(res, 200, { dish: saveOwnDish(db, authUser, body, ownDish[1] ? decodeURIComponent(ownDish[1]) : null) }, locale); return;
+      }
+      const photoUpload = pathname.match(/^\/api\/cook\/dishes\/([^/]+)\/photo$/);
+      if (identityProvider && photoUpload && req.method === 'PUT') {
+        sendJson(res,200,await uploadDishPhoto(db,authUser,decodeURIComponent(photoUpload[1]),await readJsonBody(req,2600000)),locale); return;
+      }
+      const publicPhoto = pathname.match(/^\/media\/dishes\/([a-f0-9-]{36})\.jpg$/);
+      if (identityProvider && publicPhoto && req.method === 'GET') {
+        const photo = db.prepare('SELECT jpeg FROM dish_photos WHERE id=?').get(publicPhoto[1]);
+        if(!photo)throw new SofrehGuardError('NOT_FOUND','Photo not found.',404);
+        res.writeHead(200,{'Content-Type':'image/jpeg','Cache-Control':'public,max-age=86400,immutable','X-Content-Type-Options':'nosniff'});
+        res.end(photo.jpeg);return;
+      }
+      if (identityProvider && req.method === 'GET' && ['/account','/app/customer','/app/cook'].includes(pathname)) {
+        if (pathname !== '/account' && !authUser) {
+          const entry = new URLSearchParams({role:pathname.endsWith('cook')?'COOK':'CUSTOMER'});
+          if(reqUrl.searchParams.has('locale'))entry.set('locale',locale);
+          res.writeHead(303,{Location:'/account?'+entry}); res.end(); return;
+        }
+        if (pathname.startsWith('/app/') && authUser.role !== (pathname.endsWith('cook')?'COOK':'CUSTOMER')) {
+          throw new SofrehGuardError('ROLE_FORBIDDEN','This workspace belongs to a different role.',403);
+        }
+        const app = pathname === '/account' ? 'account' : 'workspace';
+        const htmlPath = path.join(path.dirname(fileURLToPath(import.meta.url)), '../../../apps', app, 'index.html');
+        res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','X-Robots-Tag':'noindex, nofollow'});
+        const role = pathname.endsWith('cook') || reqUrl.searchParams.get('role')==='COOK' ? 'cook' : 'customer';
+        const installMetadata = `<link rel="manifest" href="/app/${role}.webmanifest"><link rel="apple-touch-icon" href="/assets/brand/app-icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Sofreh">`;
+        res.end(fs.readFileSync(htmlPath,'utf8').replace('</head>',installMetadata+'</head>')); return;
+      }
+      const manifest = pathname.match(/^\/app\/(customer|cook)\.webmanifest$/);
+      if(identityProvider && manifest && req.method==='GET'){
+        sendJson(res,200,{id:'/app/'+manifest[1],name:manifest[1]==='cook'?'Sofreh Cook':'Sofreh Customer',short_name:'Sofreh',start_url:'/app/'+manifest[1],scope:'/',display:'standalone',background_color:'#fff9ef',theme_color:'#23392f',icons:[{src:'/assets/brand/app-icon-192.png',sizes:'192x192',type:'image/png',purpose:'any maskable'},{src:'/assets/brand/app-icon-512.png',sizes:'512x512',type:'image/png',purpose:'any maskable'}]},locale,'application/manifest+json; charset=utf-8');return;
+      }
+      if(identityProvider && req.method === 'GET' && /^\/preview\/(customer|cook)(\/index.html)?$/.test(pathname)) {
+        res.writeHead(303,{Location:pathname.includes('/cook')?'/app/cook':'/app/customer'});res.end();return;
+      }
       if (req.method === 'GET' && ['/', '/showcase', '/showcase/index.html'].includes(pathname)) {
         res.writeHead(308, { Location: '/en' });
         res.end();
@@ -140,7 +224,7 @@ export function createSofrehHttpServer({ dbFilePath } = {}) {
       if (req.method === 'GET' && ['/en', '/fa', '/en/', '/fa/'].includes(pathname)) {
         const language = pathname.startsWith('/fa') ? 'fa' : 'en';
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Content-Language': language, 'Cache-Control': 'public, max-age=0, s-maxage=300' });
-        res.end(renderShowcase(language));
+        res.end(renderShowcase(language, { accountsEnabled: Boolean(identityProvider) }));
         return;
       }
       if (req.method === 'GET' && ['/robots.txt', '/sitemap.xml'].includes(pathname)) {
@@ -165,6 +249,9 @@ export function createSofrehHttpServer({ dbFilePath } = {}) {
         'fonts/Vazirmatn-OFL.txt': 'text/plain; charset=utf-8',
         'mui-responsive.js': 'text/javascript; charset=utf-8',
         'brand/wordmark-fa.png': 'image/png',
+        'brand/app-icon-192.png': 'image/png',
+        'brand/app-icon-512.png': 'image/png',
+        'brand/app-icon.svg': 'image/svg+xml',
         'brand/wordmark-fa.html': 'text/html; charset=utf-8',
         'kitchens/pari.svg': 'image/svg+xml',
         'kitchens/kambiz.svg': 'image/svg+xml',
@@ -278,11 +365,12 @@ export function createSofrehHttpServer({ dbFilePath } = {}) {
           {
             status: 'ok',
             stage: 'Stage 1',
-            syntheticFixtureMode: 'TEST ONLY',
+            syntheticFixtureMode: seedFixtures ? 'TEST ONLY' : null,
+            accountAuthenticationEnabled: Boolean(identityProvider),
             supportedLocales: SUPPORTED_LOCALES,
             activeLocale: locale,
             direction: getDirection(locale),
-            sqlite: pragmas,
+            sqlite: identityProvider ? {journalMode:pragmas.journalMode,foreignKeys:pragmas.foreignKeys,busyTimeoutMs:pragmas.busyTimeoutMs} : pragmas,
             mapConfig: MAPLIBRE_OPENFREEMAP_CONFIG
           },
           locale
@@ -481,7 +569,7 @@ export function createSofrehHttpServer({ dbFilePath } = {}) {
         {
           error: {
             code: 'INTERNAL_SERVER_ERROR',
-            message: err instanceof Error ? err.message : 'Unexpected server error'
+            message: identityProvider ? 'Unexpected server error' : err instanceof Error ? err.message : 'Unexpected server error'
           }
         },
         locale

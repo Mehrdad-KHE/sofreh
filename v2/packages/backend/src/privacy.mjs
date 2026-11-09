@@ -132,7 +132,8 @@ export function sanitizeCookForPublicDiscovery(
       serviceWindowEndIso: d.service_window_end_iso,
       allergens: JSON.parse(d.allergens_json || '[]'),
       availabilityMode,
-      isAvailableToday: availabilityMode === 'TODAY_AVAILABLE' && remainingPortions > 0,
+      isAvailableToday: availabilityMode === 'TODAY_AVAILABLE' && remainingPortions > 0 &&
+        (Boolean(cookRow.is_synthetic_test_fixture) || Date.parse(d.service_window_end_iso) > Date.now()),
       photoUrl: Object.hasOwn(SAMPLE_FOOD_PHOTOS, d.id) ? SAMPLE_FOOD_PHOTOS[d.id] : d.photo_url || '',
       isSamplePhoto: Object.hasOwn(SAMPLE_FOOD_PHOTOS, d.id),
       scheduleNote: scheduleNoteLocalized[norm],
@@ -195,8 +196,8 @@ export function sanitizeCookForPublicDiscovery(
     pickupAddressVisibility: exposesPublicExactAddress ? 'PUBLIC_EXACT' : 'AREA_ONLY',
     ...(exposesPublicExactAddress ? { pickupAddress: publicPickupAddress } : {}),
     deliveryRadiusKm: Number(cookRow.delivery_radius_km),
-    isSyntheticTestFixture: true,
-    syntheticBadgeLabel: 'TEST ONLY',
+    isSyntheticTestFixture: Boolean(cookRow.is_synthetic_test_fixture),
+    syntheticBadgeLabel: cookRow.is_synthetic_test_fixture ? 'TEST ONLY' : '',
     reviewSummary: {
       reviewCount: honestReviewCount,
       averageRating: honestAvg
@@ -273,8 +274,8 @@ export function sanitizeOrderForCustomer(authUser, orderRow, itemRows, orderRevi
         ? orderRow.delivery_address_private
         : null,
     customerNotes: orderRow.customer_notes ?? null,
-    isSyntheticTestOrder: true,
-    syntheticBadgeLabel: 'TEST ONLY',
+    isSyntheticTestOrder: Boolean(orderRow.is_synthetic_test_order),
+    syntheticBadgeLabel: orderRow.is_synthetic_test_order ? 'TEST ONLY' : '',
     createdAtIso: orderRow.created_at_iso,
     updatedAtIso: orderRow.updated_at_iso,
     items: itemRows.map((item) => ({
@@ -339,8 +340,8 @@ export function sanitizeOrderForCook(authUser, cookRow, orderRow, itemRows, orde
       ? (orderRow.delivery_address_private ?? null)
       : null,
     customerNotes: orderRow.customer_notes ?? null,
-    isSyntheticTestOrder: true,
-    syntheticBadgeLabel: 'TEST ONLY',
+    isSyntheticTestOrder: Boolean(orderRow.is_synthetic_test_order),
+    syntheticBadgeLabel: orderRow.is_synthetic_test_order ? 'TEST ONLY' : '',
     createdAtIso: orderRow.created_at_iso,
     updatedAtIso: orderRow.updated_at_iso,
     items: itemRows.map((item) => ({

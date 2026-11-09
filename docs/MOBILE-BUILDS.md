@@ -1,0 +1,44 @@
+# Customer and cook mobile builds
+
+## Implementation
+
+`v2/apps/native` is an Expo 58.0.23 / React Native 0.88.1 application with two role configurations. Both use React Native WebView 14.0.1 for the shared account workspace; this is a hybrid application, not a second independent implementation of order business logic.
+
+| Variant | Android application ID | iOS bundle ID |
+| --- | --- | --- |
+| CUSTOMER | ca.sofreh.customer | ca.sofreh.customer |
+| COOK | ca.sofreh.cook | ca.sofreh.cook |
+
+The web workspace uses the same database, cart, order identifiers and status rules as the native shell. A user-initiated message bridge requests foreground device location and returns coordinates only to the loaded Sofreh page. It does not grant background location or send device coordinates to the order API. Navigation is restricted to the configured application origin.
+
+## Local preparation
+
+Use Node 24 and an HTTPS account-server origin. From `v2`:
+
+```powershell
+$env:SOFREH_APP_ORIGIN='https://sofreh-v2.vercel.app'
+node scripts/prepare-native.mjs CUSTOMER
+node scripts/prepare-native.mjs COOK
+```
+
+The existing Vercel origin above is the known catalogue/review host. Its adapter does not activate real accounts; change this build input to the approved account-server origin before a functional native release. Merely compiling against that URL does not make it suitable for the shared-account acceptance journey.
+
+Preparation writes only to `%LOCALAPPDATA%\ElegantRuntime\Sofreh\native\shared`. Role variants are prepared sequentially in that one directory to avoid duplicating the dependency tree. The helper sets the process-level Expo home override supported by the pinned CLI, disables telemetry, isolates temporary/cache output and generates Android source without accepting SDK licenses or creating cloud accounts. Its final console path identifies the internal project; it is not an APK/IPA download.
+
+To export JavaScript from that runtime directory, retain the selected `SOFREH_APP_ROLE`, `SOFREH_APP_ORIGIN`, local Expo home and temporary-directory settings, then invoke the installed Expo CLI with Node 24:
+
+```text
+node node_modules/expo/bin/cli export --platform all --output-dir dist --max-workers 2
+```
+
+Hermes exports and generated Gradle identifiers verify bundling/configuration. They do not compile, sign, install or visually test an application. The source provides one project lockfile for reproducible dependency selection.
+
+## Binary and device acceptance
+
+Android compilation requires an appropriate Android SDK/JDK toolchain. Keep Gradle caches, Android user state and generated binaries under the same local runtime root. Install both variants on the agreed Galaxy S22 and exercise registration, permission denial/grant, ordering, cook acceptance, completion, reload and reconnect.
+
+iOS compilation requires a supported macOS/Xcode environment. The Windows CLI can export iOS JavaScript but does not generate the iOS native project. An unsigned simulator build can cover navigation and layout without an iPhone. Actual-device cloud testing then requires a compatible device build and an available testing/signing flow; no Apple membership, cloud account, signed IPA or completed device test is implied by these source files.
+
+Browser Web Push and native remote push are distinct. The backend/service worker implements browser subscriptions; the native shell does not yet implement APNs/FCM registration and delivery. Native push credentials and foreground/background/locked-device coverage remain release requirements. Store links must be added only after actual distribution exists.
+
+References: [Expo WebView](https://docs.expo.dev/versions/latest/sdk/webview/), [Expo location](https://docs.expo.dev/versions/latest/sdk/location/), [continuous native generation](https://docs.expo.dev/workflow/continuous-native-generation/), [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/).

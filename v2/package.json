@@ -15,11 +15,16 @@
     "apps/cook-mobile"
   ],
   "scripts": {
+    "prepare:identity": "node scripts/prepare-identity.mjs",
+    "start:accounts": "node --experimental-sqlite scripts/start-accounts.mjs",
     "start:backend": "node --experimental-sqlite packages/backend/src/server.mjs",
     "test": "node scripts/test-local.mjs",
     "verify:typecheck": "node scripts/verify-stage1.mjs"
   },
   "dependencies": {
+    "better-auth": "1.7.18",
+    "sharp": "0.35.5",
+    "web-push": "4.0.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.3.11",

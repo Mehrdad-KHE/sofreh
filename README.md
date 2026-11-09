@@ -2,7 +2,7 @@
 
 Sofreh connects people in Toronto and the surrounding area with local cooks and prepared meals. The product includes a bilingual discovery and ordering experience, cook order management, and a public product website.
 
-This repository contains the current synthetic-data web implementation and separate customer/cook mobile source scaffolds. Payments are simulated. The mobile manifests describe application identities; they are not downloadable app releases.
+This repository contains a bilingual product catalogue, a cookie-authenticated customer/cook web workspace, a separate synthetic review runtime, and mobile source. Payments are simulated. A JavaScript bundle, manifest or generated native project is not a downloadable, device-accepted application release.
 
 ## Documentation
 
@@ -13,8 +13,22 @@ This repository contains the current synthetic-data web implementation and separ
 - [Design, accessibility, SEO and GEO](docs/DESIGN-AND-DISCOVERY.md)
 - [Privacy, security and asset rights](docs/PRIVACY-AND-ASSETS.md)
 - [Acceptance criteria](docs/ACCEPTANCE.md)
+- [Mobile build and device acceptance](docs/MOBILE-BUILDS.md)
 
-## Run the local web implementation
+## Run the account-based web implementation
+
+Use Node 24. From `v2`:
+
+```powershell
+npm run prepare:identity
+npm run start:accounts
+```
+
+Open `http://127.0.0.1:4121/account` and create a customer or cook account. A cook creates a kitchen and menu; a separately signed-in customer can then order from it. Account setup chooses one role. Passwords use Better Auth; fixture tokens are ignored in this runtime. Email verification and forgotten-password delivery are not configured.
+
+Account data, secrets, photos, notification subscriptions and temporary runtime copies stay under `%LOCALAPPDATA%\ElegantRuntime\Sofreh`, outside the source tree. This launcher binds only to loopback; it does not make the account workspace publicly available.
+
+## Run the synthetic review implementation
 
 From `v2`, run:
 
@@ -28,7 +42,7 @@ The launcher writes synthetic SQLite data under `%LOCALAPPDATA%\ElegantRuntime\S
 - Cook: `http://127.0.0.1:4120/preview/cook`
 - Health: `http://127.0.0.1:4120/api/health`
 
-The product website is an additional delivery surface described in the project passport. Its `/showcase` route is being developed separately from the committed customer/cook baseline.
+The product website is at `/en` and `/fa`. `/` and the historical `/showcase` entry redirect to `/en`. In account mode its buttons open the account workspaces; in synthetic review mode they open the review interfaces.
 
 The local launcher binds only to loopback. Use synthetic accounts, addresses and orders. The map fetches external MapLibre/OpenFreeMap resources and therefore needs internet access. See [operations](docs/OPERATIONS.md) for runtime versions and test isolation.
 
@@ -36,7 +50,7 @@ The local launcher binds only to loopback. Use synthetic accounts, addresses and
 
 Source repository: [Mehrdad-KHE/sofreh](https://github.com/Mehrdad-KHE/sofreh), default branch `main`.
 
-The existing web hosting address is [sofreh-v2.vercel.app](https://sofreh-v2.vercel.app). Access protection and the deployed revision are deployment properties, not guarantees provided by this source tree. The current Vercel adapter uses ephemeral SQLite and is for synthetic review data. Shared durable hosting requires a separate persistent storage design.
+The existing web hosting address is [sofreh-v2.vercel.app](https://sofreh-v2.vercel.app). Access protection and the deployed revision are deployment properties, not guarantees provided by this source tree. The current Vercel adapter uses ephemeral SQLite and continues to run synthetic review data, even when account-runtime source is present in the repository. Hosted accounts require an approved durable storage deployment. Native installation, signing, push delivery and actual-phone acceptance are separate release gates.
 
 ## Rights and attribution
 

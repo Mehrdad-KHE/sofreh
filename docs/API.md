@@ -6,10 +6,36 @@ This reference describes the routes in `v2/packages/backend/src/server.mjs`. It 
 
 - JSON responses use `Content-Type: application/json; charset=utf-8`.
 - Locale is selected by `?locale=` or `X-Sofreh-Locale`, with `en-CA` as fallback. Supported locales are `en-CA` and `fa-IR`.
-- Role-protected requests accept a fixture token through `X-Sofreh-Token` or `Authorization: Bearer …`. This mechanism is synthetic identity, not production authentication.
+- The synthetic runtime accepts fixture tokens through `X-Sofreh-Token` or `Authorization: Bearer …`. Account mode uses Better Auth session cookies and ignores fixture tokens. State-changing domain requests in account mode require the configured same Origin.
 - Guard errors use `{ "error": { "code": "…", "message": "…" } }`; HTTP status is selected by the guard. Unknown routes return 404. Unexpected errors return 500.
-- JSON request bodies must be objects. The parser limits input to approximately 256 KiB of accumulated text.
-- `OPTIONS` returns 204; the current CORS response allows `*`. A deployed authentication design must review CORS and credential handling.
+- JSON request bodies must be objects. Ordinary input is limited to approximately 256 KiB of text; photo uploads have a separate bounded limit. Responses are not cached.
+- `OPTIONS` returns 204. The API does not advertise a wildcard CORS origin; the account web workspace is served from the same origin.
+
+## Account-runtime routes
+
+These routes require account mode. The existing Vercel fixture adapter does not activate them.
+
+| Method and path | Purpose |
+| --- | --- |
+| POST /api/auth/sign-up/email | Better Auth name/email/password signup; password length 12–128 |
+| POST /api/auth/sign-in/email | Better Auth session sign-in |
+| POST /api/auth/sign-out | Revoke the current session |
+| GET /api/auth/get-session | Better Auth session state |
+| POST /api/auth/change-password | Current/new password and optional revokeOtherSessions |
+| GET /api/account | Current identity, domain account and own kitchen identifier |
+| POST /api/account/setup | One-time CUSTOMER/COOK role and locale; conflicting reassignment returns 409 |
+| GET /api/cook/kitchen | Own kitchen or null, and supported public area centers |
+| PUT /api/cook/kitchen | Own kitchen information and fulfillment settings |
+| PUT /api/cook/dishes[/:dishId] | Create/edit own dish, service window, price, stock and allergens |
+| PUT /api/cook/dishes/:dishId/photo | imageBase64; bounded JPEG/PNG/WebP input re-encoded as metadata-free JPEG |
+| GET /media/dishes/:photoId.jpg | Intentionally public uploaded food image |
+| GET /api/notifications/config | Browser Web Push enabled/public key, without the private key |
+| POST /api/notifications/subscription | Owned browser subscription; supported push-service endpoints only |
+| DELETE /api/notifications/subscription | Remove this account's matching endpoint |
+
+Kitchen fields: `nameEn`, `nameFa`, `bioEn`, `bioFa`, `area`, `pickupAddress`, `pickupWindowEn`, `pickupWindowFa`, `fulfillmentMode`, `deliveryFeeCents`, `deliveryRadiusKm`. Dish fields: `titleEn`, `titleFa`, `descriptionEn`, `descriptionFa`, `priceCents`, `remainingPortions`, `serviceWindowStartIso`, `serviceWindowEndIso`, `allergens`, `availabilityMode`.
+
+Existing domain routes below retain the same ownership, cart, inventory and order logic in both runtimes. Email verification and forgotten-password delivery are not configured. Authentication errors follow Better Auth conventions, which can include a top-level `code`/`message`; domain errors retain the nested `error` object.
 
 ## Read routes
 
@@ -49,4 +75,6 @@ The current location guard rejects the defined precise-device-location fields on
 
 ## Web and asset routes
 
-`GET /preview/customer`, `/preview/cook`, and `/preview/classroom` serve HTML. `/assets/…` is served from an explicit allowlist. The `/showcase` and favicon response additions are separate development changes; the original committed baseline does not define those handlers. The backend does not define the site root `/` as a product website alias.
+`GET /en` and `/fa` serve the bilingual catalogue. `/` and `/showcase` redirect to `/en`; `/robots.txt` and `/sitemap.xml` describe catalogue discovery. `/assets/…` is served from an explicit allowlist.
+
+Synthetic mode serves `/preview/customer`, `/preview/cook` and `/preview/classroom`. Account mode serves `/account`, `/app/customer`, `/app/cook`, workspace JS/CSS, role-specific web manifests and `/sw.js`. Signed-out protected entry redirects to account entry with role/locale context. Private workspaces are noindex and omitted from the sitemap. The favicon endpoint returns 204.

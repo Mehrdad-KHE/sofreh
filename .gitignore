@@ -1,5 +1,6 @@
 # Private project coordination and runtime data
 /control/
+/DOT_SUPPLEMENTARY_HANDOFF_*.txt
 **/node_modules/
 **/.vercel/
 **/.openai/

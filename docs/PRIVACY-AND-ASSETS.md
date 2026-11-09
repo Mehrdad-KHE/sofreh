@@ -4,6 +4,8 @@
 
 The reference implementation seeds synthetic customers, cooks and orders. Fixture tokens are public test identities. Do not use real credentials, payment-card information or actual customer addresses in this mode.
 
+The separate account runtime does not seed those identities and ignores their tokens. It uses Better Auth cookie sessions, server-owned domain roles, same-origin writes and database rate limiting. Email verification and forgotten-password delivery are not configured. This local implementation is not a certification of hosted production security or retention.
+
 The backend enforces roles and ownership and serializes views for each recipient. Public discovery exposes a kitchen's public area. Pickup address disclosure depends on the implemented visibility/consent rules and order context. Delivery orders must not expose the cook's private home address to the customer.
 
 Precise device geolocation is intended to stay in browser memory under the current contract. Declining location must remain a usable path. Logs, screenshots, analytics and search markup must follow the same address boundaries as visible interfaces.
@@ -13,6 +15,10 @@ Precise device geolocation is intended to stay in browser memory under the curre
 An actual account implementation needs server-verified identity, session lifecycle, recovery, ownership checks, secret handling and review of CORS, rate limits and error disclosure. Durable storage needs access control, migration, backup/restore and retention policies. This document records requirements; it is not a security certification or a published legal privacy policy.
 
 Do not place secrets, signing keys, database files, account exports, browser profiles or private operational notes in GitHub. Store access and build secrets in the relevant approved account infrastructure.
+
+Uploaded dish photos are intentionally public. Server-side decoding/re-encoding strips embedded metadata, including EXIF/GPS; SVG and unsupported inputs are rejected. The browser may resize a selected image before upload, but server validation does not trust the browser step.
+
+Browser push subscriptions are owned by accounts. Outgoing push uses approved browser-service domains and generic order-update text; it does not place pickup/delivery addresses in notification payloads. Queued jobs share the order transaction and use leases/retries. User permission, device policy and provider behavior still affect actual delivery. Signing keys remain private runtime files.
 
 ## Asset inventory
 

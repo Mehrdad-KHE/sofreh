@@ -53,8 +53,8 @@ export function buildCookDiscoveryGeoJSON(cooks, locale = 'en-CA') {
         deliveryFeeCents: cook.deliveryFeeCents,
         supportsPickup: Boolean(cook.supportsPickup),
         supportsDelivery: Boolean(cook.supportsDelivery),
-        isSyntheticTestFixture: true,
-        syntheticBadgeLabel: 'TEST ONLY',
+        isSyntheticTestFixture: Boolean(cook.isSyntheticTestFixture),
+        syntheticBadgeLabel: cook.isSyntheticTestFixture ? 'TEST ONLY' : '',
         activeDishCount: Array.isArray(cook.dishes) ? cook.dishes.length : 0,
         todayAvailableDishCount: Array.isArray(cook.todayAvailableDishes)
           ? cook.todayAvailableDishes.length

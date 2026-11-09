@@ -5,6 +5,9 @@
 ```text
 v2/
   api/index.mjs                    Vercel request adapter
+  apps/account/                   Sign-up, sign-in and one-time role selection
+  apps/workspace/                 Authenticated customer/cook web interface
+  apps/native/                    Expo role variants sharing the web workspace
   apps/customer-mobile/preview/    Customer web interface
   apps/cook-mobile/preview/        Cook web interface
   apps/classroom-preview/          Classroom page
@@ -18,9 +21,17 @@ v2/
 
 The web interfaces call the same HTTP backend. `server.mjs` handles routes, `service.mjs` performs business operations, `db.mjs` owns schema initialization and transactions, `privacy.mjs` serializes recipient-specific views, and `savedAddresses.mjs` enforces customer ownership of addresses.
 
-The product website at `apps/showcase/preview/` is an additional development surface; it is not part of the original committed customer/cook baseline.
+The bilingual product website is server-rendered by `packages/backend/src/showcase.mjs`; `/en` and `/fa` are independently crawlable when hosting protection permits access.
 
-The native folders also contain TSX components, controllers and Expo manifests. Their current package entrypoints are controller modules. Native build wiring and signing are separate from serving the web previews.
+`apps/native` is an Expo 58 / React Native 0.88 hybrid application configured separately for customer and cook. React Native WebView renders the shared authenticated workspace, and an explicit message bridge handles user-requested foreground location without sending coordinates to the API. The older customer/cook TSX/controllers remain review scaffolds. Generated Android source and Hermes exports do not establish installed-app or iPhone acceptance. Native remote push still needs platform credentials and implementation/testing separate from browser Web Push.
+
+## Account runtime
+
+`identity.mjs` uses Better Auth 1.7.18 with database-backed sessions and rate limiting. Passwords are hashed by that library. One-time application role selection creates a domain user; client-supplied auth profile roles cannot grant domain permissions. Account mode rejects fixture-token authentication and requires the configured Origin for state-changing domain requests. Email verification and forgotten-password email delivery are not configured.
+
+`kitchen.mjs` owns cook onboarding and dish creation/editing. Public positions are selected area centers; private pickup text follows the existing disclosure rules. Real kitchen dishes cannot be ordered after their service window ends. `photos.mjs` enforces cook ownership and uses Sharp to decode/re-encode bounded JPEG/PNG/WebP uploads, stripping EXIF/GPS. Only generated JPEG data is served publicly.
+
+`notifications.mjs` writes one job per subscribed device in the order transaction. The worker claims jobs with a lease, retries failures and removes expired subscriptions. Its delivery tests use an injected sender; they are not evidence of actual locked-device delivery. The service worker displays generic messages and opens the authenticated order workspace. It does not cache account responses or addresses.
 
 ## Existing persistence
 
@@ -29,6 +40,7 @@ SQLite uses WAL, foreign keys, a 5000ms busy timeout and explicit `BEGIN IMMEDIA
 | Table | Purpose |
 | --- | --- |
 | users | Role, identity, locale and synthetic token |
+| user / session / account / verification / rateLimit | Better Auth-managed identity, credentials, sessions and throttling |
 | customer_saved_addresses | Customer-owned saved delivery addresses |
 | cook_profiles | Kitchen identity, public area, private pickup address and fulfillment settings |
 | dish_slots | Menu, price, capacity, availability, time window and allergens |
@@ -36,6 +48,8 @@ SQLite uses WAL, foreign keys, a 5000ms busy timeout and explicit `BEGIN IMMEDIA
 | orders / order_items | Order state, totals and title/price snapshots |
 | order_idempotency_keys | Customer/key/payload mapping to one order |
 | order_reviews | Participant reviews for completed orders |
+| dish_photos | Cook-owned, re-encoded public food photos |
+| push_subscriptions / notification_jobs | Owned browser subscriptions and transactional delivery work |
 
 Money is represented in integer cents. Order items retain snapshots rather than relying only on the current menu. The customer cart is associated with one cook. Precise device coordinates are not accepted by the current backend payload guard.
 

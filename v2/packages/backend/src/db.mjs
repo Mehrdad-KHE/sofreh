@@ -125,8 +125,8 @@ export function initializeSchema(db) {
       supports_pickup INTEGER NOT NULL DEFAULT 1 CHECK (supports_pickup IN (0, 1)),
       supports_delivery INTEGER NOT NULL DEFAULT 1 CHECK (supports_delivery IN (0, 1)),
       delivery_radius_km REAL NOT NULL DEFAULT 5.0 CHECK (delivery_radius_km >= 0),
-      is_synthetic_test_fixture INTEGER NOT NULL DEFAULT 1 CHECK (is_synthetic_test_fixture = 1),
-      synthetic_badge_label TEXT NOT NULL DEFAULT 'TEST ONLY' CHECK (synthetic_badge_label = 'TEST ONLY'),
+      is_synthetic_test_fixture INTEGER NOT NULL DEFAULT 1 CHECK (is_synthetic_test_fixture IN (0, 1)),
+      synthetic_badge_label TEXT NOT NULL DEFAULT 'TEST ONLY',
       updated_at_iso TEXT NOT NULL
     );
 
@@ -166,7 +166,7 @@ export function initializeSchema(db) {
       delivery_address_private TEXT,
       customer_notes TEXT,
       idempotency_key TEXT,
-      is_synthetic_test_order INTEGER NOT NULL DEFAULT 1 CHECK (is_synthetic_test_order = 1),
+      is_synthetic_test_order INTEGER NOT NULL DEFAULT 1 CHECK (is_synthetic_test_order IN (0, 1)),
       synthetic_badge_label TEXT NOT NULL DEFAULT 'TEST ONLY',
       created_at_iso TEXT NOT NULL,
       updated_at_iso TEXT NOT NULL
@@ -275,4 +275,48 @@ export function initializeSchema(db) {
   );
 
   ensureColumnExists(db, 'orders', 'idempotency_key', 'TEXT');
+  migrateFixtureConstraints(db);
+  db.exec(`CREATE TABLE IF NOT EXISTS dish_photos (
+    dish_id TEXT PRIMARY KEY REFERENCES dish_slots(id) ON DELETE CASCADE,
+    id TEXT NOT NULL UNIQUE,
+    jpeg BLOB NOT NULL,
+    updated_at_iso TEXT NOT NULL
+  );`);
+  db.exec(`CREATE TABLE IF NOT EXISTS push_subscriptions (
+    endpoint TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    subscription_json TEXT NOT NULL,updated_at_iso TEXT NOT NULL
+  );
+  CREATE TABLE IF NOT EXISTS notification_jobs (
+    id TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    endpoint TEXT NOT NULL REFERENCES push_subscriptions(endpoint) ON DELETE CASCADE,
+    payload_json TEXT NOT NULL,attempts INTEGER NOT NULL DEFAULT 0,next_attempt_ms INTEGER NOT NULL,
+    done INTEGER NOT NULL DEFAULT 0 CHECK(done IN (0,1)),lease_until_ms INTEGER NOT NULL DEFAULT 0
+  );`);
+  ensureColumnExists(db,'notification_jobs','lease_until_ms','INTEGER NOT NULL DEFAULT 0');
+}
+
+// SQLite cannot alter a CHECK constraint in place. Rebuild only tables with
+// the original fixture-only constraint, preserving all rows and indexes.
+function migrateFixtureConstraints(db) {
+  const changes = ['cook_profiles', 'orders'].map(name => {
+    const sql = db.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name=?").get(name)?.sql;
+    const changed = sql.replace(/CHECK \(is_synthetic_test_(fixture|order) = 1\)/g, 'CHECK (is_synthetic_test_$1 IN (0, 1))')
+      .replace(/ CHECK \(synthetic_badge_label = 'TEST ONLY'\)/g, '');
+    return { name, sql: changed, needed: changed !== sql };
+  }).filter(change => change.needed);
+  if (!changes.length) return;
+  db.exec('PRAGMA foreign_keys = OFF');
+  try {
+    withImmediateTransaction(db, () => {
+      for (const { name, sql } of changes) {
+        const indexes = db.prepare("SELECT sql FROM sqlite_master WHERE type='index' AND tbl_name=? AND sql IS NOT NULL").all(name);
+        db.exec(sql.replace(new RegExp(`CREATE TABLE ["\\x60]?${name}["\\x60]?`, 'i'), `CREATE TABLE ${name}_upgrade`));
+        db.exec(`INSERT INTO ${name}_upgrade SELECT * FROM ${name}; DROP TABLE ${name}; ALTER TABLE ${name}_upgrade RENAME TO ${name};`);
+        for (const index of indexes) db.exec(index.sql);
+      }
+      if (db.prepare('PRAGMA foreign_key_check').all().length) throw new Error('Fixture migration failed its foreign-key check.');
+    });
+  } finally {
+    db.exec('PRAGMA foreign_keys = ON');
+  }
 }
