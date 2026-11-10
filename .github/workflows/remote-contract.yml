@@ -10,8 +10,6 @@ jobs:
   transport:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
-    env:
-      LOCALAPPDATA: ${{ runner.temp }}
     steps:
       - uses: actions/checkout@v7.0.1
         with:
@@ -21,6 +19,10 @@ jobs:
           node-version: 24.22.2
           package-manager-cache: false
       - name: Prepare isolated dependencies
+        env:
+          LOCALAPPDATA: ${{ runner.temp }}
         run: node v2/scripts/prepare-identity.mjs
       - name: Verify independent clients and stock transactions
+        env:
+          LOCALAPPDATA: ${{ runner.temp }}
         run: node v2/scripts/test-remote-ci.mjs
