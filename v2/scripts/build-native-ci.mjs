@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 
 // Use only an ephemeral, standard GitHub-hosted runner. Never build in the
 // checkout, a synced workspace or the owner's system SDK/cache directories.
@@ -49,7 +50,22 @@ if(platform==='android'){
   if(!gradleText.includes(rootPlugin))throw new Error('Unrecognized generated Gradle template.');
   fs.writeFileSync(rootGradle,gradleText.replace(rootPlugin,`ext { ndkVersion = '${match[1]}' }\n${rootPlugin}`));
   console.log(`Using provisioned NDK ${match[1]}.`);
-  fs.writeFileSync(path.join(project,'android/local.properties'),`sdk.dir=${sdk}\n`);
+  // AGP expects CMake 3.22.1. Fetch the vendor's exact binary and verify its
+  // published checksum instead of accepting SDK-manager licenses implicitly.
+  const tooling=path.join(root,'tooling');fs.mkdirSync(tooling,{recursive:true});
+  const archive='cmake-3.22.1-linux-x86_64.tar.gz';
+  const release='https://github.com/Kitware/CMake/releases/download/v3.22.1/';
+  const checksums=await fetch(release+'cmake-3.22.1-SHA-256.txt');
+  if(!checksums.ok)throw new Error('CMake checksums unavailable.');
+  const expected=(await checksums.text()).split('\n').find(line=>line.trim().endsWith(archive))?.split(/\s+/)[0];
+  if(!/^[a-f0-9]{64}$/.test(expected||''))throw new Error('Missing vendor CMake checksum.');
+  const response=await fetch(release+archive);if(!response.ok)throw new Error('CMake download failed.');
+  const bytes=Buffer.from(await response.arrayBuffer());
+  if(createHash('sha256').update(bytes).digest('hex')!==expected)throw new Error('CMake checksum mismatch.');
+  fs.writeFileSync(path.join(tooling,archive),bytes);run('tar',['-xzf',path.join(tooling,archive),'-C',tooling]);
+  const cmake=path.join(tooling,'cmake-3.22.1-linux-x86_64');
+  run(path.join(cmake,'bin/cmake'),['--version']);
+  fs.writeFileSync(path.join(project,'android/local.properties'),`sdk.dir=${sdk}\ncmake.dir=${cmake}\n`);
   run('bash',['./gradlew','app:assembleRelease','--no-daemon','--max-workers=2',
     '-PreactNativeArchitectures=arm64-v8a',
     '-Pandroid.builder.sdkDownload=false'],path.join(project,'android'));
