@@ -14,8 +14,8 @@ export async function checkWorkspace({root,output,devices,device,id,role,env}){
   const clean=text=>String(text||'').replaceAll(password,'[masked]').replaceAll(email,'[masked]');
   const driverEnv={...env,IDB_COMPANION_TMPDIR:root,IDB_COMPANION:socket,SOFREH_IDB_STATE:path.join(root,'idb-state'),
     PIP_CACHE_DIR:path.join(root,'pip'),PYTHONPYCACHEPREFIX:path.join(root,'pycache'),PYTHONUSERBASE:path.join(root,'python-user')};
-  function run(command,args){const result=spawnSync(command,args,{cwd:root,env:driverEnv,encoding:'utf8',timeout:180000,maxBuffer:8*1024*1024});
-    if(result.error)throw new Error(clean(result.error.message));if(result.status!==0){console.error(clean(result.stderr));throw new Error(`${path.basename(command)} exited ${result.status}`);}return result.stdout.trim();}
+  function run(command,args,{quiet=false}={}){const result=spawnSync(command,args,{cwd:root,env:driverEnv,encoding:'utf8',timeout:180000,maxBuffer:8*1024*1024});
+    if(result.error)throw new Error(clean(result.error.message));if(result.status!==0){if(!quiet)console.error(clean(result.stderr));throw new Error(`${path.basename(command)} exited ${result.status}: ${clean(result.stderr).slice(-1500)}`);}return result.stdout.trim();}
   function download(name,expected,target){
     console.log('Downloading pinned official tool: '+name);
     run('curl',['--fail','--location','--silent','--show-error','--retry','2','--retry-all-errors','--connect-timeout','10','--max-time','45',
@@ -41,17 +41,22 @@ export async function checkWorkspace({root,output,devices,device,id,role,env}){
     {cwd:root,env:driverEnv,stdio:['ignore',log,log],windowsHide:true});
   let spawnError;companion.on('error',error=>{spawnError=error;});
   const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
-  const ui=(...args)=>run(python,[wrapper,'ui',...args]);
+  const ui=(...args)=>run(python,[wrapper,'ui',...args],{quiet:true});
   const sim=(...args)=>run('xcrun',['simctl','--set',devices,...args]);
   let lastTree;
-  function tree(){lastTree=JSON.parse(ui('describe-all'));return lastTree;}
+  async function tree(){
+    let failure;
+    for(let attempt=0;attempt<4;attempt++){
+      try{lastTree=JSON.parse(ui('describe-all'));return lastTree;}catch(error){failure=error;await sleep(1000);}
+    }throw failure;
+  }
   function nodes(value){if(!value||typeof value!=='object')return [];return [value,...Object.values(value).flatMap(nodes)];}
   function matches(value,label){return nodes(value).filter(node=>[node.AXLabel,node.label,node.text].includes(label)&&node.frame);}
   const bounds=value=>nodes(value).filter(node=>node.frame?.width>100&&node.frame?.height>100).map(node=>node.frame).sort((a,b)=>b.width*b.height-a.width*a.height)[0];
-  async function visible(label){for(let attempt=0;attempt<30;attempt++){const value=tree();if(matches(value,label).length)return value;await sleep(500);}throw new Error('Missing native UI label: '+label);}
+  async function visible(label){let failure;const deadline=Date.now()+90000;while(Date.now()<deadline){try{const value=await tree();if(matches(value,label).length)return value;}catch(error){failure=error;}await sleep(1000);}throw new Error('Missing native UI label: '+label+(failure?' ('+failure.message+')':''));}
   async function tap(label){
     for(let attempt=0;attempt<6;attempt++){
-      const value=tree(),screen=bounds(value),candidates=matches(value,label);
+      const value=await tree(),screen=bounds(value),candidates=matches(value,label);
       const node=candidates.find(node=>node.frame.y>=0&&node.frame.y+node.frame.height/2<screen.height);
       if(node){const frame=node.frame;ui('tap',String(Math.round(frame.x+frame.width/2)),String(Math.round(frame.y+frame.height/2)));return;}
       if(!screen)throw new Error('Native UI has no screen bounds.');
@@ -59,19 +64,21 @@ export async function checkWorkspace({root,output,devices,device,id,role,env}){
       ui('swipe',String(Math.round(screen.width/2)),String(Math.round(screen.height*(up ? .35 : .8))),String(Math.round(screen.width/2)),String(Math.round(screen.height*(up ? .8 : .35))),'--duration','0.3');
     }throw new Error('Cannot reach native UI label: '+label);
   }
-  async function dismissKeyboard(){const value=tree();if(matches(value,'Done').length)await tap('Done');else ui('key','41');}
+  async function dismissKeyboard(){const value=await tree();if(matches(value,'Done').length)await tap('Done');else ui('key','41');}
   const shot=name=>sim('io',device,'screenshot',path.join(output,role.toLowerCase()+'-'+name+'.png'));
   try{
     for(let attempt=0;attempt<60&&!fs.existsSync(socket);attempt++){if(spawnError||companion.exitCode!==null)throw new Error('idb companion failed to start.');await sleep(500);}
     if(!fs.existsSync(socket))throw new Error('No isolated idb socket.');
     console.log('Isolated iOS accessibility companion is ready.');
+    sim('launch','--terminate-running-process',device,id);
+    await visible('Welcome back');
     const origin='https://sofreh-v2.vercel.app';
     const signup=await fetch(origin+'/api/auth/sign-up/email',{method:'POST',headers:{'Content-Type':'application/json',Origin:origin},body:JSON.stringify({name:'iOS workspace check',email,password})});
     if(!signup.ok)throw new Error(`Synthetic account creation failed (${signup.status}).`);
     const cookie=signup.headers.getSetCookie().map(value=>value.split(';')[0]).join('; ');
     const setup=await fetch(origin+'/api/account/setup',{method:'POST',headers:{'Content-Type':'application/json',Origin:origin,Cookie:cookie},body:JSON.stringify({role,locale:'en-CA'})});
     if(!setup.ok)throw new Error(`Synthetic role setup failed (${setup.status}).`);
-    await visible('Welcome back');await tap('Email');ui('text',email);await dismissKeyboard();
+    await tap('Email');ui('text',email);await dismissKeyboard();
     await tap('Password');ui('text',password);await dismissKeyboard();await tap('Sign in');
     await visible(role==='COOK'?'Time to put your food on the table.':'What are you craving?');shot('workspace-en');
     await tap('Orders');await visible('Your orders');
