@@ -50,7 +50,7 @@ The local launcher binds only to loopback. Use synthetic accounts, addresses and
 
 Source repository: [Mehrdad-KHE/sofreh](https://github.com/Mehrdad-KHE/sofreh), default branch `main`.
 
-The web hosting address is [sofreh-v2.vercel.app](https://sofreh-v2.vercel.app). The adapter supports an explicit persistent account mode; an unconfigured deployment defaults to isolated fixture data. On 2026-11-09, the existing project's production environment was connected to an approved Turso Starter database. Authenticated health, a shared stored order and offline backup/account recovery were checked. Deployment protection remains in place, so this does not assert public class access. Native installation, distribution signing, device push receipt and actual-phone acceptance remain separate release gates.
+The public web hosting address is [sofreh-v2.vercel.app](https://sofreh-v2.vercel.app). The adapter supports an explicit persistent account mode; an unconfigured deployment defaults to isolated fixture data. On 2026-11-09, production was connected to an approved free Turso Starter database. Shared cloud orders, inventory concurrency and offline backup/account recovery were checked. With explicit owner approval, the main alias is public while previews retain Vercel login. Anonymous health and both catalogue languages, authenticated customer order history and unauthenticated rejection of private orders were verified. Native installation, distribution signing, device push receipt and actual-phone acceptance remain separate release gates.
 
 ## Rights and attribution
 

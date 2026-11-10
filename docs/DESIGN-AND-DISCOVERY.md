@@ -34,6 +34,8 @@ Performance targets are LCP at or below 2.5 seconds, INP at or below 200 millise
 
 The HTTP catalogue serves `/en` and `/fa` as complete server-rendered pages. `/` and the historical `/showcase` entry redirect to `/en`. Each language has a self-canonical, reciprocal alternatives, social metadata and Organization JSON-LD. `/sitemap.xml` lists only the two catalogue URLs; `/robots.txt` excludes API and account-preview paths. Catalogue app links retain the selected language. This metadata does not bypass hosting protection: public crawling still requires a publicly accessible deployment.
 
+On 2026-11-09, the owner approved public access to the main production alias with protected previews. Anonymous checks confirmed both catalogue pages, sitemap, robots and social image assets; neither catalogue response carried a noindex directive. A fresh browser checked Persian/English at mobile and desktop widths, loaded the food images and found no horizontal overflow or automated axe WCAG A/AA violations. These checks establish availability and baseline page quality, not indexing, ranking, screen-reader certification or generative-search citations.
+
 Provide independently accessible English and Persian pages, natural page titles and descriptions, reciprocal `hreflang`, appropriate canonical URLs, crawlable internal links and useful visible text. Describe actual service areas; do not mass-generate empty neighborhood pages.
 
 Use structured data only for the real entity and visible content. Organization metadata can describe the platform; restaurant/local-business metadata must not fabricate a seller, rating, address or qualification. Do not publish private kitchen coordinates or addresses to obtain a search enhancement.
