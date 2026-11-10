@@ -38,6 +38,28 @@ export async function checkWorkspace({root,output,devices,device,id,role,env}){
   const maestro=path.join(root,'maestro-cli','maestro','bin','maestro');
   const installed=run(maestro,['--version']);
   if(!installed.includes(version))throw new Error('Unexpected Maestro version.');
+  // Follow the vendor's prebuilt-runner path rather than xcodebuild's default
+  // device discovery, which does not include our isolated simctl device set.
+  const lib=path.join(root,'maestro-cli','maestro','lib');
+  const archiveWithDriver=fs.readdirSync(lib).filter(name=>name.endsWith('.jar')).map(name=>path.join(lib,name))
+    .find(file=>run('/usr/bin/unzip',['-Z1',file]).split('\n').some(name=>name.startsWith('driver-iPhoneSimulator/')));
+  if(!archiveWithDriver)throw new Error('Pinned CLI has no simulator driver resource.');
+  const driverRoot=path.join(root,'prebuilt-driver');
+  run('/usr/bin/unzip',['-q',archiveWithDriver,'driver-iPhoneSimulator/*','-d',driverRoot]);
+  const walk=dir=>fs.readdirSync(dir,{withFileTypes:true}).flatMap(item=>{
+    const file=path.join(dir,item.name);return item.isDirectory()&&!item.name.endsWith('.app')?walk(file):[file];
+  });
+  for(const zip of walk(driverRoot).filter(file=>/maestro-driver-ios(?:UITests-Runner)?\.zip$/.test(file)))run('/usr/bin/ditto',['-x','-k',zip,path.dirname(zip)]);
+  const runner=walk(driverRoot).find(file=>path.basename(file)==='maestro-driver-iosUITests-Runner.app');
+  if(!runner)throw new Error('No prebuilt simulator test runner.');
+  run('xcrun',['simctl','install',device,runner]);
+  driverEnv.SIMCTL_CHILD_PORT='7001';
+  run('xcrun',['simctl','launch','--terminate-running-process',device,'dev.mobile.maestro-driver-iosUITests.xctrunner']);
+  const deadline=Date.now()+30000;let ready=false;
+  while(Date.now()<deadline){try{ready=(await fetch('http://127.0.0.1:7001/status',{signal:AbortSignal.timeout(1000)})).ok;}catch{}if(ready)break;await new Promise(resolve=>setTimeout(resolve,500));}
+  if(!ready)throw new Error('Prebuilt simulator driver did not become ready.');
+  driverEnv.USE_XCODE_TEST_RUNNER='1';
+  console.log('Isolated prebuilt iOS driver is ready.');
   const origin='https://sofreh-v2.vercel.app';
   const signup=await fetch(origin+'/api/auth/sign-up/email',{method:'POST',headers:{'Content-Type':'application/json',Origin:origin},
     body:JSON.stringify({name:'iOS workspace check',email,password})});
