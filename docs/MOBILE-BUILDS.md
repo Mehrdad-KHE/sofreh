@@ -21,7 +21,7 @@ node scripts/prepare-native.mjs CUSTOMER
 node scripts/prepare-native.mjs COOK
 ```
 
-The existing Vercel origin above is the known catalogue/review host. Its adapter does not activate real accounts; change this build input to the approved account-server origin before a functional native release. Merely compiling against that URL does not make it suitable for the shared-account acceptance journey.
+The existing Vercel origin above now has an explicitly configured persistent account runtime in production. Deployment access protection remains enabled. Verify public/native reachability before a functional native release; compilation against that URL does not establish the shared-account acceptance journey. Keep the build origin aligned with the approved account-server origin if hosting changes.
 
 Preparation writes only to `%LOCALAPPDATA%\ElegantRuntime\Sofreh\native\shared`. Role variants are prepared sequentially in that one directory to avoid duplicating the dependency tree. The helper sets the process-level Expo home override supported by the pinned CLI, disables telemetry, isolates temporary/cache output and generates Android source without accepting SDK licenses or creating cloud accounts. Its final console path identifies the internal project; it is not an APK/IPA download.
 

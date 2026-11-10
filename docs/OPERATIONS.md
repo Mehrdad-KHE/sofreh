@@ -69,7 +69,7 @@ The relay is disabled by default. Its isolated tests inject queue publication an
 
 Before a web release, check the actual Git integration, root directory, deployed commit, protection settings and function runtime. Verify the resulting URL and the shared customer/cook flow after deployment. HTTP 200 containing a Vercel login page is not an application health result; `/api/health` must return the expected JSON.
 
-Until the explicit account configuration is activated and accepted, the existing deployment remains an ephemeral fixture runtime. Connecting GitHub to Vercel alone does not solve persistence. Keep the current Vercel host, connect an approved durable database, verify authentication and test backup/restore before exposing actual account/order data.
+An unconfigured deployment remains an ephemeral fixture runtime. The existing project's production environment was explicitly connected to a Turso Starter libSQL database on 2026-11-09. Two independent application connections exercised orders and inventory against that cloud database; the authenticated Vercel interface displayed the same stored order. A cloud last-portion race produced one winner and one insufficient-portions response. Offline backup/restore also preserved password login, account role and order data. These checks do not establish anonymous class access, physical-device receipt or unrestricted production readiness. Connecting GitHub alone still does not configure persistence.
 
 ## Release and recovery
 
