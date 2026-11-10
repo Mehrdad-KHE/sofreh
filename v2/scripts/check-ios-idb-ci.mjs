@@ -25,7 +25,14 @@ export async function checkWorkspace({root,output,devices,device,id,role,env}){
   const binary=walk(toolRoot).find(file=>path.basename(file)==='idb_companion');
   if(!binary)throw new Error('No companion executable in the pinned archive.');
   run('python3',['-m','venv',venv]);const python=path.join(venv,'bin','python3');
-  run(python,['-m','pip','install','--disable-pip-version-check','fb-idb=='+version]);
+  // This release's official source artifact precedes its PyPI publication.
+  // Install the matching, checksum-verified client rather than mixing versions.
+  const clientResponse=await fetch(`https://github.com/meta/idb/releases/download/v${version}/fb_idb-${version}.tar.gz`);
+  if(!clientResponse.ok)throw new Error('Official idb client download failed.');
+  const clientBytes=Buffer.from(await clientResponse.arrayBuffer());
+  if(createHash('sha256').update(clientBytes).digest('hex')!=='04bccff69ea7cbec5a8085b39d7db4ba8aaee452e8cf533d251e2ed67435c761')throw new Error('idb client checksum mismatch.');
+  const clientArchive=path.join(root,`fb_idb-${version}.tar.gz`);fs.writeFileSync(clientArchive,clientBytes);
+  run(python,['-m','pip','install','--disable-pip-version-check',clientArchive]);
   // Redirect the client's legacy /tmp/idb constants before importing its CLI.
   // No third-party source patch or owner HOME modification is required.
   const wrapper=path.join(root,'idb-client.py');
