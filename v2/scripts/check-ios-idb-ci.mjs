@@ -16,22 +16,21 @@ export async function checkWorkspace({root,output,devices,device,id,role,env}){
     PIP_CACHE_DIR:path.join(root,'pip'),PYTHONPYCACHEPREFIX:path.join(root,'pycache'),PYTHONUSERBASE:path.join(root,'python-user')};
   function run(command,args){const result=spawnSync(command,args,{cwd:root,env:driverEnv,encoding:'utf8',timeout:180000,maxBuffer:8*1024*1024});
     if(result.error)throw new Error(clean(result.error.message));if(result.status!==0){console.error(clean(result.stderr));throw new Error(`${path.basename(command)} exited ${result.status}`);}return result.stdout.trim();}
-  const response=await fetch(`https://github.com/meta/idb/releases/download/v${version}/idb-companion.macos-arm64.tar.gz`);
-  if(!response.ok)throw new Error('Official idb download failed.');
-  const bytes=Buffer.from(await response.arrayBuffer());
-  if(createHash('sha256').update(bytes).digest('hex')!==digest)throw new Error('idb checksum mismatch.');
-  const archive=path.join(root,'idb.tar.gz');fs.writeFileSync(archive,bytes);run('tar',['-xzf',archive,'-C',toolRoot]);
+  function download(name,expected,target){
+    console.log('Downloading pinned official tool: '+name);
+    run('curl',['--fail','--location','--silent','--show-error','--retry','2','--retry-all-errors','--connect-timeout','10','--max-time','45',
+      '--output',target,`https://github.com/meta/idb/releases/download/v${version}/${name}`]);
+    if(createHash('sha256').update(fs.readFileSync(target)).digest('hex')!==expected)throw new Error('idb release checksum mismatch.');
+  }
+  const archive=path.join(root,'idb.tar.gz');download('idb-companion.macos-arm64.tar.gz',digest,archive);run('tar',['-xzf',archive,'-C',toolRoot]);
   const walk=dir=>fs.readdirSync(dir,{withFileTypes:true}).flatMap(item=>{const file=path.join(dir,item.name);return item.isDirectory()?walk(file):[file];});
   const binary=walk(toolRoot).find(file=>path.basename(file)==='idb_companion');
   if(!binary)throw new Error('No companion executable in the pinned archive.');
   run('python3',['-m','venv',venv]);const python=path.join(venv,'bin','python3');
   // This release's official source artifact precedes its PyPI publication.
   // Install the matching, checksum-verified client rather than mixing versions.
-  const clientResponse=await fetch(`https://github.com/meta/idb/releases/download/v${version}/fb_idb-${version}.tar.gz`);
-  if(!clientResponse.ok)throw new Error('Official idb client download failed.');
-  const clientBytes=Buffer.from(await clientResponse.arrayBuffer());
-  if(createHash('sha256').update(clientBytes).digest('hex')!=='04bccff69ea7cbec5a8085b39d7db4ba8aaee452e8cf533d251e2ed67435c761')throw new Error('idb client checksum mismatch.');
-  const clientArchive=path.join(root,`fb_idb-${version}.tar.gz`);fs.writeFileSync(clientArchive,clientBytes);
+  const clientArchive=path.join(root,`fb_idb-${version}.tar.gz`);
+  download(`fb_idb-${version}.tar.gz`,'04bccff69ea7cbec5a8085b39d7db4ba8aaee452e8cf533d251e2ed67435c761',clientArchive);
   run(python,['-m','pip','install','--disable-pip-version-check',clientArchive]);
   // Redirect the client's legacy /tmp/idb constants before importing its CLI.
   // No third-party source patch or owner HOME modification is required.

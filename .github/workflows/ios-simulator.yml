@@ -11,6 +11,11 @@ on:
         description: Check real sign-in, role workspaces and session persistence
         type: boolean
         default: true
+      role:
+        description: Role to exercise (all runs both applications)
+        type: choice
+        options: [all, COOK, CUSTOMER]
+        default: all
 
 permissions:
   contents: read
@@ -22,7 +27,7 @@ jobs:
       fail-fast: false
       max-parallel: 2
       matrix:
-        role: [CUSTOMER, COOK]
+        role: ${{ fromJSON(inputs.role == 'COOK' && '["COOK"]' || inputs.role == 'CUSTOMER' && '["CUSTOMER"]' || '["CUSTOMER","COOK"]') }}
     runs-on: macos-26
     timeout-minutes: 20
     env:
