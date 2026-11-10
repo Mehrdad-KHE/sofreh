@@ -36,6 +36,17 @@ The HTTP catalogue serves `/en` and `/fa` as complete server-rendered pages. `/`
 
 On 2026-11-09, the owner approved public access to the main production alias with protected previews. Anonymous checks confirmed both catalogue pages, sitemap, robots and social image assets; neither catalogue response carried a noindex directive. A fresh browser checked Persian/English at mobile and desktop widths, loaded the food images and found no horizontal overflow or automated axe WCAG A/AA violations. These checks establish availability and baseline page quality, not indexing, ranking, screen-reader certification or generative-search citations.
 
+The public catalogue was then measured with Lighthouse 13.6.0 on standard Linux CI, Chrome 156, using simulated mobile conditions. [Baseline run](https://github.com/Mehrdad-KHE/sofreh/actions/runs/42745534562) and [optimized run](https://github.com/Mehrdad-KHE/sofreh/actions/runs/42746709678) recorded the following:
+
+| Check | Persian before → after | English before → after |
+| --- | --- | --- |
+| Performance score | 96 → 99 | 92 → 99 |
+| Accessibility / best practices / SEO | 100 / 100 / 100 → unchanged | 100 / 100 / 100 → unchanged |
+| Cumulative layout shift | 0.127 → 0 | 0.028 → 0 |
+| Largest contentful paint | 1.47s → 2.04s | 1.41s → 2.03s |
+
+Persian page transfer fell from 4,696,438 to 290,586 bytes, a 93.8% reduction. Responsive WebP assets retain the original photographs and attribution; source JPEGs remain available. The font is preloaded with optional swapping to avoid moving Persian text after the first paint, and image height now follows the responsive aspect ratio. All images loaded at 390, 850 and 1440px without horizontal overflow. The slower measured LCP in the second run remains within 2.5s; these single-run laboratory values vary and are not real-user field measurements. The generated HTML report was opened for visual review. Re-run after material content or hosting changes instead of treating these scores as a permanent guarantee.
+
 Provide independently accessible English and Persian pages, natural page titles and descriptions, reciprocal `hreflang`, appropriate canonical URLs, crawlable internal links and useful visible text. Describe actual service areas; do not mass-generate empty neighborhood pages.
 
 Use structured data only for the real entity and visible content. Organization metadata can describe the platform; restaurant/local-business metadata must not fabricate a seller, rating, address or qualification. Do not publish private kitchen coordinates or addresses to obtain a search enhancement.
