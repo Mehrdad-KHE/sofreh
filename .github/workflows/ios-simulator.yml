@@ -7,6 +7,10 @@ on:
         description: Run number containing both iOS build artifacts
         required: true
         default: '42724705850'
+      workspace:
+        description: Check real sign-in, role workspaces and session persistence
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -25,6 +29,7 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       SOFREH_BUILD_RUN: ${{ inputs.build_run }}
       SOFREH_APP_ROLE: ${{ matrix.role }}
+      SOFREH_CHECK_WORKSPACE: ${{ inputs.workspace }}
     steps:
       - uses: actions/checkout@v7.0.1
         with:
@@ -36,6 +41,7 @@ jobs:
       - name: Install, launch and capture simulator
         run: node v2/scripts/check-ios-simulator-ci.mjs
       - uses: actions/upload-artifact@v7.0.2
+        if: always()
         with:
           name: internal-iphone-${{ matrix.role }}-${{ github.run_id }}
           path: ${{ runner.temp }}/ElegantRuntime/Sofreh/simulator/artifacts/*
