@@ -2,7 +2,7 @@
   "version": 2,
   "functions": {
     "api/index.mjs": {
-      "includeFiles": ["apps/account/**", "apps/workspace/**", "apps/customer-mobile/preview/**", "apps/cook-mobile/preview/**", "apps/classroom-preview/**", "assets/**"]
+      "includeFiles": "{apps/{account,workspace,classroom-preview}/**,apps/{customer-mobile,cook-mobile}/preview/**,assets/**}"
     }
   },
   "rewrites": [
