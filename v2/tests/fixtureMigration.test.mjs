@@ -39,5 +39,7 @@ test('reseed preserves valid historical titles while repairing corrupted Persian
     seedSyntheticStage1Data(db);let row=db.prepare('SELECT * FROM order_items WHERE order_id=?').get(order.id);assert.equal(row.title_fa_snapshot,'عنوان تاریخی سالم');assert.equal(row.title_en_snapshot,'Historical title');
     db.prepare('UPDATE order_items SET title_fa_snapshot=? WHERE order_id=?').run('\uFFFD',order.id);seedSyntheticStage1Data(db);
     row=db.prepare('SELECT * FROM order_items WHERE order_id=?').get(order.id);assert.equal(row.title_fa_snapshot,db.prepare('SELECT title_fa FROM dish_slots WHERE id=?').get(dish.id).title_fa);
+    db.prepare('UPDATE order_items SET title_fa_snapshot=? WHERE order_id=?').run('????? ?????',order.id);seedSyntheticStage1Data(db);
+    assert.equal(db.prepare('SELECT title_fa_snapshot FROM order_items WHERE order_id=?').get(order.id).title_fa_snapshot,db.prepare('SELECT title_fa FROM dish_slots WHERE id=?').get(dish.id).title_fa);
   }finally{db.close();}
 });

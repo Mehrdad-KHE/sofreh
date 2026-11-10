@@ -6,6 +6,8 @@ The source manifest declares Node `24.x`. Account-runtime and complete-suite ver
 
 The fixture backend and structural validator primarily use Node built-ins. Account mode adds Better Auth, Sharp and Web Push. The checked-in legacy browser MUI bundle is already built; the authenticated workspace does not depend on that layer.
 
+To rebuild the legacy MUI bridge from its JSX and the repository lockfile, run `node scripts/build-ui.mjs` from `v2`. Installation, compilation and output stay in a unique local runtime copy. The command prints an internal bundle path; review it in the fixture browser runtime before replacing `v2/assets/mui-responsive.js`. It does not automatically modify a published asset.
+
 ## Account-mode startup
 
 From `v2`, with Node 24 available:

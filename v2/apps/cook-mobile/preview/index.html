@@ -120,6 +120,14 @@
       display: flex;
       flex-direction: column;
     }
+    @media (min-width: 901px) {
+      body { padding: 28px 40px; }
+      .phone-frame { max-width: 1180px; border-radius: 28px; }
+      .section { padding: 20px 28px 24px; }
+      .ue-inventory-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+      .order-box { padding: 16px; font-size: 13px; }
+      .ue-section-title { font-size: 18px; }
+    }
     @media (max-width: 600px) {
       html, body { width: 100%; min-width: 0; }
       body { padding: 0; }
@@ -271,6 +279,46 @@
       gap: 6px;
       margin-top: 8px;
     }
+    .ue-inventory-row > div {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(105px, 1fr)) auto;
+      gap: 8px;
+      align-items: end;
+      min-width: 0;
+    }
+    .ue-inventory-row label {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+    .ue-inventory-row input,
+    .ue-inventory-row select {
+      width: 100%;
+      min-height: 34px;
+      padding: 5px 7px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: var(--card);
+      color: var(--text);
+      font: inherit;
+      font-weight: 700;
+    }
+    .ue-inventory-row button {
+      min-height: 34px;
+      white-space: nowrap;
+    }
+    @media (min-width: 901px) {
+      .ue-inventory-list { display: grid; grid-template-columns: 1fr; gap: 10px; }
+      .ue-inventory-row { display: grid; grid-template-columns: minmax(190px, 1fr) auto minmax(560px, 1.8fr); align-items: center; }
+    }
+    @media (max-width: 900px) {
+      .ue-inventory-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+      .ue-inventory-row > div { grid-column: 1 / -1; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .ue-inventory-row > div button { width: 100%; }
+    }
     .ue-inventory-row {
       display: flex;
       justify-content: space-between;
@@ -414,6 +462,35 @@
       font-family: inherit;
       font-weight: 600;
     }
+    /* Keep the live controls readable after the base flex layout is loaded. */
+    @media (min-width: 1100px) {
+      .ue-inventory-row { display: grid; grid-template-columns: minmax(190px, 1fr) auto minmax(560px, 1.8fr); align-items: center; }
+      .ue-inventory-row > div { display: grid; grid-template-columns: repeat(4, minmax(105px, 1fr)) auto; gap: 8px; align-items: end; }
+    }
+    @media (max-width: 1099px) {
+      .ue-inventory-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+      .ue-inventory-row > div { display: grid; grid-column: 1 / -1; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+      .ue-inventory-row > div button { width: 100%; }
+    }
+    @media (max-width: 600px) {
+      html, body, #cookAppRoot, .phone-frame { width: 100%; max-width: 100%; overflow-x: hidden; }
+      body { font-size: 18px; }
+      .demo-notice { font-size: 14px; padding: 7px 12px; }
+      .app-header h1 { font-size: 20px; }
+      .app-header p { font-size: 16px; white-space: normal; overflow-wrap: anywhere; }
+      .ue-kpi-label { font-size: 14px; }
+      .ue-kpi-value { font-size: 18px; }
+      .ue-section-title { font-size: 20px; }
+      .ue-section-caption, .order-box, .ue-inventory-row { font-size: 18px; }
+      .ue-inventory-row label { font-size: 16px; }
+      .ue-inventory-row input, .ue-inventory-row select, .ue-inventory-row button,
+      .btn, .btn-secondary, #feeInput, #cookFulfillmentMode { min-height: 46px; font-size: 18px; }
+      .ue-inventory-row > span, .order-box strong, .order-box .status-badge { min-width: 0; overflow-wrap: anywhere; }
+      .order-box button, .order-box input, .order-box select { max-width: 100%; white-space: normal; }
+      .ue-inventory-count, .status-badge { font-size: 15px; }
+      .ue-step { font-size: 14px; padding: 7px 3px; }
+      .ue-bottom-nav { font-size: 16px; padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+    }
   </style>
 </head>
 <body>
@@ -459,8 +536,8 @@
     </div>
 
     <div class="section">
-      <div class="card" id="feeCard"></div>
       <div class="card" id="ordersCard"></div>
+      <div class="card" id="feeCard"></div>
     </div>
 
     <nav class="ue-bottom-nav" id="cookBottomNav" aria-label="Cook Navigation">
@@ -518,7 +595,8 @@
       }
     };
 
-    let currentLocale = 'en-CA';
+    const requestedLocale = new URLSearchParams(window.location.search).get('locale');
+    let currentLocale = requestedLocale === 'fa-IR' ? 'fa-IR' : 'en-CA';
     let activeCookId = 'cook-test-pari';
     let cookToken = 'test-token-cook-pari';
     let activeKitchen = null;
@@ -686,12 +764,12 @@
       if (ord.status === 'PENDING') {
         btns.push(
           `<button class="btn" type="button" id="accept-btn-${ord.id}" data-order-id="${ord.id}" data-next-status="ACCEPTED">${
-            isFa ? 'قبول سفارش (Accept)' : 'Accept Order'
+            isFa ? 'قبول سفارش' : 'Accept Order'
           }</button>`
         );
         btns.push(
           `<button class="btn btn-danger" type="button" id="reject-btn-${ord.id}" data-order-id="${ord.id}" data-next-status="REJECTED">${
-            isFa ? 'رد سفارش و بازگردانی ظرفیت (Reject)' : 'Reject & Restore Portions'
+            isFa ? 'رد سفارش و بازگردانی ظرفیت' : 'Reject & Restore Portions'
           }</button>`
         );
       } else if (ord.status === 'ACCEPTED') {
@@ -743,6 +821,9 @@
 
     function renderCookPreview() {
       const isFa = currentLocale === 'fa-IR';
+      const activeQueueCount = cookOrders.filter(
+        (ord) => !['COMPLETED', 'REJECTED', 'CANCELLED'].includes(ord.status)
+      ).length;
       document.documentElement.lang = currentLocale;
       document.documentElement.dir = isFa ? 'rtl' : 'ltr';
       document.documentElement.setAttribute('data-theme', 'forest');
@@ -780,7 +861,7 @@
       if (kpiFeeValue) kpiFeeValue.textContent = `CA$${(deliveryFeeCents / 100).toFixed(2)}`;
       if (kpiQueueLabel) kpiQueueLabel.textContent = isFa ? 'سفارشهای من' : 'My Orders';
       if (kpiQueueValue) {
-        kpiQueueValue.textContent = isFa ? `${cookOrders.length} سفارش` : `${cookOrders.length} orders`;
+        kpiQueueValue.textContent = isFa ? `${activeQueueCount} سفارش` : `${activeQueueCount} active`;
       }
       if (kpiStoreLabel) kpiStoreLabel.textContent = isFa ? 'امتیاز آشپزخانه' : 'Rating';
       if (kpiStoreValue) {
@@ -838,7 +919,7 @@
         </div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
           <input id="feeInput" type="number" min="0" max="5000" step="25" value="${deliveryFeeCents}" style="padding:7px 10px;width:115px;font-size:13px;" />
-          <span style="font-size:12px;font-weight:700;">cents (CA$${(deliveryFeeCents / 100).toFixed(2)})</span>
+          <span style="font-size:12px;font-weight:700;">${isFa ? 'سنت' : 'cents'} (CA$${(deliveryFeeCents / 100).toFixed(2)})</span>
           <label>${isFa ? 'روش تحویل' : 'Fulfillment'} <select id="cookFulfillmentMode">
             ${[['BOTH','Pickup & delivery'],['PICKUP_ONLY','Pickup only'],['DELIVERY_ONLY','Delivery only']].map(([value,label]) => `<option value="${value}" ${(value === (activeKitchen?.supportsPickup ? activeKitchen?.supportsDelivery ? 'BOTH' : 'PICKUP_ONLY' : 'DELIVERY_ONLY')) ? 'selected' : ''}>${isFa ? ({BOTH:'دریافت و ارسال',PICKUP_ONLY:'فقط دریافت',DELIVERY_ONLY:'فقط ارسال'}[value]) : label}</option>`).join('')}
           </select></label>
@@ -862,7 +943,14 @@
           : cookOrders
               .map((ord) => {
                 const itemsSummary = (ord.items || [])
-                  .map((it) => `${it.quantity}x ${cookAddressText(cleanDisplayKitchenName(isFa ? it.titleFa : it.titleEn))}`)
+                  .map((it) => {
+                    const fallbackDish = activeKitchen?.dishes?.find((dish) => dish.id === it.dishId);
+                    const localizedTitle = isFa ? it.titleFa : it.titleEn;
+                    const safeTitle = /\?{2,}/.test(String(localizedTitle || ''))
+                      ? (isFa ? fallbackDish?.titleFa : fallbackDish?.titleEn) || fallbackDish?.title || it.titleEn
+                      : localizedTitle;
+                    return `${it.quantity}x ${cookAddressText(cleanDisplayKitchenName(safeTitle))}`;
+                  })
                   .join(', ');
                 const deliveryLine = ord.deliveryAddressForFulfillment
                   ? `<div data-testid="cook-delivery-address-${ord.id}" style="color:#1b4332;font-weight:700;margin-top:6px;">${
@@ -912,7 +1000,7 @@
                             <option value="2">★★☆☆☆ (2)</option>
                             <option value="1">★☆☆☆☆ (1)</option>
                           </select>
-                          <input id="cook-review-comment-${ord.id}" type="text" value="Polite and punctual customer!" style="flex:1;padding:4px 8px;font-size:11px;" />
+                          <input id="cook-review-comment-${ord.id}" type="text" value="" placeholder="${isFa ? 'نظر آزمایشی درباره مشتری' : 'Demo review about customer'}" style="flex:1;padding:4px 8px;font-size:11px;" />
                           <button type="button" class="btn" id="cook-submit-review-btn-${ord.id}" data-cook-review-submit="${ord.id}" style="margin-top:0;">${
                             isFa ? 'ثبت نظر آشپز' : 'Submit Review'
                           }</button>
@@ -927,9 +1015,9 @@
                       <span class="status-badge" data-status-code="${ord.status}" data-testid="cook-order-status-${ord.id}">[${statusGlyph} ${ord.status}] — ${statusLabel}</span>
                     </div>
                     <div style="margin-top:5px;font-weight:700;">
-                      ${ord.fulfillmentType.toUpperCase()} • Total: CA$${(
+                      ${isFa ? (String(ord.fulfillmentType).toLowerCase() === 'pickup' ? 'دریافت حضوری' : 'ارسال') : ord.fulfillmentType.toUpperCase()} • ${isFa ? 'جمع کل' : 'Total'}: CA$${(
                   ord.totalCents / 100
-                ).toFixed(2)} (${ord.simulatedPaymentStatus})
+                ).toFixed(2)} (${isFa ? 'پرداخت شبیه‌سازی‌شده' : ord.simulatedPaymentStatus})
                     </div>
                     <div style="margin-top:4px;font-weight:600;">${itemsSummary}</div>
                     ${renderCookOrderStepper(ord.status, isFa)}
@@ -947,10 +1035,10 @@
       document.getElementById('ordersCard').innerHTML = `
         <div class="ue-section-header">
           <h3 class="ue-section-title" id="cookOrdersSectionTitle">${isFa ? 'سفارشهای من' : 'My Orders'}</h3>
-          <span class="ue-section-caption">${cookOrders.length} ${isFa ? 'در صف' : 'in queue'}</span>
+          <span class="ue-section-caption">${activeQueueCount} ${isFa ? 'در صف' : 'in queue'}</span>
         </div>
         <button class="btn-secondary" id="refreshCookOrdersBtn" type="button">
-          ${isFa ? 'بازخوانی سفارشهای من (Refresh Queue)' : 'Refresh Queue from Shared Backend'}
+          ${isFa ? 'بازخوانی سفارش‌های من' : 'Refresh Queue from Shared Backend'}
         </button>
         ${
           cookActionMessage

@@ -155,7 +155,7 @@ export function seedSyntheticStage1Data(db) {
     db.prepare(`
       UPDATE order_items
       SET title_fa_snapshot = (SELECT title_fa FROM dish_slots WHERE dish_slots.id = order_items.dish_id)
-      WHERE (instr(title_fa_snapshot,char(65533)) > 0 OR instr(title_fa_snapshot,'Ø') > 0 OR instr(title_fa_snapshot,'Ù') > 0)
+      WHERE (instr(title_fa_snapshot,char(65533)) > 0 OR instr(title_fa_snapshot,'Ø') > 0 OR instr(title_fa_snapshot,'Ù') > 0 OR instr(title_fa_snapshot,'???') > 0)
       AND EXISTS (
         SELECT 1 FROM orders
         WHERE orders.id = order_items.order_id
