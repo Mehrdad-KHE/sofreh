@@ -211,6 +211,8 @@ small,
 }
 .dish img {
   width: 100%;
+  aspect-ratio: 3 / 2;
+  display: block;
   max-height: 240px;
   object-fit: cover;
   border-radius: 12px;
@@ -301,6 +303,21 @@ details summary {
   border-radius: 12px;
   font-size: 13px;
 }
+.filter-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.filter-check input {
+  width: 20px;
+  height: 20px;
+  min-height: 20px;
+  flex-shrink: 0;
+}
+.kitchen-meta { margin: 6px 0; }
+.kitchen-details { margin-top: 18px; }
+.kitchen-details summary { font-size: 14px; }
+.kitchen-card .dish:first-of-type { margin-top: 10px; }
 .danger-note {
   color: #9c2940;
 }
@@ -323,11 +340,23 @@ details summary {
     padding: 8px;
   }
   main {
-    padding: 24px 18px 60px;
+    padding: 16px 18px 60px;
   }
   h1 {
-    font-size: 29px;
+    font-size: 23px;
+    margin: 5px 0 8px;
   }
+  #eyebrow { margin-bottom: 5px; letter-spacing: 0; }
+  #welcome { font-size: 13px; margin-bottom: 0; }
+  #paymentNotice { padding: 8px 12px; margin: 12px 0 8px; }
+  #connection { font-size: 12px; }
+  #tabs { margin-bottom: 14px; padding-bottom: 12px; }
+  #feedback:empty { margin: 0; }
+  #content > h2 { font-size: 22px; margin: 12px 0; }
+  .food-filters { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; margin: 8px 0; }
+  .food-filters > :first-child { grid-column: 1/-1; }
+  .food-filters label { margin: 2px 0 5px; }
+  .food-filters .filter-check { margin: 24px 0 0; min-height: 46px; }
   .intro {
     align-items: start;
   }

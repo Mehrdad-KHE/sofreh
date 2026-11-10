@@ -421,8 +421,8 @@ function renderContent() {
       );
     };
     $("showMap").onclick = () => action(showMap);
-    const filters=document.createElement('div');filters.className='controls';
-    filters.innerHTML=`${field('foodSearch',tr('Search food or kitchen','جست‌وجوی غذا یا آشپزخانه'),state.query,'search','maxlength="120"')}<div><label for="fulfillmentFilter">${tr('Receive food','روش دریافت')}</label><select id="fulfillmentFilter"><option value="">${tr('Any method','همه روش‌ها')}</option><option value="pickup" ${state.fulfillmentFilter==='pickup'?'selected':''}>${modeText('pickup')}</option><option value="delivery" ${state.fulfillmentFilter==='delivery'?'selected':''}>${modeText('delivery')}</option></select></div><label><input id="availableOnly" type="checkbox" ${state.availableOnly?'checked':''}> ${tr('Available now','قابل سفارش')}</label>`;
+    const filters=document.createElement('div');filters.className='controls food-filters';
+    filters.innerHTML=`${field('foodSearch',tr('Search food or kitchen','جست‌وجوی غذا یا آشپزخانه'),state.query,'search','maxlength="120"')}<div><label for="fulfillmentFilter">${tr('Receive food','روش دریافت')}</label><select id="fulfillmentFilter"><option value="">${tr('Any method','همه روش‌ها')}</option><option value="pickup" ${state.fulfillmentFilter==='pickup'?'selected':''}>${modeText('pickup')}</option><option value="delivery" ${state.fulfillmentFilter==='delivery'?'selected':''}>${modeText('delivery')}</option></select></div><label class="filter-check"><input id="availableOnly" type="checkbox" ${state.availableOnly?'checked':''}> ${tr('Available now','قابل سفارش')}</label>`;
     content.insertBefore(filters,content.querySelector('.controls'));
     const originalControls=filters.nextElementSibling;
     const note=originalControls.nextElementSibling;
@@ -454,16 +454,7 @@ function renderKitchenCards() {
   refreshMarkers();
   $("kitchens").innerHTML = kitchens.length
     ? kitchens
-        .map(
-          (cook) =>
-            `<article class="card"><div class="row"><h3>${h(cook.kitchenName)}</h3><span class="tag">${h(cook.neighborhood)}</span></div><p>${h(cook.bio)}</p><p class="muted">${state.origin ? tr("Approx. ", "حدود ") + number(distance(cook)) + tr(" km to kitchen area", " کیلومتر تا محدوده آشپز") : tr("Choose an origin to see distance", "برای دیدن فاصله، مبدأ را انتخاب کنید")}</p><p>${h(cook.pickupWindowLabel)}</p><p class="muted">${cook.supportsPickup ? modeText("pickup") : ""}${cook.supportsPickup && cook.supportsDelivery ? " · " : ""}${cook.supportsDelivery ? modeText("delivery") + " " + money(cook.deliveryFeeCents) : ""}</p><p class="muted">${cook.reviewSummary.reviewCount ? number(cook.reviewSummary.averageRating) + " / 5 · " + number(cook.reviewSummary.reviewCount) + tr(" reviews", " نظر") : tr("No ratings yet", "هنوز امتیازی ثبت نشده")}</p>${matchingDishes(cook).map((dish) => dishCard(cook, dish)).join("")}${cook.reviews
-              .slice(0, 3)
-              .map(
-                (review) =>
-                  `<div class="review"><strong>${number(review.rating)} / 5</strong><p>${review.commentEscaped}</p></div>`,
-              )
-              .join("")}</article>`,
-        )
+        .map(kitchenCard)
         .join("")
     : `<p class="empty">${(state.cooks.some(cook=>cook.dishes.length)?tr("No meals match these filters. Try another search.","غذایی با این فیلترها پیدا نشد؛ جست‌وجو را تغییر دهید."):tr("No kitchens have published a menu here yet.","هنوز آشپزخانه‌ای منویش را در اینجا ثبت نکرده است."))}</p>`;
   $("kitchens")
@@ -503,6 +494,21 @@ function renderKitchenCards() {
             tr("Added to your cart.", "به سبد اضافه شد."),
           )),
     );
+}
+function kitchenCard(cook) {
+  const rating = cook.reviewSummary.reviewCount
+    ? `${number(cook.reviewSummary.averageRating)} / ${number(5)} · ${number(cook.reviewSummary.reviewCount)} ${tr(cook.reviewSummary.reviewCount===1?'review':'reviews','نظر')}`
+    : tr('No ratings yet','هنوز امتیازی ثبت نشده');
+  return `<article class="card kitchen-card">
+    <div class="row"><h3>${h(cook.kitchenName)}</h3><span class="tag">${h(cook.neighborhood)}</span></div>
+    <p class="muted kitchen-meta">${state.origin ? tr('Approx. ','حدود ') + number(distance(cook)) + tr(' km to kitchen area',' کیلومتر تا محدوده آشپز') : tr('Choose an origin to see distance','برای دیدن فاصله، مبدأ را انتخاب کنید')} · ${rating}</p>
+    ${matchingDishes(cook).map(dish=>dishCard(cook,dish)).join('')}
+    <details class="kitchen-details"><summary>${tr('Kitchen details and reviews','درباره آشپزخانه و نظرها')}</summary>
+      <p>${h(cook.bio)}</p><p>${h(cook.pickupWindowLabel)}</p>
+      <p>${cook.supportsPickup ? modeText('pickup') : ''}${cook.supportsPickup && cook.supportsDelivery ? ' · ' : ''}${cook.supportsDelivery ? modeText('delivery')+' '+money(cook.deliveryFeeCents) : ''}</p>
+      ${cook.reviews.slice(0,3).map(review=>`<div class="review"><strong>${number(review.rating)} / ${number(5)}</strong><p>${review.commentEscaped}</p></div>`).join('')}
+    </details>
+  </article>`;
 }
 function dishCard(cook, dish) {
   const available =
