@@ -234,6 +234,13 @@ export function createSofrehHttpServer({ dbFilePath, database, seedFixtures = tr
         return;
       }
       const demoAssetTypes = {
+        'demo-food/ghormeh-sabzi-majidi-480.webp': 'image/webp',
+        'demo-food/ghormeh-sabzi-majidi-800.webp': 'image/webp',
+        'demo-food/ghormeh-sabzi-majidi-1280.webp': 'image/webp',
+        'demo-food/zereshk-polo-400.webp': 'image/webp',
+        'demo-food/ash-reshteh-480.webp': 'image/webp',
+        'demo-food/ash-reshteh-800.webp': 'image/webp',
+        'demo-food/ash-reshteh-1280.webp': 'image/webp',
         'demo-food/ghormeh-sabzi.jpg': 'image/jpeg',
         'demo-food/ghormeh-sabzi-majidi.jpg': 'image/jpeg',
         'demo-food/zereshk-polo.jpg': 'image/jpeg',

@@ -26,6 +26,16 @@ test('public catalogue has accessible bilingual destinations and valid discovery
         const target = await fetch(base + link[1]);
         assert.equal(target.status, 200, link[1]);
       }
+      const responsiveAssets=new Set([...html.matchAll(/(?:imagesrcset|srcset)="([^"]+)"/g)]
+        .flatMap(match=>match[1].split(',').map(candidate=>candidate.trim().split(/\s+/)[0])));
+      assert.ok(responsiveAssets.size>1);
+      for(const asset of responsiveAssets){
+        const target=await fetch(base+asset);
+        assert.equal(target.status,200,asset);
+        assert.equal(target.headers.get('content-type'),'image/webp');
+        const bytes=Buffer.from(await target.arrayBuffer());
+        assert.equal(bytes.toString('ascii',8,12),'WEBP');
+      }
       assert.doesNotMatch(html, /PLACEHOLDER|TODO|test-token|SIMULATED_AUTHORIZED/);
     }
     const robots = await (await fetch(`${base}/robots.txt`)).text();
