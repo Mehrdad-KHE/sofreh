@@ -66,11 +66,14 @@ test('real sessions isolate roles, reject fixture tokens and enforce request ori
     assert.equal((await customer('/api/account/setup',{role:'COOK'})).status,409);
     assert.equal((await customer('/api/customer/cart',{}, {method:'PUT',origin:'https://other.example'})).status,403);
     assert.equal((await customer('/api/cook/kitchen')).status,403);
-    assert.equal((await customer('/app/cook')).status,403);
+    const ownWorkspace=await customer('/app/cook?locale=fa-IR');
+    assert.equal(ownWorkspace.status,303);assert.equal(ownWorkspace.headers.get('location'),'/app/customer?locale=fa-IR');
     assert.equal((await stranger('/api/auth/sign-in/email',{email:'customer@example.test',password:'incorrect password'})).status,401);
     const stored=app.db.prepare('SELECT password FROM account').get().password;
     assert.notEqual(stored,password);assert.ok(stored.length>60);
     await register(cook,'cook@example.test','COOK');
+    const cookWorkspace=await cook('/app/customer');
+    assert.equal(cookWorkspace.status,303);assert.equal(cookWorkspace.headers.get('location'),'/app/cook');
     const kitchen=await cook('/api/cook/kitchen',kitchenInput,{method:'PUT'});assert.equal(kitchen.status,200);
     const dish=await cook('/api/cook/dishes',dishInput,{method:'PUT'});assert.equal(dish.status,200);
     assert.equal((await cook(`/api/cook/dishes/${dish.data.dish.id}/photo`,{imageBase64:Buffer.from('<svg></svg>').toString('base64')},{method:'PUT'})).status,400);
@@ -100,6 +103,19 @@ test('real sessions isolate roles, reject fixture tokens and enforce request ori
     assert.equal((await customer('/api/customer/orders')).status,401);
     app.db.prepare('UPDATE dish_slots SET service_window_end_iso=? WHERE id=?').run('2020-01-01T00:00:00.000Z',dish.data.dish.id);
     const discoveryAfter=await stranger('/api/discovery/cooks');assert.equal(discoveryAfter.data.cooks[0].dishes[0].isAvailableToday,false);
+  }finally{await app.close();}
+});
+
+test('an account without a workspace role can finish setup from either application entry',async()=>{
+  const app=await start();try{
+    const owner=app.client();
+    assert.equal((await owner('/api/auth/sign-up/email',{name:'Unfinished owner',email:'unfinished@example.test',password})).status,200);
+    for(const role of ['cook','customer']){
+      const response=await owner(`/app/${role}?locale=fa-IR`);
+      assert.equal(response.status,303);
+      assert.equal(response.headers.get('location'),`/account?role=${role.toUpperCase()}&locale=fa-IR`);
+    }
+    assert.equal((await owner('/api/customer/orders')).status,401);
   }finally{await app.close();}
 });
 

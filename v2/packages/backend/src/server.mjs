@@ -200,7 +200,14 @@ export function createSofrehHttpServer({ dbFilePath, database, seedFixtures = tr
           res.writeHead(303,{Location:'/account?'+entry}); res.end(); return;
         }
         if (pathname.startsWith('/app/') && authUser.role !== (pathname.endsWith('cook')?'COOK':'CUSTOMER')) {
-          throw new SofrehGuardError('ROLE_FORBIDDEN','This workspace belongs to a different role.',403);
+          // Entry links guide a signed-in person to their own workspace. API
+          // role boundaries below still reject another role's operations.
+          const entry = new URLSearchParams();
+          let destination;
+          if(['COOK','CUSTOMER'].includes(authUser.role))destination='/app/'+authUser.role.toLowerCase();
+          else{destination='/account';entry.set('role',pathname.endsWith('cook')?'COOK':'CUSTOMER');}
+          if(reqUrl.searchParams.has('locale'))entry.set('locale',locale);
+          res.writeHead(303,{Location:destination+(entry.size?'?'+entry:'')});res.end();return;
         }
         const app = pathname === '/account' ? 'account' : 'workspace';
         const htmlPath = path.join(path.dirname(fileURLToPath(import.meta.url)), '../../../apps', app, 'index.html');
