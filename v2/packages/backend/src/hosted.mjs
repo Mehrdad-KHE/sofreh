@@ -41,7 +41,7 @@ export async function createHostedRuntime(env=process.env,{connect=openRemoteDat
 
 export function restoreRewrittenPath(req) {
   const url=new URL(req.url||'/','http://127.0.0.1');
-  if(url.pathname!=='/api/index.mjs'||!url.searchParams.has('path'))return;
+  if(!['/api/index','/api/index.mjs'].includes(url.pathname)||!url.searchParams.has('path'))return;
   const pathname=url.searchParams.get('path');
   if(!pathname.startsWith('/')||pathname.startsWith('//')||/[\\?#\u0000-\u0020]/.test(pathname))throw new Error('Invalid rewritten path.');
   url.searchParams.delete('path');

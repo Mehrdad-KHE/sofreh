@@ -25,6 +25,7 @@ test('hosted account mode requires explicit valid configuration and never falls 
 
 test('rewritten routes retain locale and reject foreign or ambiguous destinations',()=>{
   const req={url:'/api/index.mjs?path=%2Faccount&locale=fa-IR'};restoreRewrittenPath(req);assert.equal(req.url,'/account?locale=fa-IR');
+  const classic={url:'/api/index?path=%2Fapi%2Fhealth&locale=fa-IR'};restoreRewrittenPath(classic);assert.equal(classic.url,'/api/health?locale=fa-IR');
   for(const path of ['https://foreign.example','//foreign.example','/api/health?x=1','/account#x','/a\\b','/a\nb'])
     assert.throws(()=>restoreRewrittenPath({url:'/api/index.mjs?path='+encodeURIComponent(path)}));
   const direct={url:'/account?locale=fa-IR'};restoreRewrittenPath(direct);assert.equal(direct.url,'/account?locale=fa-IR');

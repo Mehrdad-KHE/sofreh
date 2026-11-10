@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 512 512">
+  <title>Sofreh</title>
+  <rect width="512" height="512" fill="#23392f"/>
+  <path d="M105 251h302c-12 86-65 143-151 143S117 337 105 251Z" fill="#fff9ef"/>
+  <path d="M95 249h322" fill="none" stroke="#dfad51" stroke-width="18" stroke-linecap="round"/>
+  <path d="M210 416h92" fill="none" stroke="#fff9ef" stroke-width="18" stroke-linecap="round"/>
+  <path d="M200 200c-29-33 29-44 0-78m58 78c-29-33 29-44 0-78m58 78c-29-33 29-44 0-78" fill="none" stroke="#dfad51" stroke-width="15" stroke-linecap="round"/>
+  <circle cx="356" cy="119" r="12" fill="#c94f65"/>
+</svg>

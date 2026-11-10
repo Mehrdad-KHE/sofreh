@@ -1,5 +1,7 @@
 {
   "version": 2,
+  "framework": null,
+  "outputDirectory": "public",
   "functions": {
     "api/index.mjs": {
       "includeFiles": "{apps/{account,workspace,classroom-preview}/**,apps/{customer-mobile,cook-mobile}/preview/**,assets/**}"
@@ -11,6 +13,6 @@
     }
   },
   "rewrites": [
-    { "source": "/(.*)", "destination": "/api/index.mjs?path=/$1" }
+    { "source": "/(.*)", "destination": "/api/index?path=/$1" }
   ]
 }

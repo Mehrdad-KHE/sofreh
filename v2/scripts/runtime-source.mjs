@@ -30,7 +30,7 @@ export function copyRuntimeSource(target, { dependencies = false } = {}) {
   if (!resolved.startsWith(runtimeRoot + path.sep)) throw new Error('Runtime output must stay under the local Sofreh runtime.');
   fs.mkdirSync(resolved, { recursive: true });
   const excluded = new Set(['node_modules', '.git', '.vercel', 'data', 'output', 'tmp', '.expo', 'dist', 'build']);
-  for (const entry of ['api', 'apps', 'assets', 'packages', 'scripts', 'tests', 'package.json', 'package-lock.json', 'tsconfig.json', 'vercel.json']) {
+  for (const entry of ['api', 'apps', 'assets', 'packages', 'public', 'scripts', 'tests', 'package.json', 'package-lock.json', 'tsconfig.json', 'vercel.json']) {
     fs.cpSync(path.join(sourceRoot, entry), path.join(resolved, entry), {
       recursive: true,
       filter: file => !excluded.has(path.basename(file)) && !/\.(?:sqlite(?:-.*)?|log)$/.test(file)
