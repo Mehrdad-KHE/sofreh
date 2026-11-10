@@ -91,6 +91,10 @@ if(platform==='android'){
   const app=path.join(products,bundle);
   const bundleId=run('/usr/libexec/PlistBuddy',['-c','Print :CFBundleIdentifier',path.join(app,'Info.plist')],project,{capture:true});
   if(bundleId!==id)throw new Error('Simulator bundle ID mismatch.');
+  for(const key of ['NSLocationWhenInUseUsageDescription','NSPhotoLibraryUsageDescription','NSCameraUsageDescription']){
+    const purpose=run('/usr/libexec/PlistBuddy',['-c','Print :'+key,path.join(app,'Info.plist')],project,{capture:true});
+    if(!purpose.trim())throw new Error('Missing iOS user permission purpose: '+key);
+  }
   if(deviceBuild){
     const executable=run('/usr/libexec/PlistBuddy',['-c','Print :CFBundleExecutable',path.join(app,'Info.plist')],project,{capture:true});
     const platformInfo=run('xcrun',['vtool','-show-build',path.join(app,executable)],project,{capture:true});
