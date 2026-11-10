@@ -43,11 +43,11 @@ export async function checkWorkspace({root,output,devices,device,id,role,env}){
   const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
   const ui=(...args)=>run(python,[wrapper,'ui',...args],{quiet:true});
   const sim=(...args)=>run('xcrun',['simctl','--set',devices,...args]);
-  let lastTree;
+  let lastTree,readOptions=['--client-type','xctest'],readMode='xctest/ax';
   async function tree(){
     let failure;
     for(let attempt=0;attempt<4;attempt++){
-      try{lastTree=JSON.parse(ui('describe-all'));return lastTree;}catch(error){failure=error;await sleep(1000);}
+      try{lastTree=JSON.parse(ui('describe-all',...readOptions));return lastTree;}catch(error){failure=error;await sleep(1000);}
     }throw failure;
   }
   function nodes(value){if(!value||typeof value!=='object')return [];return [value,...Object.values(value).flatMap(nodes)];}
@@ -71,7 +71,21 @@ export async function checkWorkspace({root,output,devices,device,id,role,env}){
     if(!fs.existsSync(socket))throw new Error('No isolated idb socket.');
     console.log('Isolated iOS accessibility companion is ready.');
     sim('launch','--terminate-running-process',device,id);
-    await visible('Welcome back');
+    // WebKit decides which remote accessibility content to expose for the
+    // assistive client. Probe supported upstream clients/transports, keeping
+    // the working one for subsequent reads; this does not enable VoiceOver.
+    let webContentVisible=false;const probeDeadline=Date.now()+120000;
+    const modes=['xctest','voiceOver','accessibilityInspector'].flatMap(client=>['ax','ax-coresimulator'].map(backend=>({client,backend})));
+    while(!webContentVisible&&Date.now()<probeDeadline){
+      for(const mode of modes){
+        readOptions=['--client-type',mode.client,'--api',mode.backend];
+        try{if(matches(await tree(),'Welcome back').length){readMode=mode.client+'/'+mode.backend;webContentVisible=true;break;}}catch{}
+        if(Date.now()>=probeDeadline)break;
+      }
+      if(!webContentVisible)await sleep(1000);
+    }
+    if(!webContentVisible)throw new Error('Native accessibility could not expose the loaded account web content.');
+    console.log('Native web content exposed through '+readMode);
     const origin='https://sofreh-v2.vercel.app';
     const signup=await fetch(origin+'/api/auth/sign-up/email',{method:'POST',headers:{'Content-Type':'application/json',Origin:origin},body:JSON.stringify({name:'iOS workspace check',email,password})});
     if(!signup.ok)throw new Error(`Synthetic account creation failed (${signup.status}).`);
@@ -88,6 +102,8 @@ export async function checkWorkspace({root,output,devices,device,id,role,env}){
     await tap('فارسی');await visible('حساب شما');shot('account-fa');
     sim('terminate',device,id);sim('launch',device,id);
     await visible(role==='COOK'?'وقت چیدن سفره توست.':'هوس چه غذایی کرده‌ای؟');shot('session-reopened');
+    fs.writeFileSync(path.join(output,'native-interaction-metadata.json'),JSON.stringify({role,tool:'Meta idb',version,readMode,
+      signIn:true,roleTabs:true,persian:true,sessionAfterRelaunch:true,physicalDevice:false,voiceOverListeningTest:false},null,2));
     console.log('Real native WebView sign-in, role tabs, Persian and persisted session passed.');
   }catch(error){
     const diagnostic={error:clean(error.message),tree:lastTree?JSON.parse(clean(JSON.stringify(lastTree))):null,
