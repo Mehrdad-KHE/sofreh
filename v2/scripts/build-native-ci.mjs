@@ -43,9 +43,15 @@ if(platform==='android'){
   const ndk=env.ANDROID_NDK_HOME || env.ANDROID_NDK;
   const match=ndk && fs.readFileSync(path.join(ndk,'source.properties'),'utf8').match(/Pkg.Revision\s*=\s*(\S+)/);
   if(!match)throw new Error('No provisioned Android NDK found.');
+  const rootGradle=path.join(project,'android/build.gradle');
+  const gradleText=fs.readFileSync(rootGradle,'utf8');
+  const rootPlugin='apply plugin: "expo-root-project"';
+  if(!gradleText.includes(rootPlugin))throw new Error('Unrecognized generated Gradle template.');
+  fs.writeFileSync(rootGradle,gradleText.replace(rootPlugin,`ext { ndkVersion = '${match[1]}' }\n${rootPlugin}`));
+  console.log(`Using provisioned NDK ${match[1]}.`);
   fs.writeFileSync(path.join(project,'android/local.properties'),`sdk.dir=${sdk}\n`);
   run('bash',['./gradlew','app:assembleRelease','--no-daemon','--max-workers=2',
-    '-PreactNativeArchitectures=arm64-v8a',`-Pandroid.ndkVersion=${match[1]}`,
+    '-PreactNativeArchitectures=arm64-v8a',
     '-Pandroid.builder.sdkDownload=false'],path.join(project,'android'));
   const apk=path.join(project,'android/app/build/outputs/apk/release/app-release.apk');
   const buildTools=path.join(sdk,'build-tools','37.0.0');

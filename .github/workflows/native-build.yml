@@ -7,12 +7,17 @@ on:
         description: HTTPS origin of the account workspace
         required: true
         default: https://sofreh-v2.vercel.app
+      platform:
+        description: Platforms to compile
+        type: choice
+        options: [all, android, ios]
+        default: all
 
 permissions:
   contents: read
 
 concurrency:
-  group: sofreh-native-${{ github.ref }}
+  group: sofreh-native-${{ github.ref }}-${{ inputs.platform || 'all' }}
   cancel-in-progress: false
 
 jobs:
@@ -23,7 +28,7 @@ jobs:
       max-parallel: 2
       matrix:
         role: [CUSTOMER, COOK]
-        platform: [android, ios]
+        platform: ${{ fromJSON(inputs.platform == 'android' && '["android"]' || inputs.platform == 'ios' && '["ios"]' || '["android","ios"]') }}
         include:
           - platform: android
             runner: ubuntu-24.04
