@@ -6,7 +6,8 @@ export function savePushSubscription(db,user,input){
   requireAccount(user);const subscription=input.subscription;
   let url;try{url=new URL(subscription?.endpoint);}catch{throw new SofrehGuardError('INVALID_SUBSCRIPTION','Invalid push subscription.',400);}
   const hosts=['fcm.googleapis.com','updates.push.services.mozilla.com','web.push.apple.com'];
-  if(url.protocol!=='https:'||url.port||url.username||url.password||url.hash||!hosts.includes(url.hostname)||url.href.length>2500)throw new SofrehGuardError('INVALID_SUBSCRIPTION','Unsupported push service.',400);
+  const supportedHost=hosts.includes(url.hostname)||/^[a-z0-9-]+\.notify\.windows\.com$/.test(url.hostname);
+  if(url.protocol!=='https:'||url.port||url.username||url.password||url.hash||!supportedHost||url.href.length>2500)throw new SofrehGuardError('INVALID_SUBSCRIPTION','Unsupported push service.',400);
   if(!/^[A-Za-z0-9_-]{80,100}$/.test(subscription.keys?.p256dh)||!/^[A-Za-z0-9_-]{20,30}$/.test(subscription.keys?.auth))throw new SofrehGuardError('INVALID_SUBSCRIPTION','Invalid push keys.',400);
   const count=db.prepare('SELECT count(*) AS n FROM push_subscriptions WHERE user_id=?').get(user.id).n;
   if(count>=10&&!db.prepare('SELECT endpoint FROM push_subscriptions WHERE endpoint=? AND user_id=?').get(url.href,user.id))throw new SofrehGuardError('SUBSCRIPTION_LIMIT','Too many devices.',409);
@@ -31,17 +32,21 @@ export function enqueueOrderNotification(db,userId,orderId,status){
   }
 }
 
-export async function deliverNotifications(db,{vapid,send,now=Date.now()}={}){
+export async function deliverNotifications(db,{vapid,send,now=Date.now(),clock=Date.now}={}){
   const sender=send||((await import('web-push')).sendNotification);
   const jobs=db.prepare(`SELECT j.*,s.subscription_json FROM notification_jobs j JOIN push_subscriptions s ON s.endpoint=j.endpoint AND s.user_id=j.user_id
     WHERE j.done=0 AND j.next_attempt_ms<=? AND j.lease_until_ms<=? AND j.attempts<5 ORDER BY j.next_attempt_ms LIMIT 20`).all(now,now);
   for(const job of jobs){
-    const claimed=db.prepare('UPDATE notification_jobs SET lease_until_ms=? WHERE id=? AND done=0 AND lease_until_ms<=?').run(now+60000,job.id,now);
+    // Each send can take five seconds. A late job in a batch must receive its
+    // own fresh lease, not one which expired while earlier jobs were sent.
+    const claimedAt=Math.max(now,clock());
+    const claimed=db.prepare('UPDATE notification_jobs SET lease_until_ms=? WHERE id=? AND done=0 AND lease_until_ms<=? AND attempts=? AND next_attempt_ms<=?')
+      .run(claimedAt+60000,job.id,claimedAt,job.attempts,claimedAt);
     if(claimed.changes!==1)continue;
     try{await sender(JSON.parse(job.subscription_json),job.payload_json,{vapidDetails:vapid,TTL:3600,urgency:'high',timeout:5000});
       db.prepare('UPDATE notification_jobs SET done=1,attempts=attempts+1,lease_until_ms=0 WHERE id=?').run(job.id);
     }catch(error){if([404,410].includes(error.statusCode)){db.prepare('DELETE FROM push_subscriptions WHERE endpoint=?').run(job.endpoint);}
-      else db.prepare('UPDATE notification_jobs SET attempts=attempts+1,next_attempt_ms=?,lease_until_ms=0 WHERE id=?').run(now+Math.min(3600000,15000*2**job.attempts),job.id);
+      else db.prepare('UPDATE notification_jobs SET attempts=attempts+1,next_attempt_ms=?,lease_until_ms=0 WHERE id=?').run(Math.max(now,clock())+Math.min(3600000,15000*2**job.attempts),job.id);
     }
   }
   db.prepare('DELETE FROM notification_jobs WHERE done=1 AND next_attempt_ms<?').run(now-7*86400000);

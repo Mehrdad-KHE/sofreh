@@ -1,8 +1,10 @@
 import {fromNodeHeaders} from 'better-auth/node';
-import {ipAddress} from '@vercel/functions';
+import {ipAddress,waitUntil} from '@vercel/functions';
+import {QueueClient} from '@vercel/queue';
 import {createSofrehHttpServer} from './server.mjs';
 import {createIdentityProvider} from './identity.mjs';
 import {openRemoteDatabase,remoteDatabaseOptions,validateRemoteConnection} from './remote.mjs';
+import {createNotificationPump,hostedPushConfiguration} from './notificationPump.mjs';
 
 export function hostedConfiguration(env) {
   const mode=env.SOFREH_RUNTIME_MODE||'fixtures';
@@ -13,7 +15,7 @@ export function hostedConfiguration(env) {
   if(origin.protocol!=='https:'||origin.username||origin.password||origin.pathname!=='/'||origin.search||origin.hash)
     throw new Error('Configure an HTTPS application origin without a path.');
   if(typeof env.SOFREH_AUTH_SECRET!=='string'||env.SOFREH_AUTH_SECRET.length<32)throw new Error('Configure a persistent authentication secret.');
-  return {mode,connection,baseURL:origin.origin,secret:env.SOFREH_AUTH_SECRET};
+  return {mode,connection,baseURL:origin.origin,secret:env.SOFREH_AUTH_SECRET,vapid:hostedPushConfiguration(env,origin.origin)};
 }
 
 export async function createHostedRuntime(env=process.env,{connect=openRemoteDatabase}={}) {
@@ -27,7 +29,13 @@ export async function createHostedRuntime(env=process.env,{connect=openRemoteDat
       clientIPAddress:req=>env.VERCEL==='1'?ipAddress(fromNodeHeaders(req.headers)):null});
     // Fail before accepting traffic if explicit schema initialization was missed.
     for(const table of ['user','session','account','verification','rateLimit'])db.prepare(`SELECT 1 FROM "${table}" LIMIT 1`).get();
-    return createSofrehHttpServer({database:db,seedFixtures:false,identityProvider});
+    let notificationPump;
+    if(config.vapid){
+      if(!db.prepare('SELECT id FROM notification_pump WHERE id=1').get())throw new Error('Initialize the notification relay before enabling delivery.');
+      const queue=new QueueClient();
+      notificationPump=createNotificationPump({db,vapid:config.vapid,publish:queue.send.bind(queue)});
+    }
+    return {...createSofrehHttpServer({database:db,seedFixtures:false,identityProvider,pushPublicKey:config.vapid?.publicKey}),notificationPump};
   }catch(error){db.close();throw error;}
 }
 
@@ -41,7 +49,7 @@ export function restoreRewrittenPath(req) {
   req.url=pathname+(query?'?'+query:'');
 }
 
-export function createHostedHandler({initialize=()=>createHostedRuntime(),report=()=>console.error('Sofreh runtime initialization failed.')}={}) {
+export function createHostedHandler({initialize=()=>createHostedRuntime(),background=waitUntil,report=()=>console.error('Sofreh runtime initialization failed.')}={}) {
   let runtimePromise;
   async function runtime(){
     if(!runtimePromise)runtimePromise=Promise.resolve().then(initialize).catch(error=>{runtimePromise=undefined;throw error;});
@@ -50,8 +58,9 @@ export function createHostedHandler({initialize=()=>createHostedRuntime(),report
   return async(req,res)=>{
     try {
       restoreRewrittenPath(req);
-      const {server}=await runtime();
+      const {server,notificationPump}=await runtime();
       await new Promise((resolve,reject)=>{
+        if(notificationPump)res.once('finish',()=>background(notificationPump.wake().catch(()=>console.error('Sofreh notification relay will retry.'))));
         res.once('finish',resolve);res.once('close',resolve);res.once('error',reject);
         server.emit('request',req,res);
       });

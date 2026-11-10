@@ -50,6 +50,7 @@ SQLite uses WAL, foreign keys, a 5000ms busy timeout and explicit `BEGIN IMMEDIA
 | order_reviews | Participant reviews for completed orders |
 | dish_photos | Cook-owned, re-encoded public food photos |
 | push_subscriptions / notification_jobs | Owned browser subscriptions and transactional delivery work |
+| notification_pump | Singleton throttle/lease for the optional serverless outbox relay |
 
 Money is represented in integer cents. Order items retain snapshots rather than relying only on the current menu. The customer cart is associated with one cook. Precise device coordinates are not accepted by the current backend payload guard.
 

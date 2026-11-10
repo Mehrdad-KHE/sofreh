@@ -5,6 +5,14 @@ import {seedSyntheticStage1Data,authenticateByToken,createOrderTransactional,tra
 import {savePushSubscription,removePushSubscription,deliverNotifications,enqueueOrderNotification} from '../packages/backend/src/notifications.mjs';
 
 const subscription={endpoint:'https://fcm.googleapis.com/fcm/send/testing-only',keys:{p256dh:'B'.repeat(87),auth:'a'.repeat(22)}};
+test('Edge Windows push endpoints are accepted without allowing lookalike or private hosts',()=>{
+  const db=openSofrehDatabase(':memory:');try{
+    seedSyntheticStage1Data(db);const cook=authenticateByToken(db,'test-token-cook-pari');
+    assert.equal(savePushSubscription(db,cook,{subscription:{...subscription,endpoint:'https://wns2-db5p.notify.windows.com/w/?token=synthetic'}}).subscribed,true);
+    for(const endpoint of ['https://wns2-db5p.notify.windows.com.attacker.example/w/','https://attacker-notify.windows.com/w/','https://127.0.0.1/w/','http://wns2-db5p.notify.windows.com/w/'])
+      assert.throws(()=>savePushSubscription(db,cook,{subscription:{...subscription,endpoint}}),/Unsupported/);
+  }finally{db.close();}
+});
 test('notification jobs follow committed orders, retry after failure and remove expired subscriptions',async()=>{
   const db=openSofrehDatabase(':memory:');try{
     seedSyntheticStage1Data(db);
