@@ -1,0 +1,29 @@
+name: Internal public catalogue quality
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  catalogue:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 24.22.2
+          package-manager-cache: false
+      - name: Audit the public Persian and English catalogue
+        run: node v2/scripts/check-public-catalogue-ci.mjs
+      - uses: actions/upload-artifact@v7.0.2
+        if: always()
+        with:
+          name: internal-catalogue-${{ github.run_id }}
+          path: ${{ runner.temp }}/ElegantRuntime/Sofreh/catalogue/artifacts/*
+          retention-days: 1
+          if-no-files-found: error
