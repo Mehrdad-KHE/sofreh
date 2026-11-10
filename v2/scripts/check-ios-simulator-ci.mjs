@@ -40,7 +40,7 @@ try{
   sim('io',device,'screenshot',path.join(output,`${role.toLowerCase()}-iphone.png`));
   let workspaceAccepted=false;
   if(process.env.SOFREH_CHECK_WORKSPACE==='true'){
-    const {checkWorkspace}=await import('./check-ios-workspace-ci.mjs');
+    const {checkWorkspace}=await import('./check-ios-idb-ci.mjs');
     await checkWorkspace({root,output,devices,device,id,role,env});
     workspaceAccepted=true;
   }
