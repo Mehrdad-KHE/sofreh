@@ -171,14 +171,22 @@ async function enablePush() {
         "مجوز اعلان داده نشد؛ سفارش‌ها با صفحه باز به‌روز می‌شوند.",
       ),
     );
-  const registration = await navigator.serviceWorker.register("/sw.js");
-  await navigator.serviceWorker.ready;
-  const subscription =
-    (await registration.pushManager.getSubscription()) ||
-    (await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: config.publicKey,
-    }));
+  let subscription;
+  try {
+    const registration = await navigator.serviceWorker.register("/sw.js");
+    await navigator.serviceWorker.ready;
+    subscription =
+      (await registration.pushManager.getSubscription()) ||
+      (await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: config.publicKey,
+      }));
+  } catch {
+    throw new Error(tr(
+      "Your browser could not enable alerts. Check notification permissions or try another browser. Orders keep updating while open.",
+      "اعلان در این مرورگر فعال نشد. مجوز اعلان را بررسی کنید یا با مرورگر دیگری امتحان کنید. سفارش‌ها با صفحه باز به‌روز می‌شوند.",
+    ));
+  }
   await api("/api/notifications/subscription", {
     subscription: subscription.toJSON(),
   });
