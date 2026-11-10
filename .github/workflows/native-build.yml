@@ -27,13 +27,7 @@ jobs:
       fail-fast: false
       max-parallel: 2
       matrix:
-        role: [CUSTOMER, COOK]
-        platform: ${{ fromJSON(inputs.platform == 'android' && '["android"]' || inputs.platform == 'ios' && '["ios"]' || '["android","ios"]') }}
-        include:
-          - platform: android
-            runner: ubuntu-24.04
-          - platform: ios
-            runner: macos-26
+        include: ${{ fromJSON(inputs.platform == 'android' && '[{"role":"CUSTOMER","platform":"android","runner":"ubuntu-24.04"},{"role":"COOK","platform":"android","runner":"ubuntu-24.04"}]' || inputs.platform == 'ios' && '[{"role":"CUSTOMER","platform":"ios","runner":"macos-26"},{"role":"COOK","platform":"ios","runner":"macos-26"}]' || '[{"role":"CUSTOMER","platform":"android","runner":"ubuntu-24.04"},{"role":"CUSTOMER","platform":"ios","runner":"macos-26"},{"role":"COOK","platform":"android","runner":"ubuntu-24.04"},{"role":"COOK","platform":"ios","runner":"macos-26"}]') }}
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 45
     env:

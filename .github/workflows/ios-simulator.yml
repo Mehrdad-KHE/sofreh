@@ -1,0 +1,43 @@
+name: Internal iPhone simulator launch
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_run:
+        description: Run number containing both iOS build artifacts
+        required: true
+        default: '42724705850'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  simulator:
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        role: [CUSTOMER, COOK]
+    runs-on: macos-26
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+      SOFREH_BUILD_RUN: ${{ inputs.build_run }}
+      SOFREH_APP_ROLE: ${{ matrix.role }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 24.22.2
+          package-manager-cache: false
+      - name: Install, launch and capture simulator
+        run: node v2/scripts/check-ios-simulator-ci.mjs
+      - uses: actions/upload-artifact@v7.0.2
+        with:
+          name: internal-iphone-${{ matrix.role }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/ElegantRuntime/Sofreh/simulator/artifacts/*
+          retention-days: 1
+          if-no-files-found: error
