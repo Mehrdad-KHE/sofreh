@@ -42,7 +42,7 @@ SQLite uses WAL, foreign keys, a 5000ms busy timeout and explicit `BEGIN IMMEDIA
 | users | Role, identity, locale and synthetic token |
 | user / session / account / verification / rateLimit | Better Auth-managed identity, credentials, sessions and throttling |
 | customer_saved_addresses | Customer-owned saved delivery addresses |
-| cook_profiles | Kitchen identity, public area, private pickup address and fulfillment settings |
+| cook_profiles | Kitchen identity, public area, private pickup address, publication state and fulfillment settings |
 | dish_slots | Menu, price, capacity, availability, time window and allergens |
 | carts / cart_items | Persisted customer cart and quantities |
 | orders / order_items | Order state, totals and title/price snapshots |

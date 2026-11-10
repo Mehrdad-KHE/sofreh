@@ -156,3 +156,29 @@ test('authentication initialization waits for schema validation before reporting
     await assert.rejects(createIdentityProvider({...config,runMigrations:false}),/schema|verification|table/i);
   }finally{db.close();}
 });
+
+test('a cook can pause public ordering while retaining the menu and fulfilling existing orders',async()=>{
+  const app=await start();try{
+    const cook=app.client(),customer=app.client();
+    await register(cook,'pause-cook@example.test','COOK');await register(customer,'pause-customer@example.test','CUSTOMER');
+    const kitchen=(await cook('/api/cook/kitchen',{...kitchenInput,isPublished:true},{method:'PUT'})).data.kitchen;
+    const dish=(await cook('/api/cook/dishes',dishInput,{method:'PUT'})).data.dish;
+    assert.equal((await customer('/api/customer/cart/items',{cookId:kitchen.id,dishId:dish.id,quantity:1,fulfillmentType:'pickup'})).status,200);
+    const order=(await customer('/api/customer/orders',{simulatedPaymentMethod:'SIMULATED_CARD',idempotencyKey:'before-pause'})).data.order;
+    assert.equal((await customer('/api/customer/cart/items',{cookId:kitchen.id,dishId:dish.id,quantity:1,fulfillmentType:'pickup'})).status,200);
+    assert.equal((await cook('/api/cook/kitchen',{...kitchenInput,isPublished:false},{method:'PUT'})).status,200);
+    assert.equal((await customer('/api/discovery/cooks')).data.cooks.length,0);
+    assert.equal((await customer('/api/discovery/cooks?minLat=43&maxLat=44&minLng=-80&maxLng=-79')).data.cooks.length,0);
+    const own=(await cook('/api/cook/kitchen?locale=fa-IR')).data.kitchen;
+    assert.equal(own.isPublished,false);assert.equal(own.storefront.dishes[0].title,dishInput.titleFa);
+    const blocked=await customer('/api/customer/orders',{simulatedPaymentMethod:'SIMULATED_CARD',idempotencyKey:'during-pause'});
+    assert.equal(blocked.status,409);assert.equal(blocked.data.error.code,'KITCHEN_PAUSED');
+    assert.equal((await customer('/api/customer/cart/items',{cookId:kitchen.id,dishId:dish.id,quantity:1,fulfillmentType:'pickup'})).status,409);
+    assert.equal(app.db.prepare('SELECT remaining_portions FROM dish_slots WHERE id=?').get(dish.id).remaining_portions,1);
+    for(const nextStatus of ['ACCEPTED','READY','COMPLETED'])assert.equal((await cook(`/api/cook/orders/${order.id}/status`,{nextStatus})).status,200);
+    assert.equal((await customer(`/api/customer/orders/${order.id}`)).data.order.status,'COMPLETED');
+    assert.equal((await cook('/api/cook/kitchen',{...kitchenInput,isPublished:'false'},{method:'PUT'})).status,400);
+    assert.equal((await cook('/api/cook/kitchen',{...kitchenInput,isPublished:true},{method:'PUT'})).status,200);
+    assert.equal((await customer('/api/discovery/cooks')).data.cooks.length,1);
+  }finally{await app.close();}
+});

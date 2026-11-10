@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { SofrehGuardError, requireRole, requireCookOwnership } from './privacy.mjs';
+import { SofrehGuardError, requireRole, requireCookOwnership, sanitizeCookForPublicDiscovery } from './privacy.mjs';
 import { withImmediateTransaction } from './db.mjs';
 
 export const KITCHEN_AREAS = Object.freeze({
@@ -22,16 +22,17 @@ function integer(value, name, min, max) {
   return value;
 }
 
-export function getOwnKitchen(db, user) {
+export function getOwnKitchen(db, user, locale='en-CA') {
   requireRole(user, 'COOK');
   const row = db.prepare('SELECT * FROM cook_profiles WHERE user_id=?').get(user.id);
   if (!row) return null;
-  return { id: row.id, nameEn: row.kitchen_name_en, nameFa: row.kitchen_name_fa, bioEn: row.bio_en, bioFa: row.bio_fa,
+  const dishes=db.prepare('SELECT * FROM dish_slots WHERE cook_id=? AND is_active=1').all(row.id);
+  return { id: row.id, isPublished:Boolean(row.is_published), storefront:sanitizeCookForPublicDiscovery(row,dishes,locale), nameEn: row.kitchen_name_en, nameFa: row.kitchen_name_fa, bioEn: row.bio_en, bioFa: row.bio_fa,
     neighborhood: row.neighborhood, pickupAddress: row.exact_pickup_address_private, pickupWindowEn: row.pickup_window_en,
     pickupWindowFa: row.pickup_window_fa, dishes: db.prepare('SELECT id FROM dish_slots WHERE cook_id=?').all(row.id) };
 }
 
-export function saveOwnKitchen(db, user, input) {
+export function saveOwnKitchen(db, user, input, locale='en-CA') {
   requireRole(user, 'COOK');
   const area = KITCHEN_AREAS[input.area];
   if (!area) throw new SofrehGuardError('INVALID_AREA', 'Choose an available kitchen area.', 400);
@@ -41,19 +42,20 @@ export function saveOwnKitchen(db, user, input) {
   if (!['pickup','delivery','both'].includes(mode)) throw new SofrehGuardError('INVALID_FULFILLMENT', 'Choose pickup, delivery or both.', 400);
   const fee = integer(input.deliveryFeeCents,'delivery fee',0,50000);
   const radius = integer(input.deliveryRadiusKm,'delivery radius',0,100);
+  if(input.isPublished!==undefined&&typeof input.isPublished!=='boolean')throw new SofrehGuardError('INVALID_FIELD','Please check kitchen availability.',400);
   return withImmediateTransaction(db, () => {
-    const existing = db.prepare('SELECT id FROM cook_profiles WHERE user_id=?').get(user.id);
+    const existing = db.prepare('SELECT id,is_published FROM cook_profiles WHERE user_id=?').get(user.id);
     const id = existing?.id ?? `kitchen-${randomUUID()}`;
     db.prepare(`INSERT INTO cook_profiles (id,user_id,kitchen_name_en,kitchen_name_fa,bio_en,bio_fa,neighborhood,public_lat,public_lng,
       exact_pickup_address_private,pickup_window_en,pickup_window_fa,supports_pickup,supports_delivery,delivery_fee_cents,delivery_radius_km,
-      is_synthetic_test_fixture,synthetic_badge_label,updated_at_iso) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,0,'',?)
+      is_synthetic_test_fixture,synthetic_badge_label,is_published,updated_at_iso) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,0,'',?,?)
       ON CONFLICT(user_id) DO UPDATE SET kitchen_name_en=excluded.kitchen_name_en,kitchen_name_fa=excluded.kitchen_name_fa,
       bio_en=excluded.bio_en,bio_fa=excluded.bio_fa,neighborhood=excluded.neighborhood,public_lat=excluded.public_lat,public_lng=excluded.public_lng,
       exact_pickup_address_private=excluded.exact_pickup_address_private,pickup_window_en=excluded.pickup_window_en,pickup_window_fa=excluded.pickup_window_fa,
       supports_pickup=excluded.supports_pickup,supports_delivery=excluded.supports_delivery,delivery_fee_cents=excluded.delivery_fee_cents,
-      delivery_radius_km=excluded.delivery_radius_km,updated_at_iso=excluded.updated_at_iso`).run(id,user.id,...values,
-      mode === 'delivery' ? 0 : 1,mode === 'pickup' ? 0 : 1,fee,radius,new Date().toISOString());
-    return getOwnKitchen(db,user);
+      delivery_radius_km=excluded.delivery_radius_km,is_published=excluded.is_published,updated_at_iso=excluded.updated_at_iso`).run(id,user.id,...values,
+      mode === 'delivery' ? 0 : 1,mode === 'pickup' ? 0 : 1,fee,radius,input.isPublished===undefined?(existing?.is_published??1):Number(input.isPublished),new Date().toISOString());
+    return getOwnKitchen(db,user,locale);
   });
 }
 

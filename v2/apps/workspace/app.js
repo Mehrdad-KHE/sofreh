@@ -88,6 +88,7 @@ async function api(route, body, method = body ? "POST" : "GET") {
   if (!response.ok) {
     const code = data.error?.code || data.code;
     const message = {
+      KITCHEN_PAUSED: tr('This kitchen has paused new orders. Choose another kitchen or try later.','این آشپزخانه سفارش تازه نمی‌گیرد؛ آشپزخانه دیگری انتخاب کنید یا بعداً برگردید.'),
       INSUFFICIENT_PORTIONS: tr(
         "Some portions have sold out. Refresh and choose again.",
         "بخشی از موجودی تمام شده است؛ بازخوانی کنید و دوباره انتخاب کنید.",
@@ -703,7 +704,7 @@ function nextActions(order) {
 }
 function renderKitchenForm() {
   const own = state.own;
-  const cook = state.cooks.find((item) => item.id === own?.id);
+  const cook = own?.storefront || state.cooks.find((item) => item.id === own?.id);
   const area =
     Object.entries(state.areas).find(
       ([, value]) => value.name === own?.neighborhood,
@@ -718,7 +719,7 @@ function renderKitchenForm() {
       )
       .join(
         "",
-      )}</select></div>${field("pickupAddress", tr("Private pickup address", "نشانی خصوصی دریافت"), own?.pickupAddress || "", "text", 'required maxlength="500"')}${field("pickupWindowEn", tr("Pickup / delivery window — English", "بازه دریافت / ارسال — انگلیسی"), own?.pickupWindowEn || "", "text", 'required maxlength="180"')}${field("pickupWindowFa", tr("Pickup / delivery window — Persian", "بازه دریافت / ارسال — فارسی"), own?.pickupWindowFa || "", "text", 'required maxlength="180"')}<div><label for="fulfillmentMode">${tr("How customers receive food", "روش دریافت غذا")}</label><select id="fulfillmentMode" name="fulfillmentMode">${["both", "pickup", "delivery"].map((mode) => `<option value="${mode}" ${mode === (cook ? (cook.supportsPickup && cook.supportsDelivery ? "both" : cook.supportsPickup ? "pickup" : "delivery") : "both") ? "selected" : ""}>${mode === "both" ? tr("Pickup and delivery", "حضوری و ارسال") : modeText(mode)}</option>`).join("")}</select></div>${field("deliveryFee", tr("Delivery fee (CAD)", "هزینه ارسال (دلار کانادا)"), (cook?.deliveryFeeCents || 0) / 100, "number", 'required min="0" max="500" step="0.01"')}${field("deliveryRadiusKm", tr("Delivery area radius (km)", "شعاع محدوده ارسال (کیلومتر)"), cook?.deliveryRadiusKm || 5, "number", 'required min="0" max="100" step="1"')}</div><p class="notice">${tr("Saving publishes your kitchen details to discovery. Enter accurate information and allergens. No verification or licensing badge is implied.", "با ذخیره، معرفی آشپزخانه در فهرست کشف غذا دیده می‌شود. اطلاعات و مواد حساسیت‌زا را دقیق وارد کنید. نشان تأیید یا مجوزی اعطا نمی‌شود.")}</p><button type="submit" class="primary">${tr("Save kitchen", "ذخیره آشپزخانه")}</button></form>`;
+      )}</select></div>${field("pickupAddress", tr("Private pickup address", "نشانی خصوصی دریافت"), own?.pickupAddress || "", "text", 'required maxlength="500"')}${field("pickupWindowEn", tr("Pickup / delivery window — English", "بازه دریافت / ارسال — انگلیسی"), own?.pickupWindowEn || "", "text", 'required maxlength="180"')}${field("pickupWindowFa", tr("Pickup / delivery window — Persian", "بازه دریافت / ارسال — فارسی"), own?.pickupWindowFa || "", "text", 'required maxlength="180"')}<div><label for="fulfillmentMode">${tr("How customers receive food", "روش دریافت غذا")}</label><select id="fulfillmentMode" name="fulfillmentMode">${["both", "pickup", "delivery"].map((mode) => `<option value="${mode}" ${mode === (cook ? (cook.supportsPickup && cook.supportsDelivery ? "both" : cook.supportsPickup ? "pickup" : "delivery") : "both") ? "selected" : ""}>${mode === "both" ? tr("Pickup and delivery", "حضوری و ارسال") : modeText(mode)}</option>`).join("")}</select></div>${field("deliveryFee", tr("Delivery fee (CAD)", "هزینه ارسال (دلار کانادا)"), (cook?.deliveryFeeCents || 0) / 100, "number", 'required min="0" max="500" step="0.01"')}${field("deliveryRadiusKm", tr("Delivery area radius (km)", "شعاع محدوده ارسال (کیلومتر)"), cook?.deliveryRadiusKm ?? 5, "number", 'required min="0" max="100" step="1"')}</div><label class="filter-check"><input type="checkbox" name="isPublished" ${own?.isPublished ? 'checked' : ''}>${tr('Show my kitchen and accept new orders','نمایش آشپزخانه و پذیرش سفارش تازه')}</label><p class="notice">${tr('Keep this off while preparing your menu or taking a break. Existing orders remain available to complete. Publish only accurate kitchen details and allergens.','هنگام آماده‌کردن منو یا استراحت، این گزینه را خاموش نگه دارید. سفارش‌های قبلی همچنان قابل پیگیری‌اند. معرفی آشپزخانه و مواد حساسیت‌زا را دقیق وارد کنید.')}</p><button type="submit" class="primary">${tr("Save kitchen", "ذخیره آشپزخانه")}</button></form>`;
   $("kitchenForm").onsubmit = (event) => {
     event.preventDefault();
     action(
@@ -727,6 +728,7 @@ function renderKitchenForm() {
         form.deliveryFeeCents = Math.round(Number(form.deliveryFee) * 100);
         delete form.deliveryFee;
         form.deliveryRadiusKm = Number(form.deliveryRadiusKm);
+        form.isPublished = event.target.elements.isPublished.checked;
         await api("/api/cook/kitchen", form, "PUT");
         await refresh();
       },
@@ -749,7 +751,7 @@ function renderMenu() {
       `<p class="empty">${tr("Create your kitchen before adding dishes.", "پیش از افزودن غذا، آشپزخانه را ثبت کنید.")}</p>`;
     return;
   }
-  const cook = state.cooks.find((item) => item.id === state.own.id);
+  const cook = state.own.storefront || state.cooks.find((item) => item.id === state.own.id);
   const dish = cook?.dishes.find((item) => item.id === state.editDish);
   $("content").innerHTML =
     `<h2>${tr("Menu and portions", "منو و تعداد پرس")}</h2><div class="grid">${(cook?.dishes || []).map((item) => `<article class="card"><h3>${h(item.title)}</h3><p>${money(item.priceCents)} · ${number(item.remainingPortions)} ${tr("portions left", "پرس مانده")}</p><p>${date(item.serviceWindowEndIso)}</p><button type="button" data-edit-dish="${h(item.id)}">${tr("Edit dish", "ویرایش غذا")}</button></article>`).join("")}</div><div class="card" style="margin-top:24px"><h3>${dish ? tr("Edit dish", "ویرایش غذا") : tr("Add a dish", "افزودن غذا")}</h3><form id="dishForm"><div class="form-grid">${field("titleEn", tr("Dish name — English", "نام غذا — انگلیسی"), dish?.titleLocalized["en-CA"] || "", "text", 'required maxlength="180"')}${field("titleFa", tr("Dish name — Persian", "نام غذا — فارسی"), dish?.titleLocalized["fa-IR"] || "", "text", 'required maxlength="180"')}${field("descriptionEn", tr("Description — English", "توضیحات — انگلیسی"), dish?.descriptionLocalized["en-CA"] || "", "text", 'maxlength="1500"')}${field("descriptionFa", tr("Description — Persian", "توضیحات — فارسی"), dish?.descriptionLocalized["fa-IR"] || "", "text", 'maxlength="1500"')}${field("price", tr("Price per portion (CAD)", "قیمت هر پرس (دلار کانادا)"), dish ? dish.priceCents / 100 : "", "number", 'required min="0.01" max="1000" step="0.01"')}${field("remainingPortions", tr("Portions available to order", "پرس قابل سفارش"), dish?.remainingPortions ?? 0, "number", 'required min="0" max="10000" step="1"')}${field("serviceWindowStartIso", tr("Service starts (your device time)", "شروع تحویل (ساعت دستگاه شما)"), localDateTime(dish?.serviceWindowStartIso || new Date()), "datetime-local", "required")}${field("serviceWindowEndIso", tr("Service ends (your device time)", "پایان تحویل (ساعت دستگاه شما)"), localDateTime(dish?.serviceWindowEndIso || new Date(Date.now() + 86400000)), "datetime-local", "required")}${field("allergens", tr("Allergens, separated by commas", "مواد حساسیت‌زا، با ویرگول جدا شوند"), dish?.allergens.join(", ") || "", "text", 'maxlength="1500"')}<div><label for="availabilityMode">${tr("Availability", "وضعیت عرضه")}</label><select id="availabilityMode" name="availabilityMode"><option value="TODAY_AVAILABLE">${tr("Available in this service window", "قابل سفارش در این بازه")}</option><option value="REGULAR_UNAVAILABLE" ${dish?.availabilityMode === "REGULAR_UNAVAILABLE" ? "selected" : ""}>${tr("On the menu, unavailable now", "در منو، فعلاً ناموجود")}</option></select></div></div><p class="muted">${tr("List every relevant allergen. A blank field is not an allergen-free guarantee.", "مواد حساسیت‌زا را کامل وارد کنید. خالی‌بودن این قسمت به معنی بی‌خطر بودن غذا برای حساسیت نیست.")}</p><div class="actions"><button type="submit" class="primary">${tr("Save dish", "ذخیره غذا")}</button>${dish ? `<button id="newDish" type="button">${tr("Add another dish", "افزودن غذای دیگر")}</button>` : ""}</div></form></div>`;

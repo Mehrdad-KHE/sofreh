@@ -160,11 +160,11 @@ export function createSofrehHttpServer({ dbFilePath, database, seedFixtures = tr
         sendJson(res, 200, await identityProvider.setup(req, await readJsonBody(req)), locale); return;
       }
       if (identityProvider && pathname === '/api/cook/kitchen' && req.method === 'GET') {
-        sendJson(res, 200, { kitchen: getOwnKitchen(db, authUser), areas: KITCHEN_AREAS }, locale); return;
+        sendJson(res, 200, { kitchen: getOwnKitchen(db, authUser,locale), areas: KITCHEN_AREAS }, locale); return;
       }
       if (identityProvider && pathname === '/api/cook/kitchen' && req.method === 'PUT') {
         const body = await readJsonBody(req); assertNoPreciseDeviceLocationInPayload(body);
-        sendJson(res, 200, { kitchen: saveOwnKitchen(db, authUser, body) }, locale); return;
+        sendJson(res, 200, { kitchen: saveOwnKitchen(db, authUser, body,locale) }, locale); return;
       }
       const ownDish = pathname.match(/^\/api\/cook\/dishes(?:\/([^/]+))?$/);
       if(identityProvider && pathname === '/api/notifications/config' && req.method === 'GET') {

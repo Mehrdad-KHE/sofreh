@@ -266,13 +266,13 @@ export function listPublicDiscoveryCooks(db, { locale = 'en-CA', bounds = null }
     cookRows = db
       .prepare(
         `SELECT * FROM cook_profiles
-         WHERE public_lat BETWEEN ? AND ?
+         WHERE is_published=1 AND public_lat BETWEEN ? AND ?
            AND public_lng BETWEEN ? AND ?
          ORDER BY id ASC`
       )
       .all(bounds.minLat, bounds.maxLat, bounds.minLng, bounds.maxLng);
   } else {
-    cookRows = db.prepare(`SELECT * FROM cook_profiles ORDER BY id ASC`).all();
+    cookRows = db.prepare(`SELECT * FROM cook_profiles WHERE is_published=1 ORDER BY id ASC`).all();
   }
 
   const dishStmt = db.prepare(
@@ -557,6 +557,7 @@ export function getCustomerCart(db, authUser, locale = 'en-CA') {
 }
 
 function validateCookFulfillmentMode(cookRow, fulfillmentType) {
+  if(cookRow.is_published===0)throw new SofrehGuardError('KITCHEN_PAUSED','This kitchen is not accepting new orders.',409);
   if (fulfillmentType !== 'pickup' && fulfillmentType !== 'delivery') {
     throw new SofrehGuardError(
       'INVALID_FULFILLMENT_TYPE',
