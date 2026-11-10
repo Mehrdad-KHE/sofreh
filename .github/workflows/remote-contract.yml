@@ -1,0 +1,26 @@
+name: Internal remote database contract
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  transport:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      LOCALAPPDATA: ${{ runner.temp }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 24.22.2
+          package-manager-cache: false
+      - name: Prepare isolated dependencies
+        run: node v2/scripts/prepare-identity.mjs
+      - name: Verify independent clients and stock transactions
+        run: node v2/scripts/test-remote-ci.mjs

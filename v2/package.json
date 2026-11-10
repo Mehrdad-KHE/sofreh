@@ -22,6 +22,8 @@
     "verify:typecheck": "node scripts/verify-stage1.mjs"
   },
   "dependencies": {
+    "libsql": "0.5.29",
+    "kysely": "0.29.8",
     "better-auth": "1.7.18",
     "sharp": "0.35.5",
     "web-push": "4.0.0",

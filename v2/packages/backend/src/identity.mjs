@@ -2,17 +2,18 @@ import { betterAuth } from 'better-auth';
 import { toNodeHandler, fromNodeHeaders } from 'better-auth/node';
 import { getMigrations } from 'better-auth/db/migration';
 import { randomUUID } from 'node:crypto';
+import { isIP } from 'node:net';
 import { withImmediateTransaction } from './db.mjs';
 import { SofrehGuardError } from './privacy.mjs';
 import { normalizeLocale } from '../../shared/src/i18n.mjs';
 
 // Authentication and password/session cryptography belong to Better Auth.
 // Application roles are assigned once, separately from editable auth profiles.
-export async function createIdentityProvider({ db, baseURL, secret }) {
+export async function createIdentityProvider({ db, baseURL, secret, databaseOptions = db, runMigrations = true, clientIPAddress = null }) {
   const origin = new URL(baseURL).origin;
   if (!secret || secret.length < 32) throw new Error('An authentication secret of at least 32 characters is required.');
   const options = {
-    database: db,
+    database: databaseOptions,
     baseURL: origin,
     secret,
     emailAndPassword: { enabled: true, minPasswordLength: 12, maxPasswordLength: 128 },
@@ -22,8 +23,10 @@ export async function createIdentityProvider({ db, baseURL, secret }) {
     advanced: { cookiePrefix: 'sofreh', ipAddress: { ipAddressHeaders: ['x-sofreh-client-ip'] } },
     telemetry: { enabled: false }
   };
-  const migration = await getMigrations(options);
-  await migration.runMigrations();
+  if (runMigrations) {
+    const migration = await getMigrations(options);
+    await migration.runMigrations();
+  }
   const auth = betterAuth(options);
   await auth.$context;
 
@@ -40,7 +43,8 @@ export async function createIdentityProvider({ db, baseURL, secret }) {
     async handle(req, res) {
       // Never trust an internet-supplied forwarding header. A deployment behind
       // a proxy needs an explicitly reviewed trusted-proxy configuration.
-      req.headers['x-sofreh-client-ip'] = req.socket.remoteAddress;
+      const trustedIP = clientIPAddress?.(req);
+      req.headers['x-sofreh-client-ip'] = isIP(String(trustedIP || '')) ? trustedIP : req.socket?.remoteAddress;
       return toNodeHandler(auth)(req, res);
     },
     async userFor(req) { return accountFor(await sessionFor(req)); },

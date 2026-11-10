@@ -66,6 +66,8 @@ The service checks role and kitchen ownership before transitions. Terminal state
 
 ## Hosting decision
 
+The optional libSQL connector preserves the synchronous domain SQL/transaction API through the maintained vendor binding. Better Auth receives an explicit Kysely SQLite dialect to avoid treating libSQL's internal `db` member as an existing Kysely instance. Schema initialization is an explicit operation; provider provisioning and hosted activation are separate. Direct remote connections need protocol testing and cloud latency/concurrency checks before release. The current Vercel adapter still selects the fixture runtime.
+
 Use GitHub for source and versioned technical documentation. Vercel can serve the product website and web application endpoints. Native Android/iOS binaries have their own build and distribution paths.
 
 The adapter currently constructs SQLite at `/tmp/sofreh-stage1.sqlite`. Serverless instances do not provide shared persistent local storage. The durable target therefore requires a database shared by every instance, or a backend host with persistent storage. Choosing a provider must preserve atomic inventory, idempotency, role isolation and address privacy; do not merely copy the file into another temporary folder.

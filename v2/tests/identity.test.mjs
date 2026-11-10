@@ -3,16 +3,20 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { randomBytes } from 'node:crypto';
-import { openSofrehDatabase } from '../packages/backend/src/db.mjs';
+import { openSofrehDatabase, initializeSchema } from '../packages/backend/src/db.mjs';
+import {remoteDatabaseOptions,validateRemoteConnection} from '../packages/backend/src/remote.mjs';
 import { createIdentityProvider } from '../packages/backend/src/identity.mjs';
 import { createSofrehHttpServer } from '../packages/backend/src/server.mjs';
 
-async function start(dbFilePath = ':memory:', secret = randomBytes(48).toString('base64url')) {
-  const db = openSofrehDatabase(dbFilePath), identityProvider = {};
+async function start(dbFilePath = ':memory:', secret = randomBytes(48).toString('base64url'), {libsql=false}={}) {
+  let db;
+  if(libsql){const {default:Database}=await import('libsql');db=new Database(dbFilePath);db.exec('PRAGMA foreign_keys=ON');initializeSchema(db);}
+  else db=openSofrehDatabase(dbFilePath);
+  const identityProvider = {};
   const { server } = createSofrehHttpServer({ database: db, seedFixtures: false, identityProvider });
   await new Promise(resolve => server.listen(0,'127.0.0.1',resolve));
   const base = `http://127.0.0.1:${server.address().port}`;
-  try { Object.assign(identityProvider, await createIdentityProvider({db,baseURL:base,secret})); }
+  try { Object.assign(identityProvider, await createIdentityProvider({db,baseURL:base,secret,...(libsql?{databaseOptions:remoteDatabaseOptions(db)}:{})})); }
   catch(error) { server.closeAllConnections(); await new Promise(resolve=>server.close(resolve)); db.close(); throw error; }
   function client() {
     let cookie = '';
@@ -106,5 +110,39 @@ test('identity, role and saved address survive a database reopen',async()=>{
   try{const owner=app.client();await register(owner,'persist@example.test','CUSTOMER');assert.equal((await owner('/api/customer/addresses',{label:'Home',address:'45 Test Road'})).status,201);}finally{await app.close();}
   app=await start(file,secret);try{const owner=app.client();assert.equal((await owner('/api/auth/sign-in/email',{email:'persist@example.test',password})).status,200);
     assert.equal((await owner('/api/account')).data.account.role,'CUSTOMER');assert.equal((await owner('/api/customer/addresses')).data.addresses[0].address,'45 Test Road');
+  }finally{await app.close();}
+});
+
+test('libSQL driver supports the same account, order and privacy contracts',async()=>{
+  const app=await start(':memory:',randomBytes(48).toString('hex'),{libsql:true});
+  try{
+    const cook=app.client(),customer=app.client();
+    await register(cook,'libsql-cook@example.test','COOK');await register(customer,'libsql-customer@example.test','CUSTOMER');
+    const kitchen=await cook('/api/cook/kitchen',kitchenInput,{method:'PUT'});
+    const dish=await cook('/api/cook/dishes',dishInput,{method:'PUT'});
+    assert.equal(kitchen.status,200);assert.equal(dish.status,200);
+    assert.equal((await customer('/api/customer/cart/items',{cookId:kitchen.data.kitchen.id,dishId:dish.data.dish.id,quantity:1,fulfillmentType:'pickup'})).status,200);
+    const order=await customer('/api/customer/orders',{simulatedPaymentMethod:'SIMULATED_CARD',idempotencyKey:'libsql-driver-order'});
+    assert.equal(order.status,201);assert.equal(order.data.order.pickupAddressReleased,null);
+    const queue=await cook(`/api/cook/kitchen/${kitchen.data.kitchen.id}/orders`);assert.equal(queue.data.orders[0].id,order.data.order.id);
+    assert.equal((await cook(`/api/cook/orders/${order.data.order.id}/status`,{nextStatus:'REJECTED'})).status,200);
+    const rejected=(await customer(`/api/customer/orders/${order.data.order.id}`)).data.order;
+    assert.equal(rejected.simulatedPaymentStatus,'SIMULATED_REFUNDED');
+    assert.equal(app.db.prepare('SELECT remaining_portions FROM dish_slots WHERE id=?').get(dish.data.dish.id).remaining_portions,2);
+  }finally{await app.close();}
+});
+
+test('remote connection configuration rejects plaintext and embedded credentials',()=>{
+  const authToken='synthetic-configuration-token';
+  for(const url of ['http://database.example','file:local.sqlite','https://user:secret@database.example','https://database.example/path','https://database.example/?token=x'])
+    assert.throws(()=>validateRemoteConnection({url,authToken}));
+  assert.throws(()=>validateRemoteConnection({url:'libsql://database.example',authToken:''}));
+  assert.equal(validateRemoteConnection({url:'libsql://database.example',authToken}).authToken,authToken);
+});
+
+test('parallel account setup requests do not overlap SQLite transactions',async()=>{
+  const app=await start();try{
+    const profiles=await Promise.all(Array.from({length:4},(_,index)=>register(app.client(),`parallel-${index}@example.test`,index%2?'COOK':'CUSTOMER')));
+    assert.deepEqual(profiles.map(profile=>profile.account.role),['CUSTOMER','COOK','CUSTOMER','COOK']);
   }finally{await app.close();}
 });

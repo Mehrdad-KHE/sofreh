@@ -51,6 +51,12 @@ Package installation and build caches must also be local runtime data. Do not cr
 
 ## Vercel
 
+`remote.mjs` provides a libSQL connection and an explicit Kysely dialect for Better Auth. It uses the vendor's synchronous native binding; it does not copy a shared database into `/tmp` or turn asynchronous network calls into a custom blocking bridge. Connector source alone does not activate hosted accounts.
+
+For an approved, initially empty libSQL database, configure `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, `SOFREH_PUBLIC_ORIGIN` (the HTTPS application origin) and a persistent `SOFREH_AUTH_SECRET`. After `prepare:identity`, `node scripts/initialize-remote.mjs` initializes domain/authentication schemas from a local runtime copy. It creates no provider account, chooses no paid plan and imports no fixture data. Confirm the destination and take an appropriate backup before using migration tooling on an existing database. Keep all credentials outside Git.
+
+The manually dispatched `Internal remote database contract` workflow uses a checksum-pinned official libSQL server container in an isolated Linux runtime. It exercises independent application connections, ownership, images, order visibility, persistence and competing orders. Its test data stays in the ephemeral runner. This is protocol/contract coverage, not proof that a particular cloud account, pricing plan, region or deployed URL has been accepted.
+
 The source configuration uses root `v2`, `main: api/index.mjs` in package metadata and a rewrite from all paths to the adapter. The adapter forwards requests to the same HTTP handler.
 
 Before a web release, check the actual Git integration, root directory, deployed commit, protection settings and function runtime. Verify the resulting URL and the shared customer/cook flow after deployment. HTTP 200 containing a Vercel login page is not an application health result; `/api/health` must return the expected JSON.
