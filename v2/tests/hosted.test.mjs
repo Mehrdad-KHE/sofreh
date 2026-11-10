@@ -19,7 +19,7 @@ test('hosted account mode requires explicit valid configuration and never falls 
     {SOFREH_PUBLIC_ORIGIN:'http://sofreh.example'},{SOFREH_AUTH_SECRET:'short'},{TURSO_AUTH_TOKEN:''}])assert.throws(()=>hostedConfiguration({...env,...extra}));
   await assert.rejects(createHostedRuntime(env,{connect(){throw new Error('database unavailable');}}),/database unavailable/);
   const empty=new Database(':memory:');
-  await assert.rejects(createHostedRuntime(env,{connect:()=>empty}),/no such table/i);
+  await assert.rejects(createHostedRuntime(env,{connect:()=>empty}),/Database schema mismatch[\s\S]*Missing tables/);
   assert.throws(()=>empty.prepare('SELECT 1').get(),/closed|not open/i);
 });
 

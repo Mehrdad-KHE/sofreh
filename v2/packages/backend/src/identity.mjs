@@ -28,7 +28,10 @@ export async function createIdentityProvider({ db, baseURL, secret, databaseOpti
     await migration.runMigrations();
   }
   const auth = betterAuth(options);
-  await auth.$context;
+  const context=await auth.$context;
+  // Better Auth starts this cached check without awaiting it. Wait for its
+  // verdict before accepting traffic or closing a migration connection.
+  await context.checkSchema?.();
 
   async function sessionFor(req) {
     return auth.api.getSession({ headers: fromNodeHeaders(req.headers) });

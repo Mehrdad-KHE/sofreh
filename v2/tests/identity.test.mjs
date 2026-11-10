@@ -146,3 +146,13 @@ test('parallel account setup requests do not overlap SQLite transactions',async(
     assert.deepEqual(profiles.map(profile=>profile.account.role),['CUSTOMER','COOK','CUSTOMER','COOK']);
   }finally{await app.close();}
 });
+
+test('authentication initialization waits for schema validation before reporting readiness',async()=>{
+  const {default:Database}=await import('libsql');const db=new Database(':memory:');initializeSchema(db);
+  const config={db,baseURL:'https://schema.example',secret:randomBytes(48).toString('hex'),databaseOptions:remoteDatabaseOptions(db)};
+  try{
+    await createIdentityProvider(config);
+    db.exec('DROP TABLE verification');
+    await assert.rejects(createIdentityProvider({...config,runMigrations:false}),/schema|verification|table/i);
+  }finally{db.close();}
+});
