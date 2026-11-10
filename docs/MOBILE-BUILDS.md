@@ -41,6 +41,12 @@ The manually dispatched `Internal mobile builds` GitHub workflow compiles both r
 
 The mobile build workflow also offers `ios-device`. It compiles for physical-device iOS and packages an unsigned IPA for a separately approved signing/testing flow. That file is not directly installable or a store release. The script checks the executable's iOS platform before packaging; simulator apps cannot be relabeled as device builds. Cloud upload, re-signing, entitlements and device execution must be verified independently.
 
+## Recorded build evidence
+
+At source revision `4ef17a1`, [build run 42727389972](https://github.com/Mehrdad-KHE/sofreh/actions/runs/42727389972) compiled both Android APKs and both iOS simulator apps. [Run 42727392986](https://github.com/Mehrdad-KHE/sofreh/actions/runs/42727392986) compiled both unsigned physical-device IPAs. [Simulator run 42729483463](https://github.com/Mehrdad-KHE/sofreh/actions/runs/42729483463) installed and launched both roles on iPhone SE (3rd generation), iOS 26.5. Both captured screens were opened for visual inspection.
+
+The simulator showed the native retry screen because the protected Vercel host redirected away from the allowed origin. It did not establish a functional hosted account journey. A previous successful launch job had concealed an escape into Safari; inspecting its screenshots exposed the issue. The corrected WebView sends all navigation attempts through an explicit origin policy before allowing them. Process survival and successful compilation therefore remain distinct from visual and functional acceptance. One-day artifacts can expire; the workflows and versioned source are the reproducible record.
+
 Android compilation requires an appropriate Android SDK/JDK toolchain. Keep Gradle caches, Android user state and generated binaries under the same local runtime root. Install both variants on the agreed Galaxy S22 and exercise registration, permission denial/grant, ordering, cook acceptance, completion, reload and reconnect.
 
 iOS compilation requires a supported macOS/Xcode environment. The Windows CLI can export iOS JavaScript but does not generate the iOS native project. An unsigned simulator build can cover navigation and layout without an iPhone. Actual-device cloud testing then requires a compatible device build and an available testing/signing flow; no Apple membership, cloud account, signed IPA or completed device test is implied by these source files.

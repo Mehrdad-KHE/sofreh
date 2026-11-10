@@ -1,5 +1,10 @@
 {
   "version": 2,
+  "functions": {
+    "api/index.mjs": {
+      "includeFiles": ["apps/account/**", "apps/workspace/**", "apps/customer-mobile/preview/**", "apps/cook-mobile/preview/**", "apps/classroom-preview/**", "assets/**"]
+    }
+  },
   "rewrites": [
     { "source": "/(.*)", "destination": "/api/index.mjs?path=/$1" }
   ]

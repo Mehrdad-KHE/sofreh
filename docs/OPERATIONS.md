@@ -57,11 +57,15 @@ For an approved, initially empty libSQL database, configure `TURSO_DATABASE_URL`
 
 The manually dispatched `Internal remote database contract` workflow uses a checksum-pinned official libSQL server container in an isolated Linux runtime. It exercises independent application connections, ownership, images, order visibility, persistence and competing orders. Its test data stays in the ephemeral runner. This is protocol/contract coverage, not proof that a particular cloud account, pricing plan, region or deployed URL has been accepted.
 
-The source configuration uses root `v2`, `main: api/index.mjs` in package metadata and a rewrite from all paths to the adapter. The adapter forwards requests to the same HTTP handler.
+The source configuration uses root `v2`, `main: api/index.mjs` in package metadata and a rewrite from all paths to the adapter. The adapter forwards requests to the same HTTP handler and explicitly includes HTML, workspace scripts, service worker and static assets in the function package.
+
+The adapter defaults to fixture mode. After approving a database, initializing its schema and retaining the four credentials above, set `SOFREH_RUNTIME_MODE=accounts` in the intended deployment environment and redeploy. No provider integration or environment setting is changed by adding this source. Account mode creates no fixtures and runs no schema migrations during cold starts. Missing credentials, missing auth tables or an unavailable database produce a generic, non-cacheable 503; they never switch accounts back to a temporary fixture database. A failed cold start can retry on a later request. The authentication rate limiter uses Vercel's proxy-derived client IP only in the Vercel adapter; other runtimes retain socket-based behavior.
+
+Do not activate browser push merely by adding VAPID keys to Vercel. The local five-second worker needs a continuously running process. A serverless delivery/retry mechanism and actual-device acceptance must be configured separately before the hosted interface advertises push availability.
 
 Before a web release, check the actual Git integration, root directory, deployed commit, protection settings and function runtime. Verify the resulting URL and the shared customer/cook flow after deployment. HTTP 200 containing a Vercel login page is not an application health result; `/api/health` must return the expected JSON.
 
-The existing Vercel SQLite adapter is ephemeral and uses fixture identity. Connecting GitHub to Vercel does not solve persistence. Deploy the account runtime on a durable host, verify its authentication configuration and test backup/restore before exposing actual account/order data.
+Until the explicit account configuration is activated and accepted, the existing deployment remains an ephemeral fixture runtime. Connecting GitHub to Vercel alone does not solve persistence. Keep the current Vercel host, connect an approved durable database, verify authentication and test backup/restore before exposing actual account/order data.
 
 ## Release and recovery
 
