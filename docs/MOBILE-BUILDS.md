@@ -39,6 +39,8 @@ The manually dispatched `Internal mobile builds` GitHub workflow compiles both r
 
 `Internal iPhone simulator launch` takes a build run number, installs its role-specific app artifacts on temporary iPhone simulators, checks that each process remains running and captures screenshots for review. It does not remove hosting access protection or mark an account journey as accepted. Screenshots and launch metadata remain internal workflow artifacts with one-day retention.
 
+The mobile build workflow also offers `ios-device`. It compiles for physical-device iOS and packages an unsigned IPA for a separately approved signing/testing flow. That file is not directly installable or a store release. The script checks the executable's iOS platform before packaging; simulator apps cannot be relabeled as device builds. Cloud upload, re-signing, entitlements and device execution must be verified independently.
+
 Android compilation requires an appropriate Android SDK/JDK toolchain. Keep Gradle caches, Android user state and generated binaries under the same local runtime root. Install both variants on the agreed Galaxy S22 and exercise registration, permission denial/grant, ordering, cook acceptance, completion, reload and reconnect.
 
 iOS compilation requires a supported macOS/Xcode environment. The Windows CLI can export iOS JavaScript but does not generate the iOS native project. An unsigned simulator build can cover navigation and layout without an iPhone. Actual-device cloud testing then requires a compatible device build and an available testing/signing flow; no Apple membership, cloud account, signed IPA or completed device test is implied by these source files.

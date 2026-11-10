@@ -9,8 +9,9 @@ import { createHash } from 'node:crypto';
 if (process.env.GITHUB_ACTIONS !== 'true' || !path.isAbsolute(process.env.RUNNER_TEMP || '')) {
   throw new Error('This command requires a GitHub-hosted build runner.');
 }
-const platform = process.argv[2], role = process.env.SOFREH_APP_ROLE;
-if (!['android','ios'].includes(platform) || !['CUSTOMER','COOK'].includes(role)) throw new Error('Invalid platform or role.');
+const requestedPlatform = process.argv[2], deviceBuild=requestedPlatform==='ios-device';
+const platform=deviceBuild?'ios':requestedPlatform, role = process.env.SOFREH_APP_ROLE;
+if (!['android','ios','ios-device'].includes(requestedPlatform) || !['CUSTOMER','COOK'].includes(role)) throw new Error('Invalid platform or role.');
 if (platform === 'ios' && process.platform !== 'darwin') throw new Error('iOS compilation requires macOS.');
 const origin = new URL(process.env.SOFREH_APP_ORIGIN || '');
 if (origin.protocol !== 'https:' || origin.pathname !== '/' || origin.search || origin.hash || origin.username || origin.password) throw new Error('Pass an HTTPS application origin.');
@@ -81,17 +82,24 @@ if(platform==='android'){
   if(!workspace)throw new Error('No generated Xcode workspace.');
   const scheme=workspace.slice(0,-'.xcworkspace'.length);
   const derived=path.join(root,'derived');
-  run('xcodebuild',['-workspace',workspace,'-scheme',scheme,'-configuration','Release','-sdk','iphonesimulator',
-    '-destination','generic/platform=iOS Simulator','-derivedDataPath',derived,
-    'CODE_SIGNING_ALLOWED=NO',`ARCHS=${process.arch==='arm64'?'arm64':'x86_64'}`,'ONLY_ACTIVE_ARCH=YES','build'],path.join(project,'ios'));
-  const products=path.join(derived,'Build/Products/Release-iphonesimulator');
+  run('xcodebuild',['-workspace',workspace,'-scheme',scheme,'-configuration','Release','-sdk',deviceBuild?'iphoneos':'iphonesimulator',
+    '-destination',deviceBuild?'generic/platform=iOS':'generic/platform=iOS Simulator','-derivedDataPath',derived,
+    'CODE_SIGNING_ALLOWED=NO','CODE_SIGNING_REQUIRED=NO',`ARCHS=${deviceBuild||process.arch==='arm64'?'arm64':'x86_64'}`,'ONLY_ACTIVE_ARCH=YES','build'],path.join(project,'ios'));
+  const products=path.join(derived,'Build/Products',deviceBuild?'Release-iphoneos':'Release-iphonesimulator');
   const bundle=fs.readdirSync(products).find(name=>name.endsWith('.app'));
   if(!bundle)throw new Error('No simulator application produced.');
   const app=path.join(products,bundle);
   const bundleId=run('/usr/libexec/PlistBuddy',['-c','Print :CFBundleIdentifier',path.join(app,'Info.plist')],project,{capture:true});
   if(bundleId!==id)throw new Error('Simulator bundle ID mismatch.');
-  run('ditto',['-c','-k','--sequesterRsrc','--keepParent',app,path.join(output,`sofreh-${role.toLowerCase()}-ios-simulator.zip`)]);
+  if(deviceBuild){
+    const executable=run('/usr/libexec/PlistBuddy',['-c','Print :CFBundleExecutable',path.join(app,'Info.plist')],project,{capture:true});
+    const platformInfo=run('xcrun',['vtool','-show-build',path.join(app,executable)],project,{capture:true});
+    if(!/platform\s+IOS\s/.test(platformInfo))throw new Error('Expected a physical-device Mach-O binary.');
+    const payload=path.join(root,'Payload');fs.mkdirSync(payload,{recursive:true});
+    fs.cpSync(app,path.join(payload,bundle),{recursive:true,verbatimSymlinks:true});
+    run('ditto',['-c','-k','--keepParent',payload,path.join(output,`sofreh-${role.toLowerCase()}-ios-unsigned.ipa`)]);
+  }else run('ditto',['-c','-k','--sequesterRsrc','--keepParent',app,path.join(output,`sofreh-${role.toLowerCase()}-ios-simulator.zip`)]);
 }
-fs.writeFileSync(path.join(output,'build-metadata.json'),JSON.stringify({role,platform,applicationId:id,origin:origin.origin,
+fs.writeFileSync(path.join(output,'build-metadata.json'),JSON.stringify({role,platform:requestedPlatform,unsignedDeviceBuild:deviceBuild,applicationId:id,origin:origin.origin,
   revision:env.GITHUB_SHA,node:process.version,deviceAcceptance:false},null,2));
 console.log('Internal build produced. Functional and real-device acceptance are separate.');
