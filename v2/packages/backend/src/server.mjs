@@ -2,6 +2,7 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { FOOD_PHOTOGRAPHY, foodPhotograph } from '../../shared/src/sampleFoodPhotos.mjs';
 import { openSofrehDatabase, getDatabasePragmas } from './db.mjs';
 import {
   seedSyntheticStage1Data,
@@ -27,6 +28,7 @@ import { renderShowcase, renderSitemap, renderRobots } from './showcase.mjs';
 import {handleCommerceHttp} from './commerceHttp.mjs';
 import { getOwnKitchen, saveOwnKitchen, saveOwnDish, KITCHEN_AREAS } from './kitchen.mjs';
 import { uploadDishPhoto } from './photos.mjs';
+import { renderMobileFrame } from './mobileFrame.mjs';
 import { savePushSubscription, removePushSubscription } from './notifications.mjs';
 import {
   SUPPORTED_LOCALES,
@@ -212,18 +214,24 @@ export function createSofrehHttpServer({ dbFilePath, database, seedFixtures = tr
           res.writeHead(303,{Location:destination+(entry.size?'?'+entry:'')});res.end();return;
         }
         const app = pathname === '/account' ? 'account' : 'workspace';
+        if(app==='workspace'&&reqUrl.searchParams.get('view')==='mobile'){
+          res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','X-Robots-Tag':'noindex, nofollow','Content-Security-Policy':"default-src 'self'; style-src 'self' 'unsafe-inline'; frame-src 'self'; frame-ancestors 'self'"});
+          res.end(renderMobileFrame(pathname.endsWith('cook')?'cook':'customer',locale,reqUrl.searchParams.get('tab')||''));return;
+        }
         const htmlPath = path.join(path.dirname(fileURLToPath(import.meta.url)), '../../../apps', app, 'index.html');
         res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','X-Robots-Tag':'noindex, nofollow'});
         const role = pathname.endsWith('cook') || reqUrl.searchParams.get('role')==='COOK' ? 'cook' : 'customer';
         const installMetadata = `<link rel="manifest" href="/app/${role}.webmanifest"><link rel="apple-touch-icon" href="/assets/brand/app-icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Sofreh">`;
-        res.end(fs.readFileSync(htmlPath,'utf8').replace('</head>',installMetadata+'</head>')); return;
+        let workspaceHtml=fs.readFileSync(htmlPath,'utf8').replace('</head>',installMetadata+'</head>');
+        if(app==='workspace'&&reqUrl.searchParams.get('embedded')==='mobile')workspaceHtml=workspaceHtml.replace('<html ', '<html data-mobile-frame ');
+        res.end(workspaceHtml); return;
       }
       const manifest = pathname.match(/^\/app\/(customer|cook)\.webmanifest$/);
       if(identityProvider && manifest && req.method==='GET'){
         sendJson(res,200,{id:'/app/'+manifest[1],name:manifest[1]==='cook'?'Sofreh Cook':'Sofreh Customer',short_name:'Sofreh',start_url:'/app/'+manifest[1],scope:'/',display:'standalone',background_color:'#fff9ef',theme_color:'#23392f',icons:[{src:'/assets/brand/app-icon-192.png',sizes:'192x192',type:'image/png',purpose:'any maskable'},{src:'/assets/brand/app-icon-512.png',sizes:'512x512',type:'image/png',purpose:'any maskable'}]},locale,'application/manifest+json; charset=utf-8');return;
       }
-      if(identityProvider && req.method === 'GET' && /^\/preview\/(customer|cook)(\/index.html)?$/.test(pathname)) {
-        res.writeHead(303,{Location:pathname.includes('/cook')?'/app/cook':'/app/customer'});res.end();return;
+      if(identityProvider && /^\/preview\/(customer|cook)(\/.*)?$/.test(pathname)) {
+        res.writeHead(410,{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-store','X-Robots-Tag':'noindex, nofollow'});res.end('This preview link has been retired. / این پیوند پیش‌نمایش غیرفعال شده است.');return;
       }
       if (req.method === 'GET' && ['/', '/showcase', '/showcase/index.html'].includes(pathname)) {
         res.writeHead(308, { Location: '/en' });
@@ -243,6 +251,7 @@ export function createSofrehHttpServer({ dbFilePath, database, seedFixtures = tr
         return;
       }
       const demoAssetTypes = {
+        ...Object.fromEntries(FOOD_PHOTOGRAPHY.flatMap(name => [480, 800, 1200].map(width => [foodPhotograph(name, width).slice('/assets/'.length), 'image/webp']))),
         'demo-food/ghormeh-sabzi-majidi-480.webp': 'image/webp',
         'demo-food/ghormeh-sabzi-majidi-800.webp': 'image/webp',
         'demo-food/ghormeh-sabzi-majidi-1280.webp': 'image/webp',
@@ -265,6 +274,7 @@ export function createSofrehHttpServer({ dbFilePath, database, seedFixtures = tr
         'fonts/Vazirmatn-OFL.txt': 'text/plain; charset=utf-8',
         'mui-responsive.js': 'text/javascript; charset=utf-8',
         'brand/wordmark-fa.png': 'image/png',
+        'brand/wordmark-fa.svg': 'image/svg+xml',
         'brand/app-icon-192.png': 'image/png',
         'brand/app-icon-512.png': 'image/png',
         'brand/app-icon.svg': 'image/svg+xml',

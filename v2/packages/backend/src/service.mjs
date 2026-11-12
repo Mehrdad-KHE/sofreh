@@ -1,3 +1,4 @@
+import {publicKitchenIdentity} from './kitchenIdentity.mjs';
 import crypto from 'node:crypto';
 import {
   SYNTHETIC_TEST_USERS,
@@ -280,13 +281,15 @@ export function listPublicDiscoveryCooks(db, { locale = 'en-CA', bounds = null }
   const dishStmt = db.prepare(
     `SELECT * FROM dish_slots
      WHERE cook_id = ? AND is_active = 1
-     ORDER BY CASE WHEN availability_mode = 'TODAY_AVAILABLE' THEN 0 ELSE 1 END, id ASC`
+     ORDER BY CASE WHEN availability_mode = 'TODAY_AVAILABLE' THEN 0 ELSE 1 END,
+       CASE menu_category WHEN 'food' THEN 0 WHEN 'bread' THEN 1 WHEN 'pickles' THEN 2 WHEN 'sides' THEN 3 WHEN 'drinks' THEN 4 ELSE 5 END,
+       id ASC`
   );
 
   const cooks = cookRows.map((cookRow) => {
     const dishes = dishStmt.all(cookRow.id);
     const { reviewSummary, reviews } = getCookHonestReviewSummaryAndList(db, cookRow.id);
-    return sanitizeCookForPublicDiscovery(cookRow, dishes, locale, reviewSummary, reviews);
+    return {...sanitizeCookForPublicDiscovery(cookRow, dishes, locale, reviewSummary, reviews),identity:publicKitchenIdentity(db,cookRow.id)};
   }).filter(cook => cook.supportsPickup || cook.supportsDelivery);
 
   return {
@@ -1064,6 +1067,8 @@ export function createOrderTransactional(db, authUser, orderInput) {
 
     validateCookFulfillmentMode(cookRow, fulfillmentType);
     const slot=validateSchedule(db,cookId,fulfillmentType,scheduledSlotId);
+    if(slot&&rawInput.expectedScheduledSlotVersion!==undefined&&rawInput.expectedScheduledSlotVersion!==slot.version)
+      throw new SofrehGuardError('SCHEDULE_CHANGED','The fulfillment window changed. Review the latest time before ordering.',409);
     if(fulfillmentType==='delivery')checkDeliveryCoverage(db,cookId,deliveryAddress);
 
     if (

@@ -2,22 +2,37 @@ import fs from 'node:fs';import path from 'node:path';import {fileURLToPath} fro
 import {SofrehGuardError,requireRole} from './privacy.mjs';
 import {listPublicDiscoveryCooks,getCustomerCart,setCartPreferences,getCustomerOrderById,listCookKitchenOrders,upsertCustomerCart} from './service.mjs';
 import {publicBusinessConfig,listSlots,saveBusinessConfig,ownBusinessKitchen,businessOverview,saveSlot,toggleSlot,saveCoupon,toggleCoupon,favoriteKitchens,setFavorite,recordStorefrontView,orderMessages,addOrderMessage,cancelPendingOrder} from './commerce.mjs';
-import {renderStorefront,renderReceipt} from './storefront.mjs';
+import {renderStorefront,renderReceipt,renderUnavailableKitchen} from './storefront.mjs';
+import {editSlot,editCoupon,customerHistory} from './businessOperations.mjs';
+import {saveKitchenIdentity,uploadKitchenImage} from './kitchenIdentity.mjs';
 
 export async function handleCommerceHttp({req,res,url,db,user,locale,readJsonBody,sendJson}){
   const p=url.pathname,method=req.method,json=(data,status=200)=>sendJson(res,status,data,locale),body=()=>readJsonBody(req);
-  const html=(value,privatePage=false)=>{res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff',...(privatePage?{'X-Robots-Tag':'noindex, nofollow'}:{})});res.end(value);};
-  if(method==='GET'&&['/shop/style.css','/shop/app.js','/app/commerce-ui.js'].includes(p)){const rel=p==='/app/commerce-ui.js'?'workspace/commerce-ui.js':p.endsWith('.css')?'shop/style.css':'shop/app.js';const file=path.join(path.dirname(fileURLToPath(import.meta.url)),'../../../apps',rel);res.writeHead(200,{'Content-Type':p.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(fs.readFileSync(file));return true;}
+  const html=(value,privatePage=false,status=200)=>{res.writeHead(status,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff',...(privatePage?{'X-Robots-Tag':'noindex, nofollow'}:{})});res.end(value);};
+  if(method==='GET'&&['/shop/style.css','/shop/app.js','/app/commerce-ui.js','/app/business-tools-ui.js'].includes(p)){const rel=p.startsWith('/app/')?'workspace/'+p.slice('/app/'.length):p.endsWith('.css')?'shop/style.css':'shop/app.js';const file=path.join(path.dirname(fileURLToPath(import.meta.url)),'../../../apps',rel);res.writeHead(200,{'Content-Type':p.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(fs.readFileSync(file));return true;}
   const kitchenPage=p.match(/^\/kitchens\/([^/]+)$/);
-  if(method==='GET'&&(p==='/explore'||kitchenPage)){let cook=null;if(kitchenPage){cook=listPublicDiscoveryCooks(db,{locale}).cooks.find(c=>c.id===decodeURIComponent(kitchenPage[1]));if(!cook)throw new SofrehGuardError('NOT_FOUND','Kitchen not found.',404);recordStorefrontView(db,cook.id);}html(renderStorefront(cook,locale,cook?publicBusinessConfig(db,cook.id):null));return true;}
+  if(method==='GET'&&(p==='/explore'||kitchenPage)){let cook=null;if(kitchenPage){cook=listPublicDiscoveryCooks(db,{locale}).cooks.find(c=>c.id===decodeURIComponent(kitchenPage[1]));if(!cook){html(renderUnavailableKitchen(locale),true,404);return true;}recordStorefrontView(db,cook.id);}html(renderStorefront(cook,locale,cook?publicBusinessConfig(db,cook.id):null));return true;}
   const publicBusiness=p.match(/^\/api\/public\/kitchens\/([^/]+)$/);
   if(method==='GET'&&publicBusiness){const id=decodeURIComponent(publicBusiness[1]),cook=listPublicDiscoveryCooks(db,{locale}).cooks.find(c=>c.id===id);if(!cook)throw new SofrehGuardError('NOT_FOUND','Kitchen not found.',404);json({kitchen:cook,business:publicBusinessConfig(db,id),slots:listSlots(db,id)});return true;}
   if(p==='/api/cook/business'&&method==='GET'){json({business:businessOverview(db,user,Number(url.searchParams.get('days')||30))});return true;}
   if(p==='/api/cook/business'&&method==='PUT'){json({business:saveBusinessConfig(db,user,await body())});return true;}
   if(p==='/api/cook/slots'&&method==='POST'){json({slot:saveSlot(db,user,await body())},201);return true;}
   const slot=p.match(/^\/api\/cook\/slots\/([^/]+)$/);if(slot&&method==='PATCH'){json(toggleSlot(db,user,decodeURIComponent(slot[1]),(await body()).active));return true;}
+  if(slot&&method==='PUT'){json({slot:editSlot(db,user,decodeURIComponent(slot[1]),await body())});return true;}
   if(p==='/api/cook/coupons'&&method==='POST'){json({coupon:saveCoupon(db,user,await body())},201);return true;}
   const coupon=p.match(/^\/api\/cook\/coupons\/([^/]+)$/);if(coupon&&method==='PATCH'){json(toggleCoupon(db,user,decodeURIComponent(coupon[1]),(await body()).active));return true;}
+  if(coupon&&method==='PUT'){json({coupon:editCoupon(db,user,decodeURIComponent(coupon[1]),await body())});return true;}
+  const customer=p.match(/^\/api\/cook\/customers\/([^/]+)$/);
+  if(customer&&method==='GET'){json({history:customerHistory(db,user,decodeURIComponent(customer[1]),Number(url.searchParams.get('page')||1),locale)});return true;}
+  if(p==='/api/cook/identity'&&method==='PUT'){json({identity:saveKitchenIdentity(db,user,await body())});return true;}
+  const identityImage=p.match(/^\/api\/cook\/identity\/(avatar|cover)$/);
+  if(identityImage&&method==='PUT'){json({identity:await uploadKitchenImage(db,user,identityImage[1],await readJsonBody(req,2600000))});return true;}
+  const publicIdentityImage=p.match(/^\/media\/kitchens\/([0-9a-f-]+)\.jpg$/);
+  if(publicIdentityImage&&method==='GET'){
+    const image=db.prepare('SELECT i.jpeg,c.user_id,c.is_published FROM kitchen_images i JOIN cook_profiles c ON c.id=i.cook_id WHERE i.id=?').get(publicIdentityImage[1]);
+    if(!image||(!image.is_published&&image.user_id!==user?.id))throw new SofrehGuardError('NOT_FOUND','Image not found.',404);
+    res.writeHead(200,{'Content-Type':'image/jpeg','Cache-Control':image.is_published?'public, max-age=300':'private, no-store','X-Content-Type-Options':'nosniff'});res.end(image.jpeg);return true;
+  }
   if(p==='/api/customer/favorites'&&method==='GET'){json({kitchenIds:favoriteKitchens(db,user)});return true;}
   const favorite=p.match(/^\/api\/customer\/favorites\/([^/]+)$/);if(favorite&&method==='PUT'){json({kitchenIds:setFavorite(db,user,decodeURIComponent(favorite[1]),(await body()).enabled)});return true;}
   if(p==='/api/customer/cart/preferences'&&method==='PUT'){json({cart:setCartPreferences(db,user,await body(),locale)});return true;}

@@ -1,15 +1,10 @@
-# Sofreh Persian wordmark
+# Sofreh web identity
 
-Text: سفره. Forest color #1b4332. The word is typeset from the unmodified official Noto Nastaliq Urdu variable font by the Noto Project Authors, licensed under SIL OFL 1.1. The app applies this typeface only to its Persian header, preserving normal body text and English typography.
+The current web wordmark is the Persian word «سفره», shaped in Vazirmatn Regular (400) and converted to SVG paths. It remains legible without a font download. The cream-on-forest app icon uses the same wordmark. The previous bowl/steam emblem was retired at the owner's request on 2026-11-12.
 
-- Font: ../fonts/NotoNastaliqUrdu.ttf
-- License: ../fonts/OFL-NotoNastaliqUrdu.txt
-- Official source: https://github.com/google/fonts/tree/main/ofl/notonastaliqurdu
-- Reusable transparent PNG: wordmark-fa.png (364 × 329; Persian shaping rendered with Pillow/RAQM).
-- Browser specimen: /assets/brand/wordmark-fa.html
+- `wordmark-fa.svg`: primary outlined wordmark; `wordmark-fa.png`: raster equivalent.
+- `app-icon.svg`, `app-icon-192.png`, `app-icon-512.png`: web install icons; artwork is kept inside the maskable safe area.
+- Source font: `../fonts/Vazirmatn-wght.woff2`; license: `../fonts/Vazirmatn-OFL.txt` (SIL OFL 1.1). Retain font notices with redistributed font files.
+- `wordmark-fa.html` remains an optional Noto Nastaliq calligraphy specimen, not the primary web mark. Its font and OFL notice remain under `../fonts/`.
 
-The PNG is a brand asset rendered from the font, not an app screenshot. Keep the font copyright and OFL file with redistributed font copies. No Noto endorsement is implied. The wordmark is demo identity artwork, not a claim of trademark registration.
-
-## Application icon
-
-`app-icon.svg` is original project vector artwork: a bowl and rising steam in the Sofreh forest/cream/gold palette. The 192px and 512px PNGs are RGB rasterizations of that vector; the native project uses a matching 1024px RGB icon. These icons contain no external photograph, font or third-party brand asset and imply no certification or trademark registration.
+No competitor artwork, trademark, customer photo or proprietary font was used. This artwork makes no claim of trademark registration. The paused native application has not been rebuilt or released by this web identity change.

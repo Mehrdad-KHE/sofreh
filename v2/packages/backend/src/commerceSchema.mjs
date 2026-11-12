@@ -52,4 +52,14 @@ export function initializeCommerceSchema(db) {
     id TEXT PRIMARY KEY,order_id TEXT NOT NULL REFERENCES orders(id),author_user_id TEXT NOT NULL REFERENCES users(id),
     body TEXT NOT NULL,created_at_iso TEXT NOT NULL);
     CREATE INDEX IF NOT EXISTS order_messages_order_idx ON order_messages(order_id,created_at_iso);`);
+  column('fulfillment_slots','edit_version','INTEGER NOT NULL DEFAULT 1');
+  column('kitchen_coupons','edit_version','INTEGER NOT NULL DEFAULT 1');
+  db.exec(`CREATE TABLE IF NOT EXISTS kitchen_identity (
+    cook_id TEXT PRIMARY KEY REFERENCES cook_profiles(id) ON DELETE CASCADE,
+    public_name TEXT NOT NULL DEFAULT '',links_json TEXT NOT NULL DEFAULT '{}');
+    CREATE TABLE IF NOT EXISTS kitchen_images (
+    cook_id TEXT NOT NULL REFERENCES cook_profiles(id) ON DELETE CASCADE,
+    kind TEXT NOT NULL CHECK(kind IN('avatar','cover')),id TEXT NOT NULL UNIQUE,
+    jpeg BLOB NOT NULL,updated_at_iso TEXT NOT NULL,PRIMARY KEY(cook_id,kind));`);
+  column('kitchen_images','is_sample','INTEGER NOT NULL DEFAULT 0');
 }

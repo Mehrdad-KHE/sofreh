@@ -13,11 +13,9 @@ const h = (value) =>
         char
       ],
   );
-const money = (cents) =>
-  new Intl.NumberFormat(fa ? "fa-IR" : "en-CA", {
-    style: "currency",
-    currency: "CAD",
-  }).format(Number(cents) / 100);
+const money = (cents) => fa
+  ? new Intl.NumberFormat('fa-IR', {minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(cents)/100)+' دلار کانادا'
+  : new Intl.NumberFormat('en-CA', {style:'currency',currency:'CAD'}).format(Number(cents)/100);
 const number = (value) =>
   new Intl.NumberFormat(fa ? "fa-IR" : "en-CA", {
     maximumFractionDigits: 1,
@@ -95,12 +93,20 @@ async function api(route, body, method = body ? "POST" : "GET") {
   if (!response.ok) {
     const code = data.error?.code || data.code;
     const message = {
+      BUSINESS_CHANGED:tr('Another edit changed this item. Reopen it before saving.','این مورد هم‌زمان تغییر کرده است؛ آن را دوباره باز و ذخیره کنید.'),
+      BOOKED_WINDOW_LOCKED:tr('Booked windows keep their time and method. Create a new window for another schedule.','زمان و روش نوبت رزروشده ثابت می‌ماند؛ برای برنامهٔ متفاوت نوبت تازه بسازید.'),
+      CAPACITY_BELOW_BOOKINGS:tr('Capacity cannot be less than existing bookings.','ظرفیت نمی‌تواند از سفارش‌های رزروشده کمتر باشد.'),
+      COUPON_CODE_LOCKED:tr('Keep this promotion code or create a new offer.','کد این تخفیف ثابت است؛ برای کد دیگر تخفیف تازه بسازید.'),
+      USED_PROMOTION_LOCKED:tr('An offer already used keeps its terms. Only its end and total limit can change.','شرایط تخفیف استفاده‌شده ثابت است؛ فقط پایان و سقف کل قابل تغییر است.'),
+      LIMIT_BELOW_USES:tr('The limit cannot be less than existing redemptions.','سقف استفاده نمی‌تواند از دفعات استفادهٔ قبلی کمتر باشد.'),
+      INVALID_LINK:tr('Use a full HTTPS profile link for the selected social network.','پیوند کامل و امن پروفایل همان شبکهٔ اجتماعی را وارد کنید.'),
       OPTION_REQUIRED:tr('Choose the required menu options.','گزینه‌های لازم غذا را انتخاب کنید.'),
       OPTIONS_CHANGED:tr('This meal’s options changed. Remove it and choose again.','انتخاب‌های این غذا تغییر کرده‌اند؛ آن را از سبد حذف و دوباره انتخاب کنید.'),
       INVALID_OPTIONS:tr('Check your meal options.','انتخاب‌های غذا را بررسی کنید.'),
       SLOT_REQUIRED:tr('Choose a fulfillment window before ordering.','پیش از سفارش، نوبت دریافت را انتخاب کنید.'),
       SLOT_FULL:tr('That window is full. Choose another time.','ظرفیت این نوبت تکمیل شده؛ زمان دیگری انتخاب کنید.'),
       SLOT_UNAVAILABLE:tr('That window is no longer available. Refresh and choose another.','این نوبت دیگر در دسترس نیست؛ بازخوانی و زمان دیگری انتخاب کنید.'),
+      SCHEDULE_CHANGED:tr('The fulfillment window changed. Review the latest time before ordering.','نوبت دریافت تغییر کرده است؛ پیش از سفارش، زمان تازه را بررسی کنید.'),
       COUPON_UNAVAILABLE:tr('This promotion is unavailable for your cart.','این کد تخفیف برای سبد فعلی قابل استفاده نیست.'),
       COUPON_LIMIT:tr('This promotion has reached its usage limit.','سقف استفاده از این کد تخفیف پر شده است.'),
       COUPON_EXISTS:tr('That promotion code already exists.','این کد تخفیف قبلاً ثبت شده است.'),
@@ -133,8 +139,8 @@ async function api(route, body, method = body ? "POST" : "GET") {
         "وضعیت سفارش تغییر کرده است؛ آن را بازخوانی کنید.",
       ),
       INVALID_WINDOW: tr(
-        "The service window must end in the future.",
-        "پایان بازه تحویل باید در آینده باشد.",
+        "Check the time window: its end must be after its start and in the future.",
+        "بازهٔ زمانی را بررسی کنید؛ پایان باید بعد از شروع و در آینده باشد.",
       ),
     };
     const error = new Error(
@@ -304,7 +310,7 @@ async function refresh({ full = true } = {}) {
       state.intentConsumed=true;
       let intent;try{const value=sessionStorage.getItem('sofreh.purchaseIntent');if(value&&value.length<12000)intent=JSON.parse(value);sessionStorage.removeItem('sofreh.purchaseIntent');}catch{}
       if(intent&&typeof intent.cookId==='string'&&typeof intent.dishId==='string'){
-        if(!state.cart.items.length||state.cart.cookId===intent.cookId){const key=value=>JSON.stringify([...(value||[])].sort());const previous=state.cart.items.find(item=>item.dishId===intent.dishId&&key(item.selectedOptions)===key(intent.selectedOptions));await api('/api/customer/cart/items',{...intent,quantity:(previous?.quantity||0)+1});state.cart=(await api('/api/customer/cart')).cart;state.tab='cart';}
+        if(!state.cart.items.length||state.cart.cookId===intent.cookId){const key=value=>JSON.stringify([...(value||[])].sort());const previous=state.cart.items.find(item=>item.dishId===intent.dishId&&key(item.selectedOptions)===key(intent.selectedOptions));await api('/api/customer/cart/items',{...intent,quantity:(previous?.quantity||0)+(Number.isSafeInteger(intent.quantity)&&intent.quantity>0?intent.quantity:1)});state.cart=(await api('/api/customer/cart')).cart;state.tab='cart';}
         else $('feedback').textContent=tr('Your existing cart is from another kitchen. Review it before adding this meal.','سبد موجود از آشپزخانهٔ دیگری است؛ پیش از افزودن غذا آن را بررسی کنید.');
       }
     }
@@ -329,13 +335,14 @@ async function refresh({ full = true } = {}) {
     state.tab=(isCook()?['orders','menu','kitchen','business','profile']:['discover','cart','orders','profile']).includes(requested)?requested:isCook()?(state.own?'orders':'kitchen'):'discover';
   }
   if (full || identityChanged) render();
-  else if (changes && state.tab === "orders" && !document.querySelector('#content details[open]')) renderContent();
+  else if (changes && state.tab === "orders") renderOrders({preserveDrafts:true});
   else if (state.tab === "discover" && !state.map) renderKitchenCards();
 }
 function setTab(tab) {
   state.tab = tab;
   $("feedback").textContent = "";
   render();
+  window.scrollTo({top:0,behavior:"instant"});
 }
 function render() {
   try { localStorage.setItem("sofreh.locale", locale()); } catch {}
@@ -345,7 +352,7 @@ function render() {
     tr("Sofreh", "سفره") +
     " | " +
     (isCook() ? tr("Kitchen", "آشپزخانه") : tr("Your table", "سفره شما"));
-  $("brand").textContent = tr("Sofreh", "سفره");
+  $("brand").innerHTML = fa ? '<img src="/assets/brand/wordmark-fa.svg" alt="سفره">' : "Sofreh";
   $("brand").href = fa ? "/fa" : "/en";
   $("language").textContent = fa ? "English" : "فارسی";
   $("signOut").textContent = tr("Sign out", "خروج");
@@ -354,7 +361,7 @@ function render() {
     ? tr("Your kitchen, your rhythm", "آشپزخانه تو، با ریتم تو")
     : tr("Good food, close to home", "غذای خوب، نزدیک خانه");
   const pageTitles = {
-    discover: tr('What sounds good today?', 'امروز هوس چه غذایی داری؟'),
+    discover: tr('Find your next meal', 'طعم امروزت را پیدا کن'),
     cart: tr('Your table', 'سبد سفرهٔ تو'),
     orders: isCook() ? tr('Orders to take care of', 'سفارش‌های آشپزخانه') : tr('Your orders', 'سفارش‌های تو'),
     menu: tr('Your menu', 'منوی آشپزخانه'),
@@ -451,17 +458,8 @@ function renderContent() {
       )
       .join(
         "",
-      )}</select></div><button type="button" id="locate">${tr("Use my location", "استفاده از موقعیت من")}</button><button id="nearest" type="button" aria-pressed="${state.sort}">${tr("Nearest first", "نزدیک‌ترین اول")}</button><button id="showMap" type="button">${tr("Show map", "نمایش نقشه")}</button></div><p class="muted">${tr("Distances are straight-line estimates to a public kitchen area. Your device location stays in this browser.", "فاصله‌ها مستقیم و تقریبی تا محدوده عمومی آشپز هستند. موقعیت دستگاه فقط در همین مرورگر می‌ماند.")}</p><div id="map" hidden></div><div id="kitchens" class="grid"></div>`;
-    const categoryNav = document.createElement('nav');
-    categoryNav.className = 'controls menu-categories';
-    categoryNav.setAttribute('aria-label',tr('Menu categories','دسته‌بندی منو'));
-    for(const [key,label] of Object.entries(menuCategories())){
-      const button=document.createElement('button');button.type='button';button.textContent=label;
-      button.setAttribute('aria-pressed',String(state.category===key));
-      button.onclick=()=>{state.category=key;for(const item of categoryNav.children)item.setAttribute('aria-pressed',String(item===button));renderKitchenCards();};
-      categoryNav.append(button);
-    }
-    $('kitchens').before(categoryNav);
+      )}</select></div><button type="button" id="locate">${tr("My location", "مکان من")}</button><button id="nearest" type="button" aria-pressed="${state.sort}">${tr("Nearest first", "نزدیک‌ترین‌ها")}</button><button id="showMap" type="button">${tr("Show map", "نمایش نقشه")}</button></div><p class="muted">${tr("Distances are straight-line estimates to a public kitchen area. Your device location stays in this browser.", "فاصله‌ها مستقیم و تقریبی تا محدوده عمومی آشپز هستند. موقعیت دستگاه فقط در همین مرورگر می‌ماند.")}</p><div id="map" hidden></div><div id="kitchens" class="grid"></div>`;
+    state.category = 'all';
     $("area").onchange = () => {
       state.area = $("area").value;
       state.origin = areas[state.area] || null;
@@ -524,31 +522,34 @@ function renderContent() {
         { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 },
       );
     };
-    $("showMap").onclick = () => action(showMap);
     const filters=document.createElement('div');filters.className='controls food-filters';
     filters.innerHTML=`${field('foodSearch',tr('Search food or kitchen','جست‌وجوی غذا یا آشپزخانه'),state.query,'search','maxlength="120"')}<div><label for="fulfillmentFilter">${tr('Receive food','روش دریافت')}</label><select id="fulfillmentFilter"><option value="">${tr('Any method','همه روش‌ها')}</option><option value="pickup" ${state.fulfillmentFilter==='pickup'?'selected':''}>${modeText('pickup')}</option><option value="delivery" ${state.fulfillmentFilter==='delivery'?'selected':''}>${modeText('delivery')}</option></select></div><label class="filter-check"><input id="availableOnly" type="checkbox" ${state.availableOnly?'checked':''}> ${tr('Available now','قابل سفارش')}</label>`;
     content.insertBefore(filters,content.querySelector('.controls'));
-    const filterDetails=document.createElement('details');
-    filterDetails.className='extra-filters';
-    filterDetails.innerHTML=`<summary>${tr('Filters','فیلترها')}</summary><div class="filter-options"></div>`;
+    const filterDetails=document.createElement('section');
+    filterDetails.className='extra-filters';filterDetails.id='discoveryFilters';filterDetails.hidden=true;
+    filterDetails.innerHTML=`<div class="filter-options"></div>`;
     const filterOptions=filterDetails.querySelector('.filter-options');
     [...filters.children].slice(1).forEach(child=>filterOptions.append(child));
-    filters.append(filterDetails);
     const originalControls=filters.nextElementSibling;
     const note=originalControls.nextElementSibling;
     const map=$('map');
-    const locationGroup=document.createElement('details');
+    const locationGroup=document.createElement('section');
     locationGroup.className='location-filters';
-    locationGroup.innerHTML=`<summary id="locationSummary">${tr('Location and map','مکان و نقشه')}</summary>`;
+    locationGroup.id='discoveryMap';locationGroup.hidden=true;
+    locationGroup.setAttribute('aria-label',tr('Nearby kitchens on the map','آشپزخانه‌های نزدیک روی نقشه'));
     content.insertBefore(locationGroup,originalControls);
     locationGroup.append(originalControls,note,map);
-    filterOptions.append(locationGroup);
-    const resizeMap=()=>{if(state.map&&!map.hidden)requestAnimationFrame(()=>state.map?.resize());};
-    locationGroup.ontoggle=resizeMap;filterDetails.ontoggle=resizeMap;
+    const mapToggle=$('showMap');mapToggle.className='map-toggle';mapToggle.setAttribute('aria-controls','discoveryMap');mapToggle.setAttribute('aria-expanded','false');
+    mapToggle.textContent=tr('Map','نقشه');mapToggle.setAttribute('aria-label',tr('Show map','نمایش نقشه'));
+    const filterToggle=document.createElement('button');filterToggle.type='button';filterToggle.textContent=tr('Filters','فیلترها');filterToggle.setAttribute('aria-controls','discoveryFilters');filterToggle.setAttribute('aria-expanded','false');
+    filterToggle.onclick=()=>{const open=filterToggle.getAttribute('aria-expanded')!=='true';filterToggle.setAttribute('aria-expanded',String(open));filterDetails.hidden=!open;};
+    const discoveryActions=document.createElement('div');discoveryActions.className='discovery-actions';discoveryActions.append(mapToggle,filterToggle);filters.after(discoveryActions,filterDetails);
+    mapToggle.onclick=()=>action(async()=>{const open=mapToggle.getAttribute('aria-expanded')!=='true';locationGroup.hidden=!open;mapToggle.setAttribute('aria-expanded',String(open));mapToggle.textContent=open?tr('Hide map','بستن نقشه'):tr('Map','نقشه');mapToggle.setAttribute('aria-label',open?tr('Hide map','بستن نقشه'):tr('Show map','نمایش نقشه'));if(open)await showMap();});
     $('foodSearch').oninput=()=>{state.query=$('foodSearch').value;renderKitchenCards();};
     $('fulfillmentFilter').onchange=()=>{state.fulfillmentFilter=$('fulfillmentFilter').value;renderKitchenCards();};
     $('availableOnly').onchange=()=>{state.availableOnly=$('availableOnly').checked;renderKitchenCards();};
-    const savedFilter=document.createElement('label');savedFilter.className='filter-check';savedFilter.innerHTML=`<input id="favoritesOnly" type="checkbox" ${state.favoritesOnly?'checked':''}>${tr('My saved kitchens','آشپزخانه‌های ذخیره‌شدهٔ من')}`;filters.querySelector('.filter-options').append(savedFilter);$('favoritesOnly').onchange=()=>{state.favoritesOnly=$('favoritesOnly').checked;renderKitchenCards();};
+    $('foodSearch').placeholder=tr('Food or kitchen…','غذا یا آشپزخانه…');
+    const savedFilter=document.createElement('label');savedFilter.className='filter-check';savedFilter.innerHTML=`<input id="favoritesOnly" type="checkbox" ${state.favoritesOnly?'checked':''}>${tr('My saved kitchens','آشپزخانه‌های ذخیره‌شدهٔ من')}`;filterOptions.append(savedFilter);$('favoritesOnly').onchange=()=>{state.favoritesOnly=$('favoritesOnly').checked;renderKitchenCards();};
     renderKitchenCards();
   } else if (state.tab === "cart") renderCart();
   else if (state.tab === "orders") renderOrders();
@@ -559,7 +560,7 @@ function renderContent() {
 }
 function searchText(value){return String(value||'').normalize('NFKC').toLocaleLowerCase().replace(/ي/g,'ی').replace(/ك/g,'ک');}
 function matchingDishes(cook){const query=searchText(state.query).trim();const kitchenMatches=searchText([cook.kitchenName,...Object.values(cook.kitchenNameLocalized),cook.neighborhood].join(' ')).includes(query);
-  return cook.dishes.filter(dish=>(state.category==='all'||(dish.category||'other')===state.category)&&(!state.availableOnly||(dish.isAvailableToday&&Date.parse(dish.serviceWindowEndIso)>Date.now()))&&(!query||kitchenMatches||searchText([...Object.values(dish.titleLocalized),...Object.values(dish.descriptionLocalized)].join(' ')).includes(query)));
+  return cook.dishes.filter(dish=>(dish.category==='food')&&(!state.availableOnly||(dish.isAvailableToday&&Date.parse(dish.serviceWindowEndIso)>Date.now()))&&(!query||kitchenMatches||searchText([...Object.values(dish.titleLocalized),...Object.values(dish.descriptionLocalized)].join(' ')).includes(query)));
 }
 function filteredKitchens(){return state.cooks.filter(cook=>(!state.favoritesOnly||state.favoriteIds.includes(cook.id))&&(!state.fulfillmentFilter||(state.fulfillmentFilter==='pickup'?cook.supportsPickup:cook.supportsDelivery))&&matchingDishes(cook).length);}
 function updateDeliveryAreas(){
@@ -574,7 +575,7 @@ function updateDeliveryAreas(){
   const viewKey=JSON.stringify([filteredKitchens().map(cook=>[cook.id,cook.publicLat,cook.publicLng,cook.deliveryRadiusKm]),state.origin]);
   if(coordinates.length&&state.mapViewKey!==viewKey){
     const lngs=coordinates.map(point=>point[0]),lats=coordinates.map(point=>point[1]);
-    map.fitBounds([[Math.min(...lngs),Math.min(...lats)],[Math.max(...lngs),Math.max(...lats)]],{padding:40,maxZoom:12,duration:0});state.mapViewKey=viewKey;
+    map.fitBounds([[Math.min(...lngs),Math.min(...lats)],[Math.max(...lngs),Math.max(...lats)]],{padding:{top:40,bottom:80,left:40,right:40},maxZoom:12,duration:0});state.mapViewKey=viewKey;
   }
   const data={type:'FeatureCollection',features},source=map.getSource('sofreh-delivery-areas');
   if(source){source.setData(data);return;}
@@ -584,17 +585,18 @@ function updateDeliveryAreas(){
 }
 function refreshMarkers(){
   state.markers.forEach(marker=>marker.remove());state.markers=[];if(!state.map)return;
-  const add=(lng,lat,label,color)=>{
-    const element=document.createElement('button');element.type='button';element.className='map-pin';element.style.backgroundColor=color;element.setAttribute('aria-label',label);
+  const add=(lng,lat,label,color,cookId=null)=>{
+    const element=document.createElement(cookId?'button':'span');if(cookId){element.type='button';element.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6 7-12a7 7 0 0 0-14 0c0 6 7 12 7 12Z M9 9l3-2 3 2v5H9Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';}else{element.setAttribute('role','img');const caption=document.createElement('span');caption.className='origin-caption';caption.textContent=tr('Search origin','مبدأ جست‌وجو');caption.setAttribute('aria-hidden','true');element.append(caption);}element.className='map-pin'+(cookId?'':' map-origin');element.style.backgroundColor=color;element.setAttribute('aria-label',label);element.title=label;
     // Native buttons synthesize a click. Suppress MapLibre's additional
     // keypress toggle so Enter/Space cannot open and immediately close it.
     element.addEventListener('keypress',event=>{if(event.key==='Enter'||event.key===' ')event.stopImmediatePropagation();});
-    const marker=new maplibregl.Marker({element}).setLngLat([lng,lat]).setPopup(new maplibregl.Popup().setText(label)).addTo(state.map);
+    const marker=new maplibregl.Marker({element}).setLngLat([lng,lat]);if(cookId)marker.setPopup(new maplibregl.Popup({focusAfterOpen:false}).setText(label));marker.addTo(state.map);
     // MapLibre assigns a generic label when a popup is attached.
     element.setAttribute('aria-label',label);
+    if(cookId){element.dataset.kitchenId=cookId;element.addEventListener('click',()=>{const card=[...document.querySelectorAll('[data-kitchen-id]')].find(node=>node.tagName==='ARTICLE'&&node.dataset.kitchenId===cookId);if(card){card.focus({preventScroll:true});card.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});}});}
     state.markers.push(marker);
   };
-  for(const cook of filteredKitchens())add(cook.publicLng,cook.publicLat,cook.kitchenName+' · '+cook.neighborhood,'#9c2940');
+  for(const cook of filteredKitchens())add(cook.publicLng,cook.publicLat,cook.kitchenName+' · '+cook.neighborhood,'#9c2940',cook.id);
   if(state.origin)add(state.origin.lng,state.origin.lat,tr('Your selected origin','مبدأ انتخاب‌شده شما'),'#2679a8');
 }
 function renderKitchenCards() {
@@ -651,9 +653,9 @@ function kitchenCard(cook) {
   const rating = cook.reviewSummary.reviewCount
     ? `${number(cook.reviewSummary.averageRating)} / ${number(5)} · ${number(cook.reviewSummary.reviewCount)} ${tr(cook.reviewSummary.reviewCount===1?'review':'reviews','نظر')}`
     : tr('No ratings yet','هنوز امتیازی ثبت نشده');
-  return `<article class="card kitchen-card">
-    <div class="row"><h3>${h(cook.kitchenName)}</h3>${cook.isSyntheticTestFixture ? `<span class="tag">${tr('TEST ONLY','فقط نمایشی')}</span>` : ''}<span class="tag">${h(cook.neighborhood)}</span></div>
-    <p class="muted kitchen-meta" ${!state.origin&&!cook.reviewSummary.reviewCount?'hidden':''}>${state.origin ? tr('Approx. ','حدود ') + number(distance(cook)) + tr(' km to kitchen area',' کیلومتر تا محدوده آشپز') : tr('Choose an origin to see distance','برای دیدن فاصله، مبدأ را انتخاب کنید')} · ${rating}</p>
+  return `<article class="card kitchen-card" tabindex="-1" data-kitchen-id="${h(cook.id)}">
+    <div class="row"><h3 class="kitchen-name">${cook.identity?.avatarUrl&&!cook.identity.avatarIsSample?`<img src="${h(cook.identity.avatarUrl)}" alt="${tr('Kitchen profile image','تصویر معرفی آشپزخانه')}">`:''}<span>${h(cook.kitchenName)}${cook.identity?.publicName?`<small>${tr('Your cook: ','آشپز این غذا: ')}${h(cook.identity.publicName)}</small>`:''}</span></h3>${cook.isSyntheticTestFixture ? `<span class="tag">${tr('TEST ONLY','فقط نمایشی')}</span>` : ''}<span class="tag">${h(cook.neighborhood)}</span></div>
+    <p class="muted kitchen-meta" ${!state.origin&&!cook.reviewSummary.reviewCount?'hidden':''}>${state.origin ? tr('Approx. ','حدود ') + number(distance(cook)) + tr(' km to kitchen area',' کیلومتر تا محدوده آشپز') + ' · ' : ''}${rating}</p>
     <div class="kitchen-meals">${matchingDishes(cook).map(dish=>dishCard(cook,dish)).join('')}</div>
     <details class="kitchen-details"><summary>${tr('Kitchen details and reviews','درباره آشپزخانه و نظرها')}</summary>
       <p>${h(cook.bio)}</p><p>${h(cook.pickupWindowLabel)}</p>
@@ -673,12 +675,7 @@ function dishCard(cook, dish) {
     <div class="dish-media">${photo}${sample ? `<a class="photo-caption" href="/assets/credits.html">${tr('Sample photo', 'عکس نمونه')}</a>` : ''}</div>
     <div class="dish-copy">
       <div class="row"><h3>${h(dish.title)}</h3><span class="price">${money(dish.priceCents)}</span></div>
-      <p class="dish-description">${h(dish.description)}</p>
-      <div class="row dish-order"><span class="stock-label">${available ? number(dish.remainingPortions) + tr(' portions left', ' پرس مانده') : tr('Unavailable', 'ناموجود')}</span><button class="primary" type="button" data-add="${h(dish.id)}" data-cook="${h(cook.id)}" ${available ? '' : 'disabled'}>${tr('Add to cart', 'افزودن به سبد')}</button></div>
-      <details class="meal-information"><summary>${tr('Ingredients, allergens & time', 'حساسیت‌ها و زمان دریافت')}</summary>
-        <p class="full-meal-title">${h(dish.title)}</p><p>${tr('Allergens: ', 'مواد حساسیت‌زا: ')}${dish.allergens.length ? h(dish.allergens.join('، ')) : tr('Not declared. Ask the cook.', 'اعلام نشده؛ از آشپز بپرسید.')}</p>
-        <p>${date(dish.serviceWindowStartIso)} — ${date(dish.serviceWindowEndIso)}</p>
-      </details>
+      <div class="row dish-order"><button type="button" data-add="${h(dish.id)}" data-cook="${h(cook.id)}" aria-label="${h(tr('View and choose ','جزئیات و انتخاب ')+dish.title)}" ${available ? '' : 'disabled'}>${available?tr('View & choose','جزئیات و انتخاب'):tr('Unavailable','ناموجود')}<span aria-hidden="true">+</span></button></div>
     </div>
   </div>`;
 }
@@ -716,7 +713,8 @@ async function showMap() {
   });
   state.map.addControl(new maplibregl.NavigationControl());
   state.map.on('load',updateDeliveryAreas);
-  if(!$('mapNotice')){const mapNotice=document.createElement('p');mapNotice.id='mapNotice';mapNotice.className='muted';mapNotice.textContent=tr('Pins mark public kitchen areas and your selected origin. Circles show cook-set delivery radii from approximate area centres, not verified delivery coverage or road routes.','پین‌ها محدوده عمومی آشپز و مبدأ انتخاب‌شده شما هستند. دایره‌ها شعاع ارسالی‌اند که آشپز از مرکز تقریبی محله تعیین کرده؛ پوشش قطعی ارسال یا مسیر خیابانی نیستند.');$('map').after(mapNotice);}
+  if(!$('mapLegend')){const legend=document.createElement('div');legend.id='mapLegend';legend.className='map-legend';legend.innerHTML=`<span><i class="legend-kitchen" aria-hidden="true"></i>${tr('Kitchen area','آشپزخانه')}</span><span><i class="legend-origin" aria-hidden="true"></i>${tr('Search origin','مبدأ جست‌وجو')}</span><span><i class="legend-radius" aria-hidden="true"></i>${tr('Approximate delivery area','محدودهٔ تقریبی ارسال')}</span>`;$('map').before(legend);}
+  if(!$('mapNotice')){const mapNotice=document.createElement('p');mapNotice.id='mapNotice';mapNotice.className='muted';mapNotice.textContent=tr('Approximate areas, not home addresses or guaranteed road coverage.','محدوده‌ها تقریبی‌اند؛ نشانی خانه یا پوشش قطعی خیابان‌ها نیستند.');$('map').after(mapNotice);}
   refreshMarkers();
 }
 function rememberCheckoutDraft() {
@@ -736,8 +734,14 @@ function renderCart() {
   const cook = state.cooks.find((c) => c.id === cart.cookId);
   const invalidQuote=cart.quoteValid===false||cart.items.some(item=>item.optionsChanged);
   const cartMoney=value=>invalidQuote?tr("Needs review","نیازمند بازبینی"):money(value);
-  content.innerHTML = `<div class="card"><h2>${h(cart.kitchenName || cook?.kitchenName || tr("Your cart", "سبد شما"))}</h2>${cart.items.map((item) => `<div class="dish row"><div><strong>${h(item.title || item.titleLocalized?.[locale()] || item.titleEn)}</strong><p>${item.optionsChanged?tr("Price unavailable — choices changed","قیمت در دسترس نیست؛ انتخاب‌ها تغییر کرده‌اند"):money(item.unitPriceCents)+" × "+number(item.quantity)}</p><small>${h((item.options||[]).map(o=>locale()==='fa-IR'?o.labelFa:o.labelEn).join(fa?'، ':', '))}</small>${item.optionsChanged?`<p class="notice">${tr("The cook changed this meal’s choices. Remove this line and select the meal again; the total cannot be confirmed yet.","آشپز انتخاب‌های این غذا را تغییر داده است. این ردیف را حذف و غذا را دوباره انتخاب کنید؛ جمع کل هنوز قابل تأیید نیست.")}</p><a class="text-link" href="/app/customer?tab=discover&locale=${locale()}">${tr("Choose meals again","انتخاب دوبارهٔ غذا")}</a>`:""}</div><div class="actions"><button type="button" data-qty="${h(item.dishId)}" data-selection="${h(item.selectionKey||'')}" data-next="${item.optionsChanged?0:item.quantity - 1}" aria-label="${item.optionsChanged?tr("Remove changed meal","حذف غذای تغییرکرده"):tr("Remove one", "کاهش یک پرس")}">−</button><span>${number(item.quantity)}</span><button type="button" data-qty="${h(item.dishId)}" data-selection="${h(item.selectionKey||'')}" data-next="${item.quantity + 1}" ${item.optionsChanged?"disabled":""} aria-label="${tr("Add one", "افزایش یک پرس")}">+</button></div></div>`).join("")}<form id="checkout"><label for="fulfillment">${tr("Receive your food", "دریافت غذا")}</label><select id="fulfillment">${cart.supportsPickup ? `<option value="pickup" ${cart.fulfillmentType === "pickup" ? "selected" : ""}>${modeText("pickup")}</option>` : ""}${cart.supportsDelivery ? `<option value="delivery" ${cart.fulfillmentType === "delivery" ? "selected" : ""}>${modeText("delivery")}</option>` : ""}</select><div id="deliveryFields" ${cart.fulfillmentType === "delivery" ? "" : "hidden"}><label for="savedAddress">${tr("Saved address", "نشانی ذخیره‌شده")}</label><select id="savedAddress"><option value="">${tr("Enter an address", "واردکردن نشانی")}</option>${state.addresses.map((address) => `<option value="${h(address.id)}">${h(address.label)}</option>`).join("")}</select><label for="deliveryAddress">${tr("Delivery address", "نشانی تحویل")}</label><textarea id="deliveryAddress" dir="auto" maxlength="500">${h(cart.deliveryAddress || "")}</textarea></div><label for="notes">${tr("Order notes", "توضیح سفارش")}</label><textarea id="notes" maxlength="1000"></textarea><div class="total"><div class="row"><span>${tr("Food", "غذا")}</span><strong>${cartMoney(cart.subtotalCents)}</strong></div><div class="row"><span>${tr("Delivery fee", "هزینه ارسال")}</span><strong>${money(cart.deliveryFeeCents)}</strong></div><div class="row"><span>${tr("Total", "جمع کل")}</span><strong class="price">${cartMoney(cart.totalCents)}</strong></div></div><p class="notice">${tr("Simulated payment — no charge. The cook must accept your order.", "پرداخت آزمایشی است و هزینه‌ای برداشت نمی‌شود. آشپز باید سفارش را بپذیرد.")}</p><button class="primary" type="submit" ${invalidQuote?"disabled":""}>${tr("Place order", "ثبت سفارش")}</button><button type="button" id="clearCart" class="danger">${tr("Clear cart", "خالی‌کردن سبد")}</button></form></div>`;
+  content.innerHTML = `<div class="card"><h2>${h(cart.kitchenName || cook?.kitchenName || tr("Your cart", "سبد شما"))}</h2>${cart.items.map((item) => `<div class="dish row"><div><strong>${h(item.title || item.titleLocalized?.[locale()] || item.titleEn)}</strong><p>${item.optionsChanged?tr("Price unavailable — choices changed","قیمت در دسترس نیست؛ انتخاب‌ها تغییر کرده‌اند"):money(item.unitPriceCents)+" × "+number(item.quantity)}</p><small>${h((item.options||[]).map(o=>locale()==='fa-IR'?o.labelFa:o.labelEn).join(fa?'، ':', '))}</small>${item.optionsChanged?`<p class="notice">${tr("The cook changed this meal’s choices. Remove this line and select the meal again; the total cannot be confirmed yet.","آشپز انتخاب‌های این غذا را تغییر داده است. این ردیف را حذف و غذا را دوباره انتخاب کنید؛ جمع کل هنوز قابل تأیید نیست.")}</p><a class="text-link" data-reselect-meal href="/app/customer?tab=discover&locale=${locale()}">${tr("Choose meals again","انتخاب دوبارهٔ غذا")}</a>`:""}</div><div class="actions"><button type="button" data-qty="${h(item.dishId)}" data-selection="${h(item.selectionKey||'')}" data-next="${item.optionsChanged?0:item.quantity - 1}" aria-label="${item.optionsChanged?tr("Remove changed meal","حذف غذای تغییرکرده"):tr("Remove one", "کاهش یک پرس")}">−</button><span>${number(item.quantity)}</span><button type="button" data-qty="${h(item.dishId)}" data-selection="${h(item.selectionKey||'')}" data-next="${item.quantity + 1}" ${item.optionsChanged?"disabled":""} aria-label="${tr("Add one", "افزایش یک پرس")}">+</button></div></div>`).join("")}<form id="checkout"><label for="fulfillment">${tr("Receive your food", "دریافت غذا")}</label><select id="fulfillment">${cart.supportsPickup ? `<option value="pickup" ${cart.fulfillmentType === "pickup" ? "selected" : ""}>${modeText("pickup")}</option>` : ""}${cart.supportsDelivery ? `<option value="delivery" ${cart.fulfillmentType === "delivery" ? "selected" : ""}>${modeText("delivery")}</option>` : ""}</select><div id="deliveryFields" ${cart.fulfillmentType === "delivery" ? "" : "hidden"}><label for="savedAddress">${tr("Saved address", "نشانی ذخیره‌شده")}</label><select id="savedAddress"><option value="">${tr("Enter an address", "واردکردن نشانی")}</option>${state.addresses.map((address) => `<option value="${h(address.id)}">${h(address.label)}</option>`).join("")}</select><label for="deliveryAddress">${tr("Delivery address", "نشانی تحویل")}</label><textarea id="deliveryAddress" dir="auto" maxlength="500">${h(cart.deliveryAddress || "")}</textarea></div><label for="notes">${tr("Order notes", "توضیح سفارش")}</label><textarea id="notes" maxlength="1000"></textarea><div class="total"><div class="row"><span>${tr("Food", "غذا")}</span><strong>${cartMoney(cart.subtotalCents)}</strong></div><div class="row"><span>${tr("Delivery fee", "هزینه ارسال")}</span><strong>${money(cart.deliveryFeeCents)}</strong></div><div class="row"><span>${tr("Total", "جمع کل")}</span><strong class="price">${cartMoney(cart.totalCents)}</strong></div></div><p class="notice">${tr("Simulated payment — no charge. The cook must accept your order.", "پرداخت آزمایشی است و هزینه‌ای برداشت نمی‌شود. آشپز باید سفارش را بپذیرد.")}</p><button class="primary" type="submit" ${invalidQuote?"disabled":""}>${tr("Place order", "ثبت سفارش")}</button><button type="button" id="clearCart" class="danger">${tr("Clear cart", "خالی‌کردن سبد")}</button></form></div>`;
   $('checkout').dataset.cookId=cart.cookId;
+  content.querySelectorAll('[data-reselect-meal]').forEach(link=>{link.onclick=event=>{
+    if(event.ctrlKey||event.metaKey||event.shiftKey||event.altKey||event.button>0)return;
+    event.preventDefault();
+    rememberCheckoutDraft();
+    setTab('discover');
+  };});
   if(invalidQuote)$('fulfillment').disabled=true;
   const draft=state.checkoutDraft?.cookId===cart.cookId ? state.checkoutDraft : null;
   if (draft) {
@@ -813,11 +817,11 @@ function renderCart() {
       async () => {
         if(invalidQuote)throw new Error(tr('Review changed meals before ordering.','پیش از سفارش، غذاهای تغییرکرده را بازبینی کنید.'));
         const latest=(await api('/api/customer/cart')).cart;
-        const quote=value=>JSON.stringify({cook:value.cookId,fulfillment:value.fulfillmentType,coupon:value.couponCode||'',slot:value.scheduledSlotId||null,total:value.totalCents,items:value.items.map(item=>[item.dishId,item.selectionKey||'',item.quantity,item.unitPriceCents])});
+        const quote=value=>JSON.stringify({cook:value.cookId,fulfillment:value.fulfillmentType,coupon:value.couponCode||'',slot:value.scheduledSlotId||null,slotVersion:value.slots?.find(s=>s.id===value.scheduledSlotId)?.version??null,total:value.totalCents,items:value.items.map(item=>[item.dishId,item.selectionKey||'',item.quantity,item.unitPriceCents])});
         if(quote(latest)!==quote(cart)){
           state.checkoutKey=null;state.cart=latest;
           if(!latest.items.length){state.checkoutDraft=null;$('checkout')?.remove();state.tab='orders';await refresh();}else renderCart();
-          throw new Error(tr('Your cart or prices changed. Review the latest total and orders before continuing.','سبد یا قیمت‌ها تغییر کرده‌اند؛ مبلغ تازه و سفارش‌ها را پیش از ادامه بررسی کنید.'));
+          throw new Error(tr('Your cart, prices or fulfillment window changed. Review the latest details before continuing.','سبد، قیمت یا نوبت دریافت تغییر کرده است؛ جزئیات تازه را پیش از ادامه بررسی کنید.'));
         }
         if (
           cart.fulfillmentType === "delivery" &&
@@ -838,6 +842,7 @@ function renderCart() {
             fulfillmentType: cart.fulfillmentType,
             couponCode: cart.couponCode || '',
             scheduledSlotId: cart.scheduledSlotId || null,
+            ...(cart.scheduledSlotId?{expectedScheduledSlotVersion:cart.slots?.find(s=>s.id===cart.scheduledSlotId)?.version}:{}),
             deliveryAddress: $("deliveryAddress").value,
             customerNotes: $("notes").value,
             simulatedPaymentMethod: "SIMULATED_CARD",
@@ -858,6 +863,7 @@ function renderCart() {
         state.checkoutDraft = null;
         $('checkout')?.remove();
         state.tab = "orders";
+        state.orderFilter = "active";
         await refresh();
       },
       tr("Order sent to the cook.", "سفارش برای آشپز فرستاده شد."),
@@ -865,15 +871,25 @@ function renderCart() {
   };
   commerce.decorateCart();
 }
-function renderOrders() {
+function renderOrders({preserveDrafts=false}={}) {
+  // Updating status must not erase an open conversation or unsent review.
+  const drafts=preserveDrafts?[...document.querySelectorAll('#content article[data-order-id]')].flatMap(article=>
+    [...article.querySelectorAll('details[open]')].map(details=>({
+      orderId:article.dataset.orderId,summary:details.querySelector('summary')?.textContent,
+      fields:[...details.querySelectorAll('input,textarea,select')].map(field=>({
+        tag:field.tagName,name:field.name,type:field.type,value:field.value,checked:field.checked,
+        focused:field===document.activeElement,start:field.selectionStart,end:field.selectionEnd
+      }))
+    }))):[];
+  const openOrderIds=new Set(drafts.map(draft=>draft.orderId));
   const content = $("content");
   const active=order=>['PENDING','ACCEPTED','PREPARING','READY'].includes(order.status);
-  const filters=[['active',tr('In progress','در جریان')],['pending',tr('Needs acceptance','منتظر پذیرش')],['history',tr('History','سوابق')],['all',tr('All orders','همهٔ سفارش‌ها')]];
-  const visibleOrders=state.orders.filter(order=>state.orderFilter==='all'||(state.orderFilter==='pending'?order.status==='PENDING':state.orderFilter==='history'?!active(order):active(order))).sort((a,b)=>{
+  const filters=[['active',tr('In progress','در جریان')],['pending',tr('Needs acceptance','منتظر پذیرش')],['completed',tr('Completed','تکمیل‌شده')],['history',tr('History','سوابق')],['all',tr('All orders','همهٔ سفارش‌ها')]];
+  const visibleOrders=state.orders.filter(order=>openOrderIds.has(order.id)||state.orderFilter==='all'||(state.orderFilter==='pending'?order.status==='PENDING':state.orderFilter==='completed'?order.status==='COMPLETED':state.orderFilter==='history'?!active(order):active(order))).sort((a,b)=>{
     if(isCook()){const rank={PENDING:0,READY:1,PREPARING:2,ACCEPTED:3};const priority=(rank[a.status]??4)-(rank[b.status]??4);if(priority)return priority;if(a.status==='PENDING')return Date.parse(a.createdAtIso)-Date.parse(b.createdAtIso);}
     return Date.parse(b.createdAtIso)-Date.parse(a.createdAtIso);
   });
-  content.innerHTML = `<nav class="order-filters" aria-label="${tr('Filter orders','فیلتر سفارش‌ها')}">${filters.filter(([key])=>isCook()||key!=='pending').map(([key,label])=>`<button type="button" data-order-filter="${key}" aria-pressed="${state.orderFilter===key}">${label} · ${number(state.orders.filter(order=>key==='all'||(key==='pending'?order.status==='PENDING':key==='history'?!active(order):active(order))).length)}</button>`).join('')}</nav><div class="live-heading"><h2>${tr("Your orders", "سفارش‌های شما")}</h2><button id="notifications" type="button">${tr("Allow order alerts", "فعال‌کردن اعلان سفارش")}</button></div><p class="muted">${tr("Allow push alerts to receive order changes while away from this page. Delivery depends on browser, permission and device settings.", "با فعال‌کردن اعلان، تغییرات سفارش را هنگام دوربودن از صفحه هم دریافت کنید؛ دریافت به مرورگر، مجوز و تنظیمات دستگاه وابسته است.")}</p><div class="grid">${visibleOrders.length ? visibleOrders.map((order) => `<article class="card" data-order-id="${h(order.id)}"><div class="row"><h3>${h(fa ? order.kitchenNameFa : order.kitchenNameEn) || tr("Order", "سفارش")}</h3><span class="order-status">${statusText(order.status)}</span></div><p class="muted"><bdi>${h(order.id)}</bdi> · ${date(order.createdAtIso)}</p><p>${modeText(order.fulfillmentType)} · <strong>${money(order.totalCents)}</strong></p>${order.items.map((item) => `<p>${number(item.quantity)} × ${h(fa ? item.titleFa : item.titleEn)}</p>`).join("")}${order.pickupAddressReleased ? `<p><strong>${tr("Pickup address: ", "نشانی دریافت: ")}</strong><bdi>${h(order.pickupAddressReleased)}</bdi></p>` : ""}${order.deliveryAddressForFulfillment || order.deliveryAddress ? `<p dir="auto">${h(order.deliveryAddressForFulfillment || order.deliveryAddress)}</p>` : ""}${order.customerNotes ? `<p>${h(order.customerNotes)}</p>` : ""}${order.simulatedPaymentStatus === "SIMULATED_REFUNDED" ? `<p class="muted">${tr("Simulated payment refunded", "بازگشت وجه آزمایشی ثبت شد")}</p>` : ""}<div class="actions">${isCook() ? nextActions(order) : ""}</div>${reviewsMarkup(order)}${order.status === "COMPLETED" && !(order.reviews||[]).some(review=>review.reviewerUserId===state.profile.account.id) ? `<details><summary>${tr("Rate this order", "ثبت نظر برای سفارش")}</summary><form data-review="${h(order.id)}"><label>${tr("Rating", "امتیاز")}<select name="rating">${[5, 4, 3, 2, 1].map((value) => `<option value="${value}">${number(value)} / 5</option>`).join("")}</select></label><label>${tr("Your comment", "نظر شما")}<textarea name="comment" maxlength="1000" required></textarea></label><button type="submit">${tr("Save review", "ثبت نظر")}</button></form></details>` : ""}</article>`).join("") : `<p class="empty">${tr("No orders in this view. Choose another filter to see your history.", "سفارشی در این بخش نیست؛ برای دیدن سوابق فیلتر را تغییر دهید.")}</p>`}</div>`;
+  content.innerHTML = `<nav class="order-filters" aria-label="${tr('Filter orders','فیلتر سفارش‌ها')}">${filters.filter(([key])=>isCook()||key!=='pending').map(([key,label])=>`<button type="button" data-order-filter="${key}" aria-pressed="${state.orderFilter===key}">${label} · ${number(state.orders.filter(order=>key==='all'||(key==='pending'?order.status==='PENDING':key==='completed'?order.status==='COMPLETED':key==='history'?!active(order):active(order))).length)}</button>`).join('')}</nav><div class="live-heading"><h2>${tr("Your orders", "سفارش‌های شما")}</h2><button id="notifications" type="button">${tr("Allow order alerts", "فعال‌کردن اعلان سفارش")}</button></div><p class="muted">${tr("Allow push alerts to receive order changes while away from this page. Delivery depends on browser, permission and device settings.", "با فعال‌کردن اعلان، تغییرات سفارش را هنگام دوربودن از صفحه هم دریافت کنید؛ دریافت به مرورگر، مجوز و تنظیمات دستگاه وابسته است.")}</p><div class="grid">${visibleOrders.length ? visibleOrders.map((order) => `<article class="card" data-order-id="${h(order.id)}"><div class="row"><h3>${h(fa ? order.kitchenNameFa : order.kitchenNameEn) || tr("Order", "سفارش")}</h3><span class="order-status">${statusText(order.status)}</span></div><p class="muted"><bdi>${h(order.id)}</bdi> · ${date(order.createdAtIso)}</p><p>${modeText(order.fulfillmentType)} · <strong>${money(order.totalCents)}</strong></p>${order.items.map((item) => `<p>${number(item.quantity)} × ${h(fa ? item.titleFa : item.titleEn)}</p>`).join("")}${order.pickupAddressReleased ? `<p><strong>${tr("Pickup address: ", "نشانی دریافت: ")}</strong><bdi>${h(order.pickupAddressReleased)}</bdi></p>` : ""}${order.deliveryAddressForFulfillment || order.deliveryAddress ? `<p dir="auto">${h(order.deliveryAddressForFulfillment || order.deliveryAddress)}</p>` : ""}${order.customerNotes ? `<p>${h(order.customerNotes)}</p>` : ""}${order.simulatedPaymentStatus === "SIMULATED_REFUNDED" ? `<p class="muted">${tr("Simulated payment refunded", "بازگشت وجه آزمایشی ثبت شد")}</p>` : ""}<div class="actions">${isCook() ? nextActions(order) : ""}</div>${reviewsMarkup(order)}${order.status === "COMPLETED" && !(order.reviews||[]).some(review=>review.reviewerUserId===state.profile.account.id) ? `<details><summary>${tr("Rate this order", "ثبت نظر برای سفارش")}</summary><form data-review="${h(order.id)}"><label>${tr("Rating", "امتیاز")}<select name="rating">${[5, 4, 3, 2, 1].map((value) => `<option value="${value}">${number(value)} / 5</option>`).join("")}</select></label><label>${tr("Your comment", "نظر شما")}<textarea name="comment" maxlength="1000" required></textarea></label><button type="submit">${tr("Save review", "ثبت نظر")}</button></form></details>` : ""}</article>`).join("") : `<p class="empty">${tr("No orders in this view. Choose another filter to see your history.", "سفارشی در این بخش نیست؛ برای دیدن سوابق فیلتر را تغییر دهید.")}</p>`}</div>`;
   content.querySelectorAll('[data-order-filter]').forEach(button=>button.onclick=()=>{state.orderFilter=button.dataset.orderFilter;renderOrders();});
   content.querySelectorAll('.order-status').forEach(badge=>{
     if(state.orders.find(order=>order.id===badge.closest('[data-order-id]').dataset.orderId)?.status!=='PENDING')return;
@@ -926,6 +942,18 @@ function renderOrders() {
       }),
   );
   commerce.decorateOrders();
+  for(const draft of drafts){
+    const article=[...content.querySelectorAll('article[data-order-id]')].find(node=>node.dataset.orderId===draft.orderId);
+    const details=article&&[...article.querySelectorAll('details')].find(node=>node.querySelector('summary')?.textContent===draft.summary);
+    if(!details)continue;
+    details.open=true;
+    const fields=[...details.querySelectorAll('input,textarea,select')];
+    draft.fields.forEach((saved,index)=>{
+      const field=fields[index];if(!field||field.tagName!==saved.tag||field.name!==saved.name||field.type!==saved.type)return;
+      field.value=saved.value;if(saved.type==='checkbox'||saved.type==='radio')field.checked=saved.checked;
+      if(saved.focused){field.focus({preventScroll:true});if(saved.start!=null&&typeof field.setSelectionRange==='function')field.setSelectionRange(saved.start,saved.end);}
+    });
+  }
 }
 function reviewsMarkup(order){return (order.reviews||[]).map(review=>`<div class="review"><strong>${review.reviewerRole==='COOK'?tr('Cook review','نظر آشپز'):tr('Customer review','نظر مشتری')} · ${number(review.rating)} / 5</strong><p>${review.commentEscaped}</p></div>`).join('');}
 function nextActions(order) {
@@ -1072,10 +1100,11 @@ function renderMenu() {
       state.editDish = null;
       renderContent();
     };
-  const categoryLabel=document.createElement('label');categoryLabel.textContent=tr('Menu category','دستهٔ منو');categoryLabel.htmlFor='dishCategory';
+  const categoryLabel=document.createElement('label');categoryLabel.textContent=tr('Show in meal discovery','نمایش در فهرست غذای اصلی');categoryLabel.htmlFor='dishCategory';
   const categorySelect=document.createElement('select');categorySelect.id='dishCategory';categorySelect.name='category';
-  for(const [key,label] of Object.entries(menuCategories())){if(key==='all')continue;const option=document.createElement('option');option.value=key;option.textContent=label;categorySelect.append(option);}
-  categorySelect.value=dish?.category||'other';
+  const mealOption=document.createElement('option');mealOption.value='food';mealOption.textContent=tr('Main meal','غذای اصلی');categorySelect.append(mealOption);
+  if(dish&&dish.category!=='food'){const previous=document.createElement('option');previous.value=dish.category||'other';previous.textContent=tr('Existing item — kept outside the meal list','قلم قبلی — خارج از فهرست غذای اصلی');categorySelect.append(previous);}
+  categorySelect.value=dish?.category||'food';
   const categoryField=document.createElement('div');categoryField.append(categoryLabel,categorySelect);$('dishForm').querySelector('.form-grid').append(categoryField);
   $("dishForm").onsubmit = (event) => {
     event.preventDefault();

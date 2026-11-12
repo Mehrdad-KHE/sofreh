@@ -949,10 +949,10 @@ describe('Sofreh Stage 1 Implementation Suite (v2)', () => {
       customerClient.querySelectorAll('[data-category-id="all"]')[0]?.click();
 
       const storefrontHtml = customerClient.getElementById('cookListCard').innerHTML;
-      // Actual bundled sample photos replace illustrations for the three selected meals.
-      assert.match(storefrontHtml, /<img class="dish-photo" src="\/assets\/demo-food\/ghormeh-sabzi-majidi.jpg/);
-      assert.match(storefrontHtml, /src="\/assets\/demo-food\/zereshk-polo.jpg/);
-      assert.match(storefrontHtml, /src="\/assets\/demo-food\/tahchin.jpg/);
+      // Bundled sample illustrations match the three selected meal types.
+      assert.match(storefrontHtml, /<img class="dish-photo" src="\/assets\/demo-food\/studio-ghormeh-800\.webp/);
+      assert.match(storefrontHtml, /src="\/assets\/demo-food\/studio-zereshk-800\.webp/);
+      assert.match(storefrontHtml, /src="\/assets\/demo-food\/studio-tahchin-800\.webp/);
       assert.match(storefrontHtml, /Sample photo/);
       // Both TODAY_AVAILABLE and REGULAR_UNAVAILABLE sections rendered
       assert.match(storefrontHtml, /id="todayAvailableDishesSection"/);
@@ -1957,11 +1957,14 @@ describe('Sofreh Stage 1 Implementation Suite (v2)', () => {
       const dishes = discovery.cooks.flatMap((cook) => cook.dishes);
       assert.equal(dishes.length, 12);
       assert.ok(dishes.every((dish) => dish.isSamplePhoto && dish.photoUrl.startsWith('/assets/demo-food/')));
+      assert.equal(new Set(dishes.map(dish => dish.photoUrl)).size, dishes.length, 'Each distinct catalogue dish needs its own matching sample image.');
       for (const dish of dishes) {
         const response = await fetch(baseUrl + dish.photoUrl);
         assert.equal(response.status, 200, dish.id);
         const bytes = new Uint8Array(await response.arrayBuffer());
-        assert.deepEqual([...bytes.slice(0, 3)], [255, 216, 255]);
+        assert.equal(response.headers.get('content-type'), 'image/webp');
+        assert.equal(Buffer.from(bytes).toString('ascii', 0, 4), 'RIFF');
+        assert.equal(Buffer.from(bytes).toString('ascii', 8, 12), 'WEBP');
       }
       const font = await fetch(baseUrl + '/assets/fonts/NotoNastaliqUrdu.ttf');
       assert.equal(font.status, 200);

@@ -77,3 +77,30 @@ test('public reviews show genuine completed-order feedback with escaped comments
  const page=await a.anonymous('/kitchens/'+a.cookId+'?locale=en-CA');assert.match(page.data,/Read customer reviews/);assert.match(page.data,/&lt;script&gt;untrusted review&lt;\/script&gt;/);assert.ok(!page.data.includes('<script>untrusted review</script>'));
  }finally{await a.close();}
 });
+
+
+test('core meal extras keep shared price stock and order state',async()=>{
+ const app=await start();
+ try{
+  const id=await addDish(app,{remainingPortions:2,options});
+  const line={cookId:app.cookId,dishId:id,quantity:2,selectedOptions:['size:regular','extras:bread'],fulfillmentType:'pickup'};
+  assert.equal((await app.customer('/api/customer/cart/items',{...line,selectedOptions:['size:regular','extras:not-offered']})).status,409);
+  const cart=(await app.customer('/api/customer/cart/items',line)).data.cart;
+  assert.equal(cart.totalCents,2300);
+  assert.equal(cart.items[0].quantity,2);
+  const request=orderInput(app,id,{items:[{dishId:id,quantity:2,selectedOptions:line.selectedOptions}],expectedSubtotalCents:2300,expectedDeliveryFeeCents:0,expectedTotalCents:2300,idempotencyKey:'core-extras-shared-stock'});
+  const placed=await app.customer('/api/customer/orders',request);
+  assert.equal(placed.status,201,JSON.stringify(placed.data));
+  const order=placed.data.order;
+  assert.equal(order.totalCents,2300);
+  assert.equal((await app.customer('/api/customer/orders',request)).data.order.id,order.id);
+  const cookOrders=(await app.cook('/api/cook/kitchen/'+app.cookId+'/orders')).data.orders;
+  assert.equal(cookOrders.find(o=>o.id===order.id).totalCents,2300);
+  assert.match(JSON.stringify(cookOrders.find(o=>o.id===order.id)),/Bread|نان/);
+  assert.equal(app.db.prepare('SELECT remaining_portions FROM dish_slots WHERE id=?').get(id).remaining_portions,0);
+  assert.equal((await app.other('/api/customer/orders',orderInput(app,id,{items:[{dishId:id,quantity:1,selectedOptions:['size:regular']}],idempotencyKey:'core-extras-no-stock'}))).status,409);
+  assert.equal(app.db.prepare('SELECT count(*) AS n FROM orders').get().n,1);
+  for(const nextStatus of ['ACCEPTED','READY','COMPLETED'])assert.equal((await app.cook('/api/cook/orders/'+order.id+'/status',{nextStatus})).status,200);
+  assert.equal((await app.customer('/api/customer/orders/'+order.id)).data.order.status,'COMPLETED');
+ }finally{await app.close();}
+});

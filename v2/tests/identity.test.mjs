@@ -42,6 +42,34 @@ const kitchenInput={nameEn:'Test kitchen',nameFa:'آشپزخانه تست',bioEn
 const dishInput={titleEn:'Test soup',titleFa:'آش تست',descriptionEn:'Soup with wheat.',descriptionFa:'آش با گندم.',priceCents:1299,remainingPortions:2,
   serviceWindowStartIso:new Date().toISOString(),serviceWindowEndIso:new Date(Date.now()+86400000).toISOString(),allergens:['wheat'],availabilityMode:'TODAY_AVAILABLE'};
 
+test('centred mobile views use the real workspace and preserve account role gates',async()=>{
+  const app=await start();try{
+    const guest=app.client(),customer=app.client(),cook=app.client();
+    assert.equal((await guest('/app/customer?view=mobile')).status,303);
+    await register(customer,'frame-customer@example.test','CUSTOMER');await register(cook,'frame-cook@example.test','COOK');
+    for(const [client,role,tab] of [[customer,'customer','discover'],[cook,'cook','orders']]){
+      const page=await client('/app/'+role+'?view=mobile&locale=fa-IR&tab='+tab);
+      assert.equal(page.status,200);assert.equal(page.headers.get('cache-control'),'no-store');
+      assert.match(page.headers.get('content-security-policy'),/frame-src 'self'/);
+      assert.match(page.data,new RegExp('<iframe[^>]+src="/app/'+role+'\\?locale=fa-IR&amp;tab='+tab+'&amp;embedded=mobile"'));
+      assert.ok(!page.data.includes('src="/app/'+role+'?view=mobile'));
+      const direct=await client('/app/'+role+'?locale=fa-IR');assert.equal(direct.status,200);assert.match(direct.data,/id="content"/);
+      const other=await client('/app/'+(role==='cook'?'customer':'cook')+'?view=mobile');assert.equal(other.status,303);
+    }
+    const hostile=await customer('/app/customer?view=mobile&tab='+encodeURIComponent('\" onload=alert(1)'));
+    assert.ok(!hostile.data.includes('onload='));
+  }finally{await app.close();}
+});
+
+test('retired preview paths never redirect to a signed-in workspace in account mode',async()=>{
+  const app=await start();try{
+    for(const role of ['customer','cook'])for(const suffix of ['', '/', '/index.html','/older']){
+      const response=await app.client()('/preview/'+role+suffix+'?locale=fa-IR');
+      assert.equal(response.status,410);assert.equal(response.headers.get('location'),null);assert.equal(response.headers.get('cache-control'),'no-store');
+    }
+  }finally{await app.close();}
+});
+
 test('real sessions isolate roles, reject fixture tokens and enforce request origin',async()=>{
   const app=await start();try{
     const customer=app.client(),cook=app.client(),stranger=app.client();
