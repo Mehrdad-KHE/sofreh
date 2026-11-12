@@ -273,6 +273,7 @@ export function createSofrehHttpServer({ dbFilePath, database, seedFixtures = tr
         'fonts/Vazirmatn-wght.woff2': 'font/woff2',
         'fonts/Vazirmatn-OFL.txt': 'text/plain; charset=utf-8',
         'mui-responsive.js': 'text/javascript; charset=utf-8',
+        'food-viewer.js': 'text/javascript; charset=utf-8',
         'brand/wordmark-fa.png': 'image/png',
         'brand/wordmark-fa.svg': 'image/svg+xml',
         'brand/app-icon-192.png': 'image/png',

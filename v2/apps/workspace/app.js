@@ -377,6 +377,13 @@ function render() {
     "پرداخت آزمایشی است؛ هیچ مبلغی برداشت نمی‌شود.",
   );
   document.body.dataset.role=isCook()?'cook':'customer';
+  let roleNotice=$('activeRole');
+  if(!roleNotice){roleNotice=document.createElement('section');roleNotice.id='activeRole';roleNotice.className='active-role';$('paymentNotice').before(roleNotice);}
+  roleNotice.replaceChildren();
+  const roleTitle=document.createElement('strong');roleTitle.textContent=isCook()?tr('Active account: cook','حساب فعال: آشپز'):tr('Active account: customer','حساب فعال: مشتری');
+  const roleHelp=document.createElement('p');roleHelp.textContent=isCook()?tr('This is kitchen management. To order food as a customer, sign out and sign in with a customer account.','اینجا مدیریت آشپزخانه است. برای سفارش غذا در نقش مشتری، خارج شوید و با حساب مشتری وارد شوید.'):tr('This is food ordering. To manage a kitchen, sign out and sign in with a cook account.','اینجا سفارش غذاست. برای مدیریت آشپزخانه، خارج شوید و با حساب آشپز وارد شوید.');
+  roleNotice.append(roleTitle,roleHelp);
+
   const tabs = isCook()
     ? [
         ["orders", tr("Orders", "سفارش‌ها")],
