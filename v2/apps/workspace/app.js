@@ -377,6 +377,13 @@ function render() {
     "پرداخت آزمایشی است؛ هیچ مبلغی برداشت نمی‌شود.",
   );
   document.body.dataset.role=isCook()?'cook':'customer';
+  if(window.parent!==window){
+    const rolePath='/app/'+(isCook()?'cook':'customer');
+    if(window.parent.location.origin===location.origin&&window.parent.location.pathname!==rolePath){
+      window.parent.location.replace(rolePath+'?'+new URLSearchParams({locale:locale(),view:'mobile',tab:state.tab}));return;
+    }
+  }
+
   let roleNotice=$('activeRole');
   if(!roleNotice){roleNotice=document.createElement('section');roleNotice.id='activeRole';roleNotice.className='active-role';$('paymentNotice').before(roleNotice);}
   roleNotice.replaceChildren();
