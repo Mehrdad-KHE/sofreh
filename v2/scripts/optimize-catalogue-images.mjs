@@ -3,8 +3,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createRequire} from 'node:module';
 
-if(!path.isAbsolute(process.env.LOCALAPPDATA||''))throw new Error('Absolute local runtime root required.');
-const root=path.join(process.env.LOCALAPPDATA,'ElegantRuntime','Sofreh');
+import { runtimeRoot as root } from './runtime-source.mjs';
 const sharp=createRequire(path.join(root,'identity-deps','package.json'))('sharp');
 sharp.cache(false);sharp.concurrency(1);
 const outputRoot=path.join(root,'catalogue-images');fs.mkdirSync(outputRoot,{recursive:true});

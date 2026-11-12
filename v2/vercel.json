@@ -4,15 +4,30 @@
   "outputDirectory": "public",
   "functions": {
     "api/index.mjs": {
-      "includeFiles": "{apps/{account,workspace,classroom-preview}/**,apps/{customer-mobile,cook-mobile}/preview/**,assets/**}"
+      "includeFiles": "{apps/{account,workspace,shop,classroom-preview}/**,apps/{customer-mobile,cook-mobile}/preview/**,assets/**}"
     },
     "api/notifications.mjs": {
-      "includeFiles": "{apps/{account,workspace,classroom-preview}/**,apps/{customer-mobile,cook-mobile}/preview/**,assets/**}",
+      "includeFiles": "{apps/{account,workspace,shop,classroom-preview}/**,apps/{customer-mobile,cook-mobile}/preview/**,assets/**}",
       "maxDuration": 180,
-      "experimentalTriggers": [{"type":"queue/v2beta","topic":"sofreh-notification-pump","maxConcurrency":1,"retryAfterSeconds":30}]
+      "experimentalTriggers": [
+        {
+          "type": "queue/v2beta",
+          "topic": "sofreh-notification-pump",
+          "maxConcurrency": 1,
+          "retryAfterSeconds": 30
+        }
+      ]
     }
   },
   "rewrites": [
-    { "source": "/(.*)", "destination": "/api/index?path=/$1" }
-  ]
+    {
+      "source": "/(.*)",
+      "destination": "/api/index?path=/$1"
+    }
+  ],
+  "git": {
+    "deploymentEnabled": {
+      "codex/sofreh-audit-fixes-20261111": false
+    }
+  }
 }

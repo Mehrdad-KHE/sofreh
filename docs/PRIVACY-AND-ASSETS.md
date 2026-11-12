@@ -8,6 +8,8 @@ The separate account runtime does not seed those identities and ignores their to
 
 The backend enforces roles and ownership and serializes views for each recipient. Public discovery exposes a kitchen's public area. Pickup address disclosure depends on the implemented visibility/consent rules and order context. Delivery orders must not expose the cook's private home address to the customer.
 
+In the current source, account kitchens default to no pickup-address consent. The cook must opt in using a separate checkbox; the server records the time. Saving the kitchen keeps public visibility at `AREA_ONLY`. Missing/null order consent never permits disclosure. Migration requires older account kitchens to reconfirm inherited consent, and a trigger enforces an effective no-consent default for new account rows even where a legacy SQLite column still declares `DEFAULT 1`. Declared synthetic fixtures retain their explicit test consent. These source changes require the reviewed schema migration before hosted deployment.
+
 Precise device geolocation is intended to stay in browser memory under the current contract. Declining location must remain a usable path. Logs, screenshots, analytics and search markup must follow the same address boundaries as visible interfaces.
 
 ## Security work associated with actual accounts

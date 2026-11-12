@@ -4,8 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 
 export const sourceRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-if (!process.env.LOCALAPPDATA || !path.isAbsolute(process.env.LOCALAPPDATA)) throw new Error('Absolute LOCALAPPDATA is required.');
-export const runtimeRoot = path.join(process.env.LOCALAPPDATA, 'ElegantRuntime', 'Sofreh');
+export const runtimeRoot = path.resolve('D:/ElegantRuntime/Sofreh');
 
 export function node24() {
   if (Number(process.versions.node.split('.')[0]) === 24) return process.execPath;

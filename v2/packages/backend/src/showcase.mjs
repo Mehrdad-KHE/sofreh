@@ -85,7 +85,7 @@ export function renderShowcase(language = 'en', { accountsEnabled = false } = {}
   } : base;
   const e = escapeHtmlText;
   const lines = (text) => text.split('\n').map((line) => `<span>${e(line)}</span>`).join('');
-  const customer = `${accountsEnabled ? '/app/customer' : '/preview/customer'}${key === 'fa' ? '?locale=fa-IR' : ''}`;
+  const customer = `${accountsEnabled ? '/explore' : '/preview/customer'}${key === 'fa' ? '?locale=fa-IR' : ''}`;
   const cook = `${accountsEnabled ? '/app/cook' : '/preview/cook'}${key === 'fa' ? '?locale=fa-IR' : ''}`;
   const schema = { '@context': 'https://schema.org', '@type': 'Organization', name: 'Sofreh', alternateName: 'سفره', url: PUBLIC_SITE_URL, logo: `${PUBLIC_SITE_URL}/assets/brand/wordmark-fa.png` };
   const heroSizes='(max-width: 600px) calc(100vw - 60px), (max-width: 850px) 45vw, 600px';

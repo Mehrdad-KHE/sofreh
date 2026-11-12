@@ -15,6 +15,7 @@ async function listen(handler){const server=http.createServer(handler);await new
 
 test('hosted account mode requires explicit valid configuration and never falls back after a database failure',async()=>{
   assert.deepEqual(hostedConfiguration({}),{mode:'fixtures'});
+  assert.throws(()=>hostedConfiguration({VERCEL:'1'}),/SOFREH_RUNTIME_MODE/);
   for(const extra of [{SOFREH_RUNTIME_MODE:'account'},{TURSO_DATABASE_URL:'http://unsafe.example'},{SOFREH_PUBLIC_ORIGIN:'https://sofreh.example/path'},
     {SOFREH_PUBLIC_ORIGIN:'http://sofreh.example'},{SOFREH_AUTH_SECRET:'short'},{TURSO_AUTH_TOKEN:''}])assert.throws(()=>hostedConfiguration({...env,...extra}));
   await assert.rejects(createHostedRuntime(env,{connect(){throw new Error('database unavailable');}}),/database unavailable/);

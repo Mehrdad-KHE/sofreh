@@ -1,6 +1,7 @@
 import { DatabaseSync } from 'node:sqlite';
 import fs from 'node:fs';
 import path from 'node:path';
+import { initializeCommerceSchema } from './commerceSchema.mjs';
 
 /**
  * Shared Transactional SQLite Engine for Stage 1
@@ -83,6 +84,7 @@ function ensureColumnExists(db, tableName, columnName, columnDefinitionSql) {
   if (!exists) {
     db.exec(`ALTER TABLE ${tableName} ADD COLUMN ${columnName} ${columnDefinitionSql};`);
   }
+  return !exists;
 }
 
 export function initializeSchema(db) {
@@ -118,7 +120,7 @@ export function initializeSchema(db) {
       public_lng REAL NOT NULL,
       exact_pickup_address_private TEXT NOT NULL,
       public_address_visibility TEXT NOT NULL DEFAULT 'AREA_ONLY',
-      pickup_address_consent INTEGER NOT NULL DEFAULT 1 CHECK (pickup_address_consent IN (0, 1)),
+      pickup_address_consent INTEGER NOT NULL DEFAULT 0 CHECK (pickup_address_consent IN (0, 1)),
       pickup_window_en TEXT NOT NULL DEFAULT '',
       pickup_window_fa TEXT NOT NULL DEFAULT '',
       delivery_fee_cents INTEGER NOT NULL CHECK (delivery_fee_cents >= 0),
@@ -223,6 +225,12 @@ export function initializeSchema(db) {
     );
   `);
 
+  db.exec(`CREATE TABLE IF NOT EXISTS order_events (
+    id TEXT PRIMARY KEY, order_id TEXT NOT NULL REFERENCES orders(id),
+    actor_user_id TEXT NOT NULL REFERENCES users(id),
+    previous_status TEXT, next_status TEXT NOT NULL, created_at_iso TEXT NOT NULL
+  ); CREATE INDEX IF NOT EXISTS order_events_order_idx ON order_events(order_id,created_at_iso);`);
+
   // Safe non-destructive migrations for existing SQLite databases (such as sofreh-stage1.sqlite)
   ensureColumnExists(
     db,
@@ -234,8 +242,19 @@ export function initializeSchema(db) {
     db,
     'cook_profiles',
     'pickup_address_consent',
-    'INTEGER NOT NULL DEFAULT 1'
+    'INTEGER NOT NULL DEFAULT 0'
   );
+  if (ensureColumnExists(db, 'cook_profiles', 'pickup_consent_recorded_at_iso', "TEXT NOT NULL DEFAULT ''")) {
+    // Old account kitchens inherited consent without an explicit owner choice.
+    // Synthetic fixtures keep their declared test consent; account owners must opt in again.
+    db.exec('UPDATE cook_profiles SET pickup_address_consent=0 WHERE is_synthetic_test_fixture=0');
+  }
+  // Legacy SQLite columns keep their declared DEFAULT 1. Enforce an effective
+  // no-consent default without rebuilding a table referenced by historical orders.
+  db.exec(`CREATE TRIGGER IF NOT EXISTS account_pickup_consent_on_insert
+    AFTER INSERT ON cook_profiles
+    WHEN NEW.is_synthetic_test_fixture=0 AND NEW.pickup_consent_recorded_at_iso='' AND NEW.pickup_address_consent<>0
+    BEGIN UPDATE cook_profiles SET pickup_address_consent=0 WHERE id=NEW.id; END;`);
   ensureColumnExists(
     db,
     'cook_profiles',
@@ -294,9 +313,11 @@ export function initializeSchema(db) {
   );`);
   ensureColumnExists(db,'notification_jobs','lease_until_ms','INTEGER NOT NULL DEFAULT 0');
   ensureColumnExists(db,'cook_profiles','is_published','INTEGER NOT NULL DEFAULT 1 CHECK(is_published IN (0,1))');
+  ensureColumnExists(db,'dish_slots','menu_category',"TEXT NOT NULL DEFAULT 'other'");
   db.exec(`CREATE TABLE IF NOT EXISTS notification_pump (
     id INTEGER PRIMARY KEY CHECK(id=1),wake_after_ms INTEGER NOT NULL DEFAULT 0,lease_until_ms INTEGER NOT NULL DEFAULT 0
   ); INSERT OR IGNORE INTO notification_pump(id) VALUES(1);`);
+  initializeCommerceSchema(db);
 }
 
 // SQLite cannot alter a CHECK constraint in place. Rebuild only tables with

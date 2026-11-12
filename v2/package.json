@@ -19,6 +19,7 @@
     "start:accounts": "node --experimental-sqlite scripts/start-accounts.mjs",
     "start:backend": "node --experimental-sqlite packages/backend/src/server.mjs",
     "test": "node scripts/test-local.mjs",
+    "verify:workspace": "node tests/workspace.browser.mjs",
     "verify:typecheck": "node scripts/verify-stage1.mjs"
   },
   "dependencies": {

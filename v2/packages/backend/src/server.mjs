@@ -24,6 +24,7 @@ import {
 import { SofrehGuardError } from './privacy.mjs';
 import { listSavedAddresses, saveAddress, getSavedAddress, deleteSavedAddress } from './savedAddresses.mjs';
 import { renderShowcase, renderSitemap, renderRobots } from './showcase.mjs';
+import {handleCommerceHttp} from './commerceHttp.mjs';
 import { getOwnKitchen, saveOwnKitchen, saveOwnDish, KITCHEN_AREAS } from './kitchen.mjs';
 import { uploadDishPhoto } from './photos.mjs';
 import { savePushSubscription, removePushSubscription } from './notifications.mjs';
@@ -147,6 +148,7 @@ export function createSofrehHttpServer({ dbFilePath, database, seedFixtures = tr
       if (identityProvider && !['GET','HEAD','OPTIONS'].includes(req.method) && req.headers.origin !== identityProvider.origin) {
         throw new SofrehGuardError('ORIGIN_FORBIDDEN', 'Request origin is not allowed.', 403);
       }
+      if(await handleCommerceHttp({req,res,url:reqUrl,db,user:authUser,locale,readJsonBody,sendJson}))return;
       if (identityProvider && pathname === '/api/account' && req.method === 'GET') {
         sendJson(res, 200, await identityProvider.profile(req), locale); return;
       }
@@ -541,6 +543,7 @@ export function createSofrehHttpServer({ dbFilePath, database, seedFixtures = tr
           dishId,
           totalPortions: body.totalPortions,
           remainingPortions: body.remainingPortions,
+          expectedRemainingPortions: body.expectedRemainingPortions,
           priceCents: body.priceCents,
           availabilityMode: body.availabilityMode
         });

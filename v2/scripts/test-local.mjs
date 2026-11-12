@@ -1,11 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { copyRuntimeSource, node24 } from './runtime-source.mjs';
+import { copyRuntimeSource, node24, runtimeRoot } from './runtime-source.mjs';
 
-const localAppData = process.env.LOCALAPPDATA;
-if (!localAppData || !path.isAbsolute(localAppData)) throw new Error('Absolute LOCALAPPDATA is required.');
-const runtime = path.join(localAppData, 'ElegantRuntime', 'Sofreh', 'tests');
+const runtime = path.join(runtimeRoot, 'tests');
 fs.mkdirSync(runtime, { recursive: true });
 const runRoot = fs.mkdtempSync(path.join(runtime, 'run-'));
 copyRuntimeSource(runRoot, { dependencies: true });

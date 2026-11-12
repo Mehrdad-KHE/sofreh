@@ -13,7 +13,7 @@ export async function uploadDishPhoto(db, user, dishId, input) {
   if(!valid)throw new SofrehGuardError('INVALID_IMAGE','Choose a JPEG, PNG or WebP image.',400);
   const {default:sharp}=await import('sharp');
   let jpeg;
-  try{jpeg=await sharp(bytes,{limitInputPixels:20000000}).rotate().resize({width:1200,height:1200,fit:'inside',withoutEnlargement:true}).jpeg({quality:82}).toBuffer();}
+  try{let image=sharp(bytes,{limitInputPixels:20000000}).rotate().resize({width:1200,height:1200,fit:'inside',withoutEnlargement:true});if(input.enhance===true)image=image.normalise();jpeg=await image.jpeg({quality:82}).toBuffer();}
   catch{throw new SofrehGuardError('INVALID_IMAGE','The image could not be decoded.',400);}
   // Re-encoding strips GPS/EXIF and embedded content. Only a JPEG is served.
   const id=randomUUID();

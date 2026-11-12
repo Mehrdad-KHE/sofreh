@@ -8,12 +8,14 @@ import { buildCookDiscoveryGeoJSON } from '../../shared/src/mapConfig.mjs';
 import { normalizeLocale } from '../../shared/src/i18n.mjs';
 import { withImmediateTransaction } from './db.mjs';
 import { enqueueOrderNotification } from './notifications.mjs';
+import {resolveMenuSelection,publicBusinessConfig,listSlots,validateSchedule,checkDeliveryCoverage,couponQuote} from './commerce.mjs';
 import {
   SofrehGuardError,
   requireRole,
   requireCookOwnership,
   escapeHtmlText,
   sanitizeCookForPublicDiscovery,
+  isPickupAddressReady,
   sanitizeOrderForCustomer,
   sanitizeOrderForCook
 } from './privacy.mjs';
@@ -285,7 +287,7 @@ export function listPublicDiscoveryCooks(db, { locale = 'en-CA', bounds = null }
     const dishes = dishStmt.all(cookRow.id);
     const { reviewSummary, reviews } = getCookHonestReviewSummaryAndList(db, cookRow.id);
     return sanitizeCookForPublicDiscovery(cookRow, dishes, locale, reviewSummary, reviews);
-  });
+  }).filter(cook => cook.supportsPickup || cook.supportsDelivery);
 
   return {
     locale,
@@ -376,7 +378,7 @@ export function updateCookDeliverySettings(
 export function updateCookDishPortions(
   db,
   authUser,
-  { cookId, dishId, totalPortions, remainingPortions, priceCents, availabilityMode }
+  { cookId, dishId, totalPortions, remainingPortions, expectedRemainingPortions, priceCents, availabilityMode }
 ) {
   return withImmediateTransaction(db, () => {
     const cookRow = db.prepare(`SELECT * FROM cook_profiles WHERE id = ?`).get(cookId);
@@ -387,6 +389,11 @@ export function updateCookDishPortions(
       .get(dishId, cookId);
     if (!dishRow) {
       throw new SofrehGuardError('NOT_FOUND', 'Dish slot not found in your kitchen.', 404);
+    }
+    if (!cookRow.is_synthetic_test_fixture && (remainingPortions !== undefined || totalPortions !== undefined)) {
+      if (!Number.isInteger(expectedRemainingPortions) || expectedRemainingPortions !== Number(dishRow.remaining_portions)) {
+        throw new SofrehGuardError('DISH_STOCK_CHANGED', 'Reload current portions before changing stock.', 409);
+      }
     }
 
     const nextTotal =
@@ -478,7 +485,7 @@ function buildPersistedCartView(db, customerUserId, locale = 'en-CA') {
 
   const itemRows = db
     .prepare(
-      `SELECT ci.dish_id, ci.quantity, ci.updated_at_iso,
+      `SELECT ci.dish_id, ci.quantity, ci.updated_at_iso,ci.selection_key,ci.options_json,ci.option_snapshots_json,d.options_json AS menu_options_json,
               d.title_en, d.title_fa, d.price_cents, d.remaining_portions,
               d.availability_mode, d.photo_url
        FROM cart_items ci
@@ -490,16 +497,20 @@ function buildPersistedCartView(db, customerUserId, locale = 'en-CA') {
 
   let subtotalCents = 0;
   const items = itemRows.map((row) => {
-    const unitPriceCents = Number(row.price_cents);
+    let selection;
+    try{selection=resolveMenuSelection({price_cents:row.price_cents,options_json:row.menu_options_json},JSON.parse(row.options_json||'[]'));}
+    catch{selection={unitPriceCents:null,selectedOptions:JSON.parse(row.options_json||'[]'),options:JSON.parse(row.option_snapshots_json||'[]'),selectionKey:row.selection_key,optionsChanged:true};}
+    const unitPriceCents = selection.unitPriceCents;
     const quantity = Number(row.quantity);
-    const lineTotalCents = unitPriceCents * quantity;
-    subtotalCents += lineTotalCents;
+    const lineTotalCents = selection.optionsChanged ? null : unitPriceCents * quantity;
+    subtotalCents += lineTotalCents ?? 0;
     const titleLocalized = {
       'en-CA': row.title_en,
       'fa-IR': row.title_fa
     };
     return {
       dishId: row.dish_id,
+      ...selection,
       title: titleLocalized[norm],
       titleLocalized,
       photoUrl: row.photo_url || '',
@@ -514,13 +525,14 @@ function buildPersistedCartView(db, customerUserId, locale = 'en-CA') {
     };
   });
 
+  const supportsPickup=Boolean(cookRow.supports_pickup) && isPickupAddressReady(cookRow);
   let effectiveFulfillment = cartRow.fulfillment_type;
-  if (effectiveFulfillment === 'pickup' && !cookRow.supports_pickup && cookRow.supports_delivery) {
+  if (effectiveFulfillment === 'pickup' && !supportsPickup && cookRow.supports_delivery) {
     effectiveFulfillment = 'delivery';
   } else if (
     effectiveFulfillment === 'delivery' &&
     !cookRow.supports_delivery &&
-    cookRow.supports_pickup
+    supportsPickup
   ) {
     effectiveFulfillment = 'pickup';
   }
@@ -529,21 +541,27 @@ function buildPersistedCartView(db, customerUserId, locale = 'en-CA') {
     items.length > 0 && effectiveFulfillment === 'delivery'
       ? Number(cookRow.delivery_fee_cents)
       : 0;
-  const totalCents = subtotalCents + deliveryFeeCents;
+  const quoteValid = !items.some(item=>item.optionsChanged);
+  let promotion={code:cartRow.coupon_code||'',discountCents:0};
+  if(quoteValid)try{promotion=couponQuote(db,customerUserId,cookRow.id,cartRow.coupon_code,subtotalCents);}catch(error){promotion.errorCode=error.code;}
+  const totalCents = subtotalCents + deliveryFeeCents-promotion.discountCents;
 
   return {
     customerUserId,
     cookId: cookRow.id,
     kitchenName: norm === 'fa-IR' ? cookRow.kitchen_name_fa : cookRow.kitchen_name_en,
     neighborhood: cookRow.neighborhood,
-    supportsPickup: Boolean(cookRow.supports_pickup),
+    supportsPickup,
     supportsDelivery: Boolean(cookRow.supports_delivery),
     fulfillmentType: effectiveFulfillment,
     deliveryAddress: cartRow.delivery_address_private || null,
     items,
-    subtotalCents,
+    quoteValid,
+    subtotalCents: quoteValid ? subtotalCents : null,
     deliveryFeeCents,
-    totalCents,
+    totalCents: quoteValid ? totalCents : null,
+    discountCents:promotion.discountCents,couponCode:promotion.code,couponError:promotion.errorCode||null,
+    scheduledSlotId:cartRow.scheduled_slot_id||null,slots:listSlots(db,cookRow.id),business:publicBusinessConfig(db,cookRow.id),
     updatedAtIso: cartRow.updated_at_iso
   };
 }
@@ -554,6 +572,12 @@ function buildPersistedCartView(db, customerUserId, locale = 'en-CA') {
 export function getCustomerCart(db, authUser, locale = 'en-CA') {
   requireRole(authUser, 'CUSTOMER');
   return buildPersistedCartView(db, authUser.id, locale);
+}
+
+function requirePickupAddress(cookRow) {
+  if (!isPickupAddressReady(cookRow)) {
+    throw new SofrehGuardError('PICKUP_ADDRESS_UNAVAILABLE', 'Pickup is unavailable until the cook consents to sharing the pickup address with accepted pickup orders.', 409);
+  }
 }
 
 function validateCookFulfillmentMode(cookRow, fulfillmentType) {
@@ -579,6 +603,7 @@ function validateCookFulfillmentMode(cookRow, fulfillmentType) {
       400
     );
   }
+  if (fulfillmentType === 'pickup') requirePickupAddress(cookRow);
 }
 
 /**
@@ -614,6 +639,7 @@ export function upsertCustomerCart(
 
     // Consolidate duplicate dishIds
     const mergedQuantities = new Map();
+    const lineSelections = new Map();
     for (const rawItem of items) {
       const qty = Number(rawItem?.quantity);
       if (!rawItem?.dishId || !Number.isInteger(qty) || qty < 0) {
@@ -624,9 +650,13 @@ export function upsertCustomerCart(
         );
       }
       if (qty > 0) {
+        const dish=db.prepare('SELECT * FROM dish_slots WHERE id=? AND cook_id=? AND is_active=1').get(rawItem.dishId,cookId);
+        if(!dish)throw new SofrehGuardError('DISH_NOT_FOUND','Dish not found.',404);
+        const selection=resolveMenuSelection(dish,rawItem.selectedOptions||[]),key=rawItem.dishId+'|'+selection.selectionKey;
+        lineSelections.set(key,{dishId:rawItem.dishId,...selection});
         mergedQuantities.set(
-          rawItem.dishId,
-          (mergedQuantities.get(rawItem.dishId) || 0) + qty
+          key,
+          (mergedQuantities.get(key) || 0) + qty
         );
       }
     }
@@ -635,7 +665,12 @@ export function upsertCustomerCart(
       `SELECT * FROM dish_slots WHERE id = ? AND cook_id = ? AND is_active = 1`
     );
 
-    for (const [dishId, qty] of mergedQuantities.entries()) {
+    const dishQuantities=new Map();
+    for (const [key, qty] of mergedQuantities.entries()) {
+      const {dishId}=lineSelections.get(key);
+      dishQuantities.set(dishId,(dishQuantities.get(dishId)||0)+qty);
+    }
+    for (const [dishId,qty] of dishQuantities) {
       const dishRow = getDishStmt.get(dishId, cookId);
       if (!dishRow) {
         throw new SofrehGuardError(
@@ -667,6 +702,8 @@ export function upsertCustomerCart(
       `INSERT INTO carts (customer_user_id, cook_id, fulfillment_type, delivery_address_private, updated_at_iso)
        VALUES (?, ?, ?, ?, ?)
        ON CONFLICT(customer_user_id) DO UPDATE SET
+         coupon_code=CASE WHEN carts.cook_id=excluded.cook_id THEN carts.coupon_code ELSE '' END,
+         scheduled_slot_id=CASE WHEN carts.cook_id=excluded.cook_id THEN carts.scheduled_slot_id ELSE NULL END,
          cook_id = excluded.cook_id,
          fulfillment_type = excluded.fulfillment_type,
          delivery_address_private = excluded.delivery_address_private,
@@ -681,11 +718,12 @@ export function upsertCustomerCart(
 
     db.prepare(`DELETE FROM cart_items WHERE customer_user_id = ?`).run(authUser.id);
     const insertCartItem = db.prepare(
-      `INSERT INTO cart_items (customer_user_id, dish_id, quantity, updated_at_iso)
-       VALUES (?, ?, ?, ?)`
+      `INSERT INTO cart_items (customer_user_id, dish_id, quantity, updated_at_iso,selection_key,options_json,option_snapshots_json)
+       VALUES (?, ?, ?, ?,?,?,?)`
     );
-    for (const [dishId, qty] of mergedQuantities.entries()) {
-      insertCartItem.run(authUser.id, dishId, qty, nowIso);
+    for (const [key, qty] of mergedQuantities.entries()) {
+      const selection=lineSelections.get(key);
+      insertCartItem.run(authUser.id, selection.dishId, qty, nowIso,selection.selectionKey,JSON.stringify(selection.selectedOptions),JSON.stringify(selection.options));
     }
 
     return buildPersistedCartView(db, authUser.id, locale);
@@ -698,7 +736,7 @@ export function upsertCustomerCart(
 export function updateCustomerCartItemQuantity(
   db,
   authUser,
-  { cookId, dishId, quantity, fulfillmentType, deliveryAddress } = {},
+  { cookId, dishId, quantity, fulfillmentType, deliveryAddress,selectedOptions=[] } = {},
   locale = 'en-CA'
 ) {
   requireRole(authUser, 'CUSTOMER');
@@ -738,7 +776,9 @@ export function updateCustomerCartItemQuantity(
         `INSERT INTO carts (customer_user_id, cook_id, fulfillment_type, delivery_address_private, updated_at_iso)
          VALUES (?, ?, ?, ?, ?)
          ON CONFLICT(customer_user_id) DO UPDATE SET
-           cook_id = excluded.cook_id,
+           coupon_code=CASE WHEN carts.cook_id=excluded.cook_id THEN carts.coupon_code ELSE '' END,
+         scheduled_slot_id=CASE WHEN carts.cook_id=excluded.cook_id THEN carts.scheduled_slot_id ELSE NULL END,
+         cook_id = excluded.cook_id,
            fulfillment_type = excluded.fulfillment_type,
            delivery_address_private = excluded.delivery_address_private,
            updated_at_iso = excluded.updated_at_iso`
@@ -766,6 +806,9 @@ export function updateCustomerCartItemQuantity(
       );
     }
 
+    if(!Array.isArray(selectedOptions)||selectedOptions.length>72||selectedOptions.some(id=>typeof id!=='string')||new Set(selectedOptions).size!==selectedOptions.length)throw new SofrehGuardError('INVALID_OPTIONS','Check menu selections.',400);
+    const selection=qty===0?{selectedOptions,selectionKey:selectedOptions.length?crypto.createHash('sha256').update(JSON.stringify([...selectedOptions].sort((a,b)=>a.localeCompare(b)))).digest('hex').slice(0,24):''}:resolveMenuSelection(dishRow,selectedOptions);
+
     if (qty > 0) {
       if (!cookRow.is_synthetic_test_fixture && Date.parse(dishRow.service_window_end_iso) <= Date.now()) {
         throw new SofrehGuardError('DISH_WINDOW_CLOSED', 'The service window has ended.', 409);
@@ -777,7 +820,8 @@ export function updateCustomerCartItemQuantity(
           409
         );
       }
-      if (Number(dishRow.remaining_portions) < qty) {
+      const otherVariants=Number(db.prepare('SELECT coalesce(sum(quantity),0) AS n FROM cart_items WHERE customer_user_id=? AND dish_id=? AND selection_key<>?').get(authUser.id,dishId,selection.selectionKey).n);
+      if (Number(dishRow.remaining_portions) < qty+otherVariants) {
         throw new SofrehGuardError(
           'INSUFFICIENT_PORTIONS',
           `Insufficient portions for "${dishRow.title_en}": requested ${qty}, only ${dishRow.remaining_portions} remaining.`,
@@ -795,6 +839,8 @@ export function updateCustomerCartItemQuantity(
       `INSERT INTO carts (customer_user_id, cook_id, fulfillment_type, delivery_address_private, updated_at_iso)
        VALUES (?, ?, ?, ?, ?)
        ON CONFLICT(customer_user_id) DO UPDATE SET
+         coupon_code=CASE WHEN carts.cook_id=excluded.cook_id THEN carts.coupon_code ELSE '' END,
+         scheduled_slot_id=CASE WHEN carts.cook_id=excluded.cook_id THEN carts.scheduled_slot_id ELSE NULL END,
          cook_id = excluded.cook_id,
          fulfillment_type = excluded.fulfillment_type,
          delivery_address_private = excluded.delivery_address_private,
@@ -803,16 +849,18 @@ export function updateCustomerCartItemQuantity(
 
     if (qty === 0) {
       db.prepare(
-        `DELETE FROM cart_items WHERE customer_user_id = ? AND dish_id = ?`
-      ).run(authUser.id, dishId);
+        `DELETE FROM cart_items WHERE customer_user_id = ? AND dish_id = ? AND selection_key=?`
+      ).run(authUser.id, dishId,selection.selectionKey);
     } else {
       db.prepare(
-        `INSERT INTO cart_items (customer_user_id, dish_id, quantity, updated_at_iso)
-         VALUES (?, ?, ?, ?)
-         ON CONFLICT(customer_user_id, dish_id) DO UPDATE SET
+        `INSERT INTO cart_items (customer_user_id, dish_id, quantity, updated_at_iso,selection_key,options_json,option_snapshots_json)
+         VALUES (?, ?, ?, ?,?,?,?)
+         ON CONFLICT(customer_user_id, dish_id,selection_key) DO UPDATE SET
            quantity = excluded.quantity,
+           options_json = excluded.options_json,
+           option_snapshots_json = excluded.option_snapshots_json,
            updated_at_iso = excluded.updated_at_iso`
-      ).run(authUser.id, dishId, qty, nowIso);
+      ).run(authUser.id, dishId, qty, nowIso,selection.selectionKey,JSON.stringify(selection.selectedOptions),JSON.stringify(selection.options));
     }
 
     return buildPersistedCartView(db, authUser.id, locale);
@@ -831,15 +879,30 @@ export function clearCustomerCart(db, authUser, locale = 'en-CA') {
   });
 }
 
-function computeOrderPayloadHash({ cookId, fulfillmentType, deliveryAddress, items }) {
+export function setCartPreferences(db,user,input,locale='en-CA') {
+  requireRole(user,'CUSTOMER');
+  return withImmediateTransaction(db,()=>{
+    const cart=buildPersistedCartView(db,user.id,locale);
+    if(!cart.items.length)throw new SofrehGuardError('INVALID_CART_INPUT','Add a meal first.',400);
+    const code=input.couponCode===undefined?cart.couponCode:String(input.couponCode||'').trim().toUpperCase();
+    if(input.couponCode!==undefined)couponQuote(db,user.id,cart.cookId,code,cart.subtotalCents);
+    const slotId=input.scheduledSlotId===undefined?cart.scheduledSlotId:input.scheduledSlotId||null;
+    if(input.scheduledSlotId!==undefined&&slotId)validateSchedule(db,cart.cookId,cart.fulfillmentType,slotId);
+    db.prepare('UPDATE carts SET coupon_code=?,scheduled_slot_id=?,updated_at_iso=? WHERE customer_user_id=?').run(code,slotId,new Date().toISOString(),user.id);
+    return buildPersistedCartView(db,user.id,locale);
+  });
+}
+
+function computeOrderPayloadHash({ cookId, fulfillmentType, deliveryAddress, items,couponCode='',scheduledSlotId=null }) {
+  const configured=items.some(i=>i.selectedOptions?.length);
   const normalizedItems = [...items]
-    .map((i) => ({ dishId: String(i.dishId), quantity: Number(i.quantity) }))
-    .sort((a, b) => a.dishId.localeCompare(b.dishId));
+    .map((i) => ({ dishId: String(i.dishId), quantity: Number(i.quantity),...(configured?{selectedOptions:[...(i.selectedOptions||[])].sort()}:{}) }))
+    .sort((a, b) => a.dishId.localeCompare(b.dishId)||JSON.stringify(a.selectedOptions||[]).localeCompare(JSON.stringify(b.selectedOptions||[])));
   const canonical = JSON.stringify({
     cookId: String(cookId),
     fulfillmentType: String(fulfillmentType),
     deliveryAddress: fulfillmentType === 'delivery' ? String(deliveryAddress || '').trim() : null,
-    items: normalizedItems
+    items: normalizedItems,...(couponCode?{couponCode}:{}),...(scheduledSlotId?{scheduledSlotId}:{})
   });
   return crypto.createHash('sha256').update(canonical).digest('hex');
 }
@@ -870,10 +933,13 @@ export function createOrderTransactional(db, authUser, orderInput) {
         ? rawInput.deliveryAddress
         : persistedCart.deliveryAddress;
     const customerNotes = rawInput.customerNotes;
+    let couponCode=String(rawInput.couponCode??persistedCart.couponCode??'').trim().toUpperCase();
+    let scheduledSlotId=rawInput.scheduledSlotId===undefined?persistedCart.scheduledSlotId:rawInput.scheduledSlotId;
     const simulatedPaymentMethod = rawInput.simulatedPaymentMethod || 'SIMULATED_CARD';
     const idempotencyKey = rawInput.idempotencyKey
       ? String(rawInput.idempotencyKey).trim()
       : null;
+    if(idempotencyKey){const previous=db.prepare('SELECT o.coupon_code,o.scheduled_slot_id FROM order_idempotency_keys k JOIN orders o ON o.id=k.order_id WHERE k.customer_user_id=? AND k.idempotency_key=?').get(authUser.id,idempotencyKey);if(previous){if(rawInput.couponCode===undefined)couponCode=previous.coupon_code;if(rawInput.scheduledSlotId===undefined)scheduledSlotId=previous.scheduled_slot_id;}}
 
     // A client may retry after the persisted cart was cleared by the original
     // successful request. With only the original idempotency key, return that
@@ -884,6 +950,7 @@ export function createOrderTransactional(db, authUser, orderInput) {
       !rawInput.fulfillmentType &&
       rawInput.deliveryAddress === undefined &&
       !Array.isArray(rawInput.items)
+      && rawInput.couponCode===undefined && rawInput.scheduledSlotId===undefined
     ) {
       const existingIdem = db
         .prepare(
@@ -917,7 +984,7 @@ export function createOrderTransactional(db, authUser, orderInput) {
       Array.isArray(rawInput.items) && rawInput.items.length > 0
         ? rawInput.items
         : persistedCart.cookId === cookId && persistedCart.items.length > 0
-          ? persistedCart.items.map((i) => ({ dishId: i.dishId, quantity: i.quantity }))
+          ? persistedCart.items.map((i) => ({ dishId: i.dishId, quantity: i.quantity,selectedOptions:i.selectedOptions }))
           : [];
 
     if (!cookId || !Array.isArray(rawItems) || rawItems.length === 0) {
@@ -939,19 +1006,19 @@ export function createOrderTransactional(db, authUser, orderInput) {
           400
         );
       }
-      mergedMap.set(entry.dishId, (mergedMap.get(entry.dishId) || 0) + qty);
+      const selected=entry.selectedOptions||[];
+      if(!Array.isArray(selected)||selected.some(id=>typeof id!=='string')||new Set(selected).size!==selected.length)throw new SofrehGuardError('INVALID_OPTIONS','Check menu selections.',400);
+      const key=JSON.stringify([entry.dishId,[...selected].sort()]);
+      mergedMap.set(key, (mergedMap.get(key) || 0) + qty);
     }
-    const items = Array.from(mergedMap.entries()).map(([dishId, quantity]) => ({
-      dishId,
-      quantity
-    }));
+    const items = Array.from(mergedMap.entries()).map(([key, quantity]) => {const [dishId,selectedOptions]=JSON.parse(key);return {dishId,quantity,selectedOptions};});
 
     // Idempotency check before mutating portions
     const payloadHash = computeOrderPayloadHash({
       cookId,
       fulfillmentType,
       deliveryAddress,
-      items
+      items,couponCode,scheduledSlotId
     });
 
     if (idempotencyKey) {
@@ -996,6 +1063,8 @@ export function createOrderTransactional(db, authUser, orderInput) {
     }
 
     validateCookFulfillmentMode(cookRow, fulfillmentType);
+    const slot=validateSchedule(db,cookId,fulfillmentType,scheduledSlotId);
+    if(fulfillmentType==='delivery')checkDeliveryCoverage(db,cookId,deliveryAddress);
 
     if (
       fulfillmentType === 'delivery' &&
@@ -1053,6 +1122,7 @@ export function createOrderTransactional(db, authUser, orderInput) {
       if (!cookRow.is_synthetic_test_fixture && Date.parse(dishRow.service_window_end_iso) <= Date.now()) {
         throw new SofrehGuardError('DISH_WINDOW_CLOSED', 'The service window has ended.', 409);
       }
+      if(slot&&(Date.parse(slot.startIso)<Date.parse(dishRow.service_window_start_iso)||Date.parse(slot.endIso)>Date.parse(dishRow.service_window_end_iso)))throw new SofrehGuardError('SLOT_OUTSIDE_MENU','This meal is not available during the selected window.',409);
       const updateResult = decrementDishStmt.run(qty, nowIso, dishRow.id, cookId, qty);
       if (updateResult.changes !== 1) {
         throw new SofrehGuardError(
@@ -1062,15 +1132,17 @@ export function createOrderTransactional(db, authUser, orderInput) {
         );
       }
 
-      const unitPriceCents = Number(dishRow.price_cents);
+      const selection=resolveMenuSelection(dishRow,item.selectedOptions);
+      const unitPriceCents = selection.unitPriceCents;
       const lineTotalCents = unitPriceCents * qty;
       subtotalCents += lineTotalCents;
 
       resolvedItems.push({
         id: `item-${crypto.randomUUID()}`,
         dishId: dishRow.id,
-        titleEnSnapshot: dishRow.title_en,
-        titleFaSnapshot: dishRow.title_fa,
+        titleEnSnapshot: dishRow.title_en+(selection.options.length?' · '+selection.options.map(o=>o.labelEn).join(', '):''),
+        titleFaSnapshot: dishRow.title_fa+(selection.options.length?' · '+selection.options.map(o=>o.labelFa).join('، '):''),
+        options:selection.options,
         quantity: qty,
         unitPriceCents,
         lineTotalCents
@@ -1080,7 +1152,21 @@ export function createOrderTransactional(db, authUser, orderInput) {
     // Cook-set delivery fee is applied when fulfillmentType === 'delivery', 0 for 'pickup'
     const deliveryFeeCents =
       fulfillmentType === 'delivery' ? Number(cookRow.delivery_fee_cents) : 0;
-    const totalCents = subtotalCents + deliveryFeeCents;
+    const promotion=couponQuote(db,authUser.id,cookId,couponCode,subtotalCents);
+    const totalCents = subtotalCents + deliveryFeeCents-promotion.discountCents;
+
+    const expectedQuoteFields = ['expectedSubtotalCents', 'expectedDeliveryFeeCents', 'expectedTotalCents'];
+    const quoteProvided = expectedQuoteFields.some(field => rawInput[field] !== undefined);
+    if (quoteProvided) {
+      if (expectedQuoteFields.some(field => !Number.isSafeInteger(rawInput[field]) || rawInput[field] < 0)) {
+        throw new SofrehGuardError('INVALID_ORDER_QUOTE', 'Expected order totals must be non-negative safe integers.', 400);
+      }
+      if (rawInput.expectedSubtotalCents !== subtotalCents ||
+          rawInput.expectedDeliveryFeeCents !== deliveryFeeCents ||
+          rawInput.expectedTotalCents !== totalCents) {
+        throw new SofrehGuardError('ORDER_QUOTE_CHANGED', 'The current order total differs from the customer-reviewed quote.', 409);
+      }
+    }
 
     const orderId = `ord-${crypto.randomUUID().slice(0, 8)}`;
     const simulatedPaymentReference = `SIM-PAY-${crypto.randomUUID().slice(0, 12).toUpperCase()}`;
@@ -1113,6 +1199,8 @@ export function createOrderTransactional(db, authUser, orderInput) {
       nowIso
     );
 
+    db.prepare('UPDATE orders SET discount_cents=?,coupon_code=?,scheduled_slot_id=?,scheduled_start_iso=? WHERE id=?').run(promotion.discountCents,promotion.code,slot?.id||null,slot?.startIso||null,orderId);
+
     const insertItemStmt = db.prepare(
       `INSERT INTO order_items (
         id, order_id, dish_id, title_en_snapshot, title_fa_snapshot,
@@ -1131,6 +1219,7 @@ export function createOrderTransactional(db, authUser, orderInput) {
         ri.unitPriceCents,
         ri.lineTotalCents
       );
+      db.prepare('UPDATE order_items SET options_json=? WHERE id=?').run(JSON.stringify(ri.options),ri.id);
     }
 
     if (idempotencyKey) {
@@ -1156,6 +1245,8 @@ export function createOrderTransactional(db, authUser, orderInput) {
       .get(orderId);
     const itemRows = db.prepare(`SELECT * FROM order_items WHERE order_id = ?`).all(orderId);
 
+    db.prepare('INSERT INTO order_events (id,order_id,actor_user_id,previous_status,next_status,created_at_iso) VALUES (?,?,?,?,?,?)')
+      .run(crypto.randomUUID(),orderId,authUser.id,null,'PENDING',nowIso);
     enqueueOrderNotification(db,cookRow.user_id,orderId,'PENDING');
     return sanitizeOrderForCustomer(authUser, joinedOrder, itemRows, []);
   });
@@ -1202,6 +1293,8 @@ export function transitionOrderStatusTransactional(db, authUser, { orderId, next
       );
     }
 
+    if (orderRow.fulfillment_type === 'pickup' && !['REJECTED','CANCELLED'].includes(nextStatus)) requirePickupAddress(cookRow);
+
     const nowIso = new Date().toISOString();
     let nextPaymentStatus = orderRow.simulated_payment_status;
 
@@ -1238,6 +1331,8 @@ export function transitionOrderStatusTransactional(db, authUser, { orderId, next
     const itemRows = db.prepare(`SELECT * FROM order_items WHERE order_id = ?`).all(orderId);
     const reviews = listOrderReviewsForOrder(db, orderId);
 
+    db.prepare('INSERT INTO order_events (id,order_id,actor_user_id,previous_status,next_status,created_at_iso) VALUES (?,?,?,?,?,?)')
+      .run(crypto.randomUUID(),orderId,authUser.id,orderRow.status,nextStatus,nowIso);
     enqueueOrderNotification(db,orderRow.customer_user_id,orderId,nextStatus);
     return sanitizeOrderForCook(authUser, cookRow, updatedOrder, itemRows, reviews);
   });

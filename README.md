@@ -14,6 +14,10 @@ This repository contains a bilingual product catalogue, a cookie-authenticated c
 - [Privacy, security and asset rights](docs/PRIVACY-AND-ASSETS.md)
 - [Acceptance criteria](docs/ACCEPTANCE.md)
 - [Mobile build and device acceptance](docs/MOBILE-BUILDS.md)
+- [راهنمای تصویری آشپز](docs/guides/cook-web.html)
+- [ویدیوی معرفی و منابع آن](docs/MARKETING-VIDEO.md)
+- [آمادگی مستندات فروشگاه‌ها](docs/STORE-READINESS.md)
+- [موجودی مجوز وابستگی‌ها](docs/DEPENDENCY-NOTICES.md)
 
 ## Run the account-based web implementation
 
@@ -50,7 +54,7 @@ The local launcher binds only to loopback. Use synthetic accounts, addresses and
 
 Source repository: [Mehrdad-KHE/sofreh](https://github.com/Mehrdad-KHE/sofreh), default branch `main`.
 
-The public web hosting address is [sofreh-v2.vercel.app](https://sofreh-v2.vercel.app). The adapter supports an explicit persistent account mode; an unconfigured deployment defaults to isolated fixture data. On 2026-11-09, production was connected to an approved free Turso Starter database. Shared cloud orders, inventory concurrency and offline backup/account recovery were checked. With explicit owner approval, the main alias is public while previews retain Vercel login. Anonymous health and both catalogue languages, authenticated customer order history and unauthenticated rejection of private orders were verified. Native installation, distribution signing, device push receipt and actual-phone acceptance remain separate release gates.
+The public web hosting address is [sofreh-v2.vercel.app](https://sofreh-v2.vercel.app). The adapter supports an explicit persistent account mode and requires explicit configuration on Vercel. On 2026-11-09, production was connected to an approved free Turso Starter database. Shared cloud orders, inventory concurrency and offline backup/account recovery were checked. With explicit owner approval, the main alias is public while previews retain Vercel login. These are dated observations; local changes are not automatically deployed. Native installation, distribution signing, device push receipt and actual-phone acceptance remain separate release gates. Installable-app work is currently suspended at the owner's request; the class deliverable is the responsive web experience.
 
 ## Rights and attribution
 

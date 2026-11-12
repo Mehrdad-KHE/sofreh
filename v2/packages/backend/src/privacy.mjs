@@ -64,6 +64,11 @@ export function escapeHtmlText(raw) {
  * Strips: exact_pickup_address_private, user_id, phone_private, email_private.
  * Separates TODAY_AVAILABLE vs REGULAR_UNAVAILABLE dishes and attaches honest review aggregates.
  */
+export function isPickupAddressReady(cookRow) {
+  return (cookRow.pickup_address_consent === 1 || cookRow.pickup_address_consent === true) &&
+    Boolean(String(cookRow.exact_pickup_address_private || '').trim());
+}
+
 export function sanitizeCookForPublicDiscovery(
   cookRow,
   dishRows,
@@ -121,6 +126,8 @@ export function sanitizeCookForPublicDiscovery(
     return {
       id: d.id,
       cookId: d.cook_id,
+      category: d.menu_category || 'other',
+      options:JSON.parse(d.options_json||'[]'),
       title: titleLocalized[norm],
       titleLocalized,
       description: descriptionLocalized[norm],
@@ -135,7 +142,7 @@ export function sanitizeCookForPublicDiscovery(
       isAvailableToday: availabilityMode === 'TODAY_AVAILABLE' && remainingPortions > 0 &&
         (Boolean(cookRow.is_synthetic_test_fixture) || Date.parse(d.service_window_end_iso) > Date.now()),
       photoUrl: Object.hasOwn(SAMPLE_FOOD_PHOTOS, d.id) ? SAMPLE_FOOD_PHOTOS[d.id] : d.photo_url || '',
-      isSamplePhoto: Object.hasOwn(SAMPLE_FOOD_PHOTOS, d.id),
+      isSamplePhoto: Object.hasOwn(SAMPLE_FOOD_PHOTOS, d.id) || String(d.photo_url || '').startsWith('/assets/demo-food/'),
       scheduleNote: scheduleNoteLocalized[norm],
       scheduleNoteLocalized
     };
@@ -148,7 +155,7 @@ export function sanitizeCookForPublicDiscovery(
     (d) => d.availabilityMode === 'REGULAR_UNAVAILABLE'
   );
 
-  const supportsPickup = Boolean(cookRow.supports_pickup);
+  const supportsPickup = Boolean(cookRow.supports_pickup) && isPickupAddressReady(cookRow);
   const supportsDelivery = Boolean(cookRow.supports_delivery);
   const exposesPublicExactAddress =
     supportsPickup &&
@@ -241,11 +248,7 @@ export function sanitizeOrderForCustomer(authUser, orderRow, itemRows, orderRevi
     );
   }
 
-  const cookConsented =
-    orderRow.pickup_address_consent === undefined ||
-    orderRow.pickup_address_consent === null
-      ? true
-      : Boolean(orderRow.pickup_address_consent);
+  const cookConsented = orderRow.pickup_address_consent === 1 || orderRow.pickup_address_consent === true;
 
   const canReleasePickupAddress =
     orderRow.fulfillment_type === 'pickup' &&
@@ -263,6 +266,7 @@ export function sanitizeOrderForCustomer(authUser, orderRow, itemRows, orderRevi
     subtotalCents: Number(orderRow.subtotal_cents),
     deliveryFeeCents: Number(orderRow.delivery_fee_cents),
     totalCents: Number(orderRow.total_cents),
+    discountCents:Number(orderRow.discount_cents||0),couponCode:orderRow.coupon_code||'',scheduledSlotId:orderRow.scheduled_slot_id||null,scheduledStartIso:orderRow.scheduled_start_iso||null,
     simulatedPaymentMethod: orderRow.simulated_payment_method,
     simulatedPaymentStatus: orderRow.simulated_payment_status,
     simulatedPaymentReference: orderRow.simulated_payment_reference,
@@ -284,6 +288,7 @@ export function sanitizeOrderForCustomer(authUser, orderRow, itemRows, orderRevi
       titleFa: item.title_fa_snapshot,
       quantity: Number(item.quantity),
       unitPriceCents: Number(item.unit_price_cents),
+      options:JSON.parse(item.options_json||'[]'),
       lineTotalCents: Number(item.line_total_cents)
     })),
     reviews: Array.isArray(orderReviews) ? orderReviews : []
@@ -335,6 +340,7 @@ export function sanitizeOrderForCook(authUser, cookRow, orderRow, itemRows, orde
     subtotalCents: Number(orderRow.subtotal_cents),
     deliveryFeeCents: Number(orderRow.delivery_fee_cents),
     totalCents: Number(orderRow.total_cents),
+    discountCents:Number(orderRow.discount_cents||0),couponCode:orderRow.coupon_code||'',scheduledSlotId:orderRow.scheduled_slot_id||null,scheduledStartIso:orderRow.scheduled_start_iso||null,
     simulatedPaymentStatus: orderRow.simulated_payment_status,
     deliveryAddressForFulfillment: showDeliveryAddress
       ? (orderRow.delivery_address_private ?? null)
@@ -350,6 +356,7 @@ export function sanitizeOrderForCook(authUser, cookRow, orderRow, itemRows, orde
       titleFa: item.title_fa_snapshot,
       quantity: Number(item.quantity),
       unitPriceCents: Number(item.unit_price_cents),
+      options:JSON.parse(item.options_json||'[]'),
       lineTotalCents: Number(item.line_total_cents)
     })),
     reviews: Array.isArray(orderReviews) ? orderReviews : []

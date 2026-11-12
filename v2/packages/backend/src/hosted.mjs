@@ -7,7 +7,11 @@ import {openRemoteDatabase,remoteDatabaseOptions,validateRemoteConnection} from 
 import {createNotificationPump,hostedPushConfiguration} from './notificationPump.mjs';
 
 export function hostedConfiguration(env) {
-  const mode=env.SOFREH_RUNTIME_MODE||'fixtures';
+  const mode=env.SOFREH_RUNTIME_MODE;
+  if(!mode){
+    if(env.VERCEL==='1')throw new Error('Configure SOFREH_RUNTIME_MODE for Vercel deployments.');
+    return {mode:'fixtures'};
+  }
   if(mode==='fixtures')return {mode};
   if(mode!=='accounts')throw new Error('Unsupported hosted runtime mode.');
   const connection=validateRemoteConnection({url:env.TURSO_DATABASE_URL,authToken:env.TURSO_AUTH_TOKEN});
