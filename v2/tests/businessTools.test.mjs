@@ -134,3 +134,16 @@ for(const libsql of [false,true])test(`kitchen identity is opt-in and image priv
     initializeSchema(a.db);assert.equal(a.db.prepare('SELECT count(*) AS n FROM kitchen_images').get().n,1);
   }finally{await a.close();}
 });
+
+
+test('legacy dish menus migrate into food discovery without rewriting explicit categories',async()=>{
+  const a=await start();try{
+    const before=a.db.prepare('SELECT id,title_en,price_cents,remaining_portions FROM dish_slots').all();
+    a.db.exec('ALTER TABLE dish_slots DROP COLUMN menu_category');
+    initializeSchema(a.db);
+    assert.deepEqual(a.db.prepare('SELECT id,title_en,price_cents,remaining_portions FROM dish_slots').all(),before);
+    assert.equal(listPublicDiscoveryCooks(a.db).cooks[0].dishes[0].category,'food');
+    a.db.prepare("UPDATE dish_slots SET menu_category='other'").run();initializeSchema(a.db);
+    assert.equal(a.db.prepare('SELECT menu_category FROM dish_slots').get().menu_category,'other');
+  }finally{await a.close();}
+});

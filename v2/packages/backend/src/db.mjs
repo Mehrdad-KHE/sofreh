@@ -313,7 +313,8 @@ export function initializeSchema(db) {
   );`);
   ensureColumnExists(db,'notification_jobs','lease_until_ms','INTEGER NOT NULL DEFAULT 0');
   ensureColumnExists(db,'cook_profiles','is_published','INTEGER NOT NULL DEFAULT 1 CHECK(is_published IN (0,1))');
-  ensureColumnExists(db,'dish_slots','menu_category',"TEXT NOT NULL DEFAULT 'other'");
+  // Legacy dish-only menus remain discoverable when categories are introduced.
+  ensureColumnExists(db,'dish_slots','menu_category',"TEXT NOT NULL DEFAULT 'food'");
   db.exec(`CREATE TABLE IF NOT EXISTS notification_pump (
     id INTEGER PRIMARY KEY CHECK(id=1),wake_after_ms INTEGER NOT NULL DEFAULT 0,lease_until_ms INTEGER NOT NULL DEFAULT 0
   ); INSERT OR IGNORE INTO notification_pump(id) VALUES(1);`);
