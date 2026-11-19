@@ -358,6 +358,18 @@
         .topbar-in{ gap:10px; }
         .loc{ min-width:0; }
       }
+    
+      /* ---------- Location button: icon-only at phone widths so nothing is squeezed ---------- */
+      @media (max-width:759px){
+        .loc > span{ display:none; }
+        .loc > svg:last-of-type{ display:none; }
+        .loc{ padding:9px 10px; }
+      }
+      @media (min-width:760px){
+        .loc > span{ display:none; }
+        .loc > svg:last-of-type{ display:none; }
+        .loc{ padding:9px 10px; }
+      }
     </style>
   </head>
   <body>
