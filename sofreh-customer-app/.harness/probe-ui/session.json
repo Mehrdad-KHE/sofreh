@@ -1,0 +1,8 @@
+{
+  "schema_version": "hatch.probe_ui_session.v1",
+  "socket": "/home/hatch/workspace/ts-spaces/sofreh-customer-app/.harness/probe-ui/sock",
+  "slug": "sofreh-customer-app",
+  "url": "https://artifact-capture.invalid/spaces/v2/hatch-audit-2e8656e6-00a1-47d3-8975-9f456b4b7902/",
+  "audit_session_id": "7a3a2e34-b89a-45bf-984b-5c4d297a9e81",
+  "pid": 21973
+}

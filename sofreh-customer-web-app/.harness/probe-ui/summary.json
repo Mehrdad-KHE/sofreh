@@ -1,0 +1,14 @@
+{
+  "schema_version": "hatch.probe_ui_summary.v1",
+  "slug": "sofreh-customer-web-app",
+  "session_id": "4c1796f3-1970-48ea-8b70-ca3b4c602200",
+  "observes": 11,
+  "acts": 10,
+  "acts_ok": 10,
+  "interactive_nodes": 38,
+  "viewports_seen": [
+    "desktop",
+    "mobile"
+  ],
+  "findings": []
+}

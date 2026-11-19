@@ -1,0 +1,8 @@
+{
+  "runtime": "static",
+  "platformVersion": 15,
+  "entry": "index.html",
+  "name": "Sofreh Website",
+  "slug": "sofreh-website",
+  "managedCronJobs": []
+}

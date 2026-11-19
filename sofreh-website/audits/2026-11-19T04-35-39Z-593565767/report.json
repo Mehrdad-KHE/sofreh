@@ -1,0 +1,213 @@
+{
+  "ok": true,
+  "url": "https://artifact-capture.invalid/spaces/v2/hatch-audit-c52da95f-52dd-47f7-a238-635b839118f9/",
+  "duration_ms": 10358.957615,
+  "output_dir": "/home/hatch/workspace/ts-spaces/sofreh-website/audits/2026-11-19T04-35-39Z-593565767",
+  "nav_status": 200,
+  "viewports": {
+    "desktop": {
+      "width": 1440,
+      "height": 900,
+      "screenshot_path": "/home/hatch/workspace/ts-spaces/sofreh-website/audits/2026-11-19T04-35-39Z-593565767/screenshot.png",
+      "fullpage_screenshot_path": "/home/hatch/workspace/ts-spaces/sofreh-website/audits/2026-11-19T04-35-39Z-593565767/screenshot-full.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "screenshot_path": "/home/hatch/workspace/ts-spaces/sofreh-website/audits/2026-11-19T04-35-39Z-593565767/screenshot-mobile.png"
+    }
+  },
+  "targets": null,
+  "mobile_layout": {
+    "viewport_width": 390,
+    "scroll_width": 390,
+    "overflow_px": 0,
+    "widest_selector": null,
+    "verdict": "pass"
+  },
+  "horizontal_scrollers": [],
+  "unreachable_controls": {
+    "desktop": [],
+    "mobile": []
+  },
+  "clipped": {
+    "desktop": [
+      {
+        "tag": "label",
+        "text": "Dish",
+        "kind": "text_truncated",
+        "overflow_px": 34,
+        "bbox": [
+          161,
+          514,
+          1,
+          1
+        ]
+      },
+      {
+        "tag": "label",
+        "text": "Neighbourhood",
+        "kind": "text_truncated",
+        "overflow_px": 127,
+        "bbox": [
+          161,
+          514,
+          1,
+          1
+        ]
+      }
+    ],
+    "mobile": [
+      {
+        "tag": "label",
+        "text": "Dish",
+        "kind": "text_truncated",
+        "overflow_px": 34,
+        "bbox": [
+          31,
+          576,
+          1,
+          1
+        ]
+      },
+      {
+        "tag": "label",
+        "text": "Neighbourhood",
+        "kind": "text_truncated",
+        "overflow_px": 127,
+        "bbox": [
+          31,
+          576,
+          1,
+          1
+        ]
+      },
+      {
+        "tag": "b",
+        "text": "10% of the dish price, capped at $4",
+        "kind": "past_viewport",
+        "overflow_px": 18,
+        "bbox": [
+          116,
+          16129,
+          293,
+          54
+        ]
+      }
+    ]
+  },
+  "images": {
+    "total": 22,
+    "broken": [],
+    "duplicate": [
+      {
+        "src": "https://artifact-capture.invalid/spaces/v2/hatch-audit-c52da95f-52dd-47f7-a238-635b839118f9/assets/tahchin.jpg",
+        "count": 3
+      },
+      {
+        "src": "https://artifact-capture.invalid/spaces/v2/hatch-audit-c52da95f-52dd-47f7-a238-635b839118f9/assets/ghormeh.webp",
+        "count": 2
+      }
+    ],
+    "unstable": [],
+    "failed_requests": [],
+    "external_blocked": {
+      "count": 0,
+      "sample": []
+    },
+    "sample_urls": [
+      "https://artifact-capture.invalid/spaces/v2/hatch-audit-c52da95f-52dd-47f7-a238-635b839118f9/assets/tahchin.jpg",
+      "https://artifact-capture.invalid/spaces/v2/hatch-audit-c52da95f-52dd-47f7-a238-635b839118f9/assets/ghormeh.webp",
+      "https://artifact-capture.invalid/spaces/v2/hatch-audit-c52da95f-52dd-47f7-a238-635b839118f9/assets/zereshk.jpg",
+      "https://artifact-capture.invalid/spaces/v2/hatch-audit-c52da95f-52dd-47f7-a238-635b839118f9/assets/ash.jpg",
+      "https://artifact-capture.invalid/spaces/v2/hatch-audit-c52da95f-52dd-47f7-a238-635b839118f9/assets/fesenjan.jpg",
+      "https://artifact-capture.invalid/spaces/v2/hatch-audit-c52da95f-52dd-47f7-a238-635b839118f9/assets/koobideh.webp"
+    ],
+    "verdict": "pass"
+  },
+  "text_issues": [],
+  "console_errors": [],
+  "console_warnings": [],
+  "external_fetch_failures": 2,
+  "external_fetch_failure_samples": [
+    "console.error: Failed to load resource: net::ERR_SOCKS_CONNECTION_FAILED (https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Vazirmatn:wght@400;500;700;800&display=swap)",
+    "console.error: Failed to load resource: net::ERR_SOCKS_CONNECTION_FAILED (https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Vazirmatn:wght@400;500;700;800&display=swap)"
+  ],
+  "blocked_requests": [],
+  "external_requests": [
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Vazirmatn:wght@400;500;700;800&display=swap",
+      "method": "GET",
+      "resource_type": "stylesheet"
+    }
+  ],
+  "external_requests_dropped": 0,
+  "external_requests_dropped_data_bearing": 0,
+  "transport_ledger_active": true,
+  "egress_lockdown": true,
+  "transport_connections": [
+    {
+      "host": "artifact-capture.invalid",
+      "port": 443,
+      "connects": 2,
+      "bytes_up": 3932,
+      "bytes_down": 2489
+    },
+    {
+      "host": "fonts.googleapis.com",
+      "port": 443,
+      "connects": 2,
+      "bytes_up": 0,
+      "bytes_down": 0,
+      "policy_denied": true
+    }
+  ],
+  "transport_udp_attempts": 0,
+  "transport_overflow": 0,
+  "unexplained_transport_hosts": [],
+  "broken_assets": [],
+  "blocked_affordances": [],
+  "interactive_nodes": 24,
+  "aria_snapshot": "- link \"Skip to today's menu\":\n  - /url: \"#menu\"\n- banner:\n  - link \"Sofreh home\":\n    - /url: \"#top\"\n    - text: Sofreh سفره\n  - navigation \"Main\":\n    - link \"Today's menu\":\n      - /url: \"#menu\"\n    - link \"How it works\":\n      - /url: \"#how\"\n    - link \"Our cooks\":\n      - /url: \"#cooks\"\n    - link \"Fees\":\n      - /url: \"#fees\"\n    - link \"FAQ\":\n      - /url: \"#faq\"\n    - button \"Switch to dark theme (night)\": Dark\n    - button \"Switch language\": فارسی\n    - button \"Order 0\"\n- main:\n  - heading \"Real Persian home cooking, made by your neighbours in Toronto.\" [level=1]:\n    - text: Real Persian home cooking,\n    - emphasis: made by your neighbours\n    - text: in Toronto.\n  - paragraph: Sofreh is where Toronto's home cooks share the food they grew up with — ghormeh sabzi that simmers all afternoon, tahchin with a proper golden crust. Browse today's dishes, see the full price up front, and pick up dinner in your own neighbourhood.\n  - search \"Find a dish\":\n    - text: Dish\n    - searchbox \"Dish\"\n    - text: Neighbourhood\n    - combobox \"Neighbourhood\":\n      - option \"All neighbourhoods\" [selected]\n      - option \"Richmond Hill\"\n      - option \"North York\"\n      - option \"Thornhill\"\n      - option \"Scarborough\"\n      - option \"Downtown Toronto\"\n      - option \"Mississauga\"\n    - button \"Find food near me\"\n  - strong: \"6\"\n  - text: GTA neighbourhoods\n  - strong: \"19\"\n  - text: dishes cooking today\n  - strong: $0\n  - text: pickup — always free\n  - img \"Tahchin — Persian saffron rice cake with chicken, topped with barberries and pistachios, one slice cut\"\n  - text: Tahchin-e Morgh by Leila · Thornhill $21.00 100% Ontario Food Handler certified cooks 85% of every dish price goes to the cook Same day order by 2 pm, dinner by 6 pm Full price shown before you confirm — no surprises\n  - region \"Today's menu — cooked this morning, near you\":\n    - heading \"Today's menu — cooked this morning, near you\" [level=2]\n    - paragraph: Every dish lists its cook, its neighbourhood, its ingredients and its full price. Family size feeds four and is the way most neighbours order on Fridays.\n    - group \"Filter dishes\":\n      - button \"All dishes\" [pressed]\n      - button \"Stews\"\n      - button \"Rice dishes\"\n      - button \"Grills\"\n      - button \"Vegetarian\"\n      - combobox \"Filter by neighbourhood\":\n        - option \"All neighbourhoods\" [selected]\n        - option \"Richmond Hill\"\n        - option \"North York\"\n        - option \"Thornhill\"\n        - option \"Scarborough\"\n        - option \"Downtown Toronto\"\n        - option \"Mississauga\"\n    - article:\n      - img \"Ghormeh sabzi — dark green herb stew with beef and kidney beans, served with saffron rice\"\n      - heading \"Ghormeh Sabzi\" [level=3]\n      - text: قورمه‌سبزی\n      - paragraph: Slow-simmered herbs, beef, kidney beans and dried lime. The dish every Iranian abroad misses first.\n      - text: Maryam · Richmond Hill ★★★★★ 4.9 Beef Saffron rice included $18.50 / single\n      - button \"Order\"\n    - article:\n      - img \"Zereshk polo — saffron rice with barberries and roasted chicken\"\n      - heading \"Zereshk Polo ba Morgh\" [level=3]\n      - text: زرشک‌پلو با مرغ\n      - paragraph: Basmati rice with tart barberries and saffron, chicken braised in tomato and saffron until it falls apart.\n      - text: Sara · North York ★★★★★ 4.8 Chicken Family favourite $19.00 / single\n      - button \"Order\"\n    - article:\n      - img \"Tahchin — golden saffron rice cake layered with chicken, cut to show the crust\"\n      - heading \"Tahchin-e Morgh\" [level=3]\n      - text: ته چین مرغ\n      - paragraph: Saffron rice cake with a deep golden crust, layered with chicken and finished with barberries and pistachio.\n      - text: Leila · Thornhill ★★★★★ 5.0 Chicken Weekend special $21.00 / single\n      - button \"Order\"\n    - article:\n      - img \"Ash reshteh — thick herb, bean and noodle soup with kashk and crispy onions\"\n      - heading \"Ash Reshteh\" [level=3]\n      - text: آش رشته\n      - paragraph: Thick herb, bean and noodle soup with kashk, mint oil and crispy onions. Vegetarian, and made for cold Toronto evenings.\n      - text: Fatemeh · Scarborough ★★★★★ 4.9 Vegetarian Freezes well $13.50 / single\n      - button \"Order\"\n    - article:\n      - img \"Fesenjan — chicken in dark walnut and pomegranate sauce with pomegranate seeds\"\n      - heading \"Fesenjan\" [level=3]\n      - text: فسنجان\n      - paragraph: Chicken in ground-walnut and pomegranate sauce — sweet, sour and dark. Nasrin cooks hers the Gilan way, on the sour side.\n      - text: Nasrin · Downtown Toronto ★★★★★ 4.8 Chicken Contains walnuts $22.00 / single\n      - button \"Order\"\n    - article:\n      - img \"Kabab koobideh — two grilled ground-meat skewers with saffron rice and grilled tomato\"\n      - heading \"Kabab Koobideh\" [level=3]\n      - text: کباب کوبیده\n      - paragraph: Two hand-minced beef and lamb skewers grilled over charcoal, with saffron rice, grilled tomato and sumac onion.\n      - text: Reza · North York ★★★★★ 4.9 Beef & lamb Charcoal grilled $23.00 / single\n      - button \"Order\"\n    - article:\n      - img \"Gheymeh — tomato stew with split peas, beef, dried lime and crispy potato straws\"\n      - heading \"Gheymeh\" [level=3]\n      - text: خورش قیمه\n      - paragraph: Tomato and split-pea stew with beef and dried lime, topped with crispy potato straws — the way it is served at home, not in restaurants.\n      - text: Zahra · Mississauga ★★★★★ 4.7 Beef Saffron rice included $17.50 / single\n      - button \"Order\"\n    - article:\n      - img \"Baghali polo — dill and fava bean rice with braised lamb shank and tahdig\"\n      - heading \"Baghali Polo ba Mahicheh\" [level=3]\n      - text: باقالی‌پلو با ماهیچه\n      - paragraph: Dill and fava-bean rice with a lamb shank braised until it gives way at a touch. Ali makes twelve portions on Saturdays — they go first.\n      - text: Ali · Richmond Hill ★★★★★ 5.0 Lamb Saturday only $26.00 / single\n      - button \"Order\"\n    - article:\n      - img \"Kookoo sabzi — green herb frittata with barberries and walnuts, sliced\"\n      - heading \"Kookoo Sabzi\" [level=3]\n      - text: کوکو سبزی\n      - paragraph: Dense herb frittata with barberries and walnuts, served with sangak and pickled garlic. Sara's Nowruz recipe, all year round.\n      - text: Sara · North York ★★★★★ 4.8 Vegetarian Contains walnuts $14.00 / single\n      - button \"Order\"\n    - article:\n      - img \"Kabab barg — flat-grilled lamb fillet skewers over saffron rice with grilled tomatoes, herbs and flatbread\"\n      - heading \"Kabab Barg\" [level=3]\n      - text: کباب برگ\n      - paragraph: A whole lamb fillet beaten flat, marinated overnight in onion and saffron, then grilled fast over charcoal so it stays tender. Served on chelow with grilled tomato and butter.\n      - text: Reza · North York ★★★★★ 4.9 Lamb fillet Charcoal grilled $27.00 / single\n      - button \"Order\"\n    - article:\n      - img \"Kabab chenjeh — skewers of grilled lamb chunks with saffron rice, grilled tomatoes and sumac onion\"\n      - heading \"Kabab Chenjeh\" [level=3]\n      - text: کباب چنجه\n      - paragraph: Hand-cut lamb chunks marinated in onion, lemon and a little yogurt, grilled until the edges char and the middle stays juicy. No mince, no filler — just meat, fire and patience.\n      - text: Reza · North York ★★★★★ 4.8 Lamb chunks Charcoal grilled $26.00 / single\n      - button \"Order\"\n    - article:\n      - img \"Shishlik-e Shandiz — grilled lamb chops on a platter with tomato, pickles and herbs\"\n      - heading \"Shishlik-e Shandiz\" [level=3]\n      - text: شیشلیک شاندیز\n      - paragraph: \"Lamb chops the Shandiz way, from Mashhad: marinated simply, grilled on the bone and rested before they leave the kitchen. Ali only makes eight portions when he lights the charcoal.\"\n      - text: Ali · Richmond Hill ★★★★★ 5.0 Lamb chops Limited portions $31.00 / single\n      - button \"Order\"\n    - article:\n      - img \"Kabab dandeh — grilled lamb ribs served on a metal tray with bread and onion\"\n      - heading \"Kabab Dandeh\" [level=3]\n      - text: کباب دنده\n      - paragraph: Lamb ribs marinated overnight and grilled slowly so the fat renders into the meat — the Kermanshah cut, eaten with bread, raw onion and sumac, no cutlery required.\n      - text: Ali · Richmond Hill ★★★★★ 4.9 Lamb ribs Slow grilled $29.00 / single\n      - button \"Order\"\n    - article:\n      - img \"Khoresh bademjan — eggplant and beef stew in tomato sauce, served in a dark pot with rice\"\n      - heading \"Khoresh Bademjan\" [level=3]\n      - text: خورش بادمجان\n      - paragraph: Fried eggplant folded into a tomato and beef stew with sour grapes and dried lime, glossy and rich over saffron rice. The eggplants are fried the same morning — never ahead.\n      - text: Zahra · Mississauga ★★★★★ 4.8 Beef Saffron rice included $18.00 / single\n      - button \"Order\"\n    - article:\n      - img \"Lubia polo — rice layered with green beans and beef, served on a platter with herbs and salad\"\n      - heading \"Lubia Polo\" [level=3]\n      - text: لوبیا پلو\n      - paragraph: Rice layered with green beans, beef and tomato, steamed until the tahdig turns amber. Comes with shirazi salad, the way Zahra's family has always served it.\n      - text: Zahra · Mississauga ★★★★★ 4.8 Beef Shirazi salad included $16.50 / single\n      - button \"Order\"\n    - article:\n      - img \"Sabzi polo ba mahi — herbed rice with tahdig served with fried fish\"\n      - heading \"Sabzi Polo ba Mahi\" [level=3]\n      - text: سبزی پلو با ماهی\n      - paragraph: Herb rice — coriander, dill, fenugreek and fresh garlic greens — with crisp-fried fish and bitter orange on the side. The Friday dish, available any day here.\n      - text: Leila · Thornhill ★★★★★ 4.9 Fish Friday classic $24.00 / single\n      - button \"Order\"\n    - article:\n      - img \"Mirza ghasemi — smoked eggplant and tomato mash with roasted cherry tomatoes, mint and flatbread\"\n      - heading \"Mirza Ghasemi\" [level=3]\n      - text: میرزا قاسمی\n      - paragraph: Eggplant smoked over open flame, mashed with tomato, garlic and egg — Gilan's gift to every table. Eat it warm with sangak, straight from the dish it was made in.\n      - text: Nasrin · Downtown Toronto ★★★★★ 4.8 Vegetarian Smoked eggplant $14.50 / single\n      - button \"Order\"\n    - article:\n      - img \"Kashke bademjan — eggplant dip with kashk drizzle, caramelised onion and mint oil\"\n      - heading \"Kashke Bademjan\" [level=3]\n      - text: کشک بادمجان\n      - paragraph: Fried eggplant whipped with kashk, finished with mint oil and a tangle of crispy onion. Rich enough that nobody believes it is the starter — order extra bread.\n      - text: Sara · North York ★★★★★ 4.8 Vegetarian Contains dairy $13.00 / single\n      - button \"Order\"\n    - article:\n      - img \"Dolmeh barg-e mo — stuffed grape leaves arranged in a bowl with lemon\"\n      - heading \"Dolmeh Barg-e Mo\" [level=3]\n      - text: دلمه برگ مو\n      - paragraph: Grape leaves rolled by hand around herbed rice, split peas and barberries, steamed in a sweet-sour glaze. Fatemeh rolls two hundred every Thursday — they rarely see Friday.\n      - text: Fatemeh · Scarborough ★★★★★ 4.9 Vegetarian Hand-rolled $15.50 / single\n      - button \"Order\"\n  - region \"From their kitchen to your table, in four steps\":\n    - heading \"From their kitchen to your table, in four steps\" [level=2]\n    - paragraph: No warehouse, no reheating line. Your dinner is cooked in a home a few streets away, the same day you eat it.\n    - text: \"1\"\n    - heading \"Browse today's pots\" [level=3]\n    - paragraph: Cooks post what they are making each morning, with ingredients, allergens and the number of portions.\n    - text: \"2\"\n    - heading \"Order before 2 pm\" [level=3]\n    - paragraph: Choose single or family size and a pickup window. You see the dish price, the service fee and the total before you confirm.\n    - text: \"3\"\n    - heading \"They cook, you collect\" [level=3]\n    - paragraph: Your dish is cooked fresh, sealed and labelled with the cook's name and preparation time. Pickup is free; local delivery is $4.95.\n    - text: \"4\"\n    - heading \"Rate your neighbour\" [level=3]\n    - paragraph: Ratings sit beside every dish, so a great cook's next pot sells out faster — and everyone can see why.\n  - region \"The cooks behind the pots\":\n    - heading \"The cooks behind the pots\" [level=2]\n    - paragraph: Real neighbours, named on every dish they sell. Each one holds an Ontario Food Handler Certificate and cooks from a kitchen that passed Sofreh's onboarding checklist.\n    - article:\n      - heading \"Maryam\" [level=3]\n      - text: Richmond Hill\n      - paragraph: Cooking ghormeh sabzi the way her mother taught her in Tehran — fenugreek measured by eye, never by spoon.\n      - list:\n        - listitem: \"Signature: Ghormeh Sabzi\"\n        - listitem: Cooks Tue, Thu, Sat\n        - listitem: ★ 4.9\n    - article:\n      - heading \"Sara\" [level=3]\n      - text: North York\n      - paragraph: A former bakery assistant who turned her zereshk polo and kookoo sabzi into North York's worst-kept secret.\n      - list:\n        - listitem: \"Signature: Zereshk Polo, Kookoo Sabzi\"\n        - listitem: Cooks Wed, Fri, Sun\n        - listitem: ★ 4.8\n    - article:\n      - heading \"Leila\" [level=3]\n      - text: Thornhill\n      - paragraph: Known for a tahchin crust her neighbours describe as “the whole point of the dish” — deep gold, never burnt.\n      - list:\n        - listitem: \"Signature: Tahchin-e Morgh\"\n        - listitem: Cooks Fri, Sat\n        - listitem: ★ 5.0\n    - heading \"Cook on Sofreh\" [level=3]\n    - paragraph: You set your menu, your prices and your days. Sofreh takes a 15% commission, pays weekly, and cooks keep 85% of every dish. You need an Ontario Food Handler Certificate — the course takes about a day online.\n    - button \"Apply to cook\"\n  - region \"What it costs — all of it, up front\":\n    - heading \"What it costs — all of it, up front\" [level=2]\n    - paragraph: The total you see on the dish is the total you pay, plus the two lines below. Nothing is added at the door.\n    - table \"Sofreh fees\":\n      - row \"Dish price (set by the cook) As listed — $13 to $31 today\"\n      - row \"Service fee 10% of the dish price, capped at $4\"\n      - row \"Pickup from the cook Free\"\n      - row \"Local delivery (pilot area) $4.95\"\n      - row \"Cook commission 15% — cooks keep 85%\"\n    - paragraph: Pilot pricing for the GTA launch neighbourhoods. Taxes are included in the dish price. Free cancellation until the cook starts preparing your dish.\n  - region \"Questions, answered straight\":\n    - heading \"Questions, answered straight\" [level=2]\n    - group: What is Sofreh?\n    - group: Where does Sofreh serve?\n    - group: Are the cooks food-safe?\n    - group: How much does it cost?\n    - group: Can I cancel?\n    - group: How do I become a cook?\n  - region \"About Sofreh\":\n    - heading \"About Sofreh\" [level=2]\n    - paragraph:\n      - strong: Sofreh is a neighbourhood marketplace for Persian home cooking in Toronto, Canada.\n      - text: It was founded by Mehrdad Kheirollahi, a bookkeeper and long-time Torontonian, after years of watching talented home cooks in the Iranian community cook for family while neighbours searched the city for food that tasted like home.\n    - paragraph: \"The name comes from the sofreh — the cloth spread on the floor or table where a Persian meal is shared. Sofreh the marketplace works the same way: a cook in Richmond Hill, North York, Thornhill, Scarborough, downtown Toronto or Mississauga posts the dishes they are making, and people nearby order a single portion or a family tray for pickup or local delivery. Every cook is certified, every dish lists its ingredients and allergens, and every price — including fees — is public before anyone pays.\"\n  - heading \"Tonight's pots are already on.\" [level=2]\n  - paragraph: Order by 2 pm and dinner from a neighbour's kitchen is on your table by six — cooked today, a few streets away.\n  - link \"Browse today's menu\":\n    - /url: \"#menu\"\n- contentinfo:\n  - link \"Sofreh سفره\":\n    - /url: \"#top\"\n  - paragraph: Persian home cooking from certified neighbourhood cooks, across the Greater Toronto Area.\n  - paragraph:\n    - text: Toronto, Ontario, Canada\n    - link \"hello@sofreh.ca\":\n      - /url: mailto:hello@sofreh.ca\n  - navigation \"Explore\":\n    - heading \"Explore\" [level=3]\n    - list:\n      - listitem:\n        - link \"Today's menu\":\n          - /url: \"#menu\"\n      - listitem:\n        - link \"How it works\":\n          - /url: \"#how\"\n      - listitem:\n        - link \"Our cooks\":\n          - /url: \"#cooks\"\n      - listitem:\n        - link \"Fees\":\n          - /url: \"#fees\"\n  - navigation \"Neighbourhoods\":\n    - heading \"Neighbourhoods\" [level=3]\n    - list:\n      - listitem:\n        - link \"Richmond Hill\":\n          - /url: \"#menu\"\n      - listitem:\n        - link \"North York\":\n          - /url: \"#menu\"\n      - listitem:\n        - link \"Thornhill\":\n          - /url: \"#menu\"\n      - listitem:\n        - link \"Scarborough\":\n          - /url: \"#menu\"\n      - listitem:\n        - link \"Downtown Toronto\":\n          - /url: \"#menu\"\n      - listitem:\n        - link \"Mississauga\":\n          - /url: \"#menu\"\n  - navigation \"Company\":\n    - heading \"Company\" [level=3]\n    - list:\n      - listitem:\n        - link \"FAQ\":\n          - /url: \"#faq\"\n      - listitem:\n        - link \"Apply to cook\":\n          - /url: \"#cooks\"\n      - listitem:\n        - link \"Contact us\":\n          - /url: mailto:hello@sofreh.ca\n  - text: © 2026 Sofreh · Toronto, Ontario\n  - link \"Terms of service\":\n    - /url: \"#faq\"\n  - link \"Privacy policy\":\n    - /url: \"#faq\"\n  - link \"Accessibility\":\n    - /url: \"#faq\"\n  - text: Full policy pages ship with the public launch; the commitments above — fees, cancellation and food safety — are the pilot terms.\n- status",
+  "document_text": {
+    "path": "/home/hatch/workspace/ts-spaces/sofreh-website/audits/2026-11-19T04-35-39Z-593565767/document-text.txt",
+    "chars": 14821,
+    "truncated": false
+  },
+  "audit_session_id": "0d977ac7-c2a8-4d01-9307-7e710c750310",
+  "readiness": {
+    "desktop": {
+      "settled": true,
+      "settle_ms": 792,
+      "in_flight": null,
+      "network_idle": true,
+      "retried": false
+    },
+    "mobile": {
+      "settled": true,
+      "settle_ms": 249,
+      "in_flight": null,
+      "network_idle": true,
+      "retried": false
+    }
+  },
+  "color_scheme": {
+    "declared": "light",
+    "media_dependent": null,
+    "dark_frame": false
+  },
+  "mobile_ms": 4827.013234,
+  "cold_launch_ms": 1653.200653,
+  "desktop_ms": 7242.340106999999,
+  "browser_launches": 1,
+  "audit_path": "shared-concurrent",
+  "diagnostics": {
+    "audit_path": "shared-concurrent",
+    "concurrent_ran": true,
+    "concurrent_desktop_retry": false,
+    "concurrent_mobile_retry": false,
+    "shared_launch_failed": false,
+    "nav_retries": 0,
+    "settle_retries": 0
+  }
+}

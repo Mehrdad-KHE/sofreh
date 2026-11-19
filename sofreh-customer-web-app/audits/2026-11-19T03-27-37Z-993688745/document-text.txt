@@ -1,0 +1,380 @@
+Sofreh
+سفره
+[button:
+[hidden] ◉
+Deliver to
+Richmond Hill · Yonge & Elgin Mills
+[hidden] ▾
+]
+[hidden] ⌕
+[input search: Search dishes and cooks]
+[button: فارسی] [button: ♥
+1
+] [button: 🛎
+[hidden] 0
+] [button: M]
+[button: Discover] [button: Cooks] [button:
+My orders
+[hidden] 0
+] [button: Saved] [button: Account]
+# Dinner from a neighbour's kitchen, tonight.
+Nine pots are on across the GTA today. Order by 2 pm, pick up from 5 pm — or get it delivered inside the cook's neighbourhood.
+9
+dishes cooking today
+[button: All dishes] [button: Stews] [button: Rice dishes] [button: Grills] [button: Vegetarian]
+[select: Neighbourhood = All neighbourhoods* | Richmond Hill | North York | Thornhill | Scarborough | Downtown Toronto | Mississauga]
+[select: Sort dishes = Most loved* | Price: low to high | Price: high to low | Almost gone first]
+[image: Ash reshteh — thick herb, bean and noodle soup with kashk and crispy onions]
+Only 12 left today
+[button: ♡]
+### Ash Reshteh
+آش رشته
+Thick herb, bean and noodle soup with kashk, mint oil and crispy onions. Vegetarian, and made for cold Toronto evenings.
+[hidden] F
+Fatemeh · Scarborough
+[hidden] ★★★★★
+4.9 (441)
+Vegetarian
+Freezes well
+$13.50 / single
+[button: Add +]
+[image: Kookoo sabzi — green herb frittata with barberries and walnuts, sliced]
+Only 10 left today
+[button: ♡]
+### Kookoo Sabzi
+کوکو سبزی
+Dense herb frittata with barberries and walnuts, served with sangak and pickled garlic. Sara's Nowruz recipe, all year round.
+[hidden] S
+Sara · North York
+[hidden] ★★★★★
+4.8 (229)
+Vegetarian
+Contains walnuts
+$14.00 / single
+[button: Add +]
+[image: Kabab koobideh — two grilled ground-meat skewers with saffron rice and grilled tomato]
+Only 8 left today
+[button: ♡]
+### Kabab Koobideh
+کباب کوبیده
+Two hand-minced beef and lamb skewers grilled over charcoal, with saffron rice, grilled tomato and sumac onion.
+[hidden] R
+Reza · North York
+[hidden] ★★★★★
+4.9 (503)
+Beef & lamb
+Charcoal grilled
+$23.00 / single
+[button: Add +]
+[image: Ghormeh sabzi — dark green herb stew with beef and kidney beans, served with saffron rice]
+Only 7 left today
+[button: ♡]
+### Ghormeh Sabzi
+قورمه‌سبزی
+Slow-simmered herbs, beef, kidney beans and dried lime. The dish every Iranian abroad misses first.
+[hidden] M
+Maryam · Richmond Hill
+[hidden] ★★★★★
+4.9 (412)
+Beef
+Saffron rice included
+$18.50 / single
+[button: Add +]
+[image: Zereshk polo — saffron rice with barberries and roasted chicken]
+Only 9 left today
+[button: ♡]
+### Zereshk Polo ba Morgh
+زرشک‌پلو با مرغ
+Basmati rice with tart barberries and saffron, chicken braised in tomato and saffron until it falls apart.
+[hidden] S
+Sara · North York
+[hidden] ★★★★★
+4.8 (365)
+Chicken
+Family favourite
+$19.00 / single
+[button: Add +]
+[image: Tahchin — golden saffron rice cake layered with chicken, cut to show the crust]
+Only 4 left today
+[button: ♥]
+### Tahchin-e Morgh
+تهچین مرغ
+Saffron rice cake with a deep golden crust, layered with chicken and finished with barberries and pistachio.
+[hidden] L
+Leila · Thornhill
+[hidden] ★★★★★
+5.0 (298)
+Chicken
+Weekend special
+$21.00 / single
+[button: Add +]
+[image: Gheymeh — tomato stew with split peas, beef, dried lime and crispy potato straws]
+Only 5 left today
+[button: ♡]
+### Gheymeh
+خورش قیمه
+Tomato and split-pea stew with beef and dried lime, topped with crispy potato straws — the way it is served at home, not in restaurants.
+[hidden] Z
+Zahra · Mississauga
+[hidden] ★★★★★
+4.7 (264)
+Beef
+Saffron rice included
+$17.50 / single
+[button: Add +]
+[image: Fesenjan — chicken in dark walnut and pomegranate sauce with pomegranate seeds]
+Only 6 left today
+[button: ♡]
+### Fesenjan
+فسنجان
+Chicken in ground-walnut and pomegranate sauce — sweet, sour and dark. Nasrin cooks hers the Gilan way, on the sour side.
+[hidden] N
+Nasrin · Downtown Toronto
+[hidden] ★★★★★
+4.8 (187)
+Chicken
+Contains walnuts
+$22.00 / single
+[button: Add +]
+[image: Baghali polo — dill and fava bean rice with braised lamb shank and tahdig]
+Only 3 left today
+[button: ♡]
+### Baghali Polo ba Mahicheh
+باقالی‌پلو با ماهیچه
+Dill and fava-bean rice with a lamb shank braised until it gives way at a touch. Ali makes twelve portions on Saturdays — they go first.
+[hidden] A
+Ali · Richmond Hill
+[hidden] ★★★★★
+5.0 (176)
+Lamb
+Saturday only
+$26.00 / single
+[button: Add +]
+[hidden] ### Nothing matches — yet
+[hidden] Try another dish name or neighbourhood. Cooks post a second round of pots around 11 am.
+[hidden] [button: Clear search & filters]
+## Your order
+Richmond Hill
+[hidden] 🍽
+Your order is empty. Pick a dish from today's pots.
+[hidden] ## Cooks near you
+[hidden] Every Sofreh cook holds an Ontario Food Handler Certificate and cooks from a kitchen that passed the onboarding checklist. Follow a cook and their new pots surface first in your Discover feed.
+[hidden] M
+[hidden] ### Maryam
+[hidden] Richmond Hill
+[hidden] ★★★★★
+[hidden] 4.9
+[hidden] · Cooks Tue · Thu · Sat
+[hidden] [button: Follow]
+[hidden] Cooking ghormeh sabzi the way her mother taught her in Tehran — fenugreek measured by eye, never by spoon.
+[hidden] Cooking today:
+[hidden] [button: [image: no alt text] Ghormeh Sabzi · $18.50]
+[hidden] S
+[hidden] ### Sara
+[hidden] North York
+[hidden] ★★★★★
+[hidden] 4.8
+[hidden] · Cooks Wed · Fri · Sun
+[hidden] [button: Follow]
+[hidden] A former bakery assistant who turned her zereshk polo and kookoo sabzi into North York's worst-kept secret.
+[hidden] Cooking today:
+[hidden] [button: [image: no alt text] Zereshk Polo ba Morgh · $19.00] [button: [image: no alt text] Kookoo Sabzi · $14.00]
+[hidden] L
+[hidden] ### Leila
+[hidden] Thornhill
+[hidden] ★★★★★
+[hidden] 5.0
+[hidden] · Cooks Fri · Sat
+[hidden] [button: Follow]
+[hidden] Known for a tahchin crust her neighbours describe as “the whole point of the dish” — deep gold, never burnt.
+[hidden] Cooking today:
+[hidden] [button: [image: no alt text] Tahchin-e Morgh · $21.00]
+[hidden] F
+[hidden] ### Fatemeh
+[hidden] Scarborough
+[hidden] ★★★★★
+[hidden] 4.9
+[hidden] · Cooks Mon · Thu
+[hidden] [button: Follow]
+[hidden] Her ash reshteh feeds half of Scarborough on cold weeks — thick, herby, and always with extra kashk.
+[hidden] Cooking today:
+[hidden] [button: [image: no alt text] Ash Reshteh · $13.50]
+[hidden] N
+[hidden] ### Nasrin
+[hidden] Downtown Toronto
+[hidden] ★★★★★
+[hidden] 4.8
+[hidden] · Cooks Wed · Sat
+[hidden] [button: Follow]
+[hidden] From Rasht, cooking fesenjan the Gilan way — walnuts ground fine, pomegranate kept properly sour.
+[hidden] Cooking today:
+[hidden] [button: [image: no alt text] Fesenjan · $22.00]
+[hidden] R
+[hidden] ### Reza
+[hidden] North York
+[hidden] ★★★★★
+[hidden] 4.9
+[hidden] · Cooks Fri · Sat · Sun
+[hidden] [button: Follow]
+[hidden] Grills koobideh over real charcoal in his backyard, the way his father did in Karaj — no gas, no shortcuts.
+[hidden] Cooking today:
+[hidden] [button: [image: no alt text] Kabab Koobideh · $23.00]
+[hidden] Z
+[hidden] ### Zahra
+[hidden] Mississauga
+[hidden] ★★★★★
+[hidden] 4.7
+[hidden] · Cooks Tue · Fri
+[hidden] [button: Follow]
+[hidden] Her gheymeh comes with hand-cut potato straws, fried to order — never from a bag.
+[hidden] Cooking today:
+[hidden] [button: [image: no alt text] Gheymeh · $17.50]
+[hidden] A
+[hidden] ### Ali
+[hidden] Richmond Hill
+[hidden] ★★★★★
+[hidden] 5.0
+[hidden] · Cooks Sat only
+[hidden] [button: Follow]
+[hidden] Twelve lamb shanks every Saturday, braised four hours. When they're gone, they're gone until next week.
+[hidden] Cooking today:
+[hidden] [button: [image: no alt text] Baghali Polo ba Mahicheh · $26.00]
+[hidden] ## My orders
+[hidden] Live status for today's orders, and everything you've ordered before — reorder a favourite in two taps.
+[hidden] ### No orders yet
+[hidden] When you place an order it appears here, with its status from the moment the cook confirms until your dish is ready for pickup.
+[hidden] [button: Browse today's dishes]
+[hidden] ## Saved dishes & cooks
+[hidden] Tap the heart on any dish to keep it here — handy on Friday when the family sizes go up.
+[hidden] [image: Tahchin — golden saffron rice cake layered with chicken, cut to show the crust]
+[hidden] Only 4 left today
+[hidden] [button: ♥]
+[hidden] ### Tahchin-e Morgh
+[hidden] تهچین مرغ
+[hidden] Saffron rice cake with a deep golden crust, layered with chicken and finished with barberries and pistachio.
+[hidden] L
+[hidden] Leila · Thornhill
+[hidden] ★★★★★
+[hidden] 5.0 (298)
+[hidden] Chicken
+[hidden] Weekend special
+[hidden] $21.00 / single
+[hidden] [button: Add +]
+[hidden] ### Nothing saved yet
+[hidden] Tap ♥ on a dish and it will wait for you here.
+[hidden] [button: Browse today's dishes]
+[hidden] ## Your account
+[hidden] Details used at checkout — your name and phone go on the dish label so the cook hands the right bag to the right person.
+[hidden] ### Profile
+[hidden] How cooks and Sofreh reach you about an order.
+[hidden] Full name
+[hidden] [input text: = Mehrdad Kheirollahi]
+[hidden] Mobile phone
+[hidden] [input text: = +1 647-886-3734]
+[hidden] The cook calls this number if pickup runs late.
+[hidden] Email for receipts
+[hidden] [input email: = mehrdadkh@yahoo.com]
+[hidden] Preferred language
+[hidden] [select: = English | فارسی | English + فارسی*]
+[hidden] [button: Save changes]
+[hidden] ### Saved addresses
+[hidden] Delivery runs inside each cook's own neighbourhood.
+[hidden] ◉
+[hidden] Home Default
+[hidden] Yonge St & Elgin Mills Rd, Richmond Hill
+[hidden] [button: ✕]
+[hidden] ◉
+[hidden] Office
+[hidden] Yonge St & Finch Ave, North York
+[hidden] [button: Make default] [button: ✕]
+[hidden] Label
+[hidden] [input text: e.g. Office]
+[hidden] Address
+[hidden] [input text: Street, neighbourhood]
+[hidden] [button: Add address]
+[hidden] ### Food preferences
+[hidden] Dishes that clash with these are flagged before you order.
+[hidden] No nuts
+[hidden] Flags fesenjan, tahchin & kookoo sabzi
+[hidden] [input checkbox: = on]
+[hidden] Mild only
+[hidden] Hides dishes marked spicy by the cook
+[hidden] [input checkbox: = on]
+[hidden] Vegetarian first
+[hidden] Vegetarian dishes sort to the top
+[hidden] [input checkbox: = on]
+Sofreh · Persian home cooking from certified neighbourhood cooks — Toronto & the GTA.
+hello@sofreh.ca (→ mailto:hello@sofreh.ca)
+Dish price + 10% service fee (max $4) · Pickup free · Delivery $4.95
+[hidden] [button:
+[hidden] ⌂
+[hidden] Discover
+[hidden] ] [button:
+[hidden] ♨
+[hidden] Cooks
+[hidden] ] [button:
+[hidden] 🧾
+[hidden] My orders
+[hidden] 0
+[hidden] ] [button:
+[hidden] ♥
+[hidden] Saved
+[hidden] ] [button:
+[hidden] ◐
+[hidden] Account
+[hidden] ]
+[hidden] [button:
+[hidden] View order · 0 items
+[hidden] $0.00
+[hidden] ]
+[hidden] [button: ✕]
+[hidden] ## Your order
+[hidden] Richmond Hill
+[hidden] 🍽
+[hidden] Your order is empty. Pick a dish from today's pots.
+[hidden] [image: no alt text] [button: ✕]
+[hidden] ## Dish
+[hidden] Size
+[hidden] [input radio: dsize = single]
+[hidden] Single
+[hidden] ·
+[hidden] [input radio: dsize = family]
+[hidden] Family · feeds 4
+[hidden] ·
+[hidden] Make it a full sofreh
+[hidden] Quantity
+[hidden] [button: −]
+[hidden] 1
+[hidden] [button: +]
+[hidden] [button: Add to order · $0.00]
+[hidden] [button: ✕]
+[hidden] ## Checkout
+[hidden] Confirm where the food goes and how you pay. The total below is final — nothing is added later.
+[hidden] [button: Pickup · Free] [button: Delivery · $4.95]
+[hidden] Full name
+[hidden] [input text: ]
+[hidden] Mobile phone
+[hidden] [input text: ]
+[hidden] Delivery address
+[hidden] [select: = Home — Yonge St & Elgin Mills Rd, Richmond Hill* | Office — Yonge St & Finch Ave, North York]
+[hidden] Pickup / delivery window
+[hidden] [select: = 17:00 – 18:00 | 18:00 – 19:00* | 19:00 – 20:00]
+[hidden] Note for the cook (optional)
+[hidden] [input text: e.g. Less spicy, extra tahdig if you can]
+[hidden] Payment
+[hidden] Card number
+[hidden] [input text: 4242 4242 4242 4242]
+[hidden] Expiry
+[hidden] [input text: MM / YY]
+[hidden] CVC
+[hidden] [input text: 123]
+[hidden] [button: Place order]
+[hidden] Free cancellation until the cook starts preparing your dish.
+[hidden] ✓
+[hidden] ## Order placed
+[hidden] Show this code at pickup
+[hidden] —
+[hidden] [button: Track my order]
+[hidden] [button: ✕]
+[hidden] ## Where are you eating?
+[hidden] Sofreh cooks deliver inside their own neighbourhood. Pick yours to see the pots closest to you first.

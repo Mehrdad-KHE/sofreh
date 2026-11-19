@@ -1,0 +1,332 @@
+س
+Sofreh
+Cook app
+[button:
+Today
+] [button:
+Orders
+2
+] [button:
+Menu
+] [button:
+Earnings
+] [button:
+Kitchen
+]
+M
+Mina's Kitchen
+North York · 4.9 ★
+[hidden] س
+[hidden] Sofreh
+[hidden] Cook app
+[hidden] Online
+Wednesday · Nov 18
+# Salam, Mina 👋
+Here's your kitchen today — new orders, what's cooking, and what needs restocking.
+You're online
+## Taking orders until 8:30 PM
+Customers within 6 km can order from your menu right now.
+Online
+[input checkbox: = on]
+Orders today
+11
++3 vs yesterday
+Earned today
+$186
+After Sofreh's 12% fee
+Rating
+4.9 ★
+From 212 reviews
+Portions left
+29
+Across today's menu
+## Needs your action
+See all orders →
+### #1051 · Leila H.
+New
+2 × Ghormeh Sabzi + saffron rice · 1 × Shirazi salad
+Pickup · today 1:30 PM · $43.50
+[button: Accept]
+### #1050 · Arman T.
+New
+2 × Tahchin Morgh (chicken) · 1 × Mast-o-Khiar
+Delivery · today 6:00 PM · $62.00
+[button: Accept]
+### #1049 · Priya S.
+Cooking
+1 × Ash Reshteh (vegetarian)
+Pickup · today 1:00 PM · $24.00
+[button: View]
+⚠️
+Tahchin is almost out. Only 2 portions left and it's your most-ordered dish this week. Cook another tray or mark it sold out.
+## Today's schedule
+11:30
+Lunch pickup window opens
+13:00
+Order #1042 — Sara M. pickup
+17:30
+Dinner rush — most orders arrive
+18:15
+Order #1048 — family tray, delivery
+20:30
+Kitchen closes · last pickup
+## This week
+You're 18% ahead of last week. Friday is your biggest day — consider adding a second batch of Ghormeh Sabzi.
+[hidden] Orders
+[hidden] # Order board
+[hidden] Accept new orders, track what's on the stove, and hand off pickups — all in one place.
+[hidden] [button: All] [button: New (2)] [button: Cooking] [button: Ready] [button: Completed]
+[hidden] ### #1051 · Leila H.
+[hidden] New
+[hidden] Ordered 12:42 PM · Pickup · today 1:30 PM
+[hidden] $43.50
+[hidden] 2 ×
+[hidden] Ghormeh Sabzi + saffron rice
+[hidden] 1 ×
+[hidden] Shirazi salad
+[hidden] 💬 "Extra tahdig if you have it, please!"
+[hidden] 🧺 Pickup · today 1:30 PM
+[hidden] [button: Accept order] [button: Decline]
+[hidden] ### #1050 · Arman T.
+[hidden] New
+[hidden] Ordered 12:31 PM · Delivery · today 6:00 PM
+[hidden] $62.00
+[hidden] 2 ×
+[hidden] Tahchin Morgh (chicken)
+[hidden] 1 ×
+[hidden] Mast-o-Khiar — extra mint
+[hidden] 🧺 Delivery · today 6:00 PM
+[hidden] [button: Accept order] [button: Decline]
+[hidden] ### #1049 · Priya S.
+[hidden] Cooking
+[hidden] Ordered 12:05 PM · Pickup · today 1:00 PM
+[hidden] $24.00
+[hidden] 1 ×
+[hidden] Ash Reshteh (vegetarian) — no onion topping
+[hidden] 💬 "First order — mild spice please."
+[hidden] 🧺 Pickup · today 1:00 PM
+[hidden] [button: Mark ready for pickup]
+[hidden] ### #1048 · The Rahimi family
+[hidden] Cooking
+[hidden] Ordered 11:48 AM · Delivery · today 6:15 PM
+[hidden] $118.00
+[hidden] 4 ×
+[hidden] Fesenjan + saffron rice — 2 without walnuts
+[hidden] 2 ×
+[hidden] Zereshk Polo ba Morgh
+[hidden] 1 ×
+[hidden] Family Shirazi salad
+[hidden] 💬 "Family tray for 6. Two portions without walnuts (allergy)."
+[hidden] 🧺 Delivery · today 6:15 PM
+[hidden] [button: Mark ready for pickup]
+[hidden] ### #1047 · Marcus L.
+[hidden] Ready
+[hidden] Ordered 11:20 AM · Pickup · today 12:45 PM
+[hidden] $31.50
+[hidden] 1 ×
+[hidden] Joojeh Kabab + rice
+[hidden] 1 ×
+[hidden] Doogh (mint yogurt drink)
+[hidden] 🧺 Pickup · today 12:45 PM
+[hidden] [button: Handed over ✓]
+[hidden] ### #1046 · Sara M. Completed
+[hidden] Ordered 10:52 AM · Picked up 11:40 AM
+[hidden] $38.00
+[hidden] 2 ×
+[hidden] Gheymeh + rice
+[hidden] 🧺 Picked up 11:40 AM
+[hidden] Paid · $38.00 · Sofreh fee $4.56
+[hidden] ### #1045 · Nima R. Completed
+[hidden] Ordered 10:15 AM · Picked up 11:05 AM
+[hidden] $19.50
+[hidden] 1 ×
+[hidden] Ghormeh Sabzi + saffron rice
+[hidden] 🧺 Picked up 11:05 AM
+[hidden] Paid · $19.50 · Sofreh fee $2.34
+[hidden] Menu
+[hidden] # Today's menu
+[hidden] Set portions each morning, pause a dish when you sell out, and add new dishes anytime.
+[hidden] [button: + Add a dish]
+[hidden] [image: Bowl of ghormeh sabzi herb stew with saffron rice]
+[hidden] ### Ghormeh Sabzi
+[hidden] $19.50
+[hidden] قرمه‌سبزی
+[hidden] Slow-simmered herbs, beef, kidney beans and dried lime. Served with saffron basmati.
+[hidden] Portions left
+[hidden] [button: −]
+[hidden] 9 / 14
+[hidden] [button: +]
+[hidden] On menu
+[hidden] [input checkbox: = on]
+[hidden] [image: Golden tahchin saffron rice cake with barberries]
+[hidden] ### Tahchin Morgh
+[hidden] $21.00
+[hidden] ته‌چین مرغ
+[hidden] Crispy saffron yogurt rice layered with chicken, topped with barberries and pistachio.
+[hidden] Portions left
+[hidden] [button: −]
+[hidden] 2 / 10
+[hidden] [button: +]
+[hidden] On menu
+[hidden] [input checkbox: = on]
+[hidden] [image: Fesenjan walnut and pomegranate stew]
+[hidden] ### Fesenjan
+[hidden] $22.50
+[hidden] فسنجان
+[hidden] Chicken braised in walnut & pomegranate molasses — sweet, tangy, deep. With saffron rice.
+[hidden] Portions left
+[hidden] [button: −]
+[hidden] 6 / 8
+[hidden] [button: +]
+[hidden] On menu
+[hidden] [input checkbox: = on]
+[hidden] [image: Zereshk polo barberry rice with chicken]
+[hidden] ### Zereshk Polo ba Morgh
+[hidden] $20.00
+[hidden] زرشک‌پلو با مرغ
+[hidden] Barberry rice with saffron chicken — the celebration dish, jewelled and bright.
+[hidden] Portions left
+[hidden] [button: −]
+[hidden] 7 / 12
+[hidden] [button: +]
+[hidden] On menu
+[hidden] [input checkbox: = on]
+[hidden] [image: Joojeh kabab saffron chicken skewer with rice and grilled tomatoes]
+[hidden] ### Joojeh Kabab
+[hidden] $23.00
+[hidden] جوجه‌کباب
+[hidden] Saffron-and-yogurt marinated chicken, grilled with tomatoes. Rice and flatbread included.
+[hidden] Portions left
+[hidden] [button: −]
+[hidden] 5 / 10
+[hidden] [button: +]
+[hidden] On menu
+[hidden] [input checkbox: = on]
+[hidden] [image: Gheymeh split pea stew topped with crispy potato]
+[hidden] ### Gheymeh
+[hidden] $18.00
+[hidden] قیمه
+[hidden] Yellow split-pea and beef stew with dried lime, topped with crispy potato sticks.
+[hidden] Portions left
+[hidden] [button: −]
+[hidden] 0 / 10
+[hidden] [button: +]
+[hidden] Sold out
+[hidden] [input checkbox: = on]
+[hidden] [image: Ash reshteh Persian noodle and herb soup]
+[hidden] ### Ash Reshteh
+[hidden] $14.50
+[hidden] آش رشته
+[hidden] Hearty noodle, bean and herb soup with kashk and fried mint. Vegetarian. Back Friday.
+[hidden] Portions left
+[hidden] [button: −]
+[hidden] 8 / 12
+[hidden] [button: +]
+[hidden] Paused
+[hidden] [input checkbox: = on]
+[hidden] ## Add a new dish
+[hidden] It appears on your public menu as soon as you save it. You can pause it anytime.
+[hidden] Dish name (English)
+[hidden] [input text: e.g. Lubia Polo]
+[hidden] Name in Persian (optional)
+[hidden] [input text: لوبیا پلو]
+[hidden] Price per portion (CAD)
+[hidden] [input number: 18]
+[hidden] Portions today
+[hidden] [input number: 8]
+[hidden] Short description
+[hidden] [textarea: What makes yours special? Ingredients, spice level, what it comes with…]
+[hidden] [button: Save dish to menu] [button: Clear]
+[hidden] Earnings
+[hidden] # Your earnings
+[hidden] What you've made, what's on the way to your bank, and which dishes earn the most.
+[hidden] [button: This week] [button: This month]
+[hidden] Earned this week
+[hidden] $742
+[hidden] From 41 orders · avg $18.10 per order
+[hidden] Next payout
+[hidden] $518
+[hidden] Arrives Friday, Nov 20 · TD ****4821
+[hidden] Sofreh fee (12%)
+[hidden] $101
+[hidden] Covers payment, support & delivery partners
+[hidden] ## Daily earnings — this week
+[hidden] Best day: Friday
+[hidden] $96
+[hidden] Thu
+[hidden] $168
+[hidden] Fri
+[hidden] $154
+[hidden] Sat
+[hidden] $88
+[hidden] Sun
+[hidden] $64
+[hidden] Mon
+[hidden] $78
+[hidden] Tue
+[hidden] $94
+[hidden] Wed
+[hidden] ## Top dishes
+[hidden] Dish | Portions sold | Gross | You keep
+[hidden] Ghormeh Sabzi | 86 | $1,677 | $1,476
+[hidden] Tahchin Morgh | 64 | $1,344 | $1,183
+[hidden] Fesenjan | 41 | $922 | $811
+[hidden] Joojeh Kabab | 38 | $874 | $769
+[hidden] Zereshk Polo | 35 | $700 | $616
+[hidden] My kitchen
+[hidden] # Kitchen profile
+[hidden] This is what customers see on your Sofreh page — plus your hours and pickup settings.
+[hidden] M
+[hidden] ## Mina's Kitchen
+[hidden] North York, Toronto · Cooking on Sofreh since March 2025
+[hidden] ★★★★★
+[hidden] 4.9 · 212 reviews · 1,480 orders served
+[hidden] Home-style Persian cooking the way my mother taught me in Shiraz — slow stews, real saffron, and tahdig with every rice dish.
+[hidden] Halal
+[hidden] Food-handler certified
+[hidden] Vegetarian options
+[hidden] Sara M. · ★★★★★ · 2 days ago
+[hidden] "The ghormeh sabzi tastes exactly like home. You can tell the herbs are fresh. Already ordered three times this month."
+[hidden] Daniel K. · ★★★★★ · last week
+[hidden] "First time trying fesenjan — sweet, tangy, incredible with the saffron rice. Pickup was right on time."
+[hidden] ## Opening hours
+[hidden] Monday
+[hidden] Closed
+[hidden] [button: Open this day]
+[hidden] Tuesday
+[hidden] [input time: Tuesday opening time = 11:30]
+[hidden] to
+[hidden] [input time: Tuesday closing time = 20:30]
+[hidden] Wednesday
+[hidden] [input time: Wednesday opening time = 11:30]
+[hidden] to
+[hidden] [input time: Wednesday closing time = 20:30]
+[hidden] Thursday
+[hidden] [input time: Thursday opening time = 11:30]
+[hidden] to
+[hidden] [input time: Thursday closing time = 20:30]
+[hidden] Friday
+[hidden] [input time: Friday opening time = 11:30]
+[hidden] to
+[hidden] [input time: Friday closing time = 21:00]
+[hidden] Saturday
+[hidden] [input time: Saturday opening time = 12:00]
+[hidden] to
+[hidden] [input time: Saturday closing time = 21:00]
+[hidden] Sunday
+[hidden] [input time: Sunday opening time = 12:00]
+[hidden] to
+[hidden] [input time: Sunday closing time = 18:00]
+[hidden] ## Pickup & delivery
+[hidden] [input checkbox: = on]
+[hidden] Porch pickup from my address
+[hidden] [input checkbox: = on]
+[hidden] Sofreh delivery partner (within 6 km)
+[hidden] [input checkbox: = on]
+[hidden] Accept pre-orders for the next day
+[hidden] [input checkbox: = on]
+[hidden] Family trays & party orders (48h notice)
+[hidden] [button: Save settings]
+[hidden] [button: Today] [button: Orders
+[hidden] 2
+[hidden] ] [button: Menu] [button: Earnings] [button: Kitchen]

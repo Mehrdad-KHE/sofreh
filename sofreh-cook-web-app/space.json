@@ -1,0 +1,8 @@
+{
+  "runtime": "static",
+  "platformVersion": 15,
+  "entry": "index.html",
+  "name": "Sofreh Cook Web App",
+  "slug": "sofreh-cook-web-app",
+  "managedCronJobs": []
+}

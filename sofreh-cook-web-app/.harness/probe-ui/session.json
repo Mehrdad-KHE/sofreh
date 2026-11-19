@@ -1,0 +1,8 @@
+{
+  "schema_version": "hatch.probe_ui_session.v1",
+  "socket": "/home/hatch/workspace/ts-spaces/sofreh-cook-web-app/.harness/probe-ui/sock",
+  "slug": "sofreh-cook-web-app",
+  "url": "https://artifact-capture.invalid/spaces/v2/hatch-audit-ab14e62e-0faa-4d83-92ba-a129ae6f37b8/",
+  "audit_session_id": "68941d8d-ceb8-4a47-8bd4-ef078d9a3e51",
+  "pid": 17293
+}

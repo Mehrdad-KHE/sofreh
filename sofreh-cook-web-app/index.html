@@ -1,0 +1,968 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>Sofreh for Cooks — Orders, Menu, Schedule &amp; Earnings</title>
+<meta name="description" content="The Sofreh cook web app: receive and manage orders on your computer, set your menu and cooking days, track portions, earnings and reviews. Built for Sofreh home cooks in Toronto and the GTA." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#fffdf8; --surface:#ffffff; --wash:#f7f1e5; --ink:#20302a; --muted:#5a6a60;
+    --green:#17604a; --green-deep:#0d3d2e; --green-soft:#e3efe7;
+    --saffron:#dd9413; --saffron-soft:#fbeecd; --pom:#a62b25; --pom-soft:#f9e8e6;
+    --line:#e6dcc8; --chip:#f3ecdc; --shadow:0 14px 34px rgba(23,50,38,.13);
+    --radius:16px; color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#0f1512; --surface:#18211b; --wash:#141d17; --ink:#edf3ee; --muted:#a7b7ab;
+      --green:#4db58c; --green-deep:#0a2c20; --green-soft:#1b2f24; --saffron:#eda92e; --saffron-soft:#3a2d10;
+      --pom:#e0786e; --pom-soft:#38201d; --line:#2b3a2f; --chip:#1f2b22; --shadow:0 14px 34px rgba(0,0,0,.45); }
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion: reduce){ *{transition:none!important; animation:none!important} html{scroll-behavior:auto} }
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Vazirmatn",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.55;font-size:16px}
+  h1,h2,h3{font-family:"Lora","Vazirmatn",Georgia,serif;line-height:1.2;margin:0}
+  img{display:block;max-width:100%}
+  button,[role="button"],select,summary,input:not([type="checkbox"],[type="radio"]){min-height:2.75rem}
+  :focus-visible{outline:3px solid var(--saffron);outline-offset:2px;border-radius:6px}
+  .fa-name{font-weight:700;color:var(--pom)}
+
+  /* ---------- App shell ---------- */
+  .app{display:grid;grid-template-columns:264px 1fr;min-height:100vh}
+  .side{background:var(--green-deep);color:#dcebe1;display:flex;flex-direction:column;padding:22px 16px;position:sticky;top:0;height:100vh}
+  .side .brand{font-family:"Lora",serif;font-weight:700;font-size:1.5rem;color:#fff;text-decoration:none;display:flex;align-items:baseline;gap:8px;padding:2px 10px 4px}
+  .side .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--saffron);display:inline-block}
+  .side .brand .fa{font-family:"Vazirmatn",sans-serif;font-size:1rem;color:#f0b429;font-weight:700}
+  .side .studio{padding:0 10px 18px;color:#9fc3ad;font-size:.88rem;border-bottom:1px solid rgba(255,255,255,.14);margin-bottom:16px}
+  .side nav{display:grid;gap:4px}
+  .navbtn{display:flex;align-items:center;gap:12px;width:100%;text-align:start;border:0;background:transparent;color:#dcebe1;font:inherit;font-weight:600;padding:11px 12px;border-radius:12px;cursor:pointer;min-height:48px}
+  .navbtn svg{flex:none}
+  .navbtn:hover{background:rgba(255,255,255,.08)}
+  .navbtn[aria-current="page"]{background:var(--saffron);color:#261a00}
+  .navbtn .badge{margin-inline-start:auto;background:var(--pom);color:#fff;border-radius:999px;min-width:24px;height:24px;display:inline-grid;place-items:center;font-size:.8rem;padding:0 6px;font-weight:800}
+  .navbtn[aria-current="page"] .badge{background:var(--green-deep);color:#fff}
+  .side .cookcard{margin-top:auto;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:14px}
+  .side .cookcard .row{display:flex;gap:11px;align-items:center}
+  .avatar{width:44px;height:44px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-weight:800;flex:none;font-size:1.05rem}
+  .avatar.pom{background:var(--pom)} .avatar.saf{background:var(--saffron);color:#261a00}
+  .side .cookcard b{color:#fff;display:block;line-height:1.25}
+  .side .cookcard span{color:#9fc3ad;font-size:.85rem}
+  .side .cookcard .cert{margin-top:10px;font-size:.83rem;color:#cfe3d6;display:flex;gap:7px;align-items:flex-start}
+  .main{min-width:0;display:flex;flex-direction:column}
+  .topbar{position:sticky;top:0;z-index:40;background:color-mix(in srgb, var(--bg) 93%, transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:14px 28px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .topbar h1{font-size:1.45rem}
+  .topbar .date{color:var(--muted);font-size:.92rem}
+  .topbar .spacer{flex:1}
+  .search{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:0 14px;min-height:44px}
+  .search input{border:0;background:transparent;font:inherit;color:var(--ink);width:170px;outline:none;min-height:40px}
+  .iconbtn{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;display:grid;place-items:center;position:relative;flex:none}
+  .iconbtn .ping{position:absolute;top:9px;inset-inline-end:10px;width:9px;height:9px;border-radius:50%;background:var(--pom)}
+  .status-toggle{display:inline-flex;align-items:center;gap:10px;border:1.5px solid var(--green);background:var(--green-soft);color:var(--ink);border-radius:999px;padding:8px 16px;font:inherit;font-weight:700;cursor:pointer;min-height:44px}
+  .status-toggle .lamp{width:11px;height:11px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px color-mix(in srgb, var(--green) 22%, transparent)}
+  .status-toggle.paused{border-color:var(--line);background:var(--chip)}
+  .status-toggle.paused .lamp{background:var(--muted);box-shadow:none}
+  .content{padding:26px 28px 60px;max-width:1240px;width:100%;margin:0 auto}
+  @media (max-width:900px){
+    .app{grid-template-columns:1fr}
+    .side{position:static;height:auto;padding:14px 14px 16px}
+    .side .studio{display:none}
+    .side nav{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+    .navbtn{width:auto;padding:9px 14px;min-height:44px}
+    .navbtn .badge{margin-inline-start:2px}
+    .side .cookcard{display:none}
+    .topbar{padding:12px 16px}
+    .content{padding:20px 16px 48px}
+    .search input{width:110px}
+  }
+
+  /* ---------- Shared bits ---------- */
+  .btn{background:var(--green);color:#fff;border:0;border-radius:12px;padding:11px 20px;font:inherit;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;justify-content:center;text-decoration:none}
+  @media (prefers-color-scheme: dark){ .btn{color:#08130d} }
+  .btn:hover{filter:brightness(1.07)}
+  .btn.saffron{background:var(--saffron);color:#261a00}
+  .btn.ghost{background:transparent;color:var(--green);border:1.5px solid var(--green)}
+  .btn.quiet{background:var(--chip);color:var(--ink);border:1px solid var(--line)}
+  .btn.danger{background:transparent;color:var(--pom);border:1.5px solid var(--pom)}
+  .btn.small{padding:8px 14px;min-height:40px;font-size:.93rem;border-radius:10px}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+  .panel h2{font-size:1.25rem;margin-bottom:4px}
+  .panel .sub{color:var(--muted);font-size:.93rem;margin:0 0 16px}
+  .sec-head{margin:30px 0 16px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+  .sec-head h2{font-size:1.45rem}
+  .sec-head p{color:var(--muted);margin:0}
+  .sec-head .link{margin-inline-start:auto}
+  .link{color:var(--green);font-weight:700;background:none;border:0;font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:6px 2px;min-height:36px}
+  .pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 11px;font-size:.8rem;font-weight:700;white-space:nowrap}
+  .pill.new{background:var(--saffron-soft);color:#7a5200}
+  @media (prefers-color-scheme: dark){ .pill.new{color:#f5c86e} }
+  .pill.cooking{background:#e7eefb;color:#274b8f}
+  @media (prefers-color-scheme: dark){ .pill.cooking{background:#1d2a44;color:#a9c4f5} }
+  .pill.ready{background:var(--green-soft);color:var(--green-deep)}
+  @media (prefers-color-scheme: dark){ .pill.ready{color:#8fd3ae} }
+  .pill.done{background:var(--chip);color:var(--muted)}
+  .pill.declined{background:var(--pom-soft);color:var(--pom)}
+  .pill.veg{background:#e2f0e4;color:#14532d}
+  @media (prefers-color-scheme: dark){ .pill.veg{background:#17301d;color:#9fd8ab} }
+  .toast{position:fixed;bottom:22px;inset-inline-start:50%;transform:translateX(-50%);background:var(--green-deep);color:#fff;padding:13px 22px;border-radius:999px;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .25s;z-index:90;max-width:calc(100% - 32px);text-align:center;font-weight:600}
+  .toast.show{opacity:1}
+
+  /* ---------- KPI row ---------- */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  @media (max-width:1000px){ .kpis{grid-template-columns:repeat(2,1fr)} }
+  @media (max-width:480px){ .kpis{grid-template-columns:1fr 1fr;gap:10px} }
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px}
+  .kpi .lbl{color:var(--muted);font-size:.88rem;font-weight:600;display:flex;gap:8px;align-items:center}
+  .kpi .val{font-family:"Lora",serif;font-size:2rem;font-weight:700;line-height:1.15;margin-top:4px}
+  .kpi .note{font-size:.87rem;color:var(--muted)}
+  .kpi .note b{color:var(--green)}
+
+  /* ---------- Today layout ---------- */
+  .today-grid{display:grid;grid-template-columns:1.65fr 1fr;gap:20px;align-items:start}
+  @media (max-width:1000px){ .today-grid{grid-template-columns:1fr} }
+  .order-card{border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:var(--surface);display:flex;gap:16px;align-items:flex-start}
+  .order-card + .order-card{margin-top:12px}
+  .order-card img{width:74px;height:74px;border-radius:12px;object-fit:cover;flex:none}
+  .order-card .grow{flex:1;min-width:0}
+  .order-card h3{font-size:1.06rem;font-family:"Vazirmatn",sans-serif;font-weight:700}
+  .order-card .meta{color:var(--muted);font-size:.9rem}
+  .order-card .note-line{font-size:.9rem;background:var(--wash);border-radius:8px;padding:6px 10px;margin-top:8px}
+  .order-card .side-info{text-align:end;display:grid;gap:6px;justify-items:end}
+  .order-card .amt{font-weight:800;font-size:1.08rem}
+  .order-card .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  @media (max-width:560px){ .order-card{flex-wrap:wrap} .order-card .side-info{flex-direction:row;width:100%;justify-items:start;text-align:start} }
+  .timeline{list-style:none;margin:0;padding:0;display:grid;gap:0}
+  .timeline li{display:grid;grid-template-columns:64px 18px 1fr;gap:10px;padding:9px 0;align-items:start}
+  .timeline .t{font-weight:700;font-size:.92rem}
+  .timeline .dotcol{display:flex;flex-direction:column;align-items:center}
+  .timeline .dot{width:12px;height:12px;border-radius:50%;background:var(--saffron);border:2px solid var(--surface);box-shadow:0 0 0 2px var(--line);margin-top:5px}
+  .timeline .dot.done{background:var(--green)}
+  .timeline .dot.idle{background:var(--chip)}
+  .timeline p{margin:0;font-size:.94rem}
+  .timeline p span{color:var(--muted);display:block;font-size:.87rem}
+  .stock-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+  .stock-row:last-child{border-bottom:0}
+  .stock-row img{width:46px;height:46px;border-radius:10px;object-fit:cover}
+  .stock-row .bar{flex:1;height:9px;border-radius:99px;background:var(--chip);overflow:hidden;min-width:70px}
+  .stock-row .bar i{display:block;height:100%;background:var(--green);border-radius:99px}
+  .stock-row .bar i.low{background:var(--pom)}
+  .stock-row b{white-space:nowrap}
+
+  /* ---------- Orders view ---------- */
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;align-items:center}
+  .fchip{border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:9px 18px;font:inherit;font-weight:600;cursor:pointer;min-height:44px}
+  .fchip[aria-pressed="true"]{background:var(--green-deep);color:#fff;border-color:var(--green-deep)}
+  .orders-layout{display:grid;grid-template-columns:1.5fr 1fr;gap:20px;align-items:start}
+  @media (max-width:1000px){ .orders-layout{grid-template-columns:1fr} }
+  .detail{position:sticky;top:96px}
+  @media (max-width:1000px){ .detail{position:static} }
+  .detail dl{display:grid;grid-template-columns:auto 1fr;gap:7px 16px;margin:14px 0;font-size:.95rem}
+  .detail dt{color:var(--muted)} .detail dd{margin:0;font-weight:600;text-align:end}
+  .detail .msg{background:var(--wash);border-radius:10px;padding:12px 14px;font-size:.94rem}
+  .emptybox{border:1.5px dashed var(--line);border-radius:14px;padding:30px;text-align:center;color:var(--muted)}
+
+  /* ---------- Menu view ---------- */
+  .menu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+  @media (max-width:800px){ .menu-grid{grid-template-columns:1fr} }
+  .dish{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column}
+  .dish .ph{aspect-ratio:16/8;overflow:hidden;background:var(--chip)}
+  .dish .ph img{width:100%;height:100%;object-fit:cover}
+  .dish.off .ph img{filter:grayscale(.8);opacity:.55}
+  .dish .bd{padding:18px;display:flex;flex-direction:column;gap:9px;flex:1}
+  .dish h3{font-size:1.2rem}
+  .dish p{color:var(--muted);margin:0;font-size:.93rem}
+  .dish .rowline{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .dish .price{font-size:1.15rem;font-weight:800}
+  .stepper{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:999px;padding:3px}
+  .stepper button{width:38px;height:38px;min-height:38px;border-radius:50%;border:0;background:var(--chip);color:var(--ink);font-size:1.1rem;cursor:pointer;display:grid;place-items:center}
+  .stepper b{min-width:30px;text-align:center}
+  .switch{position:relative;width:52px;height:30px;flex:none}
+  .switch input{position:absolute;opacity:0;width:100%;height:100%;cursor:pointer;margin:0}
+  .switch .track{position:absolute;inset:0;background:var(--chip);border:1px solid var(--line);border-radius:999px;transition:background .2s;pointer-events:none}
+  .switch .track::after{content:"";position:absolute;top:3px;inset-inline-start:3px;width:22px;height:22px;border-radius:50%;background:var(--surface);box-shadow:0 1px 4px rgba(0,0,0,.25);transition:transform .2s}
+  .switch input:checked + .track{background:var(--green)}
+  .switch input:checked + .track::after{transform:translateX(22px)}
+  html[dir="rtl"] .switch input:checked + .track::after{transform:translateX(-22px)}
+  .switch input:focus-visible + .track{outline:3px solid var(--saffron);outline-offset:2px}
+  form.adddish{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  form.adddish .full{grid-column:1/-1}
+  @media (max-width:640px){ form.adddish{grid-template-columns:1fr} }
+  label.fld{display:grid;gap:6px;font-weight:600;font-size:.93rem}
+  label.fld input,label.fld select,label.fld textarea{border:1px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;background:var(--bg);color:var(--ink);font-weight:400;width:100%}
+  label.fld textarea{resize:vertical;min-height:74px}
+
+  /* ---------- Schedule ---------- */
+  .week{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
+  @media (max-width:900px){ .week{grid-template-columns:repeat(2,1fr)} }
+  @media (max-width:480px){ .week{grid-template-columns:1fr 1fr} }
+  .day{border:1.5px solid var(--line);border-radius:14px;padding:14px;background:var(--surface);text-align:center;display:grid;gap:8px}
+  .day b{font-family:"Lora",serif}
+  .day .cap{font-size:.85rem;color:var(--muted)}
+  .day.on{border-color:var(--green);background:var(--green-soft)}
+  .day button{min-height:40px}
+  .checkrow{display:flex;flex-wrap:wrap;gap:10px}
+  .checkchip{display:inline-flex;align-items:center;gap:9px;border:1.5px solid var(--line);border-radius:12px;padding:10px 14px;cursor:pointer;font-weight:600;min-height:48px;background:var(--surface)}
+  .checkchip input{accent-color:var(--green);width:19px;height:19px}
+
+  /* ---------- Earnings ---------- */
+  .earn-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:20px;align-items:start}
+  @media (max-width:1000px){ .earn-grid{grid-template-columns:1fr} }
+  .chart-wrap{overflow:visible}
+  .chart-wrap svg{width:100%;height:auto}
+  table{width:100%;border-collapse:collapse;font-size:.95rem}
+  th,td{padding:11px 10px;border-bottom:1px solid var(--line);text-align:start;vertical-align:top}
+  th{color:var(--muted);font-size:.85rem;font-weight:700}
+  td.num,th.num{text-align:end;font-variant-numeric:tabular-nums;white-space:nowrap}
+  tr:last-child td{border-bottom:0}
+  .fee-line{display:flex;justify-content:space-between;gap:14px;padding:10px 0;border-bottom:1px solid var(--line);font-size:.95rem}
+  .fee-line:last-child{border-bottom:0}
+  .fee-line span{color:var(--muted)} .fee-line b{white-space:nowrap}
+
+  /* ---------- Reviews / profile ---------- */
+  .rev-grid{display:grid;grid-template-columns:1fr 1.6fr;gap:20px;align-items:start}
+  @media (max-width:1000px){ .rev-grid{grid-template-columns:1fr} }
+  .stars{color:var(--saffron);letter-spacing:2px;font-size:1.05rem}
+  .review{border-bottom:1px solid var(--line);padding:16px 0}
+  .review:last-child{border-bottom:0;padding-bottom:0}
+  .review .who{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .review p{margin:8px 0 0;color:var(--ink)}
+  .review .when{color:var(--muted);font-size:.87rem}
+  .checklist{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+  .checklist li{display:flex;gap:11px;align-items:flex-start;font-size:.95rem}
+  .checklist .tick{width:26px;height:26px;border-radius:50%;background:var(--green-soft);color:var(--green);display:grid;place-items:center;flex:none;font-weight:800}
+  .checklist .tick.due{background:var(--saffron-soft);color:#7a5200}
+  @media (prefers-color-scheme: dark){ .checklist .tick.due{color:#f5c86e} }
+  .banner{display:flex;gap:14px;align-items:flex-start;background:var(--saffron-soft);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:20px}
+  .banner p{margin:0;font-size:.95rem}
+  .banner.hidden{display:none}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="side">
+    <a class="brand" href="#" data-goto="today">Sofreh <span class="dot" aria-hidden="true"></span> <span class="fa" lang="fa">سفره</span></a>
+    <p class="studio">Cook Studio — the web app for cooks, made for the big screen at home.</p>
+    <nav aria-label="Cook studio">
+      <button class="navbtn" type="button" data-goto="today" aria-current="page">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+        Today
+      </button>
+      <button class="navbtn" type="button" data-goto="orders">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 7h6M9 11h6"/></svg>
+        Orders <span class="badge" id="navNewCount">2</span>
+      </button>
+      <button class="navbtn" type="button" data-goto="menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 3v7a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V3"/><path d="M6 3v18"/><path d="M20 15V3a5 5 0 0 0-4 5v7h4z"/><path d="M20 15v6"/></svg>
+        My menu
+      </button>
+      <button class="navbtn" type="button" data-goto="schedule">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+        Schedule
+      </button>
+      <button class="navbtn" type="button" data-goto="earnings">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/><path d="M6 15h4"/></svg>
+        Earnings
+      </button>
+      <button class="navbtn" type="button" data-goto="reviews">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.7 5.6 6.1.8-4.5 4.2 1.1 6-5.4-3-5.4 3 1.1-6L3.2 9.4l6.1-.8z"/></svg>
+        Reviews &amp; profile
+      </button>
+    </nav>
+    <div class="cookcard">
+      <div class="row">
+        <span class="avatar" aria-hidden="true">M</span>
+        <div><b>Maryam</b><span>Richmond Hill · ★ 4.9</span></div>
+      </div>
+      <p class="cert">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><path d="M20 6 9 17l-5-5"/></svg>
+        Ontario Food Handler Certificate on file · kitchen checklist passed
+      </p>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <div class="main">
+    <header class="topbar">
+      <div>
+        <h1 id="pageTitle">Today in your kitchen</h1>
+        <span class="date">Wednesday, November 18, 2026 · Richmond Hill</span>
+      </div>
+      <div class="spacer"></div>
+      <label class="search">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="orderSearch" type="search" placeholder="Search…" aria-label="Search orders by customer or dish" />
+      </label>
+      <button class="iconbtn" type="button" id="bellBtn" aria-label="Notifications — 2 new orders">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M10.3 21a2 2 0 0 0 3.4 0"/></svg>
+        <span class="ping" id="bellPing" aria-hidden="true"></span>
+      </button>
+      <button class="status-toggle" type="button" id="statusToggle" aria-pressed="true">
+        <span class="lamp" aria-hidden="true"></span><span id="statusLabel">Accepting orders</span>
+      </button>
+    </header>
+
+    <div class="content">
+      <div class="banner hidden" id="pausedBanner" role="status">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="flex:none;margin-top:2px"><circle cx="12" cy="12" r="9"/><path d="M10 9v6M14 9v6"/></svg>
+        <p><b>You are paused.</b> Your dishes are hidden from today's menu and no new orders can come in. Orders already accepted still need cooking — tap “Accepting orders” above when you are ready to reopen.</p>
+      </div>
+
+      <!-- ============ TODAY ============ -->
+      <section data-panel="today" aria-label="Today">
+        <div class="kpis" role="group" aria-label="Today at a glance">
+          <div class="kpi"><span class="lbl">Orders today</span><div class="val" id="kpiOrders">8</div><span class="note"><b id="kpiNew">2 new</b> waiting for your answer</span></div>
+          <div class="kpi"><span class="lbl">Portions to cook</span><div class="val" id="kpiPortions">22</div><span class="note">across <b>4 dishes</b> on today's menu</span></div>
+          <div class="kpi"><span class="lbl">Sales today</span><div class="val" id="kpiGross">$330.00</div><span class="note">you keep <b id="kpiKeep">$280.50</b> (85%)</span></div>
+          <div class="kpi"><span class="lbl">Your rating</span><div class="val">4.9 ★</div><span class="note">from <b>132 reviews</b> · top cook in Richmond Hill</span></div>
+        </div>
+
+        <div class="today-grid" style="margin-top:20px">
+          <div class="panel">
+            <h2>Needs your attention</h2>
+            <p class="sub">New orders first, then what is on the stove and what is waiting at the door.</p>
+            <div id="todayQueue"></div>
+            <div style="margin-top:16px">
+              <button class="btn ghost" type="button" data-goto="orders">See all of today's orders</button>
+            </div>
+          </div>
+
+          <div style="display:grid;gap:20px">
+            <div class="panel">
+              <h2>Today's cooking plan</h2>
+              <p class="sub">Wednesday — one of your regular cooking days.</p>
+              <ol class="timeline">
+                <li><span class="t">09:00</span><span class="dotcol"><span class="dot done"></span></span><p>Herbs washed, ghormeh sabzi on the stove<span>Simmer until 15:30 — fenugreek in at the end</span></p></li>
+                <li><span class="t">11:30</span><span class="dotcol"><span class="dot done"></span></span><p>Gheymeh started, potatoes cut<span>Keep the straws dry until frying time</span></p></li>
+                <li><span class="t">14:00</span><span class="dotcol"><span class="dot"></span></span><p>Order cut-off for tonight<span>Menu closes; final portion count locked</span></p></li>
+                <li><span class="t">16:30</span><span class="dotcol"><span class="dot idle"></span></span><p>Seal &amp; label the 17:00 pickups<span>Cook name, ingredients and prep time on every label</span></p></li>
+                <li><span class="t">17:00</span><span class="dotcol"><span class="dot idle"></span></span><p>Pickup window 1 opens<span>3 orders · door code in each order</span></p></li>
+                <li><span class="t">18:00</span><span class="dotcol"><span class="dot idle"></span></span><p>Pickup window 2 opens<span>2 orders · 1 local delivery</span></p></li>
+              </ol>
+            </div>
+
+            <div class="panel">
+              <h2>Portions left today</h2>
+              <p class="sub">When a dish runs out it leaves the public menu on its own.</p>
+              <div id="stockList"></div>
+              <button class="link" type="button" data-goto="menu" style="margin-top:10px">Adjust portions in My menu →</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ ORDERS ============ -->
+      <section data-panel="orders" aria-label="Orders" hidden>
+        <div class="filters" role="group" aria-label="Filter orders by status">
+          <button class="fchip" type="button" data-filter="all" aria-pressed="true">All today</button>
+          <button class="fchip" type="button" data-filter="new" aria-pressed="false">New</button>
+          <button class="fchip" type="button" data-filter="cooking" aria-pressed="false">Cooking</button>
+          <button class="fchip" type="button" data-filter="ready" aria-pressed="false">Ready for pickup</button>
+          <button class="fchip" type="button" data-filter="done" aria-pressed="false">Completed</button>
+        </div>
+        <div class="orders-layout">
+          <div id="ordersList"></div>
+          <div class="panel detail" id="orderDetail" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <!-- ============ MENU ============ -->
+      <section data-panel="menu" aria-label="My menu" hidden>
+        <div class="sec-head" style="margin-top:0">
+          <div><h2>Your dishes</h2><p>What neighbours see on the public menu today. Turn a dish off and it disappears within a minute; portions count down as orders land.</p></div>
+        </div>
+        <div class="menu-grid" id="menuGrid"></div>
+
+        <div class="panel" style="margin-top:22px">
+          <h2>Add a dish</h2>
+          <p class="sub">New dishes go live on your next cooking day, after the ingredient and allergen list is complete.</p>
+          <form class="adddish" id="addDishForm">
+            <label class="fld">Dish name (English)
+              <input name="name" required placeholder="e.g. Zereshk Polo ba Morgh" />
+            </label>
+            <label class="fld">Dish name (Persian)
+              <input name="faname" placeholder="e.g. زرشک‌پلو با مرغ" />
+            </label>
+            <label class="fld">Price per single portion (CAD)
+              <input name="price" type="number" min="5" max="60" step="0.50" required placeholder="19.00" />
+            </label>
+            <label class="fld">Portions per cooking day
+              <input name="portions" type="number" min="1" max="60" required placeholder="12" />
+            </label>
+            <label class="fld full">Short description — ingredients and what makes yours yours
+              <textarea name="desc" required placeholder="Basmati rice, tart barberries, chicken braised in tomato and saffron…"></textarea>
+            </label>
+            <label class="fld">Photo
+              <select name="photo">
+                <option value="assets/zereshk.jpg">Zereshk polo photo</option>
+                <option value="assets/tahchin.jpg">Tahchin photo</option>
+                <option value="assets/fesenjan.jpg">Fesenjan photo</option>
+                <option value="assets/baghali.jpg">Baghali polo photo</option>
+                <option value="assets/koobideh.webp">Kabab koobideh photo</option>
+              </select>
+            </label>
+            <label class="fld">Allergens
+              <select name="allergen">
+                <option>None to declare</option><option>Contains nuts</option>
+                <option>Contains dairy</option><option>Contains gluten</option><option>Contains egg</option>
+              </select>
+            </label>
+            <div class="full"><button class="btn saffron" type="submit">Add dish to my menu</button></div>
+          </form>
+        </div>
+      </section>
+
+      <!-- ============ SCHEDULE ============ -->
+      <section data-panel="schedule" aria-label="Schedule" hidden>
+        <div class="panel">
+          <h2>Your cooking week</h2>
+          <p class="sub">You choose your days — most Sofreh cooks cook three or four days a week. Changes apply from next week; this week's orders are never touched.</p>
+          <div class="week" id="weekGrid"></div>
+        </div>
+
+        <div class="today-grid" style="margin-top:20px">
+          <div class="panel">
+            <h2>Pickup windows</h2>
+            <p class="sub">Neighbours pick a window when they order. Dinner windows work best — lunch only if you are home.</p>
+            <div class="checkrow" id="windowRow">
+              <label class="checkchip"><input type="checkbox" value="12:00 – 13:00" /> 12:00 – 13:00 · lunch</label>
+              <label class="checkchip"><input type="checkbox" value="17:00 – 18:00" checked /> 17:00 – 18:00</label>
+              <label class="checkchip"><input type="checkbox" value="18:00 – 19:00" checked /> 18:00 – 19:00</label>
+              <label class="checkchip"><input type="checkbox" value="19:00 – 20:00" /> 19:00 – 20:00</label>
+            </div>
+            <h3 style="margin:22px 0 8px;font-size:1.05rem">Local delivery</h3>
+            <div class="checkrow">
+              <label class="checkchip"><input type="checkbox" id="deliveryToggle" checked /> Offer delivery in Richmond Hill (+$4.95 to the customer, paid to the driver)</label>
+            </div>
+          </div>
+          <div class="panel">
+            <h2>Daily capacity</h2>
+            <p class="sub">The most portions you will cook in one day, across all dishes. Sofreh stops taking orders when you hit it.</p>
+            <div class="rowline" style="display:flex;align-items:center;gap:14px">
+              <span class="stepper">
+                <button type="button" id="capMinus" aria-label="Fewer portions">−</button>
+                <b id="capVal">24</b>
+                <button type="button" id="capPlus" aria-label="More portions">+</button>
+              </span>
+              <span style="color:var(--muted)">portions per cooking day</span>
+            </div>
+            <h3 style="margin:22px 0 8px;font-size:1.05rem">Time off</h3>
+            <p style="color:var(--muted);margin:0 0 12px;font-size:.95rem">Pause a stretch — your regulars see “back on” with the date you pick.</p>
+            <label class="fld">Away until
+              <input type="date" id="awayDate" value="2026-11-18" min="2026-11-18" />
+            </label>
+            <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
+              <button class="btn" type="button" id="saveSchedule">Save schedule</button>
+              <button class="btn quiet" type="button" id="resetSchedule">Reset to current week</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ EARNINGS ============ -->
+      <section data-panel="earnings" aria-label="Earnings" hidden>
+        <div class="kpis" role="group" aria-label="Earnings summary">
+          <div class="kpi"><span class="lbl">This week (Mon–Sun)</span><div class="val" id="weekGross">$612.50</div><span class="note">gross dish sales</span></div>
+          <div class="kpi"><span class="lbl">You keep (85%)</span><div class="val" id="weekKeep">$520.63</div><span class="note">after the 15% Sofreh commission</span></div>
+          <div class="kpi"><span class="lbl">Next payout</span><div class="val">Fri Nov 20</div><span class="note"><b id="payoutAmt">$520.63</b> to your bank account</span></div>
+          <div class="kpi"><span class="lbl">November so far</span><div class="val">$1,486.25</div><span class="note">your share · <b>74 orders</b> this month</span></div>
+        </div>
+
+        <div class="earn-grid" style="margin-top:20px">
+          <div class="panel chart-wrap">
+            <h2>Sales by cooking day</h2>
+            <p class="sub">Gross dish sales, last seven days. You cook Wed, Fri, Sat and Sun — the quiet bars are days off, not bad days.</p>
+            <svg viewBox="0 0 560 260" role="img" aria-label="Bar chart of gross sales: Thursday 0 dollars (day off), Friday 148 dollars, Saturday 186 dollars 50, Sunday 121 dollars, Monday 0 dollars (day off), Tuesday 0 dollars (day off), Wednesday today, updating live.">
+              <line x1="44" y1="216" x2="540" y2="216" stroke="var(--line)" stroke-width="2"/>
+              <g font-family="Vazirmatn,sans-serif" font-size="12" fill="var(--muted)" text-anchor="middle">
+                <text x="80" y="238">Thu 12</text><text x="148" y="238">Fri 13</text><text x="216" y="238">Sat 14</text>
+                <text x="284" y="238">Sun 15</text><text x="352" y="238">Mon 16</text><text x="420" y="238">Tue 17</text><text x="488" y="238">Wed 18 · today</text>
+              </g>
+              <g>
+                <rect x="58" y="210" width="44" height="6" rx="3" fill="var(--chip)"/>
+                <rect x="126" y="78" width="44" height="138" rx="6" fill="var(--green)"/>
+                <rect x="194" y="42" width="44" height="174" rx="6" fill="var(--green)"/>
+                <rect x="262" y="103" width="44" height="113" rx="6" fill="var(--green)"/>
+                <rect x="330" y="210" width="44" height="6" rx="3" fill="var(--chip)"/>
+                <rect x="398" y="210" width="44" height="6" rx="3" fill="var(--chip)"/>
+                <rect id="todayBar" x="466" y="66" width="44" height="150" rx="6" fill="var(--saffron)"/>
+              </g>
+              <g font-family="Vazirmatn,sans-serif" font-size="12.5" font-weight="700" fill="var(--ink)" text-anchor="middle">
+                <text x="80" y="200">off</text><text x="148" y="68">$148</text><text x="216" y="32">$186.50</text>
+                <text x="284" y="93">$121</text><text x="352" y="200">off</text><text x="420" y="200">off</text>
+                <text id="todayBarVal" x="488" y="56">$330</text>
+              </g>
+            </svg>
+            <p style="color:var(--muted);font-size:.9rem;margin:6px 0 0">Today's bar grows as orders are completed — watch it from the Orders tab.</p>
+          </div>
+
+          <div style="display:grid;gap:20px">
+            <div class="panel">
+              <h2>How a dollar splits</h2>
+              <p class="sub">The same split on every dish, shown on the public site too.</p>
+              <div class="fee-line"><span>Dish price</span><b>100% — set by you</b></div>
+              <div class="fee-line"><span>Paid to you, weekly</span><b>85%</b></div>
+              <div class="fee-line"><span>Sofreh commission</span><b>15%</b></div>
+              <div class="fee-line"><span>Customer service fee</span><b>10%, capped at $4 — not taken from you</b></div>
+              <div class="fee-line"><span>Delivery fee</span><b>$4.95 — goes to the driver</b></div>
+            </div>
+            <div class="panel">
+              <h2>Recent payouts</h2>
+              <p class="sub">Fridays, to the bank account on file.</p>
+              <table aria-label="Recent payouts">
+                <thead><tr><th>Paid</th><th>Period</th><th class="num">Your share</th></tr></thead>
+                <tbody>
+                  <tr><td>Fri Nov 13</td><td>Nov 9 – 15</td><td class="num">$438.18</td></tr>
+                  <tr><td>Fri Nov 6</td><td>Nov 2 – 8</td><td class="num">$391.55</td></tr>
+                  <tr><td>Fri Oct 30</td><td>Oct 26 – Nov 1</td><td class="num">$402.90</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ REVIEWS & PROFILE ============ -->
+      <section data-panel="reviews" aria-label="Reviews and profile" hidden>
+        <div class="rev-grid">
+          <div style="display:grid;gap:20px">
+            <div class="panel" style="text-align:center">
+              <div style="font-family:'Lora',serif;font-size:3rem;font-weight:700;line-height:1">4.9</div>
+              <div class="stars" aria-label="Rated 4.9 of 5">★★★★★</div>
+              <p style="color:var(--muted);margin:8px 0 0">132 reviews · 96% five-star<br/>Neighbours mention: “tastes like home”, “generous portions”, “always on time”.</p>
+            </div>
+            <div class="panel">
+              <h2>Kitchen &amp; safety file</h2>
+              <p class="sub">What Sofreh verified before your first order — keep it current.</p>
+              <ul class="checklist">
+                <li><span class="tick">✓</span><span><b>Ontario Food Handler Certificate</b><br/><span style="color:var(--muted)">Valid until March 2027 · certificate on file</span></span></li>
+                <li><span class="tick">✓</span><span><b>Kitchen onboarding checklist</b><br/><span style="color:var(--muted)">Passed September 2026 — fridge temperature, separation, labelling</span></span></li>
+                <li><span class="tick">✓</span><span><b>Ingredients &amp; allergens listed</b><br/><span style="color:var(--muted)">All 4 live dishes carry a full ingredient list</span></span></li>
+                <li><span class="tick due">!</span><span><b>Annual kitchen refresh</b><br/><span style="color:var(--muted)">Due January 2027 — a 20-minute video call, booked from here</span></span></li>
+              </ul>
+              <button class="btn ghost small" type="button" id="bookRefresh" style="margin-top:16px">Book the January refresh</button>
+            </div>
+            <div class="panel">
+              <h2>Your public profile</h2>
+              <p class="sub">Shown beside every dish you sell.</p>
+              <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px">
+                <span class="avatar" style="width:56px;height:56px;font-size:1.3rem" aria-hidden="true">M</span>
+                <div><b style="font-size:1.1rem">Maryam · Richmond Hill</b><br/><span style="color:var(--muted)">Cooking on Sofreh since September 2026</span></div>
+              </div>
+              <p style="margin:0;color:var(--muted)">“Cooking ghormeh sabzi the way my mother taught me in Tehran — fenugreek measured by eye, never by spoon.”</p>
+              <button class="link" type="button" id="editProfileBtn">Edit profile text</button>
+              <form id="profileForm" hidden>
+                <label class="fld">Profile text
+                  <textarea id="profileText">Cooking ghormeh sabzi the way my mother taught me in Tehran — fenugreek measured by eye, never by spoon.</textarea>
+                </label>
+                <button class="btn small" type="submit" style="margin-top:10px">Save profile</button>
+              </form>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2>Latest reviews</h2>
+            <p class="sub">Reviews appear under your dishes on the public site, with your reply if you add one.</p>
+            <div id="reviewList">
+              <article class="review">
+                <div class="who"><span class="avatar pom" style="width:36px;height:36px;font-size:.95rem" aria-hidden="true">N</span><b>Niloofar R.</b><span class="stars">★★★★★</span><span class="when">Sun Nov 15 · Ghormeh Sabzi</span></div>
+                <p>I have not tasted ghormeh sabzi like this since my grandmother's house in Shiraz. The dried lime is right, the herbs are dark and bitter in the right way. Ordered the family size for Friday again.</p>
+              </article>
+              <article class="review">
+                <div class="who"><span class="avatar saf" style="width:36px;height:36px;font-size:.95rem" aria-hidden="true">J</span><b>James T.</b><span class="stars">★★★★★</span><span class="when">Sat Nov 14 · Ash Reshteh</span></div>
+                <p>First time trying ash reshteh — Maryam wrote a little note in the bag explaining the kashk and mint oil. Thick, generous, and it reheated perfectly the next day.</p>
+              </article>
+              <article class="review">
+                <div class="who"><span class="avatar" style="width:36px;height:36px;font-size:.95rem" aria-hidden="true">P</span><b>Parisa A.</b><span class="stars">★★★★☆</span><span class="when">Fri Nov 13 · Kookoo Sabzi</span></div>
+                <p>Beautiful kookoo, deep green and full of barberries. Only wish there were a lunch pickup window on Fridays — dinner worked out fine in the end.</p>
+                <button class="link replyBtn" type="button">Reply to Parisa</button>
+                <form class="replyForm" hidden>
+                  <label class="fld">Your reply
+                    <textarea placeholder="Thank you, Parisa…"></textarea>
+                  </label>
+                  <button class="btn small" type="submit" style="margin-top:8px">Post reply</button>
+                </form>
+              </article>
+              <article class="review">
+                <div class="who"><span class="avatar pom" style="width:36px;height:36px;font-size:.95rem" aria-hidden="true">D</span><b>Daniel K.</b><span class="stars">★★★★★</span><span class="when">Wed Nov 11 · Gheymeh</span></div>
+                <p>The crispy potato straws on the gheymeh are a small thing that changes everything. Pickup was ready two minutes early, still steaming.</p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  "use strict";
+  var money = function(n){ return "$" + n.toFixed(2); };
+
+  /* ---------- Data ---------- */
+  var DISHES = [
+    { id:"ghormeh", name:"Ghormeh Sabzi", faname:"قورمه‌سبزی", img:"assets/ghormeh.webp",
+      alt:"Ghormeh sabzi — dark green herb stew with beef and kidney beans, served with saffron rice",
+      desc:"Slow-simmered herbs, beef, kidney beans and dried lime, with saffron rice.",
+      price:18.50, family:64, planned:20, live:true, tags:["Beef","Saffron rice included"] },
+    { id:"gheymeh", name:"Gheymeh", faname:"خورش قیمه", img:"assets/gheymeh.jpg",
+      alt:"Gheymeh — tomato stew with split peas, beef, dried lime and crispy potato straws",
+      desc:"Tomato and split-pea stew with beef and dried lime, topped with crispy potato straws.",
+      price:17.50, family:61, planned:14, live:true, tags:["Beef","Saffron rice included"] },
+    { id:"ash", name:"Ash Reshteh", faname:"آش رشته", img:"assets/ash.jpg",
+      alt:"Ash reshteh — thick herb, bean and noodle soup with kashk and crispy onions",
+      desc:"Thick herb, bean and noodle soup with kashk, mint oil and crispy onions.",
+      price:13.50, family:46, planned:16, live:true, tags:["Vegetarian","Freezes well"], veg:true },
+    { id:"kookoo", name:"Kookoo Sabzi", faname:"کوکو سبزی", img:"assets/kookoo.jpg",
+      alt:"Kookoo sabzi — green herb frittata with barberries and walnuts, sliced",
+      desc:"Dense herb frittata with barberries and walnuts, with sangak and pickled garlic.",
+      price:14.00, family:48, planned:10, live:true, tags:["Vegetarian","Contains walnuts"], veg:true }
+  ];
+
+  var ORDERS = [
+    { id:1042, customer:"Sara M.", dish:"ghormeh", dishName:"Ghormeh Sabzi", size:"Single", qty:2, portions:2, window:"17:00 – 18:00", total:37.00, status:"new", time:"Ordered 10:42 am", note:"", delivery:"Pickup" },
+    { id:1041, customer:"Daniel K.", dish:"gheymeh", dishName:"Gheymeh", size:"Family (feeds 4)", qty:1, portions:4, window:"17:00 – 18:00", total:61.00, status:"new", time:"Ordered 10:15 am", note:"Extra crispy potatoes on the side, please — last time they were perfect.", delivery:"Pickup" },
+    { id:1040, customer:"Niloofar R.", dish:"ghormeh", dishName:"Ghormeh Sabzi", size:"Family (feeds 4)", qty:1, portions:4, window:"18:00 – 19:00", total:64.00, status:"cooking", time:"Ordered 9:58 am", note:"", delivery:"Pickup" },
+    { id:1039, customer:"James T.", dish:"ash", dishName:"Ash Reshteh", size:"Single", qty:3, portions:3, window:"18:00 – 19:00", total:40.50, status:"cooking", time:"Ordered 9:31 am", note:"One portion without kashk — dairy allergy in the family.", delivery:"Delivery · Richmond Hill" },
+    { id:1038, customer:"Parisa A.", dish:"kookoo", dishName:"Kookoo Sabzi", size:"Single", qty:2, portions:2, window:"17:00 – 18:00", total:28.00, status:"ready", time:"Ordered 9:04 am", note:"", delivery:"Pickup" },
+    { id:1037, customer:"Michael B.", dish:"ghormeh", dishName:"Ghormeh Sabzi", size:"Single", qty:1, portions:1, window:"17:00 – 18:00", total:18.50, status:"done", time:"Picked up 12:20 pm", note:"", delivery:"Pickup" },
+    { id:1036, customer:"Leila H.", dish:"gheymeh", dishName:"Gheymeh", size:"Single", qty:2, portions:2, window:"17:00 – 18:00", total:35.00, status:"done", time:"Picked up 12:05 pm", note:"", delivery:"Pickup" },
+    { id:1035, customer:"Omar S.", dish:"ash", dishName:"Ash Reshteh", size:"Family (feeds 4)", qty:1, portions:4, window:"18:00 – 19:00", total:46.00, status:"done", time:"Delivered 12:40 pm", note:"", delivery:"Delivery · Richmond Hill" }
+  ];
+
+  var WEEK = [
+    { d:"Mon", on:false, cap:24 }, { d:"Tue", on:false, cap:24 }, { d:"Wed", on:true, cap:24 },
+    { d:"Thu", on:false, cap:24 }, { d:"Fri", on:true, cap:24 }, { d:"Sat", on:true, cap:30 }, { d:"Sun", on:true, cap:20 }
+  ];
+
+  var state = { view:"today", filter:"all", selected:1042, accepting:true, query:"" };
+
+  /* ---------- Toast ---------- */
+  var toastEl = document.getElementById("toast"), toastTimer = null;
+  function toast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toastEl.classList.remove("show"); }, 3400);
+  }
+
+  /* ---------- View switching ---------- */
+  var TITLES = { today:"Today in your kitchen", orders:"Orders", menu:"My menu", schedule:"Schedule & availability", earnings:"Earnings & payouts", reviews:"Reviews & profile" };
+  function goto(view){
+    state.view = view;
+    document.querySelectorAll("[data-panel]").forEach(function(p){ p.hidden = p.getAttribute("data-panel") !== view; });
+    document.querySelectorAll(".navbtn").forEach(function(b){
+      if (b.getAttribute("data-goto") === view) b.setAttribute("aria-current","page");
+      else b.removeAttribute("aria-current");
+    });
+    document.getElementById("pageTitle").textContent = TITLES[view];
+    window.scrollTo({ top:0, behavior:"smooth" });
+  }
+  document.querySelectorAll("[data-goto]").forEach(function(el){
+    el.addEventListener("click", function(e){ e.preventDefault(); goto(el.getAttribute("data-goto")); });
+  });
+
+  /* ---------- Helpers ---------- */
+  function dishById(id){ for (var i=0;i<DISHES.length;i++) if (DISHES[i].id===id) return DISHES[i]; return null; }
+  function soldPortions(dishId){
+    var n = 0;
+    ORDERS.forEach(function(o){ if (o.dish===dishId && o.status!=="declined") n += o.portions; });
+    return n;
+  }
+  function pill(status, delivery){
+    var readyLabel = (delivery && delivery.indexOf("Delivery") === 0) ? "Ready for the driver" : "Ready for pickup";
+    var map = { new:["new","● New — answer needed"], cooking:["cooking","On the stove"], ready:["ready",readyLabel], done:["done","Completed"], declined:["declined","Declined"] };
+    var m = map[status]; return '<span class="pill '+m[0]+'">'+m[1]+'</span>';
+  }
+  function activeOrders(){ return ORDERS.filter(function(o){ return o.status!=="done" && o.status!=="declined"; }); }
+
+  function orderCard(o, compact){
+    var d = dishById(o.dish);
+    var html = '<article class="order-card" data-order="'+o.id+'">' +
+      '<img src="'+d.img+'" alt="" width="74" height="74" />' +
+      '<div class="grow"><h3>#'+o.id+' · '+o.dishName+' — '+o.size+' × '+o.qty+'</h3>' +
+      '<div class="meta">'+o.customer+' · Pickup window '+o.window+' · '+o.delivery+'<br/>'+o.time+'</div>' +
+      (o.note ? '<p class="note-line">“'+o.note+'”</p>' : '') +
+      '<div class="actions">'+ actionsFor(o, compact) +'</div></div>' +
+      '<div class="side-info"><span class="amt">'+money(o.total)+'</span>'+ pill(o.status, o.delivery) +'</div></article>';
+    return html;
+  }
+  function actionsFor(o, compact){
+    var view = '<button class="btn quiet small" type="button" data-act="view" data-id="'+o.id+'">Details</button>';
+    if (o.status === "new") return view +
+      '<button class="btn small" type="button" data-act="accept" data-id="'+o.id+'">Accept &amp; start cooking</button>' +
+      '<button class="btn danger small" type="button" data-act="decline" data-id="'+o.id+'">Decline</button>';
+    var isDelivery = o.delivery.indexOf("Delivery") === 0;
+    if (o.status === "cooking") return view +
+      '<button class="btn saffron small" type="button" data-act="ready" data-id="'+o.id+'">'+(isDelivery ? "Mark ready for the driver" : "Mark ready for pickup")+'</button>';
+    if (o.status === "ready") return view +
+      '<button class="btn small" type="button" data-act="complete" data-id="'+o.id+'">'+(isDelivery ? "Confirm driver handoff" : "Confirm pickup")+'</button>';
+    return view;
+  }
+
+  /* ---------- KPIs & stock ---------- */
+  function refreshKPIs(){
+    var todays = ORDERS.filter(function(o){ return o.status!=="declined"; });
+    var news = ORDERS.filter(function(o){ return o.status==="new"; }).length;
+    var portions = 0; todays.forEach(function(o){ portions += o.portions; });
+    var gross = 0; todays.forEach(function(o){ gross += o.total; });
+    document.getElementById("kpiOrders").textContent = todays.length;
+    document.getElementById("kpiNew").textContent = news + (news===1 ? " new" : " new");
+    document.getElementById("kpiPortions").textContent = portions;
+    document.getElementById("kpiGross").textContent = money(gross);
+    document.getElementById("kpiKeep").textContent = money(gross * 0.85);
+    document.getElementById("navNewCount").textContent = news;
+    document.getElementById("navNewCount").style.display = news ? "" : "none";
+    document.getElementById("bellPing").style.display = news ? "" : "none";
+    /* earnings: week base 282.50 (Fri–Sun) + today's gross */
+    var weekGross = 282.50 + gross;
+    document.getElementById("weekGross").textContent = money(weekGross);
+    document.getElementById("weekKeep").textContent = money(weekGross * 0.85);
+    document.getElementById("payoutAmt").textContent = money(weekGross * 0.85);
+    var bar = document.getElementById("todayBar"), val = document.getElementById("todayBarVal");
+    var h = Math.max(10, Math.round(gross * 150 / 330));
+    bar.setAttribute("height", h); bar.setAttribute("y", 216 - h);
+    val.textContent = "$" + Math.round(gross); val.setAttribute("y", 216 - h - 10);
+    renderStock();
+  }
+  function renderStock(){
+    var el = document.getElementById("stockList");
+    el.innerHTML = DISHES.map(function(d){
+      var left = Math.max(0, d.planned - soldPortions(d.id));
+      var pct = d.planned ? Math.round(left / d.planned * 100) : 0;
+      return '<div class="stock-row"><img src="'+d.img+'" alt="" width="46" height="46" />' +
+        '<div style="flex:1;min-width:0"><b>'+d.name+'</b><div class="bar" role="img" aria-label="'+left+' of '+d.planned+' portions left"><i style="width:'+pct+'%" class="'+(left<=3?"low":"")+'"></i></div></div>' +
+        '<b>'+left+' left</b></div>';
+    }).join("");
+  }
+
+  /* ---------- Rendering: today + orders ---------- */
+  function matchesQuery(o){
+    if (!state.query) return true;
+    var q = state.query.toLowerCase();
+    return (o.customer + " " + o.dishName + " #" + o.id).toLowerCase().indexOf(q) > -1;
+  }
+  function renderToday(){
+    var list = activeOrders().filter(matchesQuery);
+    var el = document.getElementById("todayQueue");
+    el.innerHTML = list.length ? list.map(function(o){ return orderCard(o, true); }).join("")
+      : '<div class="emptybox">Everything is cooked, picked up, or still to come. New orders will land here the moment they are placed.</div>';
+  }
+  function renderOrders(){
+    var list = ORDERS.filter(function(o){
+      var okF = state.filter === "all" || o.status === state.filter;
+      return okF && matchesQuery(o);
+    });
+    var el = document.getElementById("ordersList");
+    el.innerHTML = list.length ? list.map(function(o){ return orderCard(o, false); }).join("")
+      : '<div class="emptybox">No orders in this group today. Try another filter above.</div>';
+    renderDetail();
+  }
+  function renderDetail(){
+    var o = null;
+    for (var i=0;i<ORDERS.length;i++) if (ORDERS[i].id === state.selected) o = ORDERS[i];
+    var box = document.getElementById("orderDetail");
+    if (!o){ box.innerHTML = "<h2>Order detail</h2><p class='sub'>Pick an order to see it here.</p>"; return; }
+    var d = dishById(o.dish);
+    var fee = Math.min(o.total * 0.15, o.total);
+    box.innerHTML = '<h2>Order #'+o.id+'</h2><p class="sub">'+o.time+' · '+pill(o.status, o.delivery)+'</p>' +
+      '<img src="'+d.img+'" alt="'+d.alt+'" style="width:100%;aspect-ratio:16/8;object-fit:cover;border-radius:12px" />' +
+      '<dl><dt>Customer</dt><dd>'+o.customer+'</dd>' +
+      '<dt>Dish</dt><dd>'+o.dishName+' <span class="fa-name" lang="fa">'+d.faname+'</span></dd>' +
+      '<dt>Size &amp; qty</dt><dd>'+o.size+' × '+o.qty+'</dd>' +
+      '<dt>Pickup window</dt><dd>'+o.window+'</dd>' +
+      '<dt>Fulfilment</dt><dd>'+o.delivery+'</dd>' +
+      '<dt>Order total</dt><dd>'+money(o.total)+'</dd>' +
+      '<dt>Sofreh commission (15%)</dt><dd>−'+money(o.total*0.15)+'</dd>' +
+      '<dt>You receive</dt><dd style="color:var(--green)">'+money(o.total*0.85)+'</dd></dl>' +
+      (o.note ? '<p class="msg"><b>Customer note:</b> “'+o.note+'”</p>' : '<p class="msg">No note from the customer. The sealed bag gets your standard label: cook name, ingredients, prep time.</p>') +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">'+ actionsFor(o, false) +'</div>';
+  }
+
+  function setStatus(id, status, msg){
+    for (var i=0;i<ORDERS.length;i++) if (ORDERS[i].id === id) ORDERS[i].status = status;
+    state.selected = id;
+    refreshKPIs(); renderToday(); renderOrders(); renderMenu();
+    if (msg) toast(msg);
+  }
+  document.addEventListener("click", function(e){
+    var btn = e.target.closest("[data-act]");
+    if (!btn) return;
+    var id = parseInt(btn.getAttribute("data-id"), 10);
+    var act = btn.getAttribute("data-act");
+    var o = null; for (var i=0;i<ORDERS.length;i++) if (ORDERS[i].id===id) o = ORDERS[i];
+    if (!o) return;
+    if (act === "view"){ state.selected = id; if (state.view !== "orders") goto("orders"); renderOrders(); }
+    if (act === "accept") setStatus(id, "cooking", "Order #"+id+" accepted — "+o.customer.split(" ")[0]+" can see it is on the stove.");
+    if (act === "decline") setStatus(id, "declined", "Order #"+id+" declined. "+o.customer.split(" ")[0]+" was refunded in full and told kindly.");
+    if (act === "ready") setStatus(id, "ready", "Order #"+id+" marked ready — "+(o.delivery.indexOf("Delivery")===0 ? "the driver has been called for handoff." : o.customer.split(" ")[0]+" got the pickup message."));
+    if (act === "complete") setStatus(id, "done", (o.delivery.indexOf("Delivery")===0 ? "Driver handoff confirmed for #" : "Pickup confirmed for #")+id+". "+money(o.total*0.85)+" added to your Friday payout.");
+  });
+
+  /* filters + search */
+  document.querySelectorAll("[data-filter]").forEach(function(chip){
+    chip.addEventListener("click", function(){
+      state.filter = chip.getAttribute("data-filter");
+      document.querySelectorAll("[data-filter]").forEach(function(c){ c.setAttribute("aria-pressed", c===chip ? "true" : "false"); });
+      renderOrders();
+    });
+  });
+  document.getElementById("orderSearch").addEventListener("input", function(e){
+    state.query = e.target.value.trim();
+    renderToday(); renderOrders();
+  });
+  document.getElementById("bellBtn").addEventListener("click", function(){
+    goto("orders");
+    state.filter = "new";
+    document.querySelectorAll("[data-filter]").forEach(function(c){ c.setAttribute("aria-pressed", c.getAttribute("data-filter")==="new" ? "true" : "false"); });
+    renderOrders();
+  });
+
+  /* ---------- Status toggle ---------- */
+  document.getElementById("statusToggle").addEventListener("click", function(){
+    state.accepting = !state.accepting;
+    var t = document.getElementById("statusToggle");
+    t.classList.toggle("paused", !state.accepting);
+    t.setAttribute("aria-pressed", state.accepting ? "true" : "false");
+    document.getElementById("statusLabel").textContent = state.accepting ? "Accepting orders" : "Paused";
+    document.getElementById("pausedBanner").classList.toggle("hidden", state.accepting);
+    toast(state.accepting ? "You are live — your dishes are back on today's menu." : "Paused. Your menu is hidden until you reopen.");
+  });
+
+  /* ---------- Menu ---------- */
+  function renderMenu(){
+    var grid = document.getElementById("menuGrid");
+    grid.innerHTML = DISHES.map(function(d){
+      var left = Math.max(0, d.planned - soldPortions(d.id));
+      return '<article class="dish'+(d.live?"":" off")+'" data-dish="'+d.id+'">' +
+        '<div class="ph"><img src="'+d.img+'" alt="'+d.alt+'" loading="lazy" /></div>' +
+        '<div class="bd"><div class="rowline"><h3>'+d.name+'</h3><span class="fa-name" lang="fa">'+d.faname+'</span>' +
+        (d.veg ? '<span class="pill veg">Vegetarian</span>' : '') +
+        '<span style="margin-inline-start:auto" class="pill '+(d.live?"ready":"done")+'">'+(d.live?"Live today":"Off today")+'</span></div>' +
+        '<p>'+d.desc+'</p>' +
+        '<div class="rowline"><span class="price">'+money(d.price)+'</span><span style="color:var(--muted)">single · family '+money(d.family)+'</span></div>' +
+        '<div class="rowline"><span style="font-weight:600">Portions today</span>' +
+        '<span class="stepper"><button type="button" data-step="-1" data-id="'+d.id+'" aria-label="One fewer portion of '+d.name+'">−</button><b>'+d.planned+'</b><button type="button" data-step="1" data-id="'+d.id+'" aria-label="One more portion of '+d.name+'">+</button></span>' +
+        '<span style="color:var(--muted)">'+left+' left after orders</span></div>' +
+        '<div class="rowline"><label class="switch"><input type="checkbox" data-live="'+d.id+'" '+(d.live?"checked":"")+' aria-label="Show '+d.name+' on today\'s menu" /><span class="track"></span></label>' +
+        '<span style="font-weight:600">'+(d.live?"On today's public menu":"Hidden from the public menu")+'</span>' +
+        '<span style="margin-inline-start:auto;color:var(--muted);font-size:.88rem">'+d.tags.join(" · ")+'</span></div>' +
+        '</div></article>';
+    }).join("");
+    grid.querySelectorAll("[data-step]").forEach(function(b){
+      b.addEventListener("click", function(){
+        var d = dishById(b.getAttribute("data-id"));
+        var next = d.planned + parseInt(b.getAttribute("data-step"), 10);
+        if (next < soldPortions(d.id)) { toast("You already have orders for "+soldPortions(d.id)+" portions of "+d.name+" — portions can't drop below that."); return; }
+        if (next > 60) return;
+        d.planned = next; renderMenu(); renderStock();
+      });
+    });
+    grid.querySelectorAll("[data-live]").forEach(function(sw){
+      sw.addEventListener("change", function(){
+        var d = dishById(sw.getAttribute("data-live"));
+        d.live = sw.checked; renderMenu();
+        toast(d.live ? d.name+" is back on today's public menu." : d.name+" is hidden. Orders already placed still stand.");
+      });
+    });
+  }
+  document.getElementById("addDishForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var f = new FormData(e.target);
+    var name = (f.get("name") || "").toString().trim();
+    if (!name) return;
+    DISHES.push({
+      id: "dish" + Date.now(), name: name, faname: (f.get("faname")||"").toString().trim(),
+      img: f.get("photo").toString(), alt: name + " — photo chosen by the cook",
+      desc: (f.get("desc")||"").toString().trim(), price: parseFloat(f.get("price")) || 15,
+      family: Math.round((parseFloat(f.get("price")) || 15) * 3.4), planned: parseInt(f.get("portions"),10) || 10,
+      live: false, tags: [f.get("allergen").toString()]
+    });
+    e.target.reset();
+    renderMenu(); renderStock();
+    toast(name+" added. It goes live on your next cooking day, once you switch it on above.");
+    goto("menu");
+  });
+
+  /* ---------- Schedule ---------- */
+  function renderWeek(){
+    var grid = document.getElementById("weekGrid");
+    grid.innerHTML = WEEK.map(function(w, i){
+      return '<div class="day'+(w.on?" on":"")+'"><b>'+w.d+'</b>' +
+        '<span class="cap">'+(w.on ? "Cooking · up to "+w.cap+" portions" : "Day off")+'</span>' +
+        '<button class="btn '+(w.on?"quiet":"ghost")+' small" type="button" data-day="'+i+'">'+(w.on?"Make day off":"Cook this day")+'</button></div>';
+    }).join("");
+    grid.querySelectorAll("[data-day]").forEach(function(b){
+      b.addEventListener("click", function(){
+        var w = WEEK[parseInt(b.getAttribute("data-day"),10)];
+        w.on = !w.on; renderWeek();
+      });
+    });
+  }
+  var capacity = 24;
+  function renderCap(){ document.getElementById("capVal").textContent = capacity; WEEK.forEach(function(w){ if (w.d !== "Sat" && w.d !== "Sun") w.cap = capacity; }); renderWeek(); }
+  document.getElementById("capMinus").addEventListener("click", function(){ if (capacity > 4){ capacity -= 2; renderCap(); } });
+  document.getElementById("capPlus").addEventListener("click", function(){ if (capacity < 48){ capacity += 2; renderCap(); } });
+  document.getElementById("saveSchedule").addEventListener("click", function(){
+    var days = WEEK.filter(function(w){ return w.on; }).map(function(w){ return w.d; }).join(", ");
+    var wins = [];
+    document.querySelectorAll("#windowRow input:checked").forEach(function(c){ wins.push(c.value); });
+    toast("Schedule saved — cooking "+days+"; pickups "+(wins.join(" & ") || "none")+"; capacity "+capacity+" portions.");
+  });
+  document.getElementById("resetSchedule").addEventListener("click", function(){
+    WEEK = [ {d:"Mon",on:false,cap:24},{d:"Tue",on:false,cap:24},{d:"Wed",on:true,cap:24},{d:"Thu",on:false,cap:24},{d:"Fri",on:true,cap:24},{d:"Sat",on:true,cap:30},{d:"Sun",on:true,cap:20} ];
+    capacity = 24; document.getElementById("capVal").textContent = 24; renderWeek();
+    toast("Back to your current week: Wed, Fri, Sat, Sun.");
+  });
+
+  /* ---------- Reviews & profile ---------- */
+  document.querySelectorAll(".replyBtn").forEach(function(b){
+    b.addEventListener("click", function(){
+      var form = b.parentElement.querySelector(".replyForm");
+      form.hidden = !form.hidden;
+      if (!form.hidden) form.querySelector("textarea").focus();
+    });
+  });
+  document.querySelectorAll(".replyForm").forEach(function(form){
+    form.addEventListener("submit", function(e){
+      e.preventDefault();
+      var txt = form.querySelector("textarea").value.trim();
+      if (!txt) return;
+      var p = document.createElement("p");
+      p.className = "msg"; p.style.cssText = "background:var(--green-soft);border-radius:10px;padding:10px 12px;margin-top:10px";
+      p.innerHTML = "<b>Your reply:</b> " + txt.replace(/</g,"&lt;");
+      form.parentElement.appendChild(p);
+      form.hidden = true;
+      toast("Reply posted — it now sits under Parisa's review on the public site.");
+    });
+  });
+  document.getElementById("editProfileBtn").addEventListener("click", function(){
+    var f = document.getElementById("profileForm"); f.hidden = !f.hidden;
+  });
+  document.getElementById("profileForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    toast("Profile saved — neighbours see the new text beside your dishes.");
+    e.target.hidden = true;
+  });
+  document.getElementById("bookRefresh").addEventListener("click", function(){
+    toast("Refresh booked — Sofreh will confirm a January video-call time by email.");
+  });
+
+  /* ---------- Init ---------- */
+  refreshKPIs(); renderToday(); renderOrders(); renderMenu(); renderWeek();
+})();
+</script>
+</body>
+</html>

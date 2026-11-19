@@ -1,0 +1,210 @@
+{
+  "ok": true,
+  "url": "https://artifact-capture.invalid/spaces/v2/hatch-audit-28fa4339-f4f6-49d0-a0e9-fc13ca243292/",
+  "duration_ms": 10130.131192,
+  "output_dir": "/home/hatch/workspace/ts-spaces/sofreh-customer-app/audits/2026-11-19T03-25-22Z-920534439",
+  "nav_status": 200,
+  "viewports": {
+    "desktop": {
+      "width": 1440,
+      "height": 900,
+      "screenshot_path": "/home/hatch/workspace/ts-spaces/sofreh-customer-app/audits/2026-11-19T03-25-22Z-920534439/screenshot.png",
+      "fullpage_screenshot_path": "/home/hatch/workspace/ts-spaces/sofreh-customer-app/audits/2026-11-19T03-25-22Z-920534439/screenshot-full.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "screenshot_path": "/home/hatch/workspace/ts-spaces/sofreh-customer-app/audits/2026-11-19T03-25-22Z-920534439/screenshot-mobile.png"
+    }
+  },
+  "targets": null,
+  "mobile_layout": {
+    "viewport_width": 394,
+    "scroll_width": 394,
+    "overflow_px": 0,
+    "widest_selector": null,
+    "verdict": "pass"
+  },
+  "horizontal_scrollers": [],
+  "unreachable_controls": {
+    "desktop": [],
+    "mobile": [
+      {
+        "name": "Sort dishes",
+        "tag": "select",
+        "reason": "occluded",
+        "occluder": "nav.bottomnav",
+        "bbox": [
+          213,
+          766,
+          161,
+          40
+        ]
+      }
+    ]
+  },
+  "clipped": {
+    "desktop": [
+      {
+        "tag": "h2",
+        "text": "Your basket",
+        "kind": "past_viewport",
+        "overflow_px": 151,
+        "bbox": [
+          1480,
+          22,
+          111,
+          28
+        ]
+      },
+      {
+        "tag": "button",
+        "text": "✕",
+        "kind": "past_viewport",
+        "overflow_px": 434,
+        "bbox": [
+          1834,
+          16,
+          40,
+          40
+        ]
+      }
+    ],
+    "mobile": [
+      {
+        "tag": "h2",
+        "text": "Your basket",
+        "kind": "past_viewport",
+        "overflow_px": 149,
+        "bbox": [
+          432,
+          22,
+          111,
+          28
+        ]
+      },
+      {
+        "tag": "button",
+        "text": "✕",
+        "kind": "past_viewport",
+        "overflow_px": 392,
+        "bbox": [
+          746,
+          16,
+          40,
+          40
+        ]
+      }
+    ]
+  },
+  "images": {
+    "total": 13,
+    "broken": [],
+    "duplicate": [
+      {
+        "src": "https://artifact-capture.invalid/spaces/v2/hatch-audit-28fa4339-f4f6-49d0-a0e9-fc13ca243292/assets/hero.jpg",
+        "count": 2
+      }
+    ],
+    "unstable": [],
+    "failed_requests": [],
+    "external_blocked": {
+      "count": 0,
+      "sample": []
+    },
+    "sample_urls": [
+      "https://artifact-capture.invalid/spaces/v2/hatch-audit-28fa4339-f4f6-49d0-a0e9-fc13ca243292/assets/hero.jpg",
+      "https://artifact-capture.invalid/spaces/v2/hatch-audit-28fa4339-f4f6-49d0-a0e9-fc13ca243292/assets/koobideh.jpg",
+      "https://artifact-capture.invalid/spaces/v2/hatch-audit-28fa4339-f4f6-49d0-a0e9-fc13ca243292/assets/tahdig.jpg",
+      "https://artifact-capture.invalid/spaces/v2/hatch-audit-28fa4339-f4f6-49d0-a0e9-fc13ca243292/assets/ghormeh.jpg",
+      "https://artifact-capture.invalid/spaces/v2/hatch-audit-28fa4339-f4f6-49d0-a0e9-fc13ca243292/assets/joojeh.jpg",
+      "https://artifact-capture.invalid/spaces/v2/hatch-audit-28fa4339-f4f6-49d0-a0e9-fc13ca243292/assets/zereshk.jpg"
+    ],
+    "verdict": "pass"
+  },
+  "text_issues": [],
+  "console_errors": [],
+  "console_warnings": [],
+  "external_fetch_failures": 2,
+  "external_fetch_failure_samples": [
+    "console.error: Failed to load resource: net::ERR_SOCKS_CONNECTION_FAILED (https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Naskh+Arabic:wght@500;600;700&display=swap)",
+    "console.error: Failed to load resource: net::ERR_SOCKS_CONNECTION_FAILED (https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Naskh+Arabic:wght@500;600;700&display=swap)"
+  ],
+  "blocked_requests": [],
+  "external_requests": [
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Naskh+Arabic:wght@500;600;700&display=swap",
+      "method": "GET",
+      "resource_type": "stylesheet"
+    }
+  ],
+  "external_requests_dropped": 0,
+  "external_requests_dropped_data_bearing": 0,
+  "transport_ledger_active": true,
+  "egress_lockdown": true,
+  "transport_connections": [
+    {
+      "host": "artifact-capture.invalid",
+      "port": 443,
+      "connects": 2,
+      "bytes_up": 3964,
+      "bytes_down": 2484
+    },
+    {
+      "host": "fonts.googleapis.com",
+      "port": 443,
+      "connects": 2,
+      "bytes_up": 0,
+      "bytes_down": 0,
+      "policy_denied": true
+    }
+  ],
+  "transport_udp_attempts": 0,
+  "transport_overflow": 0,
+  "unexplained_transport_hosts": [],
+  "broken_assets": [],
+  "blocked_affordances": [],
+  "interactive_nodes": 73,
+  "aria_snapshot": "- banner:\n  - link \"Sofreh home\":\n    - /url: \"#\"\n    - text: Sofreh سفره\n  - button \"Delivery location\": Deliver to Richmond Hill\n  - searchbox \"Search dishes and chefs\"\n  - navigation \"Main\":\n    - button \"Home\"\n    - button \"Orders\"\n    - button \"Favourites\"\n    - button \"Profile\"\n  - button \"Open basket\": \"0\"\n  - button \"Your profile\": M\n- main:\n  - region \"Home\":\n    - img \"A shared Persian sofreh spread with kebabs, saffron rice, stews and fresh herbs on a wooden table\"\n    - heading \"Real Persian home cooking, from kitchens near you\" [level=1]\n    - paragraph: Order from vetted home chefs across the GTA — slow-cooked stews, saffron rice with proper tahdig, and kebabs off the grill, delivered to your door.\n    - link \"Browse today's menu\":\n      - /url: \"#menu\"\n    - button \"Track an order\"\n    - text: 6 home chefs near you ★ 4.8 average rating Delivery in 35–55 min\n    - group \"Categories\":\n      - button \"All همه\" [pressed]\n      - button \"Stews · Khoresh خورش\"\n      - button \"Rice & Tahdig پلو\"\n      - button \"Kebabs کباب\"\n      - button \"Soups · Ash آش\"\n      - button \"Sides & Salads سالاد\"\n      - button \"Desserts دسر\"\n    - heading \"Today's sofreh\" [level=2]\n    - paragraph: Cooked today in small batches — when it's gone, it's gone.\n    - combobox \"Sort dishes\":\n      - option \"Most popular\" [selected]\n      - 'option \"Price: low to high\"'\n      - 'option \"Price: high to low\"'\n      - option \"Fastest delivery\"\n      - option \"Highest rated\"\n    - article:\n      - button \"View Kabab Koobideh\":\n        - img \"Two skewers of koobideh kebab over saffron rice with grilled tomato\"\n        - text: Off the charcoal\n        - button \"Save Kabab Koobideh to favourites\"\n      - heading \"Kabab Koobideh\" [level=3]\n      - text: کباب کوبیده $22.00 by\n      - strong: Farhad N.\n      - text: · Vaughan ★ 4.9 (276) 35 min gluten free Gently spiced\n      - button \"Add to basket\"\n      - button \"Details\"\n    - article:\n      - button \"View Saffron Tahdig\":\n        - img \"Golden saffron tahdig — a round of crispy rice with a wedge cut out showing fluffy rice inside\"\n        - button \"Save Saffron Tahdig to favourites\" [pressed]\n      - heading \"Saffron Tahdig\" [level=3]\n      - text: ته‌دیگ زعفرانی $9.50 by\n      - strong: Reza T.\n      - text: · Thornhill ★ 4.9 (231) 25 min vegetarian\n      - button \"Add to basket\"\n      - button \"Details\"\n    - article:\n      - button \"View Ghormeh Sabzi\":\n        - img \"A steaming bowl of ghormeh sabzi herb stew with beef and kidney beans beside saffron rice\"\n        - text: Most loved\n        - button \"Save Ghormeh Sabzi to favourites\"\n      - heading \"Ghormeh Sabzi\" [level=3]\n      - text: قورمه‌سبزی $18.50 by\n      - strong: Mahin K.\n      - text: · Richmond Hill ★ 4.9 (212) 40 min gluten free Gently spiced\n      - button \"Add to basket\"\n      - button \"Details\"\n    - article:\n      - button \"View Joojeh Kabab\":\n        - img \"Joojeh kabab — golden saffron chicken kebab skewer with rice and grilled tomato\"\n        - button \"Save Joojeh Kabab to favourites\"\n      - heading \"Joojeh Kabab\" [level=3]\n      - text: جوجه‌کباب $20.50 by\n      - strong: Farhad N.\n      - text: · Vaughan ★ 4.8 (203) 35 min gluten free\n      - button \"Add to basket\"\n      - button \"Details\"\n    - article:\n      - button \"View Zereshk Polo ba Morgh\":\n        - img \"Zereshk polo — saffron rice with red barberries and a roasted chicken leg\"\n        - text: Most loved\n        - button \"Save Zereshk Polo ba Morgh to favourites\"\n      - heading \"Zereshk Polo ba Morgh\" [level=3]\n      - text: زرشک‌پلو با مرغ $19.25 by\n      - strong: Shirin A.\n      - text: · Markham ★ 4.9 (198) 40 min gluten free\n      - button \"Add to basket\"\n      - button \"Details\"\n    - article:\n      - button \"View Fesenjan\":\n        - img \"Fesenjan chicken stew in dark pomegranate walnut sauce topped with pomegranate seeds\"\n        - text: Chef's signature\n        - button \"Save Fesenjan to favourites\" [pressed]\n      - heading \"Fesenjan\" [level=3]\n      - text: فسنجان $21.00 by\n      - strong: Parvin S.\n      - text: · North York ★ 4.8 (164) 45 min\n      - button \"Add to basket\"\n      - button \"Details\"\n    - article:\n      - button \"View Ash Reshteh\":\n        - img \"A bowl of ash reshteh noodle and herb soup topped with kashk and crispy fried onions\"\n        - button \"Save Ash Reshteh to favourites\"\n      - heading \"Ash Reshteh\" [level=3]\n      - text: آش رشته $11.00 by\n      - strong: Leila M.\n      - text: · Downtown Toronto ★ 4.8 (156) 30 min vegetarian\n      - button \"Add to basket\"\n      - button \"Details\"\n    - article:\n      - button \"View Gheimeh\":\n        - img \"Gheimeh stew with yellow split peas and beef in a copper bowl, topped with crispy potato sticks\"\n        - button \"Save Gheimeh to favourites\"\n      - heading \"Gheimeh\" [level=3]\n      - text: قیمه $16.75 by\n      - strong: Mahin K.\n      - text: · Richmond Hill ★ 4.8 (143) 35 min gluten free Gently spiced\n      - button \"Add to basket\"\n      - button \"Details\"\n    - article:\n      - button \"View Sholeh Zard\":\n        - img \"Sholeh zard saffron rice pudding decorated with cinnamon patterns and slivered almonds\"\n        - button \"Save Sholeh Zard to favourites\"\n      - heading \"Sholeh Zard\" [level=3]\n      - text: شله‌زرد $8.00 by\n      - strong: Parvin S.\n      - text: · North York ★ 4.9 (134) 15 min vegan gluten free\n      - button \"Add to basket\"\n      - button \"Details\"\n    - article:\n      - button \"View Salad Shirazi\":\n        - img \"Salad Shirazi — finely diced cucumber, tomato and onion salad with fresh mint\"\n        - button \"Save Salad Shirazi to favourites\"\n      - heading \"Salad Shirazi\" [level=3]\n      - text: سالاد شیرازی $7.50 by\n      - strong: Leila M.\n      - text: · Downtown Toronto ★ 4.7 (118) 15 min vegan gluten free\n      - button \"Add to basket\"\n      - button \"Details\"\n    - article:\n      - button \"View Faloodeh Shirazi\":\n        - img \"Faloodeh Shirazi — frozen rice noodles in rosewater syrup with pistachio and rose petals\"\n        - text: Summer favourite\n        - button \"Save Faloodeh Shirazi to favourites\"\n      - heading \"Faloodeh Shirazi\" [level=3]\n      - text: فالوده شیرازی $8.50 by\n      - strong: Shirin A.\n      - text: · Markham ★ 4.8 (97) 15 min vegan gluten free\n      - button \"Add to basket\"\n      - button \"Details\"\n    - article:\n      - button \"View Sofreh Family Platter\":\n        - img \"A full Persian family platter with kebabs, saffron rice, stews, bread and fresh herbs\"\n        - text: Serves 4\n        - button \"Save Sofreh Family Platter to favourites\"\n      - heading \"Sofreh Family Platter\" [level=3]\n      - text: سفرهٔ خانوادگی $54.00 by\n      - strong: Reza T.\n      - text: · Thornhill ★ 5.0 (87) 55 min Gently spiced\n      - button \"Add to basket\"\n      - button \"Details\"\n    - heading \"Meet the chefs\" [level=2]\n    - paragraph: Neighbours cooking the food they grew up with. Tap a chef to see only their dishes.\n    - button \"Mahin K. مهین Slow-cooked stews & khoresh Richmond Hill · 2 dishes today ★ 4.9 (412)\":\n      - heading \"Mahin K. مهین\" [level=3]\n      - paragraph: Slow-cooked stews & khoresh\n      - paragraph: Richmond Hill · 2 dishes today\n      - text: ★ 4.9 (412)\n    - button \"Parvin S. پروین Fesenjan & saffron desserts North York · 2 dishes today ★ 4.8 (298)\":\n      - heading \"Parvin S. پروین\" [level=3]\n      - paragraph: Fesenjan & saffron desserts\n      - paragraph: North York · 2 dishes today\n      - text: ★ 4.8 (298)\n    - button \"Reza T. رضا Tahdig & family platters Thornhill · 2 dishes today ★ 4.9 (356)\":\n      - heading \"Reza T. رضا\" [level=3]\n      - paragraph: Tahdig & family platters\n      - paragraph: Thornhill · 2 dishes today\n      - text: ★ 4.9 (356)\n    - button \"Shirin A. شیرین Rice dishes & zereshk polo Markham · 2 dishes today ★ 4.8 (264)\":\n      - heading \"Shirin A. شیرین\" [level=3]\n      - paragraph: Rice dishes & zereshk polo\n      - paragraph: Markham · 2 dishes today\n      - text: ★ 4.8 (264)\n    - button \"Farhad N. فرهاد Charcoal kebabs Vaughan · 2 dishes today ★ 4.9 (481)\":\n      - heading \"Farhad N. فرهاد\" [level=3]\n      - paragraph: Charcoal kebabs\n      - paragraph: Vaughan · 2 dishes today\n      - text: ★ 4.9 (481)\n    - button \"Leila M. لیلا Ash, soups & fresh salads Downtown Toronto · 2 dishes today ★ 4.7 (189)\":\n      - heading \"Leila M. لیلا\" [level=3]\n      - paragraph: Ash, soups & fresh salads\n      - paragraph: Downtown Toronto · 2 dishes today\n      - text: ★ 4.7 (189)\n    - heading \"How Sofreh works\" [level=2]\n    - text: \"1\"\n    - heading \"Pick a home chef\" [level=3]\n    - paragraph: Every chef is ID-verified and their kitchen is food-safety certified before the first order.\n    - text: \"2\"\n    - heading \"Order by 4 pm\" [level=3]\n    - paragraph: Dishes are cooked the same day in small batches. Choose a delivery window that suits your evening.\n    - text: \"3\"\n    - heading \"Dinner arrives hot\" [level=3]\n    - paragraph: Track your order from the chef's stove to your door, and rate the meal to help great chefs grow.\n    - text: Sofreh — home-cooked Persian food in the Greater Toronto Area. Prices in CAD. Delivery $3.95, free over $45.\n- status",
+  "document_text": {
+    "path": "/home/hatch/workspace/ts-spaces/sofreh-customer-app/audits/2026-11-19T03-25-22Z-920534439/document-text.txt",
+    "chars": 7813,
+    "truncated": false
+  },
+  "audit_session_id": "57f2d362-b718-4bdc-8a49-e8867546b62d",
+  "readiness": {
+    "desktop": {
+      "settled": true,
+      "settle_ms": 923,
+      "in_flight": null,
+      "network_idle": true,
+      "retried": false
+    },
+    "mobile": {
+      "settled": true,
+      "settle_ms": 726,
+      "in_flight": null,
+      "network_idle": true,
+      "retried": false
+    }
+  },
+  "color_scheme": {
+    "declared": "light dark",
+    "media_dependent": null,
+    "dark_frame": false
+  },
+  "mobile_ms": 7760.867010000001,
+  "cold_launch_ms": 780.603859,
+  "desktop_ms": 7986.352159999999,
+  "browser_launches": 1,
+  "audit_path": "shared-concurrent",
+  "diagnostics": {
+    "audit_path": "shared-concurrent",
+    "concurrent_ran": true,
+    "concurrent_desktop_retry": false,
+    "concurrent_mobile_retry": false,
+    "shared_launch_failed": false,
+    "nav_retries": 0,
+    "settle_retries": 0
+  }
+}

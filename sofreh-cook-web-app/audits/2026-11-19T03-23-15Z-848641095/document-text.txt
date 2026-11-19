@@ -1,0 +1,402 @@
+Sofreh
+سفره
+Cook Studio — the web app for cooks, made for the big screen at home.
+[button:
+Today ] [button:
+Orders
+2
+] [button:
+My menu ] [button:
+Schedule ] [button:
+Earnings ] [button:
+Reviews & profile ]
+[hidden] M
+Maryam
+Richmond Hill · ★ 4.9
+Ontario Food Handler Certificate on file · kitchen checklist passed
+# Today in your kitchen
+Wednesday, November 18, 2026 · Richmond Hill
+[input search: Search orders by customer or dish]
+[button:
+] [button:
+Accepting orders
+]
+[hidden] You are paused. Your dishes are hidden from today's menu and no new orders can come in. Orders already accepted still need cooking — tap “Accepting orders” above when you are ready to reopen.
+Orders today
+8
+2 new waiting for your answer
+Portions to cook
+22
+across 4 dishes on today's menu
+Sales today
+$330.00
+you keep $280.50 (85%)
+Your rating
+4.9 ★
+from 132 reviews · top cook in Richmond Hill
+## Needs your attention
+New orders first, then what is on the stove and what is waiting at the door.
+[image: no alt text]
+### #1042 · Ghormeh Sabzi — Single × 2
+Sara M. · Pickup window 17:00 – 18:00 · Pickup Ordered 10:42 am
+[button: Details] [button: Accept & start cooking] [button: Decline]
+$37.00
+● New — answer needed
+[image: no alt text]
+### #1041 · Gheymeh — Family (feeds 4) × 1
+Daniel K. · Pickup window 17:00 – 18:00 · Pickup Ordered 10:15 am
+“Extra crispy potatoes on the side, please — last time they were perfect.”
+[button: Details] [button: Accept & start cooking] [button: Decline]
+$61.00
+● New — answer needed
+[image: no alt text]
+### #1040 · Ghormeh Sabzi — Family (feeds 4) × 1
+Niloofar R. · Pickup window 18:00 – 19:00 · Pickup Ordered 9:58 am
+[button: Details] [button: Mark ready for pickup]
+$64.00
+On the stove
+[image: no alt text]
+### #1039 · Ash Reshteh — Single × 3
+James T. · Pickup window 18:00 – 19:00 · Delivery · Richmond Hill Ordered 9:31 am
+“One portion without kashk — dairy allergy in the family.”
+[button: Details] [button: Mark ready for pickup]
+$40.50
+On the stove
+[image: no alt text]
+### #1038 · Kookoo Sabzi — Single × 2
+Parisa A. · Pickup window 17:00 – 18:00 · Pickup Ordered 9:04 am
+[button: Details] [button: Confirm pickup]
+$28.00
+Ready for pickup
+[button: See all of today's orders]
+## Today's cooking plan
+Wednesday — one of your regular cooking days.
+09:00
+Herbs washed, ghormeh sabzi on the stove
+Simmer until 15:30 — fenugreek in at the end
+11:30
+Gheymeh started, potatoes cut
+Keep the straws dry until frying time
+14:00
+Order cut-off for tonight
+Menu closes; final portion count locked
+16:30
+Seal & label the 17:00 pickups
+Cook name, ingredients and prep time on every label
+17:00
+Pickup window 1 opens
+3 orders · door code in each order
+18:00
+Pickup window 2 opens
+2 orders · 1 local delivery
+## Portions left today
+When a dish runs out it leaves the public menu on its own.
+[image: no alt text]
+Ghormeh Sabzi
+13 left
+[image: no alt text]
+Gheymeh
+8 left
+[image: no alt text]
+Ash Reshteh
+9 left
+[image: no alt text]
+Kookoo Sabzi
+8 left
+[button: Adjust portions in My menu →]
+[hidden] [button: All today] [button: New] [button: Cooking] [button: Ready for pickup] [button: Completed]
+[hidden] [image: no alt text]
+[hidden] ### #1042 · Ghormeh Sabzi — Single × 2
+[hidden] Sara M. · Pickup window 17:00 – 18:00 · Pickup Ordered 10:42 am
+[hidden] [button: Details] [button: Accept & start cooking] [button: Decline]
+[hidden] $37.00
+[hidden] ● New — answer needed
+[hidden] [image: no alt text]
+[hidden] ### #1041 · Gheymeh — Family (feeds 4) × 1
+[hidden] Daniel K. · Pickup window 17:00 – 18:00 · Pickup Ordered 10:15 am
+[hidden] “Extra crispy potatoes on the side, please — last time they were perfect.”
+[hidden] [button: Details] [button: Accept & start cooking] [button: Decline]
+[hidden] $61.00
+[hidden] ● New — answer needed
+[hidden] [image: no alt text]
+[hidden] ### #1040 · Ghormeh Sabzi — Family (feeds 4) × 1
+[hidden] Niloofar R. · Pickup window 18:00 – 19:00 · Pickup Ordered 9:58 am
+[hidden] [button: Details] [button: Mark ready for pickup]
+[hidden] $64.00
+[hidden] On the stove
+[hidden] [image: no alt text]
+[hidden] ### #1039 · Ash Reshteh — Single × 3
+[hidden] James T. · Pickup window 18:00 – 19:00 · Delivery · Richmond Hill Ordered 9:31 am
+[hidden] “One portion without kashk — dairy allergy in the family.”
+[hidden] [button: Details] [button: Mark ready for pickup]
+[hidden] $40.50
+[hidden] On the stove
+[hidden] [image: no alt text]
+[hidden] ### #1038 · Kookoo Sabzi — Single × 2
+[hidden] Parisa A. · Pickup window 17:00 – 18:00 · Pickup Ordered 9:04 am
+[hidden] [button: Details] [button: Confirm pickup]
+[hidden] $28.00
+[hidden] Ready for pickup
+[hidden] [image: no alt text]
+[hidden] ### #1037 · Ghormeh Sabzi — Single × 1
+[hidden] Michael B. · Pickup window 17:00 – 18:00 · Pickup Picked up 12:20 pm
+[hidden] [button: Details]
+[hidden] $18.50
+[hidden] Completed
+[hidden] [image: no alt text]
+[hidden] ### #1036 · Gheymeh — Single × 2
+[hidden] Leila H. · Pickup window 17:00 – 18:00 · Pickup Picked up 12:05 pm
+[hidden] [button: Details]
+[hidden] $35.00
+[hidden] Completed
+[hidden] [image: no alt text]
+[hidden] ### #1035 · Ash Reshteh — Family (feeds 4) × 1
+[hidden] Omar S. · Pickup window 18:00 – 19:00 · Delivery · Richmond Hill Delivered 12:40 pm
+[hidden] [button: Details]
+[hidden] $46.00
+[hidden] Completed
+[hidden] ## Order #1042
+[hidden] Ordered 10:42 am · ● New — answer needed
+[hidden] [image: Ghormeh sabzi — dark green herb stew with beef and kidney beans, served with saffron rice]
+[hidden] Customer
+[hidden] Sara M.
+[hidden] Dish
+[hidden] Ghormeh Sabzi قورمه‌سبزی
+[hidden] Size & qty
+[hidden] Single × 2
+[hidden] Pickup window
+[hidden] 17:00 – 18:00
+[hidden] Fulfilment
+[hidden] Pickup
+[hidden] Order total
+[hidden] $37.00
+[hidden] Sofreh commission (15%)
+[hidden] −$5.55
+[hidden] You receive
+[hidden] $31.45
+[hidden] No note from the customer. The sealed bag gets your standard label: cook name, ingredients, prep time.
+[hidden] [button: Details] [button: Accept & start cooking] [button: Decline]
+[hidden] ## Your dishes
+[hidden] What neighbours see on the public menu today. Turn a dish off and it disappears within a minute; portions count down as orders land.
+[hidden] [image: Ghormeh sabzi — dark green herb stew with beef and kidney beans, served with saffron rice]
+[hidden] ### Ghormeh Sabzi
+[hidden] قورمه‌سبزی
+[hidden] Live today
+[hidden] Slow-simmered herbs, beef, kidney beans and dried lime, with saffron rice.
+[hidden] $18.50
+[hidden] single · family $64.00
+[hidden] Portions today
+[hidden] [button: −]
+[hidden] 20
+[hidden] [button: +]
+[hidden] 13 left after orders
+[hidden] [input checkbox: Show Ghormeh Sabzi on today's menu = on]
+[hidden] On today's public menu
+[hidden] Beef · Saffron rice included
+[hidden] [image: Gheymeh — tomato stew with split peas, beef, dried lime and crispy potato straws]
+[hidden] ### Gheymeh
+[hidden] خورش قیمه
+[hidden] Live today
+[hidden] Tomato and split-pea stew with beef and dried lime, topped with crispy potato straws.
+[hidden] $17.50
+[hidden] single · family $61.00
+[hidden] Portions today
+[hidden] [button: −]
+[hidden] 14
+[hidden] [button: +]
+[hidden] 8 left after orders
+[hidden] [input checkbox: Show Gheymeh on today's menu = on]
+[hidden] On today's public menu
+[hidden] Beef · Saffron rice included
+[hidden] [image: Ash reshteh — thick herb, bean and noodle soup with kashk and crispy onions]
+[hidden] ### Ash Reshteh
+[hidden] آش رشته
+[hidden] Vegetarian
+[hidden] Live today
+[hidden] Thick herb, bean and noodle soup with kashk, mint oil and crispy onions.
+[hidden] $13.50
+[hidden] single · family $46.00
+[hidden] Portions today
+[hidden] [button: −]
+[hidden] 16
+[hidden] [button: +]
+[hidden] 9 left after orders
+[hidden] [input checkbox: Show Ash Reshteh on today's menu = on]
+[hidden] On today's public menu
+[hidden] Vegetarian · Freezes well
+[hidden] [image: Kookoo sabzi — green herb frittata with barberries and walnuts, sliced]
+[hidden] ### Kookoo Sabzi
+[hidden] کوکو سبزی
+[hidden] Vegetarian
+[hidden] Live today
+[hidden] Dense herb frittata with barberries and walnuts, with sangak and pickled garlic.
+[hidden] $14.00
+[hidden] single · family $48.00
+[hidden] Portions today
+[hidden] [button: −]
+[hidden] 10
+[hidden] [button: +]
+[hidden] 8 left after orders
+[hidden] [input checkbox: Show Kookoo Sabzi on today's menu = on]
+[hidden] On today's public menu
+[hidden] Vegetarian · Contains walnuts
+[hidden] ## Add a dish
+[hidden] New dishes go live on your next cooking day, after the ingredient and allergen list is complete.
+[hidden] Dish name (English)
+[hidden] [input text: e.g. Zereshk Polo ba Morgh]
+[hidden] Dish name (Persian)
+[hidden] [input text: e.g. زرشک‌پلو با مرغ]
+[hidden] Price per single portion (CAD)
+[hidden] [input number: 19.00]
+[hidden] Portions per cooking day
+[hidden] [input number: 12]
+[hidden] Short description — ingredients and what makes yours yours
+[hidden] [textarea: Basmati rice, tart barberries, chicken braised in tomato and saffron…]
+[hidden] Photo
+[hidden] [select: photo = Zereshk polo photo* | Tahchin photo | Fesenjan photo | Baghali polo photo | Kabab koobideh photo]
+[hidden] Allergens
+[hidden] [select: allergen = None to declare* | Contains nuts | Contains dairy | Contains gluten | Contains egg]
+[hidden] [button: Add dish to my menu]
+[hidden] ## Your cooking week
+[hidden] You choose your days — most Sofreh cooks cook three or four days a week. Changes apply from next week; this week's orders are never touched.
+[hidden] Mon
+[hidden] Day off
+[hidden] [button: Cook this day]
+[hidden] Tue
+[hidden] Day off
+[hidden] [button: Cook this day]
+[hidden] Wed
+[hidden] Cooking · up to 24 portions
+[hidden] [button: Make day off]
+[hidden] Thu
+[hidden] Day off
+[hidden] [button: Cook this day]
+[hidden] Fri
+[hidden] Cooking · up to 24 portions
+[hidden] [button: Make day off]
+[hidden] Sat
+[hidden] Cooking · up to 30 portions
+[hidden] [button: Make day off]
+[hidden] Sun
+[hidden] Cooking · up to 20 portions
+[hidden] [button: Make day off]
+[hidden] ## Pickup windows
+[hidden] Neighbours pick a window when they order. Dinner windows work best — lunch only if you are home.
+[hidden] [input checkbox: = 12:00 – 13:00]
+[hidden] 12:00 – 13:00 · lunch
+[hidden] [input checkbox: = 17:00 – 18:00]
+[hidden] 17:00 – 18:00
+[hidden] [input checkbox: = 18:00 – 19:00]
+[hidden] 18:00 – 19:00
+[hidden] [input checkbox: = 19:00 – 20:00]
+[hidden] 19:00 – 20:00
+[hidden] ### Local delivery
+[hidden] [input checkbox: = on]
+[hidden] Offer delivery in Richmond Hill (+$4.95 to the customer, paid to the driver)
+[hidden] ## Daily capacity
+[hidden] The most portions you will cook in one day, across all dishes. Sofreh stops taking orders when you hit it.
+[hidden] [button: −]
+[hidden] 24
+[hidden] [button: +]
+[hidden] portions per cooking day
+[hidden] ### Time off
+[hidden] Pause a stretch — your regulars see “back on” with the date you pick.
+[hidden] Away until
+[hidden] [input date: = 2026-11-18]
+[hidden] [button: Save schedule] [button: Reset to current week]
+[hidden] This week (Mon–Sun)
+[hidden] $612.50
+[hidden] gross dish sales
+[hidden] You keep (85%)
+[hidden] $520.63
+[hidden] after the 15% Sofreh commission
+[hidden] Next payout
+[hidden] Fri Nov 20
+[hidden] $520.63 to your bank account
+[hidden] November so far
+[hidden] $1,486.25
+[hidden] your share · 74 orders this month
+[hidden] ## Sales by cooking day
+[hidden] Gross dish sales, last seven days. You cook Wed, Fri, Sat and Sun — the quiet bars are days off, not bad days.
+[hidden] Thu 12
+[hidden] Fri 13
+[hidden] Sat 14
+[hidden] Sun 15
+[hidden] Mon 16
+[hidden] Tue 17
+[hidden] Wed 18 · today
+[hidden] off
+[hidden] $148
+[hidden] $186.50
+[hidden] $121
+[hidden] off
+[hidden] off
+[hidden] $330
+[hidden] Today's bar grows as orders are completed — watch it from the Orders tab.
+[hidden] ## How a dollar splits
+[hidden] The same split on every dish, shown on the public site too.
+[hidden] Dish price
+[hidden] 100% — set by you
+[hidden] Paid to you, weekly
+[hidden] 85%
+[hidden] Sofreh commission
+[hidden] 15%
+[hidden] Customer service fee
+[hidden] 10%, capped at $4 — not taken from you
+[hidden] Delivery fee
+[hidden] $4.95 — goes to the driver
+[hidden] ## Recent payouts
+[hidden] Fridays, to the bank account on file.
+[hidden] Paid | Period | Your share
+[hidden] Fri Nov 13 | Nov 9 – 15 | $438.18
+[hidden] Fri Nov 6 | Nov 2 – 8 | $391.55
+[hidden] Fri Oct 30 | Oct 26 – Nov 1 | $402.90
+[hidden] 4.9
+[hidden] ★★★★★
+[hidden] 132 reviews · 96% five-star Neighbours mention: “tastes like home”, “generous portions”, “always on time”.
+[hidden] ## Kitchen & safety file
+[hidden] What Sofreh verified before your first order — keep it current.
+[hidden] ✓
+[hidden] Ontario Food Handler Certificate Valid until March 2027 · certificate on file
+[hidden] ✓
+[hidden] Kitchen onboarding checklist Passed September 2026 — fridge temperature, separation, labelling
+[hidden] ✓
+[hidden] Ingredients & allergens listed All 4 live dishes carry a full ingredient list
+[hidden] !
+[hidden] Annual kitchen refresh Due January 2027 — a 20-minute video call, booked from here
+[hidden] [button: Book the January refresh]
+[hidden] ## Your public profile
+[hidden] Shown beside every dish you sell.
+[hidden] M
+[hidden] Maryam · Richmond Hill Cooking on Sofreh since September 2026
+[hidden] “Cooking ghormeh sabzi the way my mother taught me in Tehran — fenugreek measured by eye, never by spoon.”
+[hidden] [button: Edit profile text]
+[hidden] Profile text
+[hidden] [textarea: = Cooking ghormeh sabzi the way my mother taught me in Tehran — fenugreek measured by eye, never by spoon.]
+[hidden] [button: Save profile]
+[hidden] ## Latest reviews
+[hidden] Reviews appear under your dishes on the public site, with your reply if you add one.
+[hidden] N
+[hidden] Niloofar R.
+[hidden] ★★★★★
+[hidden] Sun Nov 15 · Ghormeh Sabzi
+[hidden] I have not tasted ghormeh sabzi like this since my grandmother's house in Shiraz. The dried lime is right, the herbs are dark and bitter in the right way. Ordered the family size for Friday again.
+[hidden] J
+[hidden] James T.
+[hidden] ★★★★★
+[hidden] Sat Nov 14 · Ash Reshteh
+[hidden] First time trying ash reshteh — Maryam wrote a little note in the bag explaining the kashk and mint oil. Thick, generous, and it reheated perfectly the next day.
+[hidden] P
+[hidden] Parisa A.
+[hidden] ★★★★☆
+[hidden] Fri Nov 13 · Kookoo Sabzi
+[hidden] Beautiful kookoo, deep green and full of barberries. Only wish there were a lunch pickup window on Fridays — dinner worked out fine in the end.
+[hidden] [button: Reply to Parisa]
+[hidden] Your reply
+[hidden] [textarea: Thank you, Parisa…]
+[hidden] [button: Post reply]
+[hidden] D
+[hidden] Daniel K.
+[hidden] ★★★★★
+[hidden] Wed Nov 11 · Gheymeh
+[hidden] The crispy potato straws on the gheymeh are a small thing that changes everything. Pickup was ready two minutes early, still steaming.

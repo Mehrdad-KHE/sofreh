@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>مقایسهٔ میدانی سفره — رقبای بازار غذای خانگی</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    color-scheme: light dark;
+    --bg:#faf5ea; --surface:#fffdf7; --surface2:#f3ecdb;
+    --ink:#1d2b21; --muted:#5a6a5e; --line:#e0d5bd;
+    --green:#17452e; --green-deep:#0f3120; --green-soft:#dcead9;
+    --wine:#7c2233; --wine-soft:#f3dde0;
+    --saffron:#b97a0e; --saffron-soft:#f7ead0;
+    --gray-soft:#e8e6df; --ok:#1d7a43; --dead:#6d6a61;
+    --shadow:0 10px 30px rgba(23,45,32,.10);
+    --radius:14px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0f1712; --surface:#182219; --surface2:#1f2d20;
+      --ink:#ede7d7; --muted:#a9b8a6; --line:#2e4030;
+      --green:#8fceA6; --green-deep:#0a2416; --green-soft:#22392a;
+      --wine:#e59aa8; --wine-soft:#3d2329;
+      --saffron:#e5ac45; --saffron-soft:#3a2f18;
+      --gray-soft:#2a2f2a; --ok:#7fd6a4; --dead:#9a968a;
+      --shadow:0 10px 30px rgba(0,0,0,.45);
+    }
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} *{transition:none!important} }
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Vazirmatn",Tahoma,system-ui,sans-serif;line-height:1.9;font-size:16.5px}
+  .ltr{direction:ltr;unicode-bidi:isolate;font-family:ui-rounded,system-ui,sans-serif;letter-spacing:.01em}
+  a{color:var(--wine);text-underline-offset:3px}
+  button{min-height:44px}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 18px}
+
+  /* ---------- hero ---------- */
+  .hero{background:var(--green-deep);color:#f2ecdb;margin:0 0 8px}
+  @media (prefers-color-scheme: dark){ .hero{background:#081a10} }
+  .hero-in{max-width:1120px;margin:0 auto;padding:34px 18px 30px;
+    display:grid;grid-template-columns:1.15fr .85fr;gap:26px;align-items:center}
+  .hero h1{font-size:clamp(30px,5.2vw,46px);font-weight:900;line-height:1.35;margin:0 0 10px}
+  .hero h1 .accent{color:#e9b558}
+  .hero p.lede{margin:0 0 16px;font-size:clamp(16px,2.4vw,19px);color:#d9dfc9;max-width:34em}
+  .hero-img{width:100%;height:auto;border-radius:10px;display:block;box-shadow:0 14px 34px rgba(0,0,0,.35)}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{display:inline-flex;align-items:center;min-height:36px;padding:4px 13px;border-radius:999px;
+    border:1px solid rgba(242,236,219,.35);color:#f2ecdb;font-size:14px;font-weight:500}
+  .chip b{color:#e9b558;font-weight:800}
+
+  /* ---------- sections ---------- */
+  section{padding:30px 0 6px}
+  h2.sec{font-size:clamp(23px,3.6vw,30px);font-weight:900;margin:0 0 6px;line-height:1.5}
+  h2.sec .no{color:var(--wine);font-weight:900}
+  p.sec-sub{color:var(--muted);margin:0 0 18px;max-width:62em}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+
+  /* verdict */
+  .verdicts{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+  .verdict{padding:18px 18px 14px;border-top:5px solid var(--green)}
+  .verdict:nth-child(2){border-top-color:var(--wine)}
+  .verdict:nth-child(3){border-top-color:var(--saffron)}
+  .verdict:nth-child(4){border-top-color:var(--green)}
+  .verdict h3{margin:0 0 6px;font-size:18px;font-weight:800;line-height:1.6}
+  .verdict p{margin:0;color:var(--muted);font-size:15.5px}
+
+  /* chart */
+  .chart-card{padding:20px 18px 10px}
+  .chart-card h3{margin:0 0 2px;font-size:19px;font-weight:800}
+  .chart-card .note{color:var(--muted);font-size:14.5px;margin:0 0 8px}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;font-size:14px;color:var(--muted);margin:6px 0 2px}
+  .legend .sw{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-inline-end:6px}
+  svg text{font-family:"Vazirmatn",Tahoma,sans-serif}
+  .axis-note{font-size:13.5px;color:var(--muted);margin:2px 0 10px}
+
+  /* filters */
+  .filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+  .filters button{border:1px solid var(--line);background:var(--surface);color:var(--ink);
+    border-radius:999px;padding:6px 18px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer}
+  .filters button[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:#f5efdd}
+  @media (prefers-color-scheme: dark){ .filters button[aria-pressed="true"]{color:#0c1f13} }
+  .filters button:focus-visible,.more-btn:focus-visible,a:focus-visible{outline:3px solid var(--saffron);outline-offset:2px}
+
+  /* player grid */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;align-items:start}
+  .player{padding:18px;display:flex;flex-direction:column;gap:10px}
+  .player.sofreh{border:2px solid var(--wine)}
+  .p-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+  .p-name{font-size:21px;font-weight:900;line-height:1.4;margin:0}
+  .p-name .ltr{font-weight:800}
+  .p-site{font-size:14px;margin:0}
+  .badges{display:flex;flex-wrap:wrap;gap:6px}
+  .badge{font-size:12.5px;font-weight:700;padding:2px 10px;border-radius:999px;min-height:26px;display:inline-flex;align-items:center}
+  .b-active{background:var(--green-soft);color:var(--green)}
+  .b-tool{background:var(--saffron-soft);color:var(--saffron)}
+  .b-dead{background:var(--gray-soft);color:var(--dead)}
+  .b-exp{background:var(--wine-soft);color:var(--wine)}
+  .b-self{background:var(--wine);color:#fff}
+  .b-verify{border:1px solid var(--line);color:var(--muted);background:transparent}
+  .b-tier{background:var(--surface2);color:var(--ink);border:1px solid var(--line)}
+  .p-meta{font-size:14.5px;color:var(--muted);margin:0}
+  .p-rows{display:grid;gap:7px;font-size:15px}
+  .p-rows .row{display:grid;grid-template-columns:86px 1fr;gap:8px}
+  .p-rows .k{color:var(--muted);font-weight:700;font-size:13.5px;padding-top:2px}
+  .p-judge{margin:0;font-size:15.5px;border-inline-start:4px solid var(--saffron);padding-inline-start:12px}
+  .more-btn{align-self:flex-start;background:none;border:none;color:var(--wine);font-family:inherit;
+    font-size:15px;font-weight:800;cursor:pointer;padding:6px 4px}
+  .more{display:none;border-top:1px dashed var(--line);padding-top:10px;font-size:15px}
+  .more.open{display:block}
+  .more h4{margin:10px 0 4px;font-size:15px;font-weight:800;color:var(--green)}
+  .more ul{margin:0;padding-inline-start:20px}
+  .more li{margin:2px 0}
+  .hidden-card{display:none}
+
+  /* patterns */
+  .patterns{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;counter-reset:pat}
+  .pattern{padding:16px 18px}
+  .pattern .n{font-size:30px;font-weight:900;color:var(--saffron);line-height:1.2}
+  .pattern h3{margin:4px 0 6px;font-size:17.5px;font-weight:800}
+  .pattern p{margin:0;color:var(--muted);font-size:15px}
+
+  /* gaps */
+  .gaps{display:grid;gap:10px}
+  .gap{display:grid;grid-template-columns:52px 1fr;gap:14px;padding:14px 18px;align-items:start}
+  .gap .n{font-size:26px;font-weight:900;color:var(--wine);line-height:1.3}
+  .gap h3{margin:0 0 2px;font-size:17.5px;font-weight:800}
+  .gap p{margin:0;color:var(--muted);font-size:15.5px}
+
+  /* differentiate */
+  .diffs{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+  .diff{padding:18px}
+  .diff h3{margin:0 0 6px;font-size:17.5px;font-weight:800;color:var(--green)}
+  .diff p{margin:0;color:var(--muted);font-size:15.5px}
+
+  /* borrow columns */
+  .borrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;align-items:start}
+  .bcol{padding:18px}
+  .bcol h3{margin:0 0 10px;font-size:18px;font-weight:900}
+  .bcol.now h3{color:var(--ok)} .bcol.later h3{color:var(--saffron)} .bcol.never h3{color:var(--wine)}
+  .bcol ul{margin:0;padding-inline-start:20px;font-size:15.5px}
+  .bcol li{margin:6px 0}
+  .bcol .from{color:var(--muted);font-size:13.5px}
+
+  /* standards */
+  .std-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+  .std{padding:16px 18px}
+  .std h3{margin:0 0 4px;font-size:17px;font-weight:900}
+  .std .surf{font-size:13.5px;font-weight:700;color:var(--wine);margin:0 0 6px}
+  .std p{margin:0;color:var(--muted);font-size:14.5px}
+  .baseline{margin-top:14px;padding:18px}
+  .baseline h3{margin:0 0 8px;font-size:18px;font-weight:900}
+  .baseline ul{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:6px 22px;font-size:15.5px}
+  .baseline li{padding-inline-start:24px;position:relative}
+  .baseline li::before{content:"✓";position:absolute;inset-inline-start:0;color:var(--ok);font-weight:900}
+
+  /* caveats + sources */
+  .caveats{padding:18px}
+  .caveats ul{margin:0;padding-inline-start:20px;font-size:15.5px}
+  .caveats li{margin:6px 0}
+  .sources{columns:2;column-gap:34px;font-size:15px}
+  @media (max-width:640px){ .sources{columns:1} .hero-in{grid-template-columns:1fr} }
+  .sources li{margin:7px 0;break-inside:avoid}
+  .sources ul{padding-inline-start:20px;margin:0}
+  footer{padding:34px 0 44px;color:var(--muted);font-size:14.5px}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-in">
+    <div>
+      <h1>سفره، روبه‌روی <span class="accent">همهٔ میدان</span></h1>
+      <p class="lede">هر سایت و سرویسی که در کانادا، آمریکا و چند کشور دیگر مدل «غذای خانگی از آشپز محلی» را اجرا می‌کند — یا اجرا می‌کرد — یکی‌یکی باز شد و خوانده شد: بیشترشان زنده، و آن‌هایی که بسته یا تعطیل بودند از ایندکس تازهٔ همان سایت و منابع معتبر. نرخ و امتیازشان، مدل پولشان، زیبایی و حرفه‌ای‌بودنشان و استاندارد اعتمادشان. این صفحه جمع‌بندی همان بررسی است، با حکم نهایی برای قدم بعدی سفره — و روی هر کارت نوشته شده هر سرویس چطور بررسی شده است.</p>
+      <div class="chips">
+        <span class="chip">بررسی سایت‌ها: <b>&nbsp;۱۸–۱۹ نوامبر ۲۰۲۶</b></span>
+        <span class="chip"><b>۱۵</b>&nbsp;سرویس در جدول مقایسه</span>
+        <span class="chip"><b>۵</b>&nbsp;سرویس تعطیل‌شده یا از بازار مصرف‌کننده رفته</span>
+      </div>
+    </div>
+    <img class="hero-img" src="assets/sofreh-spread.webp" alt="تصویرسازی سفرهٔ سنتی ایرانی از بالا: پارچهٔ سبز با نقش بته‌جقه، نان، برنج زعفرانی، قوری و استکان چای، انار و گردو" />
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ===== verdict ===== -->
+  <section aria-labelledby="verdict-h">
+    <h2 class="sec" id="verdict-h">حکم کلی، اول از همه</h2>
+    <p class="sec-sub">چهار نتیجه‌ای که از خواندن کل میدان بیرون آمد — قبل از جزئیات هر سایت.</p>
+    <div class="verdicts">
+      <article class="card verdict">
+        <h3>بازارِ خالصِ آشپزبه‌همسایه، یک گورستان است</h3>
+        <p>WoodSpoon با 16 میلیون دلار سرمایه تعطیل شد، دامنهٔ DishDivvy پارک شده، Homemade قدیمی مدت‌هاست رفته، سایت CookOut تورنتو در نوامبر ۲۰۲۶ به صفحهٔ هشدار فیشینگ می‌رسد و خود Cookin دیگر بازار مصرف‌کننده نیست: به ابزار فروش برای آشپزها تبدیل و در CookUnity حل شد. بازمانده‌ها همه یا به اشتراک و آشپزخانهٔ مرکزی رفتند یا کنترل کیفیت و تحویل را خودشان دست گرفتند.</p>
+      </article>
+      <article class="card verdict">
+        <h3>مشکل سفره سلیقه نیست؛ «مدرک» است</h3>
+        <p>سایت فعلی سفره از نظر طراحی از چند رقیبِ واقعاً در حال معامله تمیزتر است. اما هیچ غذای واقعی با قیمت، هیچ آشپزِ نام‌دار، هیچ جمله‌ای دربارهٔ ایمنی غذا، هیچ کارمزد و هیچ عددی ندارد و پانوشتش می‌گوید پرداخت‌ها شبیه‌سازی شده‌اند. رقبای معتبر با غذای قابل خرید و اعتمادِ عدددار شروع می‌کنند؛ سفره با حال‌وهوا.</p>
+      </article>
+      <article class="card verdict">
+        <h3>هستهٔ قابل قرض گرفتن، کوچک و ارزان است</h3>
+        <p>جست‌وجوی مکانی در هیرو، غذای نام‌دار به نام آشپزش با قیمت واقعی، نشانِ قابل‌دیدنِ بررسی و ایمنی غذا، ضمانت رضایت، شفافیت کارمزد برای آشپز و نظر مشتری‌ای که به آشپز مشخصی وصل است. هیچ‌کدام مقیاس نمی‌خواهد. آشپز سلبریتی، «۹۰ میلیون وعده» و قیف تخفیف ۵۰درصدی را نباید کپی کرد.</p>
+      </article>
+      <article class="card verdict">
+        <h3>برگ برندهٔ سفره را بزرگ‌ها نمی‌توانند جعل کنند</h3>
+        <p>تراکم محله‌ای در GTA، غذای ایرانی و دیاسپورا به نام خودِ صاحب دستور غذا، و تجربهٔ واقعاً دوزبانهٔ فارسی/انگلیسی در سطح محصول. Shef و CookOut به «غذای مهاجرها» اشاره می‌کنند؛ هیچ‌کدام دوزبانه و محله‌محور نیستند.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===== ratings chart ===== -->
+  <section aria-labelledby="chart-h">
+    <h2 class="sec" id="chart-h"><span class="no">۱ ـ</span> امتیازها، همان‌طور که پیدا شدند</h2>
+    <p class="sec-sub">امتیازها از پلتفرم‌های متفاوت‌اند و کنار هم فقط تصویر کلی می‌دهند؛ برای همین پلتفرم و تعداد رأی، کنار هر میله نوشته شده. نکتهٔ مهم گزارش: امتیاز ستاره‌ای بدون تعداد رأی، دکور است — همهٔ بازیگران جدی تعداد را هم نشان می‌دهند.</p>
+    <div class="card chart-card">
+      <h3>امتیاز از ۵</h3>
+      <div class="legend" id="chart-legend"></div>
+      <div id="chart" dir="ltr"></div>
+      <p class="axis-note">منبع: AppBrain برای امتیاز اپ‌های Shef، Trustpilot برای بقیه — از گزارش تحقیق، بررسی ۱۸–۱۹ نوامبر ۲۰۲۶. FoodSt در سایتش «۵ ستاره» می‌گوید اما تعدادی نشان نمی‌دهد، و برای CookOut هیچ امتیاز عمومیِ قابل اتکایی پیدا نشد؛ برای همین در نمودار نیستند.</p>
+    </div>
+  </section>
+
+  <!-- ===== field ===== -->
+  <section aria-labelledby="field-h">
+    <h2 class="sec" id="field-h"><span class="no">۲ ـ</span> میدان، یکی‌یکی</h2>
+    <p class="sec-sub">هر کارت: این سرویس چیست و کجاست، چقدر سرمایه و چه مدلی دارد، پول چطور می‌چرخد، امتیازش چیست و حکم طراحی و اعتمادش. روی «جزئیات و درس برای سفره» بزنید تا داستان کامل، چیزهای قابل قرض و چیزهای وابسته به مقیاس باز شود. برچسب «بررسی زنده» یعنی سایت در مرورگر تحقیق باز و خوانده شده؛ «از ایندکس» یعنی از کشِ تازهٔ همان سایت و منابع معتبر خوانده شده؛ «بارگذاری ناموفق» یعنی خود سایت بالا نیامد — که خودش یک یافته است.</p>
+    <div class="filters" role="group" aria-label="پالایش بر اساس وضعیت">
+      <button type="button" data-filter="all" aria-pressed="true">همه (۱۵)</button>
+      <button type="button" data-filter="active" aria-pressed="false">فعال‌ها</button>
+      <button type="button" data-filter="tool" aria-pressed="false">ابزار فروشنده</button>
+      <button type="button" data-filter="exp" aria-pressed="false">تجربه و مرجع طراحی</button>
+      <button type="button" data-filter="dead" aria-pressed="false">تعطیل یا از دست رفته</button>
+    </div>
+    <div class="grid" id="player-grid"></div>
+    <p class="axis-note" style="margin-top:12px">سه نام دیگر هم در حاشیهٔ میدان دیده شدند و فقط از ایندکس بررسی شدند: <span class="ltr">Chefry</span> (chefry.io) و <span class="ltr">Homio</span> (eathomio.com، کالیفرنیا) — هیبریدهای کوچک بازار/فروشگاه برای فروشنده‌های خانگی؛ Homio تأیید آشپز را خودکار کرده، یعنی قطب مخالف تست مزهٔ Shef — و <span class="ltr">Cook My Grub</span> در بریتانیا (۲۰۱۹). میدان هنوز روی سؤال «چقدر سخت بگیریم؟» به توافق نرسیده؛ این برای سفره یک جای خالیِ آماده است.</p>
+  </section>
+
+  <!-- ===== patterns ===== -->
+  <section aria-labelledby="pat-h">
+    <h2 class="sec" id="pat-h"><span class="no">۳ ـ</span> هفت الگویی که همهٔ بازیگران معتبر دارند</h2>
+    <p class="sec-sub">این‌ها سلیقه نیستند؛ در سایت هر بازیگری که واقعاً در حال معامله است، هر هفت‌تا دیده می‌شود.</p>
+    <div class="patterns">
+      <article class="card pattern"><div class="n">۱</div><h3>مکان، قبل از برند</h3><p>فیلد کد پستی/محله، کنش اصلی هیرو است (CookUnity، چک‌کنندهٔ بالای هیروی FoodSt، نوار جست‌وجوی All About The Cooks). هیچ‌کس از شما نمی‌خواهد قبل از پرسیدن «کجایی؟» مانیفست بخوانید.</p></article>
+      <article class="card pattern"><div class="n">۲</div><h3>غذای قابل خرید، بالای صفحه</h3><p>غذای واقعی با قیمت، در همان اسکرول اول (پرفروش‌های FoodSt، ریل‌های Goldbelly، منوی CookUnity). عکسِ حال‌وهوا پشتیبان غذاست، هرگز جایگزینش نیست.</p></article>
+      <article class="card pattern"><div class="n">۳</div><h3>آشپز، خودِ محصول است</h3><p>غذا نام آشپزش را دارد (FoodSt)، پروفایل مدرک و غذای امضادار دارد (CookUnity)، داستان‌ها درآمد و نتیجه دارند (Cookin و Hotplate). «آشپزخانه»های بی‌نام تبدیل به مشتری نمی‌شوند.</p></article>
+      <article class="card pattern"><div class="n">۴</div><h3>امتیاز، با مخرجش</h3><p>«۴٫۳۵ از ۱۹۷٬۶۵۵ امتیاز»، «۴٫۸۲ از ۴٬۵۸۲ نظر». ستاره بدون تعداد، دکور است. نسخهٔ صادقانهٔ شروع همین الگو برای سفره آماده است: آشپزخانهٔ تازه، بدون امتیاز ساختگی شروع می‌کند.</p></article>
+      <article class="card pattern"><div class="n">۵</div><h3>سیستم ایمنیِ نام‌دار و قابل بررسی</h3><p>گواهی + بازرسی/ثبت + اعلام آلرژن‌ها، با کلمات ساده روی صفحهٔ اصلی (All About The Cooks، Shef، FoodSt). کلمهٔ تنها «بررسی‌شده» ضعیف‌ترین شکل است؛ یک فرایند مشخص، شکل قوی آن است.</p></article>
+      <article class="card pattern"><div class="n">۶</div><h3>ضمانتی که برای پلتفرم هزینه دارد</h3><p>بازپرداخت ۱۰۰درصدی Shef («دوستش نداشتی، مهمان ما»)، «پرداخت تضمینی» Cookin، بیمهٔ خودکار All About The Cooks. اعتماد را کسی علامت می‌دهد که ریسک را گردن می‌گیرد.</p></article>
+      <article class="card pattern"><div class="n">۷</div><h3>اقتصاد شفاف برای آشپز</h3><p>Cookin و Hotplate کارمزد دقیق را روی صفحهٔ اصلی چاپ می‌کنند (۲٫۹٪ + ۳۰ سنت / ۵٪ کارمزد مشتری / ۶٫۹۹ دلار تحویل). جذب آشپز هم یک سطح اعتماد است؛ آشپز با صراحت پول قضاوت می‌کند.</p></article>
+    </div>
+  </section>
+
+  <!-- ===== gaps ===== -->
+  <section aria-labelledby="gap-h">
+    <h2 class="sec" id="gap-h"><span class="no">۴ ـ</span> سایت فعلی سفره، از چشم یک بازدیدکننده</h2>
+    <p class="sec-sub">سایت فعلی (<a class="ltr" href="https://sofreh-v2.vercel.app/en" target="_blank" rel="noopener">sofreh-v2.vercel.app</a>) زنده بررسی شد: هیروی کرم با سبز تیره و زرشکی، سه قدم ایده، سه کارت غذای نمونه بدون قیمت و آشپز و امتیاز با این یادداشت که عکس‌ها نمونه‌اند، بخش آشپزها، پنج پرسش متداول و بخش اپ با برچسب صادقانهٔ «کانسپت آینده؛ دانلود موجود نیست». دو نکتهٔ خوبش را باید نگه داشت: امتیاز فقط از سفارش کامل‌شده می‌آید و آشپزخانهٔ تازه امتیاز ساختگی ندارد؛ و نشانی دقیق فقط بعد از پذیرش سفارش دیده می‌شود. اما در برابر میدان، این هفت خلأ به ترتیب شدت آسیب:</p>
+    <div class="gaps">
+      <article class="card gap"><div class="n">۱</div><div><h3>چیزی برای خریدن نیست</h3><p>هیچ غذایی با قیمت روی صفحهٔ اصلی نیست و صفحهٔ اکسپلور هنگام بررسی فقط خط «در حال بارگذاری» نشان می‌داد، بدون هیچ لیستی. هر رقیب در یک اسکرول جواب می‌دهد: امشب چی بخورم و چقدر می‌شود؟</p></div></article>
+      <article class="card gap"><div class="n">۲</div><div><h3>آدمی در کار نیست</h3><p>نه آشپز نام‌دار، نه چهره، نه محله، نه داستان — در حالی که قانع‌کننده‌ترین دارایی این دسته دقیقاً همین است.</p></div></article>
+      <article class="card gap"><div class="n">۳</div><div><h3>جواب ایمنی غذا داده نشده</h3><p>اولین سؤال هر شکاک دربارهٔ غذای خانگی — «قانونی و سالم و بازرسی‌شده است؟» — اصلاً پاسخ ندارد. All About The Cooks و Shef روی صفحهٔ اصلی جوابش را می‌دهند.</p></div></article>
+      <article class="card gap"><div class="n">۴</div><div><h3>هیچ عددی نیست</h3><p>نه تعداد آشپز، نه تعداد وعده، نه تعداد نظر، نه مطبوعات — حتی All About The Cooks کوچک هم جایزه و نظر مشتری نشان می‌دهد.</p></div></article>
+      <article class="card gap"><div class="n">۵</div><div><h3>داستان پول برای آشپز نیست</h3><p>نه کمیسیون، نه کارمزد، نه شرط پرداخت. Cookin و Hotplate مال خودشان را همان دور و بر هیرو چاپ می‌کنند.</p></div></article>
+      <article class="card gap"><div class="n">۶</div><div><h3>نشانه‌های نمونهٔ آزمایشی</h3><p>«پرداخت‌ها شبیه‌سازی شده‌اند»، «کانسپت آیندهٔ اپ»، «عکس‌های نمونه» — صادقانه‌اند، اما کل سایت را دمو قاب می‌کنند. صداقت رقبا دربارهٔ محدودیت است (حداقل سفارش، بازهٔ تحویل)، نه دربارهٔ موجودیت.</p></div></article>
+      <article class="card gap"><div class="n">۷</div><div><h3>ضمانتی نیست</h3><p>هیچ وعدهٔ بازپرداخت یا رضایتی از هیچ نوعی داده نشده است.</p></div></article>
+    </div>
+  </section>
+
+  <!-- ===== differentiate ===== -->
+  <section aria-labelledby="diff-h">
+    <h2 class="sec" id="diff-h"><span class="no">۵ ـ</span> سفره کجا می‌تواند آشکارا متفاوت باشد</h2>
+    <p class="sec-sub">الگوها را قرض بگیر، هویت را نگه دار. این شش‌تا را هیچ‌کدام از پانزده‌تای بالا نمی‌توانند به این شکل داشته باشند.</p>
+    <div class="diffs">
+      <article class="card diff"><h3>تراکم محله‌ای، خودِ برند باشد</h3><p>طراحی GTA-اول: جست‌وجو بر اساس محله (ریچموندهیل، نورث‌یورک، اسکاربرو، میسیساگا…)، کارت آشپزی که با فاصله و نام محله شروع شود و ریل «این هفته نزدیک تو کی چی می‌پزد». Shef در سطح کلان‌شهر است و CookUnity ملی؛ خیابان‌به‌خیابانِ تورنتو را هیچ‌کس معتبر صاحب نیست.</p></article>
+      <article class="card diff"><h3>غذای دیاسپورا، با نام درستش</h3><p>اول ایرانی: قرمه‌سبزی، ته‌دیگ، آش رشته — با نام آشپز، شهر مبدأ و داستانش، در هر دو خط. Shef و CookOut «غذای مهاجر» را کلی بازاریابی می‌کنند؛ سفره می‌تواند مشخص باشد، و مشخص‌بودن اصالت خوانده می‌شود.</p></article>
+      <article class="card diff"><h3>دوزبانه در سطح محصول، نه صفحهٔ ترجمه‌شده</h3><p>کلید فارسی/انگلیسی همین حالا هست؛ امتدادش بده به نام غذاها، داستان آشپزها و جست‌وجو: «قرمه سبزی» و «ghormeh sabzi» هر دو به یک آشپز برسند. هیچ رقیبی در این گزارش در سطح محصول دوزبانه نیست.</p></article>
+      <article class="card diff"><h3>آیین سفره، هویت بصری</h3><p>پارچه و میز سفره به‌عنوان موتیف تکرارشوندهٔ طراحی — غذای مشترک و پرس خانوادگی — سفره را فوری از زیبایی‌شناسی «سوخت باشگاهی» CookUnity و مینیمالیسم لوکس Shef جدا می‌کند و مجموعه‌های مناسبتی (نوروز، یلدا، رمضان، پلاتر مهمانی) را طبیعی توجیه می‌کند؛ همان الگوی مناسبتی Goldbelly.</p></article>
+      <article class="card diff"><h3>یک استاندارد اعتمادِ عمومی و انتاریویی</h3><p>چک‌لیست خود سفره را منتشر کن: گواهی بهداشت مواد غذایی انتاریو، الزامات آشپزخانه/ثبت، برچسب آلرژن دوزبانه، بیمه/ضمانت — به شکل یک نشان نام‌دار روی هر کارت آشپز: «تأیید سفره: گواهی‌دار · بیمه · تست مزه». All About The Cooks ثابت کرده محتوا جواب می‌دهد؛ طراحی سفره می‌تواند آن را شبیه «استاندارد» نشان بدهد، نه سلب مسئولیت.</p></article>
+      <article class="card diff"><h3>عددهای کوچک و راست، به‌روز</h3><p>«۱۴ آشپز · ۶ محله · ۳۱۲ وعده · ۴٫۹ از ۸۷ سفارش» از هر ابرادعای قرضی قوی‌تر است — و دقیقاً جواب شکست CookOut با عددهای ناسازگارش است. ریتم پیش‌سفارش (الگوی دراپ Hotplate) هم صادقانه قاب شود: «برای روز سفارشت پخته می‌شود» یعنی تازگی و صفر اسراف، نه عذرخواهی برای فوری‌نبودن؛ WoodSpoon سر تعقیب تحویل فوری مرد.</p></article>
+    </div>
+  </section>
+
+  <!-- ===== borrow ===== -->
+  <section aria-labelledby="borrow-h">
+    <h2 class="sec" id="borrow-h"><span class="no">۶ ـ</span> قرض بگیر / بعداً / هرگز</h2>
+    <p class="sec-sub">مرجع سریع برای هر تصمیم طراحی بعدی سفره.</p>
+    <div class="borrow">
+      <article class="card bcol now">
+        <h3>همین حالا — ارزان و بی‌نیاز از مقیاس</h3>
+        <ul>
+          <li>جست‌وجوی کد پستی/محله در هیرو <span class="from">(CookUnity، All About The Cooks)</span></li>
+          <li>غذای نام‌دار به نام آشپز + قیمت <span class="from">(FoodSt)</span></li>
+          <li>بخش ایمنی غذا روی صفحهٔ اصلی + نشان روی کارت آشپز <span class="from">(All About The Cooks، FoodSt)</span></li>
+          <li>ضمانت رضایت ۱۰۰درصدی <span class="from">(Shef)</span></li>
+          <li>کارمزد منتشرشده برای آشپزها <span class="from">(Cookin، Hotplate)</span></li>
+          <li>نظر مشتریِ وصل به آشپز مشخص <span class="from">(All About The Cooks)</span></li>
+        </ul>
+      </article>
+      <article class="card bcol later">
+        <h3>بعداً — کمی مقیاس می‌خواهد</h3>
+        <ul>
+          <li>سفارش ترکیبی از چند آشپز در یک تحویل <span class="from">(Shef)</span></li>
+          <li>رویداد تست مزه برای پذیرش آشپز <span class="from">(Shef)</span></li>
+          <li>مجموعه‌های مناسبتی و هدیه <span class="from">(Goldbelly، FoodSt)</span></li>
+          <li>داستان درآمد آشپز با عدد واقعی <span class="from">(Cookin)</span></li>
+          <li>اطلاع‌رسانی پیامکیِ دراپ به مشترک‌ها <span class="from">(Hotplate)</span></li>
+          <li>وفاداری و پاداش <span class="from">(Goldbelly، Hotplate)</span></li>
+        </ul>
+      </article>
+      <article class="card bcol never">
+        <h3>هرگز — وابسته به مقیاس یا زیان‌بار</h3>
+        <ul>
+          <li>قاب آشپز سلبریتی و میشلن <span class="from">(CookUnity، Goldbelly)</span></li>
+          <li>قیف تخفیف ۴۰ تا ۵۰درصدی سفارش اول <span class="from">(Shef، CookUnity)</span></li>
+          <li>منوی قفل‌شده پشت ثبت‌نام <span class="from">(CookUnity کانادا)</span></li>
+          <li>ابرادعاهایی مثل «۹۰ میلیون وعده» و عددهای ناسازگار <span class="from">(CookOut)</span></li>
+          <li>وعدهٔ تحویل فوریِ درخواستی <span class="from">(شرط مرگبار WoodSpoon)</span></li>
+          <li>مدل فقط‌اشتراکی <span class="from">(Shef، CookUnity) — سفارش تکی را نگه دار</span></li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===== standards ===== -->
+  <section aria-labelledby="std-h">
+    <h2 class="sec" id="std-h"><span class="no">۷ ـ</span> با کدام استاندارد بسنجیم؟</h2>
+    <p class="sec-sub">سؤال اول این پروژه همین بود: مثل Fluent مایکروسافت، چه سیستم‌های طراحی دیگری هست و سفره با کدام متر جلو برود؟ جواب حرفه‌ای این است: یک زبان بصری برای هر سطح — نه یک سیستم برای همه‌جا. سیستم‌ها از مستندات رسمی خودشان خوانده شدند و این نقشهٔ استفاده برای سفره است:</p>
+    <div class="std-grid">
+      <article class="card std"><h3><span class="ltr">Material Design 3</span> — گوگل</h3><p class="surf">سطح: ویترین عمومی و وب مصرف‌کننده</p><p>کامل‌ترین مرجع عمومی برای جریان کشف و سفارش: کلاس‌های چیدمان واکنش‌گرا، نقش‌های رنگی سازگار و حالت‌های کامل هر کامپوننت. گرامر پیش‌فرض صفحهٔ عمومی سفره.</p></article>
+      <article class="card std"><h3><span class="ltr">Fluent 2</span> — مایکروسافت</h3><p class="surf">سطح: نظم توکن‌ها در کل محصول</p><p>مدل دولایهٔ توکن Fluent (توکن سراسری ← توکن مستعار معنایی) را حتی وقتی بصری از سیستم دیگری است قرض بگیر؛ رीबرند و حالت تاریک را ارزان نگه می‌دارد.</p></article>
+      <article class="card std"><h3><span class="ltr">Human Interface Guidelines</span> — اپل</h3><p class="surf">سطح: اپ iOS و iPadOS</p><p>تایپ پویا (Dynamic Type)، ناحیه‌های امن و قانون هدف لمسی ۴۴ پوینت — حتی وقتی بصری اپ سفارشی است، این‌ها خط قرمزند.</p></article>
+      <article class="card std"><h3><span class="ltr">Polaris</span> — شاپیفای</h3><p class="surf">سطح: داشبورد آشپز و فروشنده</p><p>تراکم آرام، بخش‌های کارتی و زبان سادهٔ وظیفه‌محور؛ برای جایی که آشپز منو، پرس و سفارش مدیریت می‌کند، برند کمتر و کار بیشتر.</p></article>
+      <article class="card std"><h3><span class="ltr">Carbon</span> — آی‌بی‌ام</h3><p class="surf">سطح: مدیریت داده‌سنگین</p><p>جدول سفارش‌ها، موجودی و گزارش؛ با تفکیک تایپ و حرکت «بهره‌ور در برابر بیانی» (productive / expressive).</p></article>
+      <article class="card std"><h3><span class="ltr">Spectrum</span> — ادوبی</h3><p class="surf">سطح: ابزار خلاقه و ویرایش رسانه</p><p>بوم خنثی که محتوا را جلو نگه می‌دارد؛ مرجع مقیاس‌های رنگ، تایپ و تراکم وقتی سفره به ابزار عکس و ویرایش منو برسد.</p></article>
+      <article class="card std"><h3><span class="ltr">Atlassian Design System</span></h3><p class="surf">سطح: وب‌اپ تیمی و بهره‌وری</p><p>توکن‌های فاصلهٔ ۸ پیکسلی و تایپ مبتنی بر rem برای محصولی که قرار است صفحه‌های زیادی داشته باشد.</p></article>
+      <article class="card std"><h3>قانون ترکیب</h3><p class="surf">سطح: همه‌جا</p><p>در هر سطح فقط یک زبان بصری؛ اصول را بین سیستم‌ها قرض بگیر، کامپوننت‌ها را قاطی نکن. شعاع گوشه، سایه و شکل دکمهٔ مخلوط، سریع‌ترین راه غیرحرفه‌ای دیده‌شدن است.</p></article>
+    </div>
+    <div class="card baseline">
+      <h3>خط مبنای مشترک هر هفت سیستم — چک‌لیست داوری هر صفحهٔ سفره</h3>
+      <ul>
+        <li>اول توکن‌های معنایی (رنگ، تایپ، فاصله، شعاع، ارتفاع) تعریف شود؛ کامپوننت فقط از همان توکن‌ها.</li>
+        <li>چیدمان روی مقیاس فاصلهٔ همان سیستم؛ هیچ مقدار خارج از مقیاس.</li>
+        <li>هر کامپوننت تعاملی، همهٔ حالت‌هایش را داشته باشد: پیش‌فرض، هاور، فوکوس صفحه‌کلید، فشرده، انتخاب‌شده، غیرفعال، خطا.</li>
+        <li>کنتراست متن بدنه حداقل ۴٫۵ به ۱ و متن بزرگ و آیکن و حاشیهٔ فیلد حداقل ۳ به ۱.</li>
+        <li>هدف لمسی: حداقل ۴۴ پوینت در اپل و ۴۸ dp در متریال؛ فوکوس همیشه دیده شود و بعد از بسته‌شدن دیالوگ گم نشود.</li>
+        <li>رنگ وضعیت فقط برای وضعیت؛ معنا هرگز فقط با رنگ نیاید — همیشه آیکن یا برچسب متنی هم باشد.</li>
+        <li>حرکت بین حدود ۱۰۰ تا ۴۰۰ میلی‌ثانیه، با منحنی easing، و خاموش/ساده‌شده با ترجیح کاهش حرکت کاربر.</li>
+        <li>تیترها یک ترتیب منطقی؛ دکمه و تیتر با حروف جمله‌ای و کلمات سادهٔ قابل‌فهم برای کاربر تازه.</li>
+        <li>چیدمان دوزبانه و راست‌به‌چپ با همان توکن‌ها آزموده شود؛ فاصله و ترتیب فوکوس باید بدون بازطراحی از ترجمه و آینه‌ای‌شدن جان سالم به در ببرند.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== caveats ===== -->
+  <section aria-labelledby="cav-h">
+    <h2 class="sec" id="cav-h"><span class="no">۸ ـ</span> آنچه نتوانستیم قطعی کنیم</h2>
+    <p class="sec-sub">هر عددی در این صفحه با منبعش آمده؛ این‌ها جاهایی است که خود تحقیق هم با احتیاط گزارش کرده و نباید محکم‌تر از این نقل شوند.</p>
+    <div class="card caveats">
+      <ul>
+        <li><b>Shef در مرورگر زنده:</b> shef.com به مرورگر تحقیق خطای 403 داد؛ صفحهٔ اصلی از کشِ تازهٔ همان نشانی (۱۹ نوامبر ۲۰۲۶) و مرکز راهنمایش خوانده شد. سهم آشپز از منابع ثالثِ به‌روز (نوامبر ۲۰۲۶) و صفحات راهنماست، نه از حساب واردشدهٔ یک آشپز. صفحه‌های قدیمی‌تر که کارمزد ۱۵٪ می‌گویند، مدل قبلی را توصیف می‌کنند.</li>
+        <li><b>CookOut:</b> دامنه به صفحهٔ هشدار فیشینگ می‌رفت؛ فقط صفحات ایندکس‌شده‌اش (کرال آوریل ۲۰۲۶) خوانده شد. ممکن است اپش هنوز کار کند — راستی‌آزمایی نشد. گزارش‌های سرمایه‌اش هم ناسازگارند (پیش‌بذری در Crunchbase در برابر «بدون سرمایه» در Tracxn).</li>
+        <li><b>تاریخ تعطیلی DishDivvy و WoodSpoon:</b> از دامنهٔ پارک/مرده و منابعی مثل PitchBook و Startup Nation نتیجه‌گیری شده؛ برای DishDivvy اطلاعیهٔ رسمی تعطیلی پیدا نشد.</li>
+        <li><b>مجموع سرمایه:</b> برای Shef بین ردیاب‌ها از 48.8 تا 102 میلیون دلار و برای CookUnity از 352 تا 372 میلیون دلار اختلاف است (وابسته به شمردن بدهی)؛ رقم اعلامی خود شرکت‌ها ترجیح داده شد.</li>
+        <li><b>حداقل سفارش FoodSt:</b> صفحهٔ اصلی 120 دلار می‌گوید و وبلاگ خودش 70 دلار؛ صفحهٔ اصلی به‌عنوان فعلی گرفته شد.</li>
+        <li><b>قیمت CookUnity کانادا:</b> بین منابع و تاریخ‌ها از حدود 9 تا 17.09 دلار برای هر وعده تغییر می‌کند؛ بازه گزارش شده، نه یک قیمت واحد.</li>
+        <li>در هیچ سایتی جریان سفارشِ واردشده کامل نشد؛ جریان‌های سفارش تا جایی توصیف شده‌اند که عمومی دیده می‌شوند.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== sources ===== -->
+  <section aria-labelledby="src-h">
+    <h2 class="sec" id="src-h">منابع</h2>
+    <p class="sec-sub">سایت‌هایی که در مرورگر تحقیق زنده باز شدند (۱۸–۱۹ نوامبر ۲۰۲۶) و منابع ایندکسیِ اصلی. نشانی‌ها عیناً از گزارش تحقیق آمده‌اند.</p>
+    <div class="sources">
+      <ul>
+        <li>سفره (وضعیت فعلی): <a class="ltr" href="https://sofreh-v2.vercel.app/en" target="_blank" rel="noopener">sofreh-v2.vercel.app/en</a> و <a class="ltr" href="https://sofreh-v2.vercel.app/explore" target="_blank" rel="noopener">/explore</a></li>
+        <li>Cookin: <a class="ltr" href="https://www.cookin.com/" target="_blank" rel="noopener">cookin.com</a></li>
+        <li>CookUnity: <a class="ltr" href="https://www.cookunity.com/" target="_blank" rel="noopener">cookunity.com</a> · کانادا: <a class="ltr" href="https://www.cookunity.com/en-ca/lp/prep-meal-delivery-service-toronto" target="_blank" rel="noopener">صفحهٔ تورنتو</a> · <a class="ltr" href="https://mealkitscanada.ca/cook-unity-review-canada/" target="_blank" rel="noopener">نقد MealKitsCanada</a></li>
+        <li>Shef: <a class="ltr" href="https://shef.com/" target="_blank" rel="noopener">shef.com</a> · <a class="ltr" href="https://help.shef.com/en/articles/8009561-how-shef-works" target="_blank" rel="noopener">How Shef Works</a> · <a class="ltr" href="https://www.businesswire.com/news/home/20261013400528/en/Shef-Launches-Weekly-Shared-Personal-Chef-Service-in-Houston" target="_blank" rel="noopener">BusinessWire</a> · <a class="ltr" href="https://www.trustpilot.com/review/shef.com?page=2" target="_blank" rel="noopener">Trustpilot</a></li>
+        <li>FoodSt: <a class="ltr" href="https://foodst.com.au/" target="_blank" rel="noopener">foodst.com.au</a> · <a class="ltr" href="https://foodst.com.au/pages/faqs" target="_blank" rel="noopener">پرسش‌ها</a></li>
+        <li>All About The Cooks: <a class="ltr" href="https://allaboutthecooks.co.uk/" target="_blank" rel="noopener">allaboutthecooks.co.uk</a> · <a class="ltr" href="https://allaboutthecooks.co.uk/faq/" target="_blank" rel="noopener">پرسش‌ها</a></li>
+        <li>Hotplate: <a class="ltr" href="https://www.hotplate.com/" target="_blank" rel="noopener">hotplate.com</a> · <a class="ltr" href="https://www.blog.hotplate.com/blog/what-hotplate-does-yy4rf" target="_blank" rel="noopener">مدل و قیمت</a></li>
+        <li>Goldbelly: <a class="ltr" href="https://www.goldbelly.com/" target="_blank" rel="noopener">goldbelly.com</a></li>
+        <li>CookOut: <a class="ltr" href="https://www.cookoutdelivery.com/becomeachef" target="_blank" rel="noopener">cookoutdelivery.com/becomeachef</a> (ایندکس، آوریل ۲۰۲۶)</li>
+        <li>HomeCooks: <a class="ltr" href="https://www.eu-startups.com/2026/01/londons-homecooks-secures-e1-6-million-for-its-home-cooked-meals-prepared-by-independent-chefs/" target="_blank" rel="noopener">EU-Startups</a></li>
+        <li>WoodSpoon: <a class="ltr" href="https://pitchbook.com/profiles/company/443276-92" target="_blank" rel="noopener">PitchBook</a> · DishDivvy: <a class="ltr" href="https://www.dishdivvy.com/" target="_blank" rel="noopener">dishdivvy.com</a> (پارک‌شده)</li>
+        <li>Eatwith: <a class="ltr" href="https://www.trustpilot.com/review/www.eatwith.com" target="_blank" rel="noopener">Trustpilot</a> · Cozymeal: <a class="ltr" href="https://www.cozymeal.com/vn/how-it-works" target="_blank" rel="noopener">cozymeal.com</a></li>
+        <li>استانداردها: <a class="ltr" href="https://m3.material.io/" target="_blank" rel="noopener">Material 3</a> · <a class="ltr" href="https://fluent2.microsoft.design/" target="_blank" rel="noopener">Fluent 2</a> · <a class="ltr" href="https://developer.apple.com/design/human-interface-guidelines/" target="_blank" rel="noopener">Apple HIG</a> · <a class="ltr" href="https://polaris.shopify.com/" target="_blank" rel="noopener">Polaris</a> · <a class="ltr" href="https://carbondesignsystem.com/" target="_blank" rel="noopener">Carbon</a> · <a class="ltr" href="https://spectrum.adobe.com/" target="_blank" rel="noopener">Spectrum</a> · <a class="ltr" href="https://atlassian.design/" target="_blank" rel="noopener">Atlassian</a></li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <p>این صفحه یک عکسِ ثابت از میدان در ۱۹ نوامبر ۲۰۲۶ است؛ سایت‌ها زنده‌اند و عوض می‌شوند و فقط با بازبینی تازه به‌روز می‌شود. اعداد پولی به ارز خود هر سرویس‌اند (دلار آمریکا، کانادا، استرالیا و پوند) همان‌طور که روی سایت‌هایشان چاپ شده بود.</p>
+  </footer>
+</main>
+
+<script>
+/* ---------- single source of truth for the chart ---------- */
+var RATINGS = [
+  { label: "Shef · iOS",            value: 4.82, count: "4,582 رأی",  kind: "app" },
+  { label: "Shef · Android",        value: 4.65, count: "≈992 رأی",   kind: "app" },
+  { label: "CookUnity · Trustpilot", value: 4.10, count: "15,600+ نظر", kind: "tp" },
+  { label: "Shef · Trustpilot",       value: 3.90, count: "266 نظر",     kind: "tp" },
+  { label: "Eatwith · Trustpilot",    value: 2.50, count: "46 نظر",      kind: "tp" }
+];
+var KIND = {
+  app: { color: "#1d7a43", label: "امتیاز فروشگاه اپ" },
+  tp:  { color: "#7c2233", label: "Trustpilot" }
+};
+
+(function buildChart(){
+  var W = 680, rowH = 58, top = 4, axisH = 26;
+  var H = top + RATINGS.length * rowH + axisH;
+  var plotX = 6, plotW = W - plotX - 128, max = 5;
+  var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" role="img" aria-label="نمودار میله‌ای امتیاز سرویس‌ها از ۵" style="display:block">';
+  /* gridlines + ticks 0..5 */
+  for (var t = 0; t <= 5; t++){
+    var gx = plotX + (t / max) * plotW;
+    svg += '<line x1="' + gx + '" y1="' + top + '" x2="' + gx + '" y2="' + (H - axisH) + '" stroke="var(--line)" stroke-width="1"/>';
+    svg += '<text x="' + gx + '" y="' + (H - 6) + '" text-anchor="middle" font-size="12.5" fill="var(--muted)">' + t + '</text>';
+  }
+  RATINGS.forEach(function(r, i){
+    var y = top + i * rowH;
+    var bw = (r.value / max) * plotW;
+    svg += '<text x="' + plotX + '" y="' + (y + 15) + '" font-size="13.5" font-weight="700" fill="var(--ink)">' + r.label + '</text>';
+    svg += '<rect x="' + plotX + '" y="' + (y + 22) + '" width="' + plotW + '" height="22" rx="6" fill="var(--gray-soft)"/>';
+    svg += '<rect x="' + plotX + '" y="' + (y + 22) + '" width="' + bw + '" height="22" rx="6" fill="' + KIND[r.kind].color + '"/>';
+    svg += '<text x="' + (plotX + bw + 10) + '" y="' + (y + 38) + '" font-size="13.5" font-weight="800" fill="var(--ink)">' + r.value.toFixed(2) + ' · ' + r.count + '</text>';
+  });
+  svg += '</svg>';
+  document.getElementById('chart').innerHTML = svg;
+  var lg = '';
+  for (var k in KIND){ lg += '<span><span class="sw" style="background:' + KIND[k].color + '"></span>' + KIND[k].label + '</span>'; }
+  document.getElementById('chart-legend').innerHTML = lg;
+})();
+
+/* ---------- players ---------- */
+var STATUS = {
+  active: { cls: "b-active", label: "فعال" },
+  tool:   { cls: "b-tool",   label: "ابزار فروشنده" },
+  dead:   { cls: "b-dead",   label: "تعطیل / از دست رفته" },
+  exp:    { cls: "b-exp",    label: "تجربه / مرجع" },
+  self:   { cls: "b-self",   label: "سایت فعلی سفره" }
+};
+var PLAYERS = [
+  { name:"سفره — Sofreh", site:"sofreh-v2.vercel.app", url:"https://sofreh-v2.vercel.app/en",
+    status:"self", verify:"بررسی زنده", tier:"نقطهٔ شروع",
+    meta:"تورنتو و GTA · بازار غذای خانگی دوزبانهٔ فارسی/انگلیسی · آشپزها منو، پرس و تحویل/پیکاپ خودشان را مدیریت می‌کنند.",
+    rows:[["مدل","بازار مصرف‌کننده؛ مرور آشپزخانه و غذای نزدیک و سفارش"],["پول","روی سایت چیزی اعلام نشده؛ پانوشت: پرداخت‌ها شبیه‌سازی شده‌اند"],["امتیاز","امتیاز فقط از سفارش کامل‌شده؛ آشپزخانهٔ تازه بدون امتیاز ساختگی شروع می‌کند"]],
+    judge:"از نظر سلیقهٔ طراحی، تمیزترین سایت کوچک این مجموعه — اما از نظر «مدرک کسب‌وکار» ضعیف‌ترین: نه غذای قیمت‌دار، نه آشپز نام‌دار، نه ایمنی غذا، نه عدد.",
+    detail:{ story:"هیرو: «کمی نزدیک‌تر به خانه / غذای خوب، همسایه‌های خوب» روی کرم با سبز تیره و زرشکی و کلید فارسی در ناوبری. سه قدم ایده، سه کارت غذای نمونه بدون قیمت/آشپز/امتیاز، بخش آشپز، پنج پرسش، بخش اپ با برچسب «کانسپت آینده». صفحهٔ اکسپلور جست‌وجو دارد اما هنگام بررسی هیچ لیستی رندر نشد.",
+      borrow:["دو صداقت فعلی را نگه دار: امتیاز فقط از سفارش کامل‌شده، و خصوصی‌ماندن نشانی تا بعد از پذیرش سفارش."], scale:["—"] } },
+  { name:"Shef", site:"shef.com", url:"https://shef.com/",
+    status:"active", verify:"از ایندکس (سایت به مرورگر 403 داد)", tier:"ردهٔ ۱ — برند و اعتماد",
+    meta:"آمریکا، ۱۰ بازار کلان‌شهری · تأسیس ۲۰۱۸/۱۹ سان‌فرانسیسکو، Joey Grassia و Alvin Salehi · بیش از 100 میلیون دلار سرمایه (a16z ،CRV ،Y Combinator).",
+    rows:[["مدل","اشتراک هفتگی + بازار؛ تحویل با خود Shef"],["پول","از 58 دلار در هفته (پیشنهاد 35 دلار)؛ آشپز در بازار 70٪ قیمتش را می‌گیرد و در سرویس هفتگی نرخ ثابت هر پرس (اصلی 10 دلار، ویژه 13 دلار، مخلفات 2 تا 6 دلار)"],["امتیاز","iOS ‏4.82 از 4,582 · اندروید 4.65 از ≈992 · Trustpilot ‏3.9 از 266"]],
+    judge:"نزدیک‌ترین چیز به برندِ تعریف‌کنندهٔ این دسته: انسانی، پریمیوم و ضمانت‌محور. حتی نقطه‌ضعف رهبر دسته هم لجستیک است، نه آشپزی.",
+    detail:{ story:"از بازار باز به سرویس هفتگیِ گزیده رفت. هیرو: «آرام باش — آشپزت شام را پوشش داده» با ویدیو و عکس کیسهٔ عایق. ادعای شرکت (اکتبر ۲۰۲۶): هزاران آشپز بررسی‌شده و بیش از 180,000 خانواده.",
+      borrow:["متن ضمانت ۱۰۰٪ بازپرداخت: «دوستش نداشتی، مهمان ما»","آمار پذیرش «کمتر از ۳٪ متقاضی‌ها قبول می‌شوند» — سفره نسخهٔ صادقانهٔ خودش را چاپ کند","تست مزهٔ سه غذا در پذیرش آشپز","سفارش ترکیبی از چند آشپز در یک تحویل و چت مستقیم با آشپز"],
+      scale:["شبکهٔ تحویل و زیرساخت نقاط تحویل‌دادن سفارش","هالهٔ آشپزهای فارغ‌التحصیل میشلن"] } },
+  { name:"CookUnity", site:"cookunity.com / cookunity.ca", url:"https://www.cookunity.com/",
+    status:"active", verify:"بررسی زنده", tier:"ردهٔ ۱ — تجربهٔ کشف و پروفایل",
+    meta:"آمریکا + انتاریو · تأسیس ۲۰۱۵ نیویورک، Mateo Marietti · حدود 350 میلیون دلار+ سرمایه (با بدهی)؛ Cookin را ۲۰۲۴ خرید. آشپزها در آشپزخانهٔ مرکزی می‌پزند — غذای خانگی نیست.",
+    rows:[["مدل","اشتراک هفتگی غذای سرآشپز از آشپزخانه‌های مرکزی"],["پول","۴ تا ۱۶ وعده در هفته؛ کانادا حدود 9 تا 17 دلار هر وعده بسته به اندازهٔ پلن + حدود 9.99 دلار تحویل"],["امتیاز","Trustpilot ‏4.1 از 15,600+ · اما BBB نمرهٔ F و بدون اعتبارنامه"]],
+    judge:"پیچیده‌ترین طراحی تجاری مجموعه — و یک هشدار: طراحی اشتراکِ تخفیف‌محور، بی‌اعتمادیِ صورت‌حساب اشتراک را هم وارد می‌کند. در کانادا منو پشت کد پستی + پرسش‌نامه + ساخت حساب قفل است.",
+    detail:{ story:"نوار پیشنهاد «۵۰٪ تخفیف هفتهٔ اول»، هیرو با فیلد کد پستی به‌عنوان کنش اصلی، چیپ‌های پالایش (رژیم/پروتئین/آشپزی/سرآشپز/سبک زندگی/GLP-1)، دیوار نظرها با ادعای «بیش از ۹۰ میلیون وعده به بیش از ۱ میلیون مشتری» و دیوار مطبوعات (WSJ، Bon Appétit، Forbes). بهترین الگوی پروفایل سرآشپز در میدان: مدرک‌ها، آموزش، میانگین امتیاز با شمارش عظیم (مثلاً 4.35 از 197,655) و غذای امضادار.",
+      borrow:["هیروی کد پستی/محله‌اول","کارت سرآشپز با شمارش امتیاز و غذای امضادار","دسته‌بندی پالایش منو"],
+      scale:["قاب سرآشپز سلبریتی (میشلن، James Beard)","تئاتر تخفیف معرفی و منوی قفل‌شده پشت ثبت‌نام — قرض نگیر"] } },
+  { name:"Cookin", site:"cookin.com", url:"https://www.cookin.com/",
+    status:"tool", verify:"بررسی زنده", tier:"ردهٔ ۱ — سمت آشپز",
+    meta:"ابزار فروشنده در آمریکا و کانادا · تأسیس ۲۰۲۲ تورنتو، Morley Ivers و Michael Baruch · حدود 15 تا 17 میلیون دلار سرمایه؛ نوامبر ۲۰۲۴ با معاملهٔ تمام‌سهامی به CookUnity فروخته شد و بنیان‌گذارها حالا CookUnity کانادا را می‌چرخانند.",
+    rows:[["مدل","ابزار فروشگاه‌ساز برای فروشندهٔ غذا — دیگر بازار کشف مصرف‌کننده نیست"],["پول","بدون هزینهٔ ماهانه؛ فروشنده 2.9٪ + 30 سنت پردازش؛ مشتری 5٪ کارمزد خدمت؛ تحویل 6.99 دلار هر سفارش"],["امتیاز","ابزار B2B است؛ امتیاز مصرف‌کننده ندارد"]],
+    judge:"مرجع نام‌بردهٔ سفره، شکل عوض کرده است. طراحی SaaS تمیز و معتبر — در شفافیت پول زیبا، در بصری عام. خودش در پرسش‌ها صادقانه می‌گوید: «مشتری را خودت می‌آوری؛ ما فناوری را می‌دهیم».",
+    detail:{ story:"هیروی وسط‌چین SaaS روی شیری، تقریباً بدون عکس غذا بالای صفحه. تب‌های قابلیت (پرداخت تضمینی، بهبوددهندهٔ عکس با AI، نظر مشتری، سازندهٔ پیشنهاد)، مقایسهٔ «آشوب در برابر نظم» با اینستاگرام و واتساپ و تلفن، و چرخانهٔ داستان آشپزها: Chef Mónica، Chachos Tacos، «از هر ۴ آشپزی مثل Akshitha یکی به‌طور میانگین ساعتی 34 دلار درمی‌آورد»، دراپ پیش‌فروشِ تمام‌شدهٔ Patrick Kriss و «۳۰ سال آشپزی خانگی» Chef Azita. پرداخت هفتگی سه‌شنبه‌ها با Stripe Connect؛ پشتیبانی انسانی ۷ روز هفته ۹ صبح تا ۱۰ شب به وقت شرق، برای آشپز و مشتری‌اش.",
+      borrow:["شفافیت رادیکال کارمزد روی صفحهٔ اصلی","داستان درآمد آشپز با نام و عدد واقعی"],
+      scale:["ادعای «هزاران آشپز»، تیم پشتیبانی تمام‌هفته و ابزار عکس AI"] } },
+  { name:"FoodSt", site:"foodst.com.au", url:"https://foodst.com.au/",
+    status:"active", verify:"بررسی زنده", tier:"ردهٔ ۱ — نزدیک‌ترین هم‌مدل صادق",
+    meta:"استرالیا: سیدنی، ملبورن، بریزبن، آدلاید، کانبرا و مناطق · تأسیس ۲۰۱۵/۱۶ سیدنی، Lorraine Gnanadickam · حدود 500 هزار دلار فرشته در ۲۰۲۱ + تأمین مالی جمعی.",
+    rows:[["مدل","غذای منجمد گزیده از آشپزهای خانگی معتبر؛ اجرا و ارسال مرکزی؛ بدون اشتراک و قفل"],["پول","حداقل سفارش 120 دلار (صفحهٔ اصلی؛ وبلاگ خودش هنوز 70 دلار می‌گوید — متن کهنه)؛ غذاها حدود 9.50 تا 46 دلار"],["امتیاز","سایت می‌گوید «۵ ستاره» اما تعدادی نشان نمی‌دهد"]],
+    judge:"طراحی بصری متوسط (شلوغی قالب Shopify و سئو) اما اصالتِ درجه‌یک: آدم واقعی، قیمت واقعی، محدودیت واقعی — همه دیده‌شدنی. معماری اطلاعاتش را می‌شود تقریباً کامل برای سفره برداشت.",
+    detail:{ story:"یک چک‌کنندهٔ تحویل بالای هیرو نشسته (کد پستی + محله + تاریخ + ساعت) — کاربرد قبل از برند. هیرو پرترهٔ یک آشپز واقعی است، نه عکس تبلیغاتی غذا. هر غذا نام آشپزش را دارد: «پای گوشت و گینسِ Gavin ‏46 دلار»، «پف کاری مارپیچ مالزیاییِ Christina»، «مرغ ساتایِ Nat»، «بادمجان پارمزانِ Davide». پروفایل آشپزها نشان مدرک دارد (مثلاً «ناظر معتبر ایمنی غذا») وسط داستان اول‌شخص. شعار ساده: «ساختهٔ آدم‌ها، نه کارخانه‌ها»، «بدون نگهدارنده»، «۱۰۰+ غذا، ۳۰ آشپزی». به مشتری‌های NDIS و مراقبت سالمندان هم خدمت می‌دهد.",
+      borrow:["معماری اطلاعات تقریباً کامل: چک‌کنندهٔ تحویل، غذای نام‌دار، نشان اعتبار","کانال تقاضای سازمانی/جامعه‌ای (معادلش در تورنتو: هدیهٔ خانواده و سازمان‌های تازه‌واردان)"],
+      scale:["انجماد و ارسال بین‌شهری با پیک‌های معتبر HACCP"] } },
+  { name:"All About The Cooks", site:"allaboutthecooks.co.uk", url:"https://allaboutthecooks.co.uk/",
+    status:"active", verify:"بررسی زنده", tier:"بهترین متن اعتماد — ضعیف‌ترین طراحی",
+    meta:"بریتانیا، از بریستول و باث به سراسر کشور · تأسیس ۲۰۱۹ بریستول، Claire Ladkin · جذب 350 هزار پوند در Crowdcube · مطبوعات به آن «Etsy غذای خانگی» می‌گویند.",
+    rows:[["مدل","خالص‌ترین بازار همتا‌به‌همتای بازمانده: پیش‌سفارش و هماهنگی تحویل/پیکاپ مستقیم با آشپز"],["پول","بدون هزینهٔ عضویت؛ کمیسیون کسر می‌شود اما نرخش منتشر نشده — تنها خلأ شفافیتش؛ بیمه داخلش هست"],["امتیاز","امتیاز تجمیعی ندارد؛ فقط نظرهای نام‌دار روی سایت"]],
+    judge:"ثابت می‌کند یک بازار می‌تواند واقعاً قابل اعتماد باشد و هنوز غیرقانع‌کننده به نظر برسد. سفره همین حالا در طراحی از آن جلو است؛ در مادهٔ ایمنی باید به آن برسد.",
+    detail:{ story:"هیرو خودِ جست‌وجوست: نوار زرد «آشپزهای نزدیکت را پیدا کن» + فیلد مکان + کلید نقشه. کارت آشپز: نام کوچک + محله + نوع غذا («Saynab، بریستول (Redfield)») با وضعیت صادقانهٔ «بسته است». اما بصری ضعیف‌ترین سایت زندهٔ مجموعه است: بالای صفحه عکس غذا ندارد و دکمه‌های آبی پیش‌فرض ناهماهنگ‌اند.",
+      borrow:["بخش «دربارهٔ ایمنی غذا» روی صفحهٔ اصلی: گواهی بهداشت سطح ۱ و ۲ برای هر آشپز، ثبت نزد مقام محلی (قابل بازرسی، با پشتیبانی تا رتبهٔ بهداشت ۴ ستاره+)، اعلام ۱۴ آلرژن اصلی روی پروفایل","خط بیمه: غذای فروخته‌شده از پلتفرم خودکار بیمه است","پروفایل آشپز را تیم خودش می‌سازد؛ نظرها هم نام نظر دهنده را دارند هم نام آشپز («Louise — سفارش از Mahesh»)","ردیف لوگوی مطبوعات و جایزه‌ها (BBC Food & Farming ،The Observer ،Tech Nation)"],
+      scale:["—"] } },
+  { name:"Hotplate", site:"hotplate.com", url:"https://www.hotplate.com/",
+    status:"tool", verify:"بررسی زنده", tier:"ردهٔ ۱ — سمت آشپز",
+    meta:"آمریکا · ابزار فروشگاه برای پاپ‌آپ‌ها و آشپزخانه‌های خانگی؛ خودش صریح می‌گوید «ما بازار مصرف‌کننده نیستیم».",
+    rows:[["مدل","فروشگاه پیش‌سفارشِ «دراپ» (پنجرهٔ زمانی فروش)؛ مشتری با شمارهٔ تلفن مشترک می‌شود"],["پول","حساب رایگان؛ فروشنده 2.9٪ + 30 سنت؛ مشتری 5٪ + 0.55 دلار هر سفارش"],["امتیاز","ابزار فروشنده است؛ امتیاز مصرف‌کننده ندارد"]],
+    judge:"مدرن‌ترین طراحی SaaS مجموعه. ایده‌های قابل قرضش مکانیک دراپ و پیامک است، نه کشف — چون عمداً کشف ندارد و تمام فرض سفره کشف است.",
+    detail:{ story:"تیتر چرخان هیرو («قدرت‌بخش داغ‌ترین دراپ‌های [نان خمیرترش/پیتزا/دونات]»)، نمایش فروشنده‌ها در قالب پروفایل اجتماعی (هندل، تعداد دنبال‌کننده، شهر، ویدیوی نظر) و ادعای نمایشی «5k+ آشپز» و «100M دلار» درآمد. هنگام بازشدن دراپ خودکار پیامک می‌زند و فهرست آماده‌سازی و برچسب بسته‌بندی تولید می‌کند.",
+      borrow:["پنجرهٔ دراپ/پیش‌سفارش به‌عنوان ریتم سفارش — با روش واقعی پخت خانگی (روزهای بچ) جور است","اطلاع‌رسانی «آشپزت این هفته می‌پزد» به سبک پیامک","ابزار فهرست آماده‌سازی به‌عنوان امتیاز دیدنی برای جذب آشپز"],
+      scale:["—"] } },
+  { name:"Goldbelly", site:"goldbelly.com", url:"https://www.goldbelly.com/",
+    status:"exp", verify:"بررسی زنده", tier:"سقف طراحی — مرجع فروش",
+    meta:"ارسال سراسری در آمریکا · تأسیس ۲۰۱۳ نیویورک، Joe Ariel · حدود 900+ سازنده · غذای نمادین رستوران‌ها و هدیه — غذای خانگی نیست؛ سقف طراحی بازار غذاست.",
+    rows:[["مدل","بازار گزیدهٔ غذای رستوران‌های نمادین، هدیه‌محور"],["پول","قیمت‌های پریمیوم؛ کمیسیون اعلام نشده"],["امتیاز","روی هر کارت: نام سازنده + درصد مثبت (مثلاً ۹۵٪) + نشان «Star Shipper» + قیمت + پرچم ارسال رایگان"]],
+    judge:"حرفه‌ای‌ترین فروش و عکاسی تجارت الکترونیک غذا؛ در عین حال آشکارا شلوغ و گران، و احساسات ثالث دربارهٔ ارسال و ارزش خرید غر می‌زند.",
+    detail:{ story:"هدر جست‌وجومحور با پیشنهادهای ترند، ریل‌های مناسبتی بی‌وقفه با تاریخ (عیدها و مناسبت‌ها)، پرفروش‌ها، سرآشپزهای افسانه‌ای، رستوران‌های نمادین همراه شهرشان، دیوار مطبوعات (CNBC ،TIME ،WSJ ،Eater)، دیوار محتوای کاربران و امتیاز وفاداری.",
+      borrow:["مجموعه‌های مناسبتی (برای سفره: یلدا، نوروز، رمضان، مهمانی)","نشان «درصد مثبت / ستاره‌دار» برای هر فروشنده","برچسب شهر/محله روی هر کارت"],
+      scale:["همهٔ ارسال ملی و سازنده‌های سلبریتی"] } },
+  { name:"CookOut", site:"cookoutdelivery.com", url:"https://www.cookoutdelivery.com/",
+    status:"dead", verify:"بارگذاری ناموفق — دامنه به هشدار فیشینگ می‌رسد", tier:"درس عبرت",
+    meta:"تورنتو/GTA و ونکوور · تأسیس ۲۰۲۰ تورنتو، Donald Cheung · سرمایه باریک/اعلام‌نشده (منابع ناسازگارند). مستقیم‌ترین رقیب مفهومی سفره در GTA بود: «طعم خانه برای مهاجرها و دانشجوهای بین‌المللی».",
+    rows:[["مدل","بازار اپ‌محور با راننده‌های خودش و قابلیت‌های اجتماعی"],["پول","تحویل همان‌روز در GTA با نرخ ثابت 3.99 دلار؛ آشپز «تا ۹۵٪» درآمدش را نگه می‌دارد"],["امتیاز","هیچ امتیاز عمومی قابل اتکایی پیدا نشد"]],
+    judge:"صفحات ایندکس‌شده‌اش شلوغ و ادعامحور و ناسازگارند (یک جا 600+ آشپز، جای دیگر «بیش از ۱۰۰۰ آشپز»؛ ادعای درآمد ماهانهٔ حدود 5000 دلار) — عددهای بزرگِ ناسازگار، از عددهای کوچکِ راست کمتر اعتماد می‌سازند. و در ۱۸ نوامبر ۲۰۲۶ دامنه‌اش به سایتی نامرتبط پشت هشدار «فیشینگ مشکوک» Cloudflare می‌رسید: بهداشت دامنه و برند، خودِ زیرساخت اعتماد است.",
+    detail:{ story:"آشپزها ۱ تا ۲ روز پخت انتخاب می‌کردند، پیش‌سفارش می‌گرفتند و راننده‌های CookOut جمع می‌کردند. رقیق‌ترین پذیرش میدان: «فقط یک گواهی معتبر بهداشت مواد غذایی لازم است» — هرچند برای جاهایی که پخت خانگی قانونی نیست آشپزخانهٔ تجاری و کمک مجوز هم می‌داد.",
+      borrow:["فقط دو چیز: نرخ ثابت و سادهٔ تحویل، و جایگاه‌یابی صریح «طعم خانه برای تازه‌واردها» — که سفره معتبرتر اجرایش می‌کند"],
+      scale:["—"] } },
+  { name:"HomeCooks", site:"homecooks.co.uk", url:"https://homecooks.co.uk/",
+    status:"active", verify:"از ایندکس", tier:"بازماندهٔ در حال چرخش",
+    meta:"بریتانیا · تأسیس ۲۰۲۰ لندن، Josh Magidson · جذب 1.4 میلیون پوند در ژانویهٔ ۲۰۲۶.",
+    rows:[["مدل","بازار پلن غذای هفتگی؛ سرآشپزها بچ می‌پزند؛ در حال گسترش به غرفه‌های فریزر خرده‌فروشی"],["پول","پلن اشتراکی؛ ادعای 300+ غذا و 60 هزار مشتری ثابت"],["امتیاز","در گزارش نیامده"]],
+    judge:"درسش این است: حتی بازمانده‌ها هم از تحویل خانگی خالص فاصله می‌گیرند و به خرده‌فروشی و کانال‌های دیگر تنوع می‌دهند.",
+    detail:{ story:"بازار پلن هفتگی با آشپزهای مستقل؛ سرمایهٔ ۲۰۲۶ برای رفتن به داخل فروشگاه‌های رفاهی (غرفهٔ فریزر) است.", borrow:["تنوع کانال فروش در آینده، نه حالا"], scale:["قراردادهای خرده‌فروشی"] } },
+  { name:"Eatwith", site:"eatwith.com", url:"https://eatwith.com/",
+    status:"exp", verify:"از ایندکس", tier:"مرجع تجربه — شهرت ضعیف",
+    meta:"جهانی، ۱۳۰+ کشور · تأسیس ۲۰۱۲ تل‌آویو، Guy Michlin و Shemer Schwarz · ۲۰۱۷ به VizEat فروخته شد؛ TripAdvisor سرمایه‌گذارش بود.",
+    rows:[["مدل","تجربهٔ غذا (شام، کلاس، تور) — نه تحویل غذا"],["پول","رزرو به‌ازای هر صندلی"],["امتیاز","Trustpilot فقط 2.5 از 46 نظر — به‌طرز چشمگیری ضعیف"]],
+    judge:"طراحی پروفایل میزبان و نظر در مقیاس جهانی را نشان می‌دهد، اما شهرت بیرون‌پلتفرمش ضعیف است: مدرک نظرِ عدددار باید در هیرو باشد و شهرت خارج از سایت هم بخشی از محصول است.",
+    detail:{ story:"میزبان‌محور: شام و کلاس و تور غذایی در ۱۳۰+ کشور.", borrow:["پروفایل میزبان/آشپز با نظرهای قابل شمارش"], scale:["پوشش جهانی تجربه‌ها"] } },
+  { name:"Cozymeal", site:"cozymeal.com", url:"https://www.cozymeal.com/",
+    status:"exp", verify:"از ایندکس", tier:"مرجع اعتماد عدددار",
+    meta:"۴۰۰+ شهر · از ۲۰۱۴ · تجربه و کلاس سرآشپز (مدل نزدیک، نه تحویل).",
+    rows:[["مدل","تجربه و کلاس آشپزی"],["پول","به‌ازای هر تجربه"],["امتیاز","ادعای خودش: 45,000+ نظر پنج‌ستاره و ۹۸٪ پیشنهادشده"]],
+    judge:"بهترین نمونهٔ «اعتماد عدددار در هیرو»: آمار نظر را همان بالای صفحه می‌گذارد، جایی که بازدیدکننده تصمیم می‌گیرد.",
+    detail:{ story:"صفحهٔ اصلی‌اش با «45,000+ نظر پنج‌ستاره · ۹۸٪ پیشنهادشده · 50,000+ تجربه» شروع می‌شود.", borrow:["گذاشتن آمار نظر در هیرو — وقتی عدد واقعی داری"], scale:["حجم نظر انباشتهٔ یک دهه"] } },
+  { name:"WoodSpoon", site:"eatwoodspoon.com", url:"https://eatwoodspoon.com/",
+    status:"dead", verify:"بارگذاری ناموفق — دامنه دیگر resolve نمی‌شود", tier:"گورستان",
+    meta:"نیویورک · تأسیس ۲۰۱۹ توسط Oren Saar ،Merav Kalish Rozengarten و Lee Reshef — مهاجرهایی دلتنگ غذای خاورمیانه · 16 میلیون دلار سرمایه.",
+    rows:[["مدل","بود: بازار آشپز خانگی فوری + زمان‌بندی‌شده؛ ۲۰۲۱ به پذیرایی شرکتی چرخید"],["پول","کارمزد بین آشپز و مشتری تقسیم می‌شد؛ بیمه داخلش بود"],["امتیاز","—"]],
+    judge:"ژانویهٔ ۲۰۲۴ تعطیل شد. درس: اقتصاد تحویل فوری، تأمین‌مالی‌شده‌ترین بازیگر خالص میدان را کشت.",
+    detail:{ story:"آشپزهای تأییدشده، سفارش فوری و زمان‌دار؛ چرخش به کترینگ اداری در ۲۰۲۱ هم نجاتش نداد.", borrow:["—"], scale:["—"] } },
+  { name:"DishDivvy", site:"dishdivvy.com", url:"https://www.dishdivvy.com/",
+    status:"dead", verify:"بارگذاری ناموفق — دامنه پارک شده", tier:"گورستان",
+    meta:"کالیفرنیا · تأسیس ۲۰۱۸ لس‌آنجلس، Ani Torosyan.",
+    rows:[["مدل","بود: آشپز خانگی بررسی‌شده، پیکاپ یا تحویل DoorDash"],["پول","۱۵٪ کارمزد + کارمزد مشتری 0.55/0.99 دلار"],["امتیاز","—"]],
+    judge:"سخت‌گیرانه‌ترین پذیرش دورانش را داشت — گواهی ایمنی غذا به‌علاوهٔ بازرسی حضوری آشپزخانه — و باز هم رفت. درس: سخت‌گیری به‌تنهایی در برابر تراکم کم زنده نمی‌ماند.",
+    detail:{ story:"آشپز قیمت و برنامه‌اش را خودش می‌گذاشت؛ تراکم فقط جنوب کالیفرنیا بود.", borrow:["ایدهٔ بازرسی آشپزخانه به‌عنوان سطح بالای نشان اعتماد"], scale:["—"] } },
+  { name:"Homemade (آمریکا)", site:"— (تعطیل)", url:"",
+    status:"dead", verify:"از ایندکس", tier:"گورستان",
+    meta:"نیویورک · ۲۰۱۵، Nick Devane و Mike Dee (Techstars) · «Etsy آشپزی» با وعده‌های 8 تا 12 دلاری.",
+    rows:[["مدل","بود: اپ فروش غذای خانگی"],["پول","وعده‌های 8 تا 12 دلار"],["امتیاز","—"]],
+    judge:"مدت‌هاست تعطیل است؛ یک هم‌نام هلندی (Homemade B.V. ‏، ۲۰۲۲) همین ایده را امروز با قاب اجتماع و ضدتنهایی اجرا می‌کند. درس: این ایده هر چند سال برمی‌گردد؛ اجرا و تراکم تصمیم می‌گیرند.",
+    detail:{ story:"اپ موبایل برای فروش غذای خانگی در نیویورک/فیلادلفیا/سان‌فرانسیسکو.", borrow:["—"], scale:["—"] } }
+];
+
+(function renderPlayers(){
+  var grid = document.getElementById('player-grid');
+  PLAYERS.forEach(function(p, idx){
+    var st = STATUS[p.status];
+    var rows = p.rows.map(function(r){ return '<div class="row"><span class="k">' + r[0] + '</span><span>' + r[1] + '</span></div>'; }).join('');
+    var borrow = p.detail.borrow.map(function(x){ return '<li>' + x + '</li>'; }).join('');
+    var scale = p.detail.scale.map(function(x){ return '<li>' + x + '</li>'; }).join('');
+    var siteLine = p.url
+      ? '<p class="p-site"><a class="ltr" href="' + p.url + '" target="_blank" rel="noopener">' + p.site + '</a></p>'
+      : '<p class="p-site ltr">' + p.site + '</p>';
+    var card = document.createElement('article');
+    card.className = 'card player' + (p.status === 'self' ? ' sofreh' : '');
+    card.setAttribute('data-status', p.status);
+    card.innerHTML =
+      '<div class="p-head"><div><h3 class="p-name">' + p.name + '</h3>' + siteLine + '</div></div>' +
+      '<div class="badges"><span class="badge ' + st.cls + '">' + st.label + '</span>' +
+      '<span class="badge b-verify">' + p.verify + '</span>' +
+      '<span class="badge b-tier">' + p.tier + '</span></div>' +
+      '<p class="p-meta">' + p.meta + '</p>' +
+      '<div class="p-rows">' + rows + '</div>' +
+      '<p class="p-judge">' + p.judge + '</p>' +
+      '<button type="button" class="more-btn" aria-expanded="false" data-more="' + idx + '">جزئیات و درس برای سفره ←</button>' +
+      '<div class="more" id="more-' + idx + '"><p style="margin:0">' + p.detail.story + '</p>' +
+      '<h4>قابل قرض برای سفره</h4><ul>' + borrow + '</ul>' +
+      '<h4>وابسته به مقیاس (نباید کپی شود)</h4><ul>' + scale + '</ul></div>';
+    grid.appendChild(card);
+  });
+
+  grid.addEventListener('click', function(e){
+    var btn = e.target.closest('[data-more]');
+    if (!btn) return;
+    var box = document.getElementById('more-' + btn.getAttribute('data-more'));
+    var open = box.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    btn.textContent = open ? 'بستن جزئیات ↑' : 'جزئیات و درس برای سفره ←';
+  });
+
+  var filterBtns = document.querySelectorAll('[data-filter]');
+  filterBtns.forEach(function(b){
+    b.addEventListener('click', function(){
+      filterBtns.forEach(function(x){ x.setAttribute('aria-pressed', 'false'); });
+      b.setAttribute('aria-pressed', 'true');
+      var f = b.getAttribute('data-filter');
+      document.querySelectorAll('.player').forEach(function(c){
+        var show = f === 'all' || c.getAttribute('data-status') === f || (f === 'active' && c.getAttribute('data-status') === 'self');
+        c.classList.toggle('hidden-card', !show);
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>

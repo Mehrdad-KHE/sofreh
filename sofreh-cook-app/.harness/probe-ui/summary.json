@@ -1,0 +1,13 @@
+{
+  "schema_version": "hatch.probe_ui_summary.v1",
+  "slug": "sofreh-cook-app",
+  "session_id": "66c4b8ff-9fff-4e2d-b043-16a512db3e1d",
+  "observes": 8,
+  "acts": 7,
+  "acts_ok": 7,
+  "interactive_nodes": 23,
+  "viewports_seen": [
+    "mobile"
+  ],
+  "findings": []
+}

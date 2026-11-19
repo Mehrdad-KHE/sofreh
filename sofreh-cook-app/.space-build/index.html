@@ -1,0 +1,706 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>Sofreh — Cook App</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg:#FAF5EE; --surface:#FFFFFF; --surface2:#F3EDE2; --ink:#211A13; --ink2:#5C5142; --ink3:#8A7D6A;
+  --line:#E7DCCB; --saffron:#B96A00; --saffron-soft:#F7E8CF; --pom:#9E2B25; --pom-soft:#F9E3E0;
+  --herb:#3E6B34; --herb-soft:#E4EEDF; --gold:#D9A441;
+  --shadow:0 1px 2px rgba(60,40,10,.06),0 8px 24px -12px rgba(60,40,10,.18);
+  --r-card:14px; --r-btn:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#16120E; --surface:#211B15; --surface2:#2A231B;
+    --ink:#F2EADF; --ink2:#C9BBA6; --ink3:#9A8B74; --line:#3A3126;
+    --saffron:#E39A2E; --saffron-soft:#3A2C14; --pom:#E0786E; --pom-soft:#3D211E;
+    --herb:#8FC07E; --herb-soft:#24331F; --gold:#D9A441;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -12px rgba(0,0,0,.6);
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Manrope",system-ui,sans-serif;font-size:15px;line-height:1.5}
+h1,h2,h3,.serif{font-family:"Lora",Georgia,serif}
+button,[role="button"],select,input,textarea{font:inherit;color:inherit}
+button,[role="button"],select,summary,input:not([type="checkbox"]){min-height:2.25rem}
+img{display:block;max-width:100%}
+.fa{font-family:"Lora",serif;font-style:normal}
+
+/* ---------- App shell ---------- */
+.shell{display:flex;min-height:100dvh}
+.sidebar{width:248px;flex:0 0 248px;background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;position:sticky;top:0;height:100dvh;padding:20px 14px}
+.brand{display:flex;align-items:center;gap:10px;padding:2px 8px 18px}
+.brand-mark{width:38px;height:38px;border-radius:11px;background:var(--pom);color:#FFF7EA;display:grid;place-items:center;font-family:"Lora",serif;font-size:20px;font-weight:700}
+.brand b{font-family:"Lora",serif;font-size:21px;letter-spacing:.2px;display:block;line-height:1.1}
+.brand span{font-size:11.5px;color:var(--ink3);font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.nav{display:flex;flex-direction:column;gap:4px;margin-top:6px}
+.nav button{display:flex;align-items:center;gap:11px;width:100%;text-align:left;background:none;border:0;border-radius:var(--r-btn);padding:10px 12px;font-weight:600;color:var(--ink2);cursor:pointer;min-height:44px}
+.nav button svg{width:20px;height:20px;flex:0 0 20px}
+.nav button:hover{background:var(--surface2);color:var(--ink)}
+.nav button.active{background:var(--saffron-soft);color:var(--ink)}
+.nav button.active svg{color:var(--saffron)}
+.nav .badge{margin-left:auto;background:var(--pom);color:#fff;font-size:11px;font-weight:800;min-width:20px;height:20px;border-radius:999px;display:grid;place-items:center;padding:0 6px}
+.side-foot{margin-top:auto;border-top:1px solid var(--line);padding-top:14px}
+.kitchen-mini{display:flex;gap:10px;align-items:center;padding:4px 8px}
+.avatar{width:40px;height:40px;border-radius:50%;background:var(--herb);color:#fff;display:grid;place-items:center;font-weight:800;font-size:15px;flex:0 0 40px}
+.kitchen-mini b{display:block;font-size:14px;line-height:1.25}
+.kitchen-mini span{font-size:12px;color:var(--ink3)}
+.main{flex:1;min-width:0}
+.topbar{display:none}
+.content{max-width:1060px;margin:0 auto;padding:28px 28px 96px}
+.view{display:none}
+.view.active{display:block}
+
+/* ---------- Shared ---------- */
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--saffron)}
+.page-head{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;justify-content:space-between;margin-bottom:20px}
+.page-head h1{font-size:30px;margin:2px 0 4px;line-height:1.15}
+.page-head p{margin:0;color:var(--ink2);max-width:52ch}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-card);box-shadow:var(--shadow)}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:var(--r-btn);padding:8px 16px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;justify-content:center}
+.btn:hover{border-color:var(--ink3)}
+.btn.primary{background:var(--pom);border-color:var(--pom);color:#FFF7EA}
+.btn.primary:hover{background:#87231E}
+.btn.herb{background:var(--herb);border-color:var(--herb);color:#fff}
+.btn.ghost{border-color:transparent;background:transparent}
+.btn.small{padding:5px 12px;font-size:13.5px;min-height:36px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 14px;font-weight:700;font-size:13.5px;cursor:pointer;min-height:38px}
+.chip.active{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:800;letter-spacing:.03em;padding:3px 9px;border-radius:999px}
+.tag.new{background:var(--pom-soft);color:var(--pom)}
+.tag.cooking{background:var(--saffron-soft);color:var(--saffron)}
+.tag.ready{background:var(--herb-soft);color:var(--herb)}
+.tag.done{background:var(--surface2);color:var(--ink2)}
+.tag.off{background:var(--surface2);color:var(--ink3)}
+.dot{width:8px;height:8px;border-radius:50%;background:currentColor;display:inline-block}
+
+/* online switch */
+.switch{display:inline-flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+.switch input{position:absolute;opacity:0;width:0;height:0}
+.track{width:52px;height:30px;border-radius:999px;background:var(--line);position:relative;transition:background .2s;flex:0 0 52px}
+.track::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:left .2s}
+.switch input:checked + .track{background:var(--herb)}
+.switch input:checked + .track::after{left:25px}
+.switch input:focus-visible + .track{outline:2px solid var(--saffron);outline-offset:2px}
+
+/* ---------- Today ---------- */
+.status-banner{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;padding:16px 20px;margin-bottom:18px}
+.status-banner .left{display:flex;gap:14px;align-items:center}
+.status-banner h2{margin:0;font-size:19px}
+.status-banner p{margin:2px 0 0;color:var(--ink2);font-size:13.5px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.stat{padding:16px 18px}
+.stat .k{font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3)}
+.stat .v{font-family:"Lora",serif;font-size:30px;font-weight:700;margin:4px 0 2px;line-height:1.1}
+.stat .s{font-size:12.5px;color:var(--ink2)}
+.stat .s b{color:var(--herb)}
+.cols{display:grid;grid-template-columns:1.65fr 1fr;gap:18px;align-items:start}
+.section-title{display:flex;align-items:center;justify-content:space-between;margin:0 0 12px}
+.section-title h2{font-size:20px;margin:0}
+.section-title a{color:var(--saffron);font-weight:700;font-size:13.5px;text-decoration:none;cursor:pointer}
+.stack{display:flex;flex-direction:column;gap:12px}
+.mini-card{padding:14px 16px;display:flex;gap:12px;align-items:flex-start}
+.mini-card h3{margin:0 0 4px;font-size:16.5px}
+.mini-card p{margin:0;color:var(--ink2);font-size:13.5px}
+.timeline{padding:18px 20px}
+.timeline ul{list-style:none;margin:10px 0 0;padding:0}
+.timeline li{display:flex;gap:12px;padding:9px 0;border-top:1px dashed var(--line);font-size:14px}
+.timeline li:first-child{border-top:0}
+.timeline .t{font-weight:800;color:var(--saffron);flex:0 0 52px;font-variant-numeric:tabular-nums}
+.alert{display:flex;gap:12px;padding:14px 16px;border-radius:var(--r-card);background:var(--saffron-soft);border:1px solid var(--line);font-size:14px}
+.alert b{color:var(--saffron)}
+
+/* ---------- Orders ---------- */
+.order{padding:0;overflow:hidden}
+.order-top{display:flex;gap:14px;padding:16px 18px 12px;align-items:flex-start}
+.order-top .meta{flex:1;min-width:0}
+.order-top h3{margin:0;font-size:17px}
+.order-top .sub{color:var(--ink2);font-size:13px;margin-top:2px}
+.order-total{font-family:"Lora",serif;font-size:19px;font-weight:700;white-space:nowrap}
+.order-items{padding:0 18px 12px;display:flex;flex-direction:column;gap:6px}
+.order-items .row{display:flex;gap:10px;font-size:14px;align-items:baseline}
+.order-items .qty{font-weight:800;color:var(--saffron);flex:0 0 30px}
+.order-items .note{color:var(--ink3);font-size:12.5px}
+.order-note{margin:0 18px 12px;background:var(--surface2);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--ink2)}
+.order-actions{display:flex;flex-wrap:wrap;gap:8px;padding:12px 18px;border-top:1px solid var(--line);background:var(--surface)}
+.order-actions .spacer{flex:1}
+.pickup{font-size:13px;color:var(--ink2);display:flex;align-items:center;gap:6px}
+.empty{padding:36px 20px;text-align:center;color:var(--ink2)}
+.empty h3{margin:0 0 6px;color:var(--ink)}
+
+/* ---------- Menu ---------- */
+.menu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.dish{overflow:hidden;display:flex;flex-direction:column}
+.dish img{width:100%;height:168px;object-fit:cover}
+.dish .body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px;flex:1}
+.dish h3{margin:0;font-size:18px;display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.dish h3 .price{font-size:17px;color:var(--pom);white-space:nowrap}
+.dish .fa-name{color:var(--ink3);font-size:13px;margin-top:-6px}
+.dish p{margin:0;color:var(--ink2);font-size:13.5px}
+.dish .rowline{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;padding-top:6px}
+.stepper{display:inline-flex;align-items:center;gap:2px;border:1px solid var(--line);border-radius:999px;padding:2px}
+.stepper button{width:34px;height:34px;min-height:34px;border:0;background:var(--surface2);border-radius:50%;font-size:17px;font-weight:800;cursor:pointer;display:grid;place-items:center}
+.stepper .n{min-width:58px;text-align:center;font-weight:800;font-size:13.5px}
+.dish.soldout img{filter:grayscale(.7);opacity:.75}
+.form-card{padding:20px;margin-top:18px}
+.form-card h2{margin:0 0 4px;font-size:20px}
+.form-card p{margin:0 0 14px;color:var(--ink2);font-size:13.5px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{display:flex;flex-direction:column;gap:5px}
+.field.full{grid-column:1/-1}
+.field label{font-size:12.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--ink2)}
+.field input,.field select,.field textarea{border:1px solid var(--line);background:var(--surface);border-radius:var(--r-btn);padding:9px 12px;min-height:42px}
+.field textarea{min-height:74px;resize:vertical}
+
+/* ---------- Earnings ---------- */
+.earn-head{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:14px;margin-bottom:18px}
+.earn-big{padding:20px}
+.earn-big .k{font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3)}
+.earn-big .v{font-family:"Lora",serif;font-size:36px;font-weight:700;margin:6px 0 2px}
+.earn-big .s{font-size:13px;color:var(--ink2)}
+.chart-card{padding:20px;margin-bottom:18px}
+.chart-card .bar-wrap{display:flex;align-items:flex-end;gap:10px;height:170px;margin-top:18px;border-bottom:2px solid var(--line);padding:0 4px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end}
+.bar{width:100%;max-width:52px;background:var(--saffron);border-radius:6px 6px 0 0;min-height:4px}
+.bar.dim{background:var(--line)}
+.bar-lab{font-size:12px;color:var(--ink2);font-weight:700}
+.bar-val{font-size:12px;font-weight:800;font-variant-numeric:tabular-nums}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);padding:10px 14px;border-bottom:1px solid var(--line)}
+td{padding:11px 14px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right}
+
+/* ---------- Kitchen / profile ---------- */
+.profile-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:18px;align-items:start}
+.profile-card{padding:22px;text-align:center}
+.profile-card .avatar{width:76px;height:76px;font-size:28px;margin:0 auto 10px}
+.profile-card h2{margin:0;font-size:22px}
+.profile-card .loc{color:var(--ink2);font-size:13.5px}
+.stars{color:var(--gold);font-size:17px;letter-spacing:2px;margin:6px 0}
+.review{padding:14px 16px}
+.review p{margin:6px 0 0;color:var(--ink2);font-size:14px}
+.review .who{font-weight:800;font-size:13.5px}
+.hours-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px dashed var(--line);font-size:14px}
+.hours-row:first-of-type{border-top:0}
+.hours-row .day{flex:0 0 96px;font-weight:700}
+.hours-row input[type="time"]{border:1px solid var(--line);border-radius:8px;padding:5px 8px;background:var(--surface);min-height:36px}
+.checkline{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px dashed var(--line);font-size:14.5px;cursor:pointer;min-height:44px}
+.checkline input{width:19px;height:19px;accent-color:var(--pom)}
+
+/* bottom nav (mobile) */
+.bottomnav{display:none}
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:12px 20px;border-radius:999px;font-weight:700;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:60;box-shadow:var(--shadow);max-width:92vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media (max-width:900px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .cols,.profile-grid{grid-template-columns:1fr}
+  .earn-head{grid-template-columns:1fr}
+  .menu-grid{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  .sidebar{display:none}
+  .content{padding:16px 16px 110px}
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:40}
+  .topbar .brand{padding:0}
+  .bottomnav{display:flex;position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--line);z-index:50;padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+  .bottomnav button{flex:1;background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;font-weight:700;color:var(--ink3);padding:7px 2px;border-radius:10px;cursor:pointer;position:relative;min-height:52px}
+  .bottomnav button svg{width:21px;height:21px}
+  .bottomnav button.active{color:var(--pom)}
+  .bottomnav .badge{position:absolute;top:2px;right:calc(50% - 20px);background:var(--pom);color:#fff;font-size:10px;font-weight:800;min-width:17px;height:17px;border-radius:999px;display:grid;place-items:center;padding:0 4px}
+  .page-head h1{font-size:25px}
+  .form-grid{grid-template-columns:1fr}
+  .toast{bottom:86px}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- Sidebar (desktop) -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">س</div>
+      <div><b>Sofreh</b><span>Cook app</span></div>
+    </div>
+    <nav class="nav" id="sideNav" aria-label="Main"></nav>
+    <div class="side-foot">
+      <div class="kitchen-mini">
+        <div class="avatar">M</div>
+        <div><b>Mina's Kitchen</b><span>North York · 4.9 ★</span></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">س</div>
+        <div><b>Sofreh</b><span>Cook app</span></div>
+      </div>
+      <span class="tag ready" id="topStatus"><span class="dot"></span>Online</span>
+    </header>
+
+    <main class="content">
+
+      <!-- ============ VIEW: TODAY ============ -->
+      <section class="view active" id="view-today">
+        <div class="page-head">
+          <div>
+            <div class="eyebrow">Wednesday · Nov 18</div>
+            <h1>Salam, Mina 👋</h1>
+            <p>Here's your kitchen today — new orders, what's cooking, and what needs restocking.</p>
+          </div>
+        </div>
+
+        <div class="card status-banner">
+          <div class="left">
+            <span class="tag ready" id="statusTag" style="font-size:13px;padding:6px 12px"><span class="dot"></span><span id="statusText">You're online</span></span>
+            <div>
+              <h2 id="statusHead">Taking orders until 8:30 PM</h2>
+              <p id="statusSub">Customers within 6 km can order from your menu right now.</p>
+            </div>
+          </div>
+          <label class="switch">
+            <span style="font-weight:700;font-size:14px" id="switchLabel">Online</span>
+            <input type="checkbox" id="onlineToggle" checked />
+            <span class="track"></span>
+          </label>
+        </div>
+
+        <div class="stats">
+          <div class="card stat"><div class="k">Orders today</div><div class="v" id="statOrders">9</div><div class="s"><b>+3</b> vs yesterday</div></div>
+          <div class="card stat"><div class="k">Earned today</div><div class="v" id="statEarned">$186</div><div class="s">After Sofreh's 12% fee</div></div>
+          <div class="card stat"><div class="k">Rating</div><div class="v">4.9 ★</div><div class="s">From 212 reviews</div></div>
+          <div class="card stat"><div class="k">Portions left</div><div class="v" id="statPortions">—</div><div class="s">Across today's menu</div></div>
+        </div>
+
+        <div class="cols">
+          <div>
+            <div class="section-title"><h2>Needs your action</h2><a data-goto="orders">See all orders →</a></div>
+            <div class="stack" id="todayQueue"></div>
+            <div style="height:18px"></div>
+            <div class="alert"><div>⚠️</div><div><b>Tahchin is almost out.</b> Only <span id="alertTahchin">2</span> portions left and it's your most-ordered dish this week. Cook another tray or mark it sold out.</div></div>
+          </div>
+          <div class="card timeline">
+            <h2 style="margin:0;font-size:19px">Today's schedule</h2>
+            <ul>
+              <li><span class="t">11:30</span><span>Lunch pickup window opens</span></li>
+              <li><span class="t">13:00</span><span>Order #1042 — Sara M. pickup</span></li>
+              <li><span class="t">17:30</span><span>Dinner rush — most orders arrive</span></li>
+              <li><span class="t">18:15</span><span>Order #1048 — family tray, delivery</span></li>
+              <li><span class="t">20:30</span><span>Kitchen closes · last pickup</span></li>
+            </ul>
+            <div style="height:10px"></div>
+            <div class="section-title" style="margin-bottom:6px"><h2 style="font-size:17px">This week</h2></div>
+            <p style="margin:0;color:var(--ink2);font-size:14px">You're <b style="color:var(--herb)">18% ahead</b> of last week. Friday is your biggest day — consider adding a second batch of Ghormeh Sabzi.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ VIEW: ORDERS ============ -->
+      <section class="view" id="view-orders">
+        <div class="page-head">
+          <div>
+            <div class="eyebrow">Orders</div>
+            <h1>Order board</h1>
+            <p>Accept new orders, track what's on the stove, and hand off pickups — all in one place.</p>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px" id="orderFilters">
+          <button class="chip active" data-filter="all">All</button>
+          <button class="chip" data-filter="new">New <span id="chipNew"></span></button>
+          <button class="chip" data-filter="cooking">Cooking</button>
+          <button class="chip" data-filter="ready">Ready</button>
+          <button class="chip" data-filter="done">Completed</button>
+        </div>
+        <div class="stack" id="orderList"></div>
+      </section>
+
+      <!-- ============ VIEW: MENU ============ -->
+      <section class="view" id="view-menu">
+        <div class="page-head">
+          <div>
+            <div class="eyebrow">Menu</div>
+            <h1>Today's menu</h1>
+            <p>Set portions each morning, pause a dish when you sell out, and add new dishes anytime.</p>
+          </div>
+          <button class="btn primary" id="scrollAdd">+ Add a dish</button>
+        </div>
+        <div class="menu-grid" id="menuGrid"></div>
+
+        <div class="card form-card" id="addDishCard">
+          <h2>Add a new dish</h2>
+          <p>It appears on your public menu as soon as you save it. You can pause it anytime.</p>
+          <form id="addDishForm">
+            <div class="form-grid">
+              <div class="field"><label for="fName">Dish name (English)</label><input id="fName" required placeholder="e.g. Lubia Polo" /></div>
+              <div class="field"><label for="fFa">Name in Persian (optional)</label><input id="fFa" placeholder="لوبیا پلو" /></div>
+              <div class="field"><label for="fPrice">Price per portion (CAD)</label><input id="fPrice" type="number" min="1" step="0.5" required placeholder="18" /></div>
+              <div class="field"><label for="fPortions">Portions today</label><input id="fPortions" type="number" min="0" max="60" required placeholder="8" /></div>
+              <div class="field full"><label for="fDesc">Short description</label><textarea id="fDesc" placeholder="What makes yours special? Ingredients, spice level, what it comes with…"></textarea></div>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+              <button type="submit" class="btn primary">Save dish to menu</button>
+              <button type="reset" class="btn">Clear</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- ============ VIEW: EARNINGS ============ -->
+      <section class="view" id="view-earnings">
+        <div class="page-head">
+          <div>
+            <div class="eyebrow">Earnings</div>
+            <h1>Your earnings</h1>
+            <p>What you've made, what's on the way to your bank, and which dishes earn the most.</p>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="chip active" data-period="week">This week</button>
+            <button class="chip" data-period="month">This month</button>
+          </div>
+        </div>
+        <div class="earn-head">
+          <div class="card earn-big"><div class="k" id="earnK">Earned this week</div><div class="v" id="earnV">$742</div><div class="s" id="earnS">From 41 orders · avg $18.10 per order</div></div>
+          <div class="card earn-big"><div class="k">Next payout</div><div class="v">$518</div><div class="s">Arrives Friday, Nov 20 · TD ****4821</div></div>
+          <div class="card earn-big"><div class="k">Sofreh fee (12%)</div><div class="v" id="feeV">$101</div><div class="s">Covers payment, support &amp; delivery partners</div></div>
+        </div>
+        <div class="card chart-card">
+          <div class="section-title" style="margin:0"><h2 id="chartTitle">Daily earnings — this week</h2><span style="color:var(--ink2);font-size:13px" id="chartNote">Best day: Friday</span></div>
+          <div class="bar-wrap" id="chart"></div>
+        </div>
+        <div class="card" style="overflow:hidden">
+          <div class="section-title" style="padding:16px 18px 0"><h2>Top dishes</h2></div>
+          <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>Dish</th><th class="num">Portions sold</th><th class="num">Gross</th><th class="num">You keep</th></tr></thead>
+            <tbody id="topDishes"></tbody>
+          </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ VIEW: KITCHEN ============ -->
+      <section class="view" id="view-kitchen">
+        <div class="page-head">
+          <div>
+            <div class="eyebrow">My kitchen</div>
+            <h1>Kitchen profile</h1>
+            <p>This is what customers see on your Sofreh page — plus your hours and pickup settings.</p>
+          </div>
+        </div>
+        <div class="profile-grid">
+          <div class="stack">
+            <div class="card profile-card">
+              <div class="avatar">M</div>
+              <h2>Mina's Kitchen</h2>
+              <div class="loc">North York, Toronto · Cooking on Sofreh since March 2025</div>
+              <div class="stars" aria-label="4.9 out of 5 stars">★★★★★</div>
+              <div style="font-weight:800">4.9 · 212 reviews · 1,480 orders served</div>
+              <p style="color:var(--ink2);font-size:14px;margin:12px 0 0">Home-style Persian cooking the way my mother taught me in Shiraz — slow stews, real saffron, and tahdig with every rice dish.</p>
+              <div style="display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap">
+                <span class="tag cooking">Halal</span><span class="tag ready">Food-handler certified</span><span class="tag cooking">Vegetarian options</span>
+              </div>
+            </div>
+            <div class="card review">
+              <div class="who">Sara M. · ★★★★★ <span style="color:var(--ink3);font-weight:600">· 2 days ago</span></div>
+              <p>"The ghormeh sabzi tastes exactly like home. You can tell the herbs are fresh. Already ordered three times this month."</p>
+            </div>
+            <div class="card review">
+              <div class="who">Daniel K. · ★★★★★ <span style="color:var(--ink3);font-weight:600">· last week</span></div>
+              <p>"First time trying fesenjan — sweet, tangy, incredible with the saffron rice. Pickup was right on time."</p>
+            </div>
+          </div>
+          <div class="stack">
+            <div class="card" style="padding:20px">
+              <h2 style="margin:0 0 6px;font-size:19px">Opening hours</h2>
+              <div id="hoursList"></div>
+            </div>
+            <div class="card" style="padding:20px">
+              <h2 style="margin:0 0 4px;font-size:19px">Pickup &amp; delivery</h2>
+              <label class="checkline"><input type="checkbox" checked id="optPickup" /> Porch pickup from my address</label>
+              <label class="checkline"><input type="checkbox" checked id="optDelivery" /> Sofreh delivery partner (within 6 km)</label>
+              <label class="checkline"><input type="checkbox" id="optPreorder" /> Accept pre-orders for the next day</label>
+              <label class="checkline"><input type="checkbox" checked id="optLarge" /> Family trays &amp; party orders (48h notice)</label>
+              <div style="margin-top:14px"><button class="btn primary" id="saveKitchen">Save settings</button></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<nav class="bottomnav" id="bottomNav" aria-label="Main"></nav>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+var NAV = [
+  {id:'today',   label:'Today',    icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>'},
+  {id:'orders',  label:'Orders',   icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>'},
+  {id:'menu',    label:'Menu',     icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>'},
+  {id:'earnings',label:'Earnings', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>'},
+  {id:'kitchen', label:'Kitchen',  icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg>'}
+];
+
+var orders = [
+  {id:1051, name:'Leila H.', time:'12:42 PM', when:'Pickup · today 1:30 PM', status:'new', total:43.50, note:'Extra tahdig if you have it, please!', items:[{q:2,name:'Ghormeh Sabzi + saffron rice',note:''},{q:1,name:'Shirazi salad',note:''}]},
+  {id:1050, name:'Arman T.', time:'12:31 PM', when:'Delivery · today 6:00 PM', status:'new', total:62.00, note:'', items:[{q:2,name:'Tahchin Morgh (chicken)',note:''},{q:1,name:'Mast-o-Khiar',note:'extra mint'}]},
+  {id:1049, name:'Priya S.', time:'12:05 PM', when:'Pickup · today 1:00 PM', status:'cooking', total:24.00, note:'First order — mild spice please.', items:[{q:1,name:'Ash Reshteh (vegetarian)',note:'no onion topping'}]},
+  {id:1048, name:'The Rahimi family', time:'11:48 AM', when:'Delivery · today 6:15 PM', status:'cooking', total:118.00, note:'Family tray for 6. Two portions without walnuts (allergy).', items:[{q:4,name:'Fesenjan + saffron rice',note:'2 without walnuts'},{q:2,name:'Zereshk Polo ba Morgh',note:''},{q:1,name:'Family Shirazi salad',note:''}]},
+  {id:1047, name:'Marcus L.', time:'11:20 AM', when:'Pickup · today 12:45 PM', status:'ready', total:31.50, note:'', items:[{q:1,name:'Joojeh Kabab + rice',note:''},{q:1,name:'Doogh (mint yogurt drink)',note:''}]},
+  {id:1046, name:'Sara M.', time:'10:52 AM', when:'Picked up 11:40 AM', status:'done', total:38.00, note:'', items:[{q:2,name:'Gheymeh + rice',note:''}]},
+  {id:1045, name:'Nima R.', time:'10:15 AM', when:'Picked up 11:05 AM', status:'done', total:19.50, note:'', items:[{q:1,name:'Ghormeh Sabzi + saffron rice',note:''}]}
+];
+
+var dishes = [
+  {name:'Ghormeh Sabzi', fa:'قرمه‌سبزی', price:19.50, portions:9, max:14, on:true, img:'assets/ghormeh.webp', alt:'Bowl of ghormeh sabzi herb stew with saffron rice', desc:'Slow-simmered herbs, beef, kidney beans and dried lime. Served with saffron basmati.'},
+  {name:'Tahchin Morgh', fa:'ته‌چین مرغ', price:21.00, portions:2, max:10, on:true, img:'assets/tahchin.webp', alt:'Golden tahchin saffron rice cake with barberries', desc:'Crispy saffron yogurt rice layered with chicken, topped with barberries and pistachio.'},
+  {name:'Fesenjan', fa:'فسنجان', price:22.50, portions:6, max:8, on:true, img:'assets/fesenjan.jpg', alt:'Fesenjan walnut and pomegranate stew', desc:'Chicken braised in walnut & pomegranate molasses — sweet, tangy, deep. With saffron rice.'},
+  {name:'Zereshk Polo ba Morgh', fa:'زرشک‌پلو با مرغ', price:20.00, portions:7, max:12, on:true, img:'assets/zereshk.jpg', alt:'Zereshk polo barberry rice with chicken', desc:'Barberry rice with saffron chicken — the celebration dish, jewelled and bright.'},
+  {name:'Joojeh Kabab', fa:'جوجه‌کباب', price:23.00, portions:5, max:10, on:true, img:'assets/joojeh.jpg', alt:'Joojeh kabab saffron chicken skewer with rice and grilled tomatoes', desc:'Saffron-and-yogurt marinated chicken, grilled with tomatoes. Rice and flatbread included.'},
+  {name:'Gheymeh', fa:'قیمه', price:18.00, portions:0, max:10, on:true, img:'assets/gheymeh.jpg', alt:'Gheymeh split pea stew topped with crispy potato', desc:'Yellow split-pea and beef stew with dried lime, topped with crispy potato sticks.'},
+  {name:'Ash Reshteh', fa:'آش رشته', price:14.50, portions:8, max:12, on:false, img:'assets/ash.jpg', alt:'Ash reshteh Persian noodle and herb soup', desc:'Hearty noodle, bean and herb soup with kashk and fried mint. Vegetarian. Back Friday.'}
+];
+
+var weekData = [{d:'Thu',v:96},{d:'Fri',v:168},{d:'Sat',v:154},{d:'Sun',v:88},{d:'Mon',v:64},{d:'Tue',v:78},{d:'Wed',v:94}];
+var monthData = [{d:'Wk 1',v:612},{d:'Wk 2',v:688},{d:'Wk 3',v:742},{d:'Wk 4',v:704}];
+var hoursData = [['Monday','Closed',''],['Tuesday','11:30','20:30'],['Wednesday','11:30','20:30'],['Thursday','11:30','20:30'],['Friday','11:30','21:00'],['Saturday','12:00','21:00'],['Sunday','12:00','18:00']];
+
+var currentView='today', orderFilter='all', online=true;
+
+/* ---------- nav ---------- */
+function buildNav(){
+  var html = NAV.map(function(n){
+    var badge = n.id==='orders' ? '<span class="badge" data-navbadge style="display:none"></span>' : '';
+    return '<button data-nav="'+n.id+'" class="'+(n.id===currentView?'active':'')+'">'+n.icon+'<span>'+n.label+'</span>'+badge+'</button>';
+  }).join('');
+  document.getElementById('sideNav').innerHTML = html;
+  document.getElementById('bottomNav').innerHTML = html;
+  document.querySelectorAll('[data-nav]').forEach(function(b){
+    b.addEventListener('click', function(){ goTo(b.getAttribute('data-nav')); });
+  });
+}
+function goTo(id){
+  currentView=id;
+  document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+  document.getElementById('view-'+id).classList.add('active');
+  document.querySelectorAll('[data-nav]').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-nav')===id); });
+  window.scrollTo({top:0});
+}
+document.querySelectorAll('[data-goto]').forEach(function(a){
+  a.addEventListener('click', function(){ goTo(a.getAttribute('data-goto')); });
+});
+
+/* ---------- toast ---------- */
+var toastTimer=null;
+function toast(msg){
+  var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(function(){ t.classList.remove('show'); }, 2800);
+}
+
+/* ---------- orders ---------- */
+function newCount(){ return orders.filter(function(o){return o.status==='new';}).length; }
+function statusTag(s){
+  if(s==='new') return '<span class="tag new"><span class="dot"></span>New</span>';
+  if(s==='cooking') return '<span class="tag cooking"><span class="dot"></span>Cooking</span>';
+  if(s==='ready') return '<span class="tag ready"><span class="dot"></span>Ready</span>';
+  return '<span class="tag done">Completed</span>';
+}
+function orderActions(o){
+  if(o.status==='new') return '<button class="btn primary small" data-act="accept" data-id="'+o.id+'">Accept order</button><button class="btn small" data-act="decline" data-id="'+o.id+'">Decline</button>';
+  if(o.status==='cooking') return '<button class="btn herb small" data-act="ready" data-id="'+o.id+'">Mark ready for pickup</button>';
+  if(o.status==='ready') return '<button class="btn small" data-act="done" data-id="'+o.id+'">Handed over ✓</button>';
+  return '<span style="font-size:13px;color:var(--ink3)">Paid · $'+o.total.toFixed(2)+' · Sofreh fee $'+(o.total*0.12).toFixed(2)+'</span>';
+}
+function orderCard(o, compact){
+  var items = o.items.map(function(it){
+    return '<div class="row"><span class="qty">'+it.q+' ×</span><span>'+it.name+(it.note?' <span class="note">— '+it.note+'</span>':'')+'</span></div>';
+  }).join('');
+  return '<article class="card order">'
+    + '<div class="order-top"><div class="meta"><h3>#'+o.id+' · '+o.name+' '+statusTag(o.status)+'</h3>'
+    + '<div class="sub">Ordered '+o.time+' · '+o.when+'</div></div>'
+    + '<div class="order-total">$'+o.total.toFixed(2)+'</div></div>'
+    + '<div class="order-items">'+items+'</div>'
+    + (o.note ? '<div class="order-note">💬 "'+o.note+'"</div>' : '')
+    + (compact ? '' : '<div class="order-actions"><span class="pickup">🧺 '+o.when+'</span><span class="spacer"></span>'+orderActions(o)+'</div>')
+    + '</article>';
+}
+function renderOrders(){
+  var list = orders.filter(function(o){ return orderFilter==='all' || o.status===orderFilter; });
+  var el = document.getElementById('orderList');
+  el.innerHTML = list.length ? list.map(function(o){return orderCard(o,false);}).join('')
+    : '<div class="card empty"><h3>Nothing here right now</h3><p>No orders in this stage. New orders will appear here the moment they come in.</p></div>';
+  el.querySelectorAll('[data-act]').forEach(function(b){ b.addEventListener('click', onOrderAction); });
+  var c = newCount();
+  document.getElementById('chipNew').textContent = c ? '('+c+')' : '';
+  document.querySelectorAll('[data-navbadge]').forEach(function(bd){
+    bd.style.display = c ? 'grid' : 'none'; bd.textContent = c;
+  });
+  renderTodayQueue(); updateStats();
+}
+function onOrderAction(e){
+  var btn=e.currentTarget, id=+btn.getAttribute('data-id'), act=btn.getAttribute('data-act');
+  var o=orders.find(function(x){return x.id===id;}); if(!o) return;
+  if(act==='accept'){ o.status='cooking'; toast('Order #'+id+' accepted — time to cook! 🍳'); }
+  if(act==='decline'){ orders=orders.filter(function(x){return x.id!==id;}); toast('Order #'+id+' declined. The customer was notified.'); }
+  if(act==='ready'){ o.status='ready'; toast('Order #'+id+' marked ready — '+o.name.split(' ')[0]+' got a notification.'); }
+  if(act==='done'){ o.status='done'; toast('Order #'+id+' completed. Nice work, Mina!'); }
+  renderOrders();
+}
+document.getElementById('orderFilters').addEventListener('click', function(e){
+  var b=e.target.closest('[data-filter]'); if(!b) return;
+  orderFilter=b.getAttribute('data-filter');
+  this.querySelectorAll('.chip').forEach(function(c){ c.classList.toggle('active', c===b); });
+  renderOrders();
+});
+
+/* ---------- today ---------- */
+function renderTodayQueue(){
+  var q = orders.filter(function(o){ return o.status==='new'||o.status==='cooking'; }).slice(0,3);
+  var el=document.getElementById('todayQueue');
+  el.innerHTML = q.length ? q.map(function(o){
+    return '<article class="card mini-card"><div style="flex:1;min-width:0"><h3>#'+o.id+' · '+o.name+' '+statusTag(o.status)+'</h3>'
+      + '<p>'+o.items.map(function(i){return i.q+' × '+i.name;}).join(' · ')+'</p>'
+      + '<p style="margin-top:3px">'+o.when+' · <b style="color:var(--ink)">$'+o.total.toFixed(2)+'</b></p></div>'
+      + (o.status==='new'
+        ? '<button class="btn primary small" data-today-accept="'+o.id+'">Accept</button>'
+        : '<button class="btn small" data-today-goto="1">View</button>')
+      + '</article>';
+  }).join('') : '<div class="card empty"><h3>All caught up 🎉</h3><p>No orders waiting. Enjoy the quiet — dinner rush starts around 5:30 PM.</p></div>';
+  el.querySelectorAll('[data-today-accept]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var o=orders.find(function(x){return x.id===+b.getAttribute('data-today-accept');});
+      if(o){ o.status='cooking'; toast('Order #'+o.id+' accepted — time to cook! 🍳'); renderOrders(); }
+    });
+  });
+  el.querySelectorAll('[data-today-goto]').forEach(function(b){ b.addEventListener('click', function(){ goTo('orders'); }); });
+}
+function updateStats(){
+  var active = orders.filter(function(o){return o.status!=='done';}).length;
+  var done = orders.filter(function(o){return o.status==='done';});
+  var earned = 186 + done.reduce(function(s,o){return s;},0);
+  document.getElementById('statOrders').textContent = orders.length + 4;
+  var left = dishes.filter(function(d){return d.on;}).reduce(function(s,d){return s+d.portions;},0);
+  document.getElementById('statPortions').textContent = left;
+  var tah = dishes.find(function(d){return d.name.indexOf('Tahchin')===0;});
+  if(tah) document.getElementById('alertTahchin').textContent = tah.portions;
+}
+
+/* ---------- online toggle ---------- */
+document.getElementById('onlineToggle').addEventListener('change', function(){
+  online = this.checked;
+  document.getElementById('switchLabel').textContent = online ? 'Online' : 'Offline';
+  document.getElementById('statusText').textContent = online ? "You're online" : "You're offline";
+  document.getElementById('statusHead').textContent = online ? 'Taking orders until 8:30 PM' : 'Your kitchen is hidden from customers';
+  document.getElementById('statusSub').textContent = online ? 'Customers within 6 km can order from your menu right now.' : 'Orders already accepted still need to be finished. Go online again whenever you\'re ready.';
+  var tag=document.getElementById('statusTag');
+  tag.className = 'tag ' + (online ? 'ready' : 'off'); tag.style.fontSize='13px'; tag.style.padding='6px 12px';
+  var top=document.getElementById('topStatus');
+  top.className='tag '+(online?'ready':'off'); top.innerHTML='<span class="dot"></span>'+(online?'Online':'Offline');
+  toast(online ? 'You\'re online — customers can order now.' : 'You\'re offline. Take your time.');
+});
+
+/* ---------- menu ---------- */
+function renderMenu(){
+  var grid=document.getElementById('menuGrid');
+  grid.innerHTML = dishes.map(function(d,i){
+    var soldout = d.on && d.portions===0;
+    return '<article class="card dish'+(soldout?' soldout':'')+'">'
+      + '<img src="'+d.img+'" alt="'+d.alt+'" loading="lazy" />'
+      + '<div class="body"><h3>'+d.name+'<span class="price">$'+d.price.toFixed(2)+'</span></h3>'
+      + '<div class="fa-name">'+d.fa+'</div><p>'+d.desc+'</p>'
+      + '<div class="rowline"><div><div style="font-size:11.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3)">Portions left</div>'
+      + '<div class="stepper"><button data-dec="'+i+'" aria-label="One less portion">−</button><span class="n">'+d.portions+' / '+d.max+'</span><button data-inc="'+i+'" aria-label="One more portion">+</button></div></div>'
+      + '<div style="text-align:right"><div style="font-size:11.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px">'+(d.on ? (soldout?'Sold out':'On menu') : 'Paused')+'</div>'
+      + '<label class="switch"><input type="checkbox" data-dishon="'+i+'" '+(d.on?'checked':'')+' /><span class="track" style="width:46px;height:27px"></span></label></div></div>'
+      + '</div></article>';
+  }).join('');
+  grid.querySelectorAll('[data-inc]').forEach(function(b){ b.addEventListener('click', function(){ var d=dishes[+b.getAttribute('data-inc')]; if(d.portions<d.max){d.portions++;} renderMenu(); updateStats(); }); });
+  grid.querySelectorAll('[data-dec]').forEach(function(b){ b.addEventListener('click', function(){ var d=dishes[+b.getAttribute('data-dec')]; if(d.portions>0){d.portions--;} renderMenu(); updateStats(); }); });
+  grid.querySelectorAll('[data-dishon]').forEach(function(c){ c.addEventListener('change', function(){ var d=dishes[+c.getAttribute('data-dishon')]; d.on=c.checked; toast(d.on ? d.name+' is back on the menu.' : d.name+' paused — customers can\'t order it.'); renderMenu(); updateStats(); }); });
+  updateStats();
+}
+document.getElementById('scrollAdd').addEventListener('click', function(){
+  document.getElementById('addDishCard').scrollIntoView({behavior:'smooth', block:'start'});
+  document.getElementById('fName').focus({preventScroll:true});
+});
+document.getElementById('addDishForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  var name=document.getElementById('fName').value.trim(); if(!name) return;
+  dishes.unshift({ name:name, fa:document.getElementById('fFa').value.trim()||'—', price:parseFloat(document.getElementById('fPrice').value)||15,
+    portions:parseInt(document.getElementById('fPortions').value)||0, max:parseInt(document.getElementById('fPortions').value)||10, on:true,
+    img:'assets/ghormeh.webp', alt:'Photo of '+name, desc:document.getElementById('fDesc').value.trim()||'Fresh from Mina\'s kitchen today.' });
+  this.reset(); renderMenu();
+  toast(name+' added to today\'s menu ✓');
+  document.getElementById('menuGrid').scrollIntoView({behavior:'smooth'});
+});
+
+/* ---------- earnings ---------- */
+function renderChart(data, title){
+  var max=Math.max.apply(null, data.map(function(x){return x.v;}));
+  document.getElementById('chart').innerHTML = data.map(function(x,i){
+    var h=Math.round(x.v/max*100);
+    return '<div class="bar-col"><div class="bar-val">$'+x.v+'</div><div class="bar'+(i===data.length-1?'':' dim')+'" style="height:'+h+'%"></div><div class="bar-lab">'+x.d+'</div></div>';
+  }).join('');
+  document.getElementById('chartTitle').textContent = title;
+}
+function renderTopDishes(){
+  var rows=[['Ghormeh Sabzi',86,1677],['Tahchin Morgh',64,1344],['Fesenjan',41,922],['Joojeh Kabab',38,874],['Zereshk Polo',35,700]];
+  document.getElementById('topDishes').innerHTML = rows.map(function(r){
+    return '<tr><td style="font-weight:700">'+r[0]+'</td><td class="num">'+r[1]+'</td><td class="num">$'+r[2].toLocaleString()+'</td><td class="num" style="font-weight:800">$'+Math.round(r[2]*0.88).toLocaleString()+'</td></tr>';
+  }).join('');
+}
+document.querySelectorAll('[data-period]').forEach(function(b){
+  b.addEventListener('click', function(){
+    document.querySelectorAll('[data-period]').forEach(function(x){x.classList.remove('active');});
+    b.classList.add('active');
+    if(b.getAttribute('data-period')==='week'){
+      renderChart(weekData,'Daily earnings — this week');
+      document.getElementById('earnK').textContent='Earned this week';
+      document.getElementById('earnV').textContent='$742';
+      document.getElementById('earnS').textContent='From 41 orders · avg $18.10 per order';
+      document.getElementById('feeV').textContent='$101';
+      document.getElementById('chartNote').textContent='Best day: Friday';
+    } else {
+      renderChart(monthData,'Weekly earnings — November');
+      document.getElementById('earnK').textContent='Earned this month';
+      document.getElementById('earnV').textContent='$2,746';
+      document.getElementById('earnS').textContent='From 148 orders · avg $18.55 per order';
+      document.getElementById('feeV').textContent='$375';
+      document.getElementById('chartNote').textContent='Best week: Week 3';
+    }
+  });
+});
+
+/* ---------- kitchen ---------- */
+function renderHours(){
+  document.getElementById('hoursList').innerHTML = hoursData.map(function(h,i){
+    if(h[1]==='Closed') return '<div class="hours-row"><span class="day">'+h[0]+'</span><span style="color:var(--pom);font-weight:700">Closed</span><span style="flex:1"></span><button class="btn small ghost" data-open-day="'+i+'">Open this day</button></div>';
+    return '<div class="hours-row"><span class="day">'+h[0]+'</span><input type="time" value="'+h[1]+'" aria-label="'+h[0]+' opening time" /><span>to</span><input type="time" value="'+h[2]+'" aria-label="'+h[0]+' closing time" /></div>';
+  }).join('');
+  document.querySelectorAll('[data-open-day]').forEach(function(b){
+    b.addEventListener('click', function(){ var i=+b.getAttribute('data-open-day'); hoursData[i]=[hoursData[i][0],'11:30','20:30']; renderHours(); toast(hoursData[i][0]+' added to your schedule.'); });
+  });
+}
+document.getElementById('saveKitchen').addEventListener('click', function(){ toast('Kitchen settings saved ✓ Customers see the update right away.'); });
+
+/* ---------- init ---------- */
+buildNav(); renderOrders(); renderMenu(); renderChart(weekData,'Daily earnings — this week'); renderTopDishes(); renderHours(); updateStats();
+</script>
+</body>
+</html>

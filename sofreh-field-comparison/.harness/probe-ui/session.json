@@ -1,0 +1,8 @@
+{
+  "schema_version": "hatch.probe_ui_session.v1",
+  "socket": "/home/hatch/workspace/ts-spaces/sofreh-field-comparison/.harness/probe-ui/sock",
+  "slug": "sofreh-field-comparison",
+  "url": "https://artifact-capture.invalid/spaces/v2/hatch-audit-66faa98b-0546-4f20-bfb2-44cf9bec8345/",
+  "audit_session_id": "bf1d3fe5-1250-4baa-a6aa-ca31b1bbbbcb",
+  "pid": 10171
+}

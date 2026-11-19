@@ -1,0 +1,8 @@
+{
+  "runtime": "static",
+  "platformVersion": 15,
+  "entry": "index.html",
+  "name": "Sofreh Customer Web App",
+  "slug": "sofreh-customer-web-app",
+  "managedCronJobs": []
+}

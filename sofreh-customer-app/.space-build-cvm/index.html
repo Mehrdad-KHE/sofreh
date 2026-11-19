@@ -1,0 +1,2979 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>Sofreh — Customer App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Naskh+Arabic:wght@500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      button, [role="button"], select, summary, input:not([type="checkbox"], [type="radio"]) { min-height: 2.25rem; }
+      :root{
+        --bg:#f6f3ec; --surface:#ffffff; --surface-2:#efe9dd; --ink:#1d2420; --ink-2:#4c564f; --ink-3:#7c867e;
+        --line:#e2dacb; --green:#17452e; --green-2:#1f5c3d; --green-soft:#e3efe4; --saffron:#d98a06; --saffron-soft:#fdf0d5;
+        --pom:#a62b25; --pom-soft:#fbe9e7; --gold:#b97f16;
+        --shadow:0 10px 30px rgba(29,36,32,.10); --shadow-sm:0 2px 10px rgba(29,36,32,.08);
+        --r-lg:20px; --r-md:14px; --r-sm:10px;
+      }
+      @media (prefers-color-scheme: dark){
+        :root{
+          --bg:#14120e; --surface:#1f1c16; --surface-2:#2a261d; --ink:#f0ead9; --ink-2:#c9c2ae; --ink-3:#98917c;
+          --line:#38332a; --green:#8fce9f; --green-2:#a8dcb4; --green-soft:#22392a; --saffron:#eda93a; --saffron-soft:#3d2f10;
+          --pom:#ef9a93; --pom-soft:#402220; --gold:#e3b34e;
+          --shadow:0 10px 30px rgba(0,0,0,.45); --shadow-sm:0 2px 10px rgba(0,0,0,.35);
+        }
+      }
+      html{ box-sizing:border-box; scroll-behavior:smooth; }
+      *, *::before, *::after{ box-sizing:inherit; }
+      body{ margin:0; background:var(--bg); color:var(--ink); font-family:"Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif; font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased; }
+      h1,h2,h3,h4,p,ul,ol,figure{ margin:0; }
+      ul,ol{ padding:0; list-style:none; }
+      button{ font:inherit; cursor:pointer; border:0; background:none; color:inherit; }
+      input,select,textarea{ font:inherit; color:inherit; }
+      img{ display:block; max-width:100%; }
+      .fa{ font-family:"Noto Naskh Arabic", serif; }
+      :focus-visible{ outline:3px solid var(--saffron); outline-offset:2px; border-radius:6px; }
+
+      /* ---------- Top bar ---------- */
+      .topbar{ position:sticky; top:0; z-index:40; background:color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
+      .topbar-in{ max-width:1180px; margin:0 auto; padding:10px 16px; display:flex; align-items:center; gap:14px; }
+      .brand{ display:flex; align-items:baseline; gap:8px; text-decoration:none; color:var(--ink); }
+      .brand .word{ font-weight:800; font-size:1.45rem; letter-spacing:-.02em; color:var(--green); }
+      @media (prefers-color-scheme: dark){ .brand .word{ color:var(--green-2); } }
+      .brand .fa{ font-size:1.15rem; color:var(--saffron); font-weight:700; }
+      .loc{ display:flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; background:var(--surface); border:1px solid var(--line); font-size:.85rem; font-weight:600; min-height:2.25rem; }
+      .loc small{ display:block; font-weight:500; color:var(--ink-3); font-size:.68rem; line-height:1.1; }
+      .loc svg{ flex:none; }
+      .searchbar{ flex:1; display:none; position:relative; }
+      .searchbar input{ width:100%; padding:10px 14px 10px 42px; border-radius:999px; border:1px solid var(--line); background:var(--surface); font-size:.95rem; }
+      .searchbar svg{ position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--ink-3); }
+      .icon-btn{ position:relative; display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:50%; background:var(--surface); border:1px solid var(--line); flex:none; }
+      .icon-btn .badge{ position:absolute; top:-4px; right:-4px; min-width:20px; height:20px; padding:0 5px; border-radius:999px; background:var(--pom); color:#fff; font-size:.72rem; font-weight:800; display:flex; align-items:center; justify-content:center; }
+      .icon-btn .badge[hidden]{ display:none; }
+      @media (prefers-color-scheme: dark){ .icon-btn .badge{ color:#1d1210; background:var(--saffron); } }
+      .avatar-dot{ width:44px; height:44px; border-radius:50%; background:var(--green); color:#fff; font-weight:800; display:flex; align-items:center; justify-content:center; flex:none; font-size:.95rem; }
+      @media (prefers-color-scheme: dark){ .avatar-dot{ background:var(--green-soft); color:var(--green-2); } }
+      .search-mobile{ max-width:1180px; margin:0 auto; padding:0 16px 10px; position:relative; }
+      .search-mobile input{ width:100%; padding:11px 14px 11px 42px; border-radius:999px; border:1px solid var(--line); background:var(--surface); font-size:.95rem; }
+      .search-mobile svg{ position:absolute; left:30px; top:50%; transform:translateY(-50%); color:var(--ink-3); }
+      @media (min-width:760px){ .searchbar{ display:block; } .search-mobile{ display:none; } }
+
+      main{ max-width:1180px; margin:0 auto; padding:0 16px 110px; }
+      @media (min-width:760px){ main{ padding-bottom:48px; } }
+      .view{ display:none; }
+      .view.active{ display:block; }
+
+      /* ---------- Hero ---------- */
+      .hero{ margin-top:14px; border-radius:var(--r-lg); overflow:hidden; position:relative; background:var(--green); color:#fff; box-shadow:var(--shadow); }
+      .hero img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.55; }
+      .hero-txt{ position:relative; display:flex; flex-direction:column; justify-content:flex-end; padding:96px 20px 20px; background:linear-gradient(to top, rgba(10,26,17,.88) 0%, rgba(10,26,17,.35) 55%, rgba(10,26,17,0) 100%); }
+      @media (min-width:760px){ .hero-txt{ padding:150px 26px 26px; } }
+      .hero-txt h1{ font-size:1.55rem; line-height:1.15; letter-spacing:-.02em; font-weight:800; max-width:22ch; }
+      @media (min-width:760px){ .hero-txt h1{ font-size:2.3rem; } }
+      .hero-txt p{ margin-top:8px; color:#e8e2cf; max-width:52ch; font-size:.98rem; }
+      .hero-cta{ margin-top:16px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+      .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:11px 20px; border-radius:999px; font-weight:700; font-size:.95rem; min-height:2.75rem; text-decoration:none; transition:transform .15s ease, background .15s ease; }
+      .btn:active{ transform:scale(.97); }
+      .btn-saffron{ background:var(--saffron); color:#241a02; }
+      .btn-ghost{ background:rgba(255,255,255,.14); color:#fff; border:1px solid rgba(255,255,255,.4); }
+      .hero-stats{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+      .hero-stats span{ background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.25); padding:5px 12px; border-radius:999px; font-size:.8rem; font-weight:600; }
+
+      /* ---------- Sections ---------- */
+      .sec-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin:24px 0 12px; }
+      .sec-head h2{ font-size:1.3rem; font-weight:800; letter-spacing:-.01em; }
+      .sec-head p{ color:var(--ink-2); font-size:.9rem; margin-top:2px; }
+      .sortsel{ border:1px solid var(--line); background:var(--surface); border-radius:999px; padding:8px 12px; font-size:.85rem; font-weight:600; min-height:2.5rem; }
+
+      .chips{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+      .chip{ padding:8px 13px; border-radius:999px; border:1px solid var(--line); background:var(--surface); font-weight:600; font-size:.87rem; min-height:2.5rem; display:inline-flex; align-items:center; gap:7px; }
+      .chip[aria-pressed="true"]{ background:var(--green); border-color:var(--green); color:#fff; }
+      @media (prefers-color-scheme: dark){ .chip[aria-pressed="true"]{ background:var(--green-soft); color:var(--green-2); border-color:var(--green); } }
+      .chip .fa{ font-size:.95rem; }
+
+      /* ---------- Dish grid ---------- */
+      .grid{ display:grid; grid-template-columns:1fr; gap:16px; }
+      @media (min-width:560px){ .grid{ grid-template-columns:repeat(2,1fr); } }
+      @media (min-width:960px){ .grid{ grid-template-columns:repeat(3,1fr); } }
+      .card{ background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg); overflow:hidden; box-shadow:var(--shadow-sm); display:flex; flex-direction:column; }
+      .card-img{ position:relative; cursor:pointer; }
+      .card-img img{ width:100%; height:190px; object-fit:cover; }
+      .tag{ position:absolute; top:10px; left:10px; background:rgba(16,30,20,.82); color:#ffe9b0; font-size:.72rem; font-weight:700; padding:4px 10px; border-radius:999px; }
+      .fav-btn{ position:absolute; top:8px; right:8px; width:40px; height:40px; border-radius:50%; background:var(--surface); box-shadow:var(--shadow-sm); display:flex; align-items:center; justify-content:center; }
+      .fav-btn svg{ width:20px; height:20px; fill:none; stroke:var(--ink-2); stroke-width:2; }
+      .fav-btn.on svg{ fill:var(--pom); stroke:var(--pom); }
+      @media (prefers-color-scheme: dark){ .fav-btn.on svg{ fill:var(--saffron); stroke:var(--saffron); } }
+      .card-body{ padding:14px 16px 16px; display:flex; flex-direction:column; gap:6px; flex:1; }
+      .card-title{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+      .card-title h3{ font-size:1.05rem; font-weight:800; line-height:1.25; }
+      .card-title .fa{ color:var(--ink-3); font-size:.95rem; font-weight:600; white-space:nowrap; padding-top:2px; }
+      .price{ font-weight:800; color:var(--green); font-size:1.05rem; white-space:nowrap; }
+      @media (prefers-color-scheme: dark){ .price{ color:var(--green-2); } }
+      .chef-line{ display:flex; align-items:center; gap:8px; font-size:.87rem; color:var(--ink-2); }
+      .chef-ava{ width:26px; height:26px; border-radius:50%; background:var(--saffron-soft); color:var(--gold); font-size:.68rem; font-weight:800; display:flex; align-items:center; justify-content:center; flex:none; border:1px solid var(--line); }
+      .meta-line{ display:flex; flex-wrap:wrap; gap:6px 14px; font-size:.83rem; color:var(--ink-3); font-weight:600; }
+      .meta-line .stars{ color:var(--gold); }
+      .badges{ display:flex; flex-wrap:wrap; gap:6px; }
+      .bdg{ font-size:.72rem; font-weight:700; padding:3px 9px; border-radius:999px; background:var(--green-soft); color:var(--green); }
+      @media (prefers-color-scheme: dark){ .bdg{ color:var(--green-2); } }
+      .bdg.hot{ background:var(--pom-soft); color:var(--pom); }
+      .card-foot{ margin-top:auto; padding-top:10px; display:flex; gap:8px; }
+      .btn-add{ flex:1; background:var(--green); color:#fff; border-radius:12px; padding:11px; font-weight:700; min-height:2.75rem; }
+      @media (prefers-color-scheme: dark){ .btn-add{ background:var(--green-soft); color:var(--green-2); border:1px solid var(--green); } }
+      .btn-view{ padding:11px 16px; border-radius:12px; border:1px solid var(--line); font-weight:700; background:var(--surface); min-height:2.75rem; }
+      .empty{ text-align:center; padding:44px 20px; background:var(--surface); border:1px dashed var(--line); border-radius:var(--r-lg); color:var(--ink-2); }
+      .empty h3{ color:var(--ink); font-size:1.1rem; margin-bottom:6px; }
+
+      /* ---------- Chefs ---------- */
+      .chef-grid{ display:grid; grid-template-columns:1fr; gap:12px; }
+      @media (min-width:560px){ .chef-grid{ grid-template-columns:repeat(2,1fr); } }
+      @media (min-width:960px){ .chef-grid{ grid-template-columns:repeat(3,1fr); } }
+      .chef-card{ display:flex; gap:14px; align-items:center; background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:16px; text-align:left; width:100%; box-shadow:var(--shadow-sm); }
+      .chef-card .big-ava{ width:56px; height:56px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.05rem; color:#fff; }
+      .chef-card h3{ font-size:1rem; font-weight:800; }
+      .chef-card p{ font-size:.85rem; color:var(--ink-2); }
+      .chef-card .stars{ color:var(--gold); font-size:.83rem; font-weight:700; }
+
+      .steps{ display:grid; gap:12px; margin-top:6px; }
+      @media (min-width:760px){ .steps{ grid-template-columns:repeat(3,1fr); } }
+      .step{ background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:18px; }
+      .step .num{ width:34px; height:34px; border-radius:50%; background:var(--saffron-soft); color:var(--gold); font-weight:800; display:flex; align-items:center; justify-content:center; margin-bottom:10px; }
+      .step h3{ font-size:1rem; font-weight:800; margin-bottom:4px; }
+      .step p{ font-size:.9rem; color:var(--ink-2); }
+
+      footer{ margin-top:44px; padding:22px 4px 8px; border-top:1px solid var(--line); color:var(--ink-3); font-size:.85rem; display:flex; flex-wrap:wrap; gap:8px 22px; justify-content:space-between; }
+
+      /* ---------- Bottom nav / cart bar ---------- */
+      .bottomnav{ position:fixed; left:0; right:0; bottom:0; z-index:40; background:var(--surface); border-top:1px solid var(--line); display:flex; padding:6px 8px calc(6px + env(safe-area-inset-bottom)); }
+      .bottomnav button{ flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; font-size:.68rem; font-weight:700; color:var(--ink-3); padding:7px 2px; border-radius:10px; min-height:52px; position:relative; }
+      .bottomnav button[aria-current="page"]{ color:var(--green); }
+      @media (prefers-color-scheme: dark){ .bottomnav button[aria-current="page"]{ color:var(--green-2); } }
+      .bottomnav .nbadge{ position:absolute; top:2px; right:calc(50% - 20px); min-width:18px; height:18px; padding:0 4px; border-radius:999px; background:var(--pom); color:#fff; font-size:.65rem; font-weight:800; display:flex; align-items:center; justify-content:center; }
+      @media (min-width:760px){ .bottomnav{ display:none; } }
+      .topnav{ display:none; }
+      @media (min-width:760px){
+        .topnav{ display:flex; gap:4px; margin-left:auto; }
+        .topnav button{ padding:9px 14px; border-radius:999px; font-weight:700; font-size:.9rem; color:var(--ink-2); min-height:2.5rem; }
+        .topnav button[aria-current="page"]{ background:var(--green-soft); color:var(--green); }
+      }
+      .cartbar{ position:fixed; left:16px; right:16px; bottom:86px; z-index:39; background:var(--green); color:#fff; border-radius:16px; padding:14px 18px; display:none; align-items:center; justify-content:space-between; gap:12px; box-shadow:var(--shadow); font-weight:700; width:calc(100% - 32px); text-align:left; }
+      .cartbar.show{ display:flex; }
+      .cartbar small{ display:block; font-weight:500; opacity:.85; font-size:.78rem; }
+      @media (min-width:760px){ .cartbar{ display:none !important; } }
+
+      /* ---------- Drawer (cart / checkout) ---------- */
+      .scrim{ position:fixed; inset:0; background:rgba(12,16,13,.55); z-index:50; opacity:0; pointer-events:none; transition:opacity .2s ease; }
+      .scrim.open{ opacity:1; pointer-events:auto; }
+      .drawer{ position:fixed; top:0; right:0; bottom:0; width:min(430px, 100vw); background:var(--surface); z-index:51; transform:translateX(105%); transition:transform .25s ease; display:flex; flex-direction:column; box-shadow:var(--shadow); }
+      .drawer.open{ transform:translateX(0); }
+      .drawer-head{ display:flex; align-items:center; justify-content:space-between; padding:16px 18px; border-bottom:1px solid var(--line); }
+      .drawer-head h2{ font-size:1.15rem; font-weight:800; }
+      .drawer-body{ flex:1; overflow-y:auto; padding:16px 18px; }
+      .drawer-foot{ border-top:1px solid var(--line); padding:14px 18px calc(14px + env(safe-area-inset-bottom)); }
+      .cart-item{ display:flex; gap:12px; padding:12px 0; border-bottom:1px solid var(--line); }
+      .cart-item img{ width:64px; height:64px; border-radius:12px; object-fit:cover; flex:none; }
+      .cart-item h4{ font-size:.95rem; font-weight:700; line-height:1.3; }
+      .cart-item .ci-meta{ font-size:.8rem; color:var(--ink-3); }
+      .qty{ display:inline-flex; align-items:center; gap:2px; border:1px solid var(--line); border-radius:999px; padding:2px; }
+      .qty button{ width:34px; height:34px; border-radius:50%; font-weight:800; font-size:1rem; display:flex; align-items:center; justify-content:center; min-height:34px; }
+      .qty output{ min-width:22px; text-align:center; font-weight:800; }
+      .ci-right{ margin-left:auto; text-align:right; display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
+      .ci-price{ font-weight:800; }
+      .remove-btn{ font-size:.78rem; color:var(--pom); font-weight:700; min-height:2rem; padding:2px 4px; }
+      .totals{ display:grid; gap:7px; font-size:.92rem; }
+      .totals div{ display:flex; justify-content:space-between; }
+      .totals .grand{ font-size:1.08rem; font-weight:800; border-top:1px solid var(--line); padding-top:9px; margin-top:3px; }
+      .totals .free{ color:var(--green); font-weight:700; }
+      .btn-block{ width:100%; background:var(--green); color:#fff; border-radius:14px; padding:14px; font-weight:800; font-size:1rem; min-height:3.25rem; margin-top:12px; }
+      @media (prefers-color-scheme: dark){ .btn-block{ background:var(--green-soft); color:var(--green-2); border:1px solid var(--green); } }
+      .btn-block:disabled{ opacity:.45; cursor:not-allowed; }
+      .field{ display:grid; gap:6px; margin-bottom:14px; }
+      .field label{ font-size:.85rem; font-weight:700; }
+      .field input, .field select, .field textarea{ border:1px solid var(--line); border-radius:12px; padding:11px 13px; background:var(--surface); width:100%; }
+      .field textarea{ min-height:64px; resize:vertical; }
+      .seg{ display:flex; flex-wrap:wrap; gap:8px; }
+      .seg button{ padding:9px 14px; border-radius:999px; border:1px solid var(--line); font-weight:600; font-size:.88rem; min-height:2.5rem; background:var(--surface); }
+      .seg button[aria-pressed="true"]{ background:var(--green); color:#fff; border-color:var(--green); }
+      @media (prefers-color-scheme: dark){ .seg button[aria-pressed="true"]{ background:var(--green-soft); color:var(--green-2); } }
+      .pay-note{ background:var(--saffron-soft); border-radius:12px; padding:11px 13px; font-size:.85rem; color:var(--ink-2); margin-bottom:14px; }
+      .pay-note strong{ color:var(--ink); }
+      .success{ text-align:center; padding:26px 8px; }
+      .success .tick{ width:70px; height:70px; border-radius:50%; background:var(--green-soft); color:var(--green); display:flex; align-items:center; justify-content:center; margin:0 auto 16px; }
+      @media (prefers-color-scheme: dark){ .success .tick{ color:var(--green-2); } }
+      .success h3{ font-size:1.3rem; font-weight:800; margin-bottom:6px; }
+      .success p{ color:var(--ink-2); font-size:.93rem; }
+
+      /* ---------- Dish modal ---------- */
+      .modal{ position:fixed; inset:0; z-index:52; display:none; align-items:flex-end; justify-content:center; }
+      .modal.open{ display:flex; }
+      .modal-card{ background:var(--surface); width:100%; max-height:92vh; overflow-y:auto; border-radius:24px 24px 0 0; position:relative; animation:rise .22s ease; }
+      @media (min-width:700px){ .modal{ align-items:center; padding:20px; } .modal-card{ max-width:620px; border-radius:24px; } }
+      @keyframes rise{ from{ transform:translateY(18px); opacity:.6; } to{ transform:none; opacity:1; } }
+      .modal-card > img{ width:100%; height:250px; object-fit:cover; }
+      .modal-x{ position:absolute; top:12px; right:12px; width:42px; height:42px; border-radius:50%; background:var(--surface); box-shadow:var(--shadow-sm); display:flex; align-items:center; justify-content:center; font-size:1.1rem; font-weight:800; }
+      .modal-body{ padding:20px 22px 24px; }
+      .modal-body h2{ font-size:1.45rem; font-weight:800; letter-spacing:-.01em; }
+      .modal-body .fa-name{ color:var(--ink-3); font-size:1.05rem; }
+      .modal-desc{ color:var(--ink-2); margin-top:10px; font-size:.97rem; }
+      .ing{ display:flex; flex-wrap:wrap; gap:6px; margin-top:12px; }
+      .ing span{ background:var(--surface-2); padding:4px 11px; border-radius:999px; font-size:.8rem; font-weight:600; }
+      .opt-label{ font-weight:800; font-size:.92rem; margin:20px 0 9px; }
+      .extra-row{ display:flex; flex-wrap:wrap; gap:8px; }
+      .modal-foot{ display:flex; gap:10px; align-items:center; margin-top:22px; }
+      .modal-foot .btn-add{ min-height:3.25rem; font-size:1rem; }
+
+      /* ---------- Orders ---------- */
+      .order-card{ background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg); padding:18px; margin-bottom:14px; box-shadow:var(--shadow-sm); }
+      .order-top{ display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:flex-start; }
+      .order-top h3{ font-size:1.02rem; font-weight:800; }
+      .order-top p{ font-size:.85rem; color:var(--ink-3); }
+      .status-pill{ font-size:.76rem; font-weight:800; padding:5px 12px; border-radius:999px; background:var(--saffron-soft); color:var(--gold); white-space:nowrap; }
+      .status-pill.done{ background:var(--green-soft); color:var(--green); }
+      @media (prefers-color-scheme: dark){ .status-pill.done{ color:var(--green-2); } }
+      .order-items{ margin-top:12px; display:grid; gap:5px; font-size:.92rem; color:var(--ink-2); }
+      .order-items div{ display:flex; justify-content:space-between; gap:10px; }
+      .tracker{ margin-top:16px; }
+      .track-steps{ display:flex; justify-content:space-between; position:relative; margin-bottom:6px; }
+      .track-steps::before{ content:""; position:absolute; top:13px; left:8%; right:8%; height:3px; background:var(--line); border-radius:2px; }
+      .track-fill{ position:absolute; top:13px; left:8%; height:3px; background:var(--saffron); border-radius:2px; transition:width .6s ease; }
+      .tstep{ position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; gap:5px; width:20%; text-align:center; }
+      .tstep .dot{ width:27px; height:27px; border-radius:50%; background:var(--surface); border:2px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:.7rem; font-weight:800; color:var(--ink-3); }
+      .tstep.hit .dot{ background:var(--saffron); border-color:var(--saffron); color:#241a02; }
+      .tstep span{ font-size:.68rem; font-weight:700; color:var(--ink-3); line-height:1.2; }
+      .tstep.hit span{ color:var(--ink); }
+      .order-foot{ display:flex; justify-content:space-between; align-items:center; margin-top:14px; gap:10px; flex-wrap:wrap; }
+      .order-total{ font-weight:800; font-size:1.05rem; }
+      .btn-small{ padding:9px 16px; border-radius:999px; border:1px solid var(--line); font-weight:700; font-size:.87rem; background:var(--surface); min-height:2.5rem; }
+
+      /* ---------- Profile ---------- */
+      .prof-head{ display:flex; gap:16px; align-items:center; background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg); padding:20px; box-shadow:var(--shadow-sm); }
+      .prof-head .avatar-dot{ width:64px; height:64px; font-size:1.3rem; }
+      .prof-head h2{ font-size:1.25rem; font-weight:800; }
+      .prof-head p{ color:var(--ink-2); font-size:.9rem; }
+      .prof-sec{ background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg); padding:6px 20px; margin-top:14px; box-shadow:var(--shadow-sm); }
+      .prof-sec h3{ font-size:.8rem; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3); padding:14px 0 4px; }
+      .prof-row{ display:flex; justify-content:space-between; align-items:center; gap:14px; padding:13px 0; border-top:1px solid var(--line); }
+      .prof-row:first-of-type{ border-top:0; }
+      .prof-row .k{ font-weight:700; font-size:.95rem; }
+      .prof-row .v{ color:var(--ink-2); font-size:.9rem; text-align:right; }
+      .switch{ position:relative; width:52px; height:30px; flex:none; }
+      .switch input{ position:absolute; opacity:0; width:100%; height:100%; cursor:pointer; margin:0; }
+      .switch .tr{ position:absolute; inset:0; background:var(--line); border-radius:999px; transition:background .15s; pointer-events:none; }
+      .switch .tr::after{ content:""; position:absolute; top:3px; left:3px; width:24px; height:24px; border-radius:50%; background:var(--surface); transition:left .15s; box-shadow:var(--shadow-sm); }
+      .switch input:checked + .tr{ background:var(--green); }
+      .switch input:checked + .tr::after{ left:25px; }
+      .switch input:focus-visible + .tr{ outline:3px solid var(--saffron); outline-offset:2px; }
+
+      .toast{ position:fixed; left:50%; bottom:150px; transform:translate(-50%, 16px); background:var(--ink); color:var(--bg); padding:12px 20px; border-radius:999px; font-weight:700; font-size:.9rem; z-index:60; opacity:0; pointer-events:none; transition:opacity .2s, transform .2s; box-shadow:var(--shadow); max-width:calc(100vw - 32px); text-align:center; }
+      .toast.show{ opacity:1; transform:translate(-50%, 0); }
+      @media (min-width:760px){ .toast{ bottom:36px; } }
+      @media (prefers-reduced-motion: reduce){
+        html{ scroll-behavior:auto; }
+        .modal-card{ animation:none; }
+        .drawer, .scrim, .track-fill, .toast{ transition:none; }
+      }
+      /* Mobile app shell: header and bottom nav take their own bands,
+         content scrolls between them — nothing is ever covered. */
+      @media (max-width:759px){
+        html, body{ height:100%; }
+        body{ display:flex; flex-direction:column; }
+        .topbar{ position:static; flex:none; }
+        main{ flex:1; overflow-y:auto; width:100%; padding-bottom:28px; }
+        .bottomnav{ position:static; flex:none; }
+        .cartbar{ bottom:86px; }
+        .toast{ bottom:172px; }
+      }
+    </style>
+    <style data-hatch-cvm-bundle></style>
+</head>
+  <body>
+    <!-- ======================= TOP BAR ======================= -->
+    <header class="topbar">
+      <div class="topbar-in">
+        <a class="brand" href="#" data-nav="home" aria-label="Sofreh home">
+          <span class="word">Sofreh</span><span class="fa" lang="fa" dir="rtl">سفره</span>
+        </a>
+        <button class="loc" id="locBtn" type="button" aria-label="Delivery location">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 21s-7-5.5-7-11a7 7 0 1 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+          <span><small>Deliver to</small><span id="locText">Richmond Hill</span></span>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="searchbar">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></svg>
+          <input id="searchDesk" type="search" placeholder="Search ghormeh sabzi, kebab, a chef…" aria-label="Search dishes and chefs" />
+        </div>
+        <nav class="topnav" aria-label="Main">
+          <button type="button" data-nav="home" aria-current="page">Home</button>
+          <button type="button" data-nav="orders">Orders</button>
+          <button type="button" data-nav="favorites">Favourites</button>
+          <button type="button" data-nav="profile">Profile</button>
+        </nav>
+        <button class="icon-btn" id="cartBtn" type="button" aria-label="Open basket">
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 7h15l-1.5 9h-12z"/><path d="M6 7 5 3H2"/><circle cx="9" cy="20" r="1.6"/><circle cx="17" cy="20" r="1.6"/></svg>
+          <span class="badge" id="cartBadge" hidden>0</span>
+        </button>
+        <button class="avatar-dot" type="button" data-nav="profile" aria-label="Your profile">M</button>
+      </div>
+      <div class="search-mobile">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></svg>
+        <input id="searchMob" type="search" placeholder="Search ghormeh sabzi, kebab, a chef…" aria-label="Search dishes and chefs" />
+      </div>
+    </header>
+
+    <main>
+      <!-- ======================= HOME ======================= -->
+      <section class="view active" id="view-home" aria-label="Home">
+        <div class="hero">
+          <img data-hatch-src="assets/hero.jpg" alt="A shared Persian sofreh spread with kebabs, saffron rice, stews and fresh herbs on a wooden table" />
+          <div class="hero-txt">
+            <h1>Real Persian home cooking, from kitchens near you</h1>
+            <p>Order from vetted home chefs across the GTA — slow-cooked stews, saffron rice with proper tahdig, and kebabs off the grill, delivered to your door.</p>
+            <div class="hero-cta">
+              <a class="btn btn-saffron" href="#menu">Browse today's menu</a>
+              <button class="btn btn-ghost" type="button" data-nav="orders">Track an order</button>
+            </div>
+            <div class="hero-stats">
+              <span>6 home chefs near you</span><span>★ 4.8 average rating</span><span>Delivery in 35–55 min</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="chips" id="catChips" role="group" aria-label="Categories"></div>
+
+        <div class="sec-head" id="menu">
+          <div>
+            <h2 id="menuTitle">Today's sofreh</h2>
+            <p id="menuSub">Cooked today in small batches — when it's gone, it's gone.</p>
+          </div>
+          <select class="sortsel" id="sortSel" aria-label="Sort dishes">
+            <option value="popular">Most popular</option>
+            <option value="priceAsc">Price: low to high</option>
+            <option value="priceDesc">Price: high to low</option>
+            <option value="fastest">Fastest delivery</option>
+            <option value="rating">Highest rated</option>
+          </select>
+        </div>
+        <div class="grid" id="dishGrid"></div>
+        <div class="empty" id="noResults" hidden>
+          <h3>Nothing on the sofreh matches that</h3>
+          <p>Try a different search, or clear the category filter to see everything cooking today.</p>
+          <p style="margin-top:12px"><button class="btn-small" type="button" id="clearFilters">Clear search &amp; filters</button></p>
+        </div>
+
+        <div class="sec-head">
+          <div>
+            <h2>Meet the chefs</h2>
+            <p>Neighbours cooking the food they grew up with. Tap a chef to see only their dishes.</p>
+          </div>
+        </div>
+        <div class="chef-grid" id="chefGrid"></div>
+
+        <div class="sec-head">
+          <div><h2>How Sofreh works</h2></div>
+        </div>
+        <div class="steps">
+          <div class="step"><div class="num">1</div><h3>Pick a home chef</h3><p>Every chef is ID-verified and their kitchen is food-safety certified before the first order.</p></div>
+          <div class="step"><div class="num">2</div><h3>Order by 4 pm</h3><p>Dishes are cooked the same day in small batches. Choose a delivery window that suits your evening.</p></div>
+          <div class="step"><div class="num">3</div><h3>Dinner arrives hot</h3><p>Track your order from the chef's stove to your door, and rate the meal to help great chefs grow.</p></div>
+        </div>
+
+        <footer>
+          <span>Sofreh — home-cooked Persian food in the Greater Toronto Area.</span>
+          <span>Prices in CAD. Delivery $3.95, free over $45.</span>
+        </footer>
+      </section>
+
+      <!-- ======================= ORDERS ======================= -->
+      <section class="view" id="view-orders" aria-label="Your orders">
+        <div class="sec-head"><div><h2>Your orders</h2><p>Live tracking for today's order, and your recent meals below.</p></div></div>
+        <div id="ordersList"></div>
+      </section>
+
+      <!-- ======================= FAVOURITES ======================= -->
+      <section class="view" id="view-favorites" aria-label="Favourites">
+        <div class="sec-head"><div><h2>Favourites</h2><p>The dishes you keep coming back to.</p></div></div>
+        <div class="grid" id="favGrid"></div>
+        <div class="empty" id="favEmpty" hidden>
+          <h3>No favourites yet</h3>
+          <p>Tap the heart on any dish and it will wait for you here.</p>
+          <p style="margin-top:12px"><button class="btn-small" type="button" data-nav="home">Browse the menu</button></p>
+        </div>
+      </section>
+
+      <!-- ======================= PROFILE ======================= -->
+      <section class="view" id="view-profile" aria-label="Profile">
+        <div class="sec-head"><div><h2>Profile</h2></div></div>
+        <div class="prof-head">
+          <div class="avatar-dot" aria-hidden="true">M</div>
+          <div>
+            <h2>Mehrdad K.</h2>
+            <p>mehrdadkh@yahoo.com · +1 647-886-3734</p>
+            <p style="margin-top:4px"><span class="bdg">Sofreh member since 2026</span> <span class="bdg">14 orders</span></p>
+          </div>
+        </div>
+        <div class="prof-sec">
+          <h3>Delivery addresses</h3>
+          <div class="prof-row"><span class="k">Home</span><span class="v">Richmond Hill, ON — default</span></div>
+          <div class="prof-row"><span class="k">Office</span><span class="v">North York, ON</span></div>
+          <div class="prof-row"><span class="k">Add an address</span><button class="btn-small" type="button" id="addAddrBtn">Add</button></div>
+        </div>
+        <div class="prof-sec">
+          <h3>Payment</h3>
+          <div class="prof-row"><span class="k">Visa</span><span class="v">•••• 4242 · default</span></div>
+          <div class="prof-row"><span class="k">Apple Pay</span><span class="v">Enabled on this device</span></div>
+        </div>
+        <div class="prof-sec">
+          <h3>Preferences</h3>
+          <div class="prof-row"><span class="k">Order updates by text</span><label class="switch"><input type="checkbox" id="prefSms" checked /><span class="tr"></span></label></div>
+          <div class="prof-row"><span class="k">Weekly menu email</span><label class="switch"><input type="checkbox" id="prefEmail" checked /><span class="tr"></span></label></div>
+          <div class="prof-row"><span class="k">Chef specials &amp; offers</span><label class="switch"><input type="checkbox" id="prefOffers" /><span class="tr"></span></label></div>
+          <div class="prof-row"><span class="k">Default spice level</span>
+            <select class="sortsel" id="prefSpice" aria-label="Default spice level"><option>Medium</option><option>Mild</option><option>Hot</option></select>
+          </div>
+        </div>
+        <div class="prof-sec">
+          <h3>Support</h3>
+          <div class="prof-row"><span class="k">Help with an order</span><button class="btn-small" type="button" id="helpBtn">Contact support</button></div>
+          <div class="prof-row"><span class="k">Become a Sofreh chef</span><button class="btn-small" type="button" id="chefApplyBtn">Learn more</button></div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Floating basket bar (mobile) -->
+    <button class="cartbar" id="cartBar" type="button">
+      <span><span id="cartBarCount">0 items</span><small>Tap to review your basket</small></span>
+      <span id="cartBarTotal">$0.00</span>
+    </button>
+
+    <!-- Bottom navigation (mobile) -->
+    <nav class="bottomnav" aria-label="Main">
+      <button type="button" data-nav="home" aria-current="page">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Home
+      </button>
+      <button type="button" data-nav="orders">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>Orders
+      </button>
+      <button type="button" data-nav="favorites">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20.5C7 16.5 3 13.3 3 9.3A4.8 4.8 0 0 1 12 6a4.8 4.8 0 0 1 9 3.3c0 4-4 7.2-9 11.2z"/></svg>Favourites
+      </button>
+      <button type="button" data-nav="profile">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-5.5 8-5.5s6.5 1.5 8 5.5"/></svg>Profile
+      </button>
+    </nav>
+
+    <!-- Basket / checkout drawer -->
+    <div class="scrim" id="scrim"></div>
+    <aside class="drawer" id="drawer" aria-label="Basket and checkout" aria-hidden="true">
+      <div class="drawer-head">
+        <h2 id="drawerTitle">Your basket</h2>
+        <button class="icon-btn" id="drawerClose" type="button" aria-label="Close basket" style="width:40px;height:40px">✕</button>
+      </div>
+      <div class="drawer-body" id="drawerBody"></div>
+      <div class="drawer-foot" id="drawerFoot"></div>
+    </aside>
+
+    <!-- Dish detail modal -->
+    <div class="modal" id="dishModal" role="dialog" aria-modal="true" aria-labelledby="modalName">
+      <div class="modal-card" id="modalCard"></div>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    
+  <script data-hatch-cvm-bundle>(() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  function __accessProp(key) {
+    return this[key];
+  }
+  var __toCommonJS = (from) => {
+    var entry = (__moduleCache ??= new WeakMap).get(from), desc;
+    if (entry)
+      return entry;
+    entry = __defProp({}, "__esModule", { value: true });
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (var key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(entry, key))
+          __defProp(entry, key, {
+            get: __accessProp.bind(from, key),
+            enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable
+          });
+    }
+    __moduleCache.set(from, entry);
+    return entry;
+  };
+  var __moduleCache;
+
+  // src/prelude.ts
+  var exports_prelude = {};
+
+  // src/tunnel-url.ts
+  var B64_CHUNK = 32768;
+  function computeSelfBaseDir(selfHref) {
+    if (!selfHref)
+      return "";
+    let h = selfHref;
+    const hash = h.indexOf("#");
+    if (hash >= 0)
+      h = h.slice(0, hash);
+    const q = h.indexOf("?");
+    if (q >= 0)
+      h = h.slice(0, q);
+    const slash = h.lastIndexOf("/");
+    return slash >= 0 ? h.slice(0, slash + 1) : "";
+  }
+  function isSelfOriginUrl(u, selfBaseDir, selfHref, objectUrls) {
+    if (!selfBaseDir || !u.startsWith(selfBaseDir))
+      return false;
+    if (u === selfHref)
+      return false;
+    return !objectUrls.has(u);
+  }
+  function isExternalUrl(u, selfBaseDir, selfHref, objectUrls) {
+    if (!u)
+      return false;
+    if (u.startsWith("#"))
+      return true;
+    if (isSelfOriginUrl(u, selfBaseDir, selfHref, objectUrls))
+      return false;
+    if (u.startsWith("data:") || u.startsWith("blob:"))
+      return true;
+    if (u.startsWith("about:") || u.startsWith("javascript:"))
+      return true;
+    if (u.startsWith("//"))
+      return true;
+    if (/^[a-z][a-z0-9+.-]*:/i.test(u)) {
+      return true;
+    }
+    return false;
+  }
+  function ownObjectUrl(scriptUrl, objectUrls) {
+    const href = typeof scriptUrl === "string" ? scriptUrl : scriptUrl instanceof URL ? scriptUrl.href : null;
+    return href !== null && href.startsWith("blob:") && objectUrls.has(href) ? href : null;
+  }
+  var WORKER_TUNNEL_SHIM = [
+    "self.__tunnel=self.__tunnel||{",
+    "fetch:function(){return self.fetch.apply(self,arguments)},",
+    "XHR:self.XMLHttpRequest,WebSocket:self.WebSocket,EventSource:self.EventSource,",
+    "Worker:self.Worker,import:function(s){return import(s)},",
+    "Image:function(w,h){return new Image(w,h)},",
+    "sendBeacon:function(){return false},",
+    "getStyle:function(x){if(x==null)return x;try{return x.style}catch(e){return undefined}},",
+    "setStyle:function(x,n,v){x.style[n]=v},",
+    "setUrlProp:function(x,n,v){x[n]=v;return v},",
+    "setAttr:function(x){return x.setAttribute.apply(x,[].slice.call(arguments,1))},",
+    "setAttrNS:function(x){return x.setAttributeNS.apply(x,[].slice.call(arguments,1))},",
+    "setInnerHTML:function(x,v,w){x[w||'innerHTML']=v},",
+    "setStyleText:function(x,v){x.textContent=v},",
+    "insertAdjacentHTML:function(x,p,v){return x.insertAdjacentHTML(p,v)},",
+    `_importMeta:{url:self.location.href}};
+`
+  ].join("");
+  function isWorkerScriptBlob(obj) {
+    return obj instanceof Blob && (obj.type === "" || /javascript|ecmascript/i.test(obj.type));
+  }
+  function workerScriptBlob(script) {
+    return new Blob([WORKER_TUNNEL_SHIM, script], { type: "text/javascript" });
+  }
+  function normalizeToRelPath(u, selfBaseDir) {
+    let s = u;
+    if (selfBaseDir && s.startsWith(selfBaseDir)) {
+      s = s.slice(selfBaseDir.length);
+    }
+    s = s.replace(/^\.\//, "");
+    s = s.replace(/^\/+/, "");
+    return s;
+  }
+  function blobInner(base, NativeURL) {
+    if (base == null)
+      return null;
+    const s = typeof base === "string" ? base : base instanceof NativeURL ? base.href : String(base);
+    return s.startsWith("blob:") ? s.slice("blob:".length) : null;
+  }
+  var OPAQUE_BLOB_ORIGIN = "https://hatch-cvm-opaque.invalid";
+  function isAbsoluteUrlString(s, NativeURL) {
+    try {
+      new NativeURL(s);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+  function resolveAgainstBlobBase(u, base, NativeURL) {
+    const inner = blobInner(base, NativeURL);
+    if (inner === null)
+      return null;
+    if (isAbsoluteUrlString(inner, NativeURL)) {
+      return new NativeURL("blob:" + new NativeURL(u, inner).href);
+    }
+    const slash = inner.indexOf("/");
+    const token = slash >= 0 ? inner.slice(0, slash) : inner;
+    const path = slash >= 0 ? inner.slice(slash) : "/";
+    const resolved = new NativeURL(u, OPAQUE_BLOB_ORIGIN + path);
+    return new NativeURL("blob:" + token + resolved.pathname + resolved.search + resolved.hash);
+  }
+  function resolveTunnelUrl(url, base, selfHref, NativeURL) {
+    const u = url == null ? "" : typeof url === "string" ? url : url instanceof NativeURL ? url.href : String(url);
+    const uAbsolute = /^[a-z][a-z0-9+.-]*:/i.test(u) || u.startsWith("//");
+    if (base !== undefined && base !== null && !uAbsolute) {
+      const viaBlob = resolveAgainstBlobBase(u, base, NativeURL);
+      if (viaBlob !== null)
+        return viaBlob;
+      return new NativeURL(u, base);
+    }
+    if (!uAbsolute && selfHref) {
+      const viaBlob = resolveAgainstBlobBase(u, selfHref, NativeURL);
+      if (viaBlob !== null)
+        return viaBlob;
+    }
+    return base === undefined ? new NativeURL(u) : new NativeURL(u, base);
+  }
+  function bytesToBase64(bytes) {
+    const u8 = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+    let s = "";
+    for (let i = 0;i < u8.length; i += B64_CHUNK) {
+      s += String.fromCharCode.apply(null, Array.from(u8.subarray(i, i + B64_CHUNK)));
+    }
+    return btoa(s);
+  }
+  function base64ToBytes(b64) {
+    const bin = atob(b64);
+    const out = new Uint8Array(bin.length);
+    for (let i = 0;i < bin.length; i++)
+      out[i] = bin.charCodeAt(i);
+    return out;
+  }
+  function importMetaUrl(selfHref, selfBaseDir) {
+    return selfBaseDir ? `${selfBaseDir}assets/cvm-bundle.js` : selfHref;
+  }
+
+  // src/download-links.ts
+  function installDownloadLinks(fetchAsset, isExternalUrl, revokeDelayMs) {
+    document.addEventListener("click", (event) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
+        return;
+      const anchor = event.composedPath().find((node) => node instanceof HTMLAnchorElement);
+      if (!anchor?.hasAttribute("download"))
+        return;
+      const href = anchor.getAttribute("href");
+      if (!href || isExternalUrl(href))
+        return;
+      event.preventDefault();
+      const filename = anchor.download || resourceFilename(href);
+      (async () => {
+        const response = await fetchAsset(href);
+        if (!response.ok) {
+          throw new Error(`Artifact download failed: HTTP ${response.status}`);
+        }
+        const url = URL.createObjectURL(await response.blob());
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        link.hidden = true;
+        document.body.appendChild(link);
+        try {
+          link.click();
+        } finally {
+          link.remove();
+          setTimeout(() => URL.revokeObjectURL(url), revokeDelayMs);
+        }
+      })().catch((error) => reportError(error));
+    });
+  }
+  function resourceFilename(href) {
+    const path = new URL(href, document.baseURI).pathname;
+    const name = path.slice(path.lastIndexOf("/") + 1);
+    try {
+      return decodeURIComponent(name);
+    } catch {
+      return name;
+    }
+  }
+
+  // src/fragment-links.ts
+  function installFragmentLinks() {
+    if (!location.href.startsWith("blob:null/"))
+      return;
+    const NativeURL = URL;
+    const pushState = history.pushState.bind(history);
+    const replaceState = history.replaceState.bind(history);
+    window.addEventListener("click", (event) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
+        return;
+      const anchor = event.composedPath().find((node) => node instanceof HTMLAnchorElement);
+      if (!anchor || anchor.hasAttribute("download"))
+        return;
+      const targetName = anchor.getAttribute("target") ?? document.querySelector("base[target]")?.getAttribute("target") ?? "";
+      if (targetName !== "" && targetName.toLowerCase() !== "_self")
+        return;
+      const href = anchor.getAttribute("href");
+      if (!href?.startsWith("#"))
+        return;
+      const oldURL = location.href;
+      const nextURL = new NativeURL(href, oldURL);
+      event.preventDefault();
+      const changed = nextURL.href !== oldURL;
+      if (changed) {
+        pushState(null, "", nextURL.href);
+      } else {
+        replaceState(null, "", nextURL.href);
+      }
+      window.dispatchEvent(new PopStateEvent("popstate", { state: null }));
+      const target = fragmentTarget(nextURL.hash);
+      if (target) {
+        target.scrollIntoView();
+        if (target !== document.documentElement && (target instanceof HTMLElement || target instanceof SVGElement)) {
+          const hadTabIndex = target.hasAttribute("tabindex");
+          if (!hadTabIndex)
+            target.setAttribute("tabindex", "-1");
+          target.focus({ preventScroll: true });
+          if (!hadTabIndex)
+            target.removeAttribute("tabindex");
+        }
+      }
+      if (changed) {
+        queueMicrotask(() => window.dispatchEvent(new HashChangeEvent("hashchange", {
+          oldURL,
+          newURL: nextURL.href
+        })));
+      }
+    });
+  }
+  function fragmentTarget(hash) {
+    const bytes = hash.slice(1).replace(/%([0-9a-f]{2})/gi, (_match, hex) => String.fromCharCode(parseInt(hex, 16)));
+    const fragment = new TextDecoder().decode(Uint8Array.from(bytes, (byte) => byte.charCodeAt(0)));
+    if (fragment === "")
+      return document.documentElement;
+    const idTarget = document.getElementById(fragment);
+    if (idTarget)
+      return idTarget;
+    const namedTarget = Array.from(document.getElementsByName(fragment)).find((node) => node instanceof HTMLAnchorElement);
+    return namedTarget ?? (fragment.toLowerCase() === "top" ? document.documentElement : null);
+  }
+
+  // src/prelude.ts
+  (function installTunnel() {
+    installFragmentLinks();
+    let port = null;
+    let portReadyResolve = null;
+    const portReady = new Promise((res) => {
+      portReadyResolve = res;
+    });
+    const pending = new Map;
+    const openWs = new Map;
+    function newId() {
+      return Math.random().toString(36).slice(2) + "-" + Date.now().toString(36);
+    }
+    function bytesToB64(bytes) {
+      return bytesToBase64(bytes);
+    }
+    function b64ToBytes(b64) {
+      return base64ToBytes(b64);
+    }
+    async function httpReq(method, path, body, headers) {
+      const p = port ?? await portReady;
+      const id = newId();
+      const headerArr = [];
+      if (headers) {
+        const h = new Headers(headers);
+        h.forEach((v, k) => headerArr.push([k, v]));
+      }
+      let bodyB64 = "";
+      if (body != null && body !== "") {
+        let bytes;
+        if (typeof body === "string") {
+          bytes = new TextEncoder().encode(body);
+        } else if (body instanceof ArrayBuffer) {
+          bytes = new Uint8Array(body);
+        } else if (body instanceof Uint8Array) {
+          bytes = body;
+        } else if (body instanceof Blob) {
+          bytes = new Uint8Array(await body.arrayBuffer());
+        } else if (body instanceof FormData) {
+          const boundary = "----HatchBoundary" + Math.random().toString(36).slice(2);
+          let s = "";
+          for (const [k, v] of body.entries()) {
+            s += `--${boundary}\r
+Content-Disposition: form-data; name="${k}"`;
+            if (v instanceof File) {
+              s += `; filename="${v.name}"\r
+Content-Type: ${v.type || "application/octet-stream"}\r
+\r
+`;
+              const fb = new Uint8Array(await v.arrayBuffer());
+              s += new TextDecoder("latin1").decode(fb);
+            } else {
+              s += `\r
+\r
+${v}`;
+            }
+            s += `\r
+`;
+          }
+          s += `--${boundary}--\r
+`;
+          bytes = new TextEncoder().encode(s);
+          headerArr.push([
+            "content-type",
+            `multipart/form-data; boundary=${boundary}`
+          ]);
+        } else {
+          bytes = new TextEncoder().encode(String(body));
+        }
+        bodyB64 = bytesToB64(bytes);
+      }
+      return new Promise((resolve, reject) => {
+        pending.set(id, {
+          resolve: (msg) => {
+            if (msg.error) {
+              reject(new Error(msg.error.message ?? "tunnel error"));
+              return;
+            }
+            resolve({
+              status: msg.status,
+              headers: msg.headers,
+              bytes: msg.bodyB64 ? b64ToBytes(msg.bodyB64) : new Uint8Array(0)
+            });
+          },
+          reject
+        });
+        p.postMessage({
+          type: "http.req",
+          id,
+          method,
+          path,
+          headers: headerArr,
+          bodyB64
+        });
+      });
+    }
+    async function tunnelFetch(input, init) {
+      let urlStr;
+      let method = init?.method ?? "GET";
+      let headers = init?.headers;
+      let body = init?.body;
+      if (input instanceof Request) {
+        urlStr = input.url;
+        method = init?.method ?? input.method;
+        headers = init?.headers ?? input.headers;
+        if (body == null && input.body) {
+          body = await input.arrayBuffer();
+        }
+      } else {
+        urlStr = String(input);
+      }
+      if (isExternalUrl2(urlStr)) {
+        return originalFetch(input, init);
+      }
+      const relPath = normalizeToRelPath2(urlStr);
+      const r = await httpReq(method, relPath, body ?? null, headers);
+      const respHeaders = new Headers;
+      for (const [k, v] of r.headers ?? [])
+        respHeaders.set(k, v);
+      return new Response(r.bytes, {
+        status: r.status,
+        headers: respHeaders
+      });
+    }
+
+    class TunnelWebSocket extends EventTarget {
+      readyState = 0;
+      static CONNECTING = 0;
+      static OPEN = 1;
+      static CLOSING = 2;
+      static CLOSED = 3;
+      CONNECTING = 0;
+      OPEN = 1;
+      CLOSING = 2;
+      CLOSED = 3;
+      url;
+      binaryType = "blob";
+      bufferedAmount = 0;
+      protocol = "";
+      extensions = "";
+      onopen = null;
+      onmessage = null;
+      onclose = null;
+      onerror = null;
+      _id;
+      constructor(urlIn, _protocols) {
+        super();
+        const urlStr = String(urlIn);
+        this.url = urlStr;
+        this._id = newId();
+        openWs.set(this._id, this);
+        const path = normalizeToRelPath2(urlStr);
+        (async () => {
+          const p = port ?? await portReady;
+          p.postMessage({ type: "ws.open", id: this._id, path });
+        })();
+      }
+      _handle(msg) {
+        if (msg.type === "ws.opened") {
+          this.readyState = 1;
+          const ev = new Event("open");
+          this.onopen?.(ev);
+          this.dispatchEvent(ev);
+        } else if (msg.type === "ws.message") {
+          const bytes = msg.dataB64 ? b64ToBytes(msg.dataB64) : new Uint8Array(0);
+          let data;
+          if (msg.binary) {
+            data = this.binaryType === "arraybuffer" ? bytes.buffer : new Blob([bytes]);
+          } else {
+            data = new TextDecoder().decode(bytes);
+          }
+          const ev = new MessageEvent("message", { data });
+          this.onmessage?.(ev);
+          this.dispatchEvent(ev);
+        } else if (msg.type === "ws.closed") {
+          this.readyState = 3;
+          const ev = new CloseEvent("close", {
+            code: msg.code ?? 1000,
+            reason: msg.reason ?? ""
+          });
+          this.onclose?.(ev);
+          this.dispatchEvent(ev);
+          openWs.delete(this._id);
+        } else if (msg.type === "ws.error") {
+          const ev = new Event("error");
+          this.onerror?.(ev);
+          this.dispatchEvent(ev);
+        }
+      }
+      send(data) {
+        (async () => {
+          const p = port ?? await portReady;
+          let bytes;
+          let binary = false;
+          if (typeof data === "string") {
+            bytes = new TextEncoder().encode(data);
+          } else if (data instanceof Blob) {
+            bytes = new Uint8Array(await data.arrayBuffer());
+            binary = true;
+          } else if (data instanceof ArrayBuffer) {
+            bytes = new Uint8Array(data);
+            binary = true;
+          } else if (ArrayBuffer.isView(data)) {
+            bytes = new Uint8Array(data.buffer, data.byteOffset, data.byteLength);
+            binary = true;
+          } else {
+            bytes = new TextEncoder().encode(String(data));
+          }
+          p.postMessage({
+            type: "ws.send",
+            id: this._id,
+            dataB64: bytesToB64(bytes),
+            binary
+          });
+        })();
+      }
+      close(code, reason) {
+        (async () => {
+          const p = port ?? await portReady;
+          p.postMessage({ type: "ws.close", id: this._id, code, reason });
+        })();
+      }
+      addEventListener(type, listener, options) {
+        super.addEventListener(type, listener, options);
+      }
+    }
+
+    class TunnelXHR extends EventTarget {
+      static UNSENT = 0;
+      static OPENED = 1;
+      static HEADERS_RECEIVED = 2;
+      static LOADING = 3;
+      static DONE = 4;
+      UNSENT = 0;
+      OPENED = 1;
+      HEADERS_RECEIVED = 2;
+      LOADING = 3;
+      DONE = 4;
+      readyState = 0;
+      status = 0;
+      statusText = "";
+      responseText = "";
+      response = null;
+      responseType = "";
+      responseURL = "";
+      withCredentials = false;
+      timeout = 0;
+      upload = new EventTarget;
+      onreadystatechange = null;
+      onload = null;
+      onerror = null;
+      onloadend = null;
+      onabort = null;
+      onprogress = null;
+      ontimeout = null;
+      _method = "GET";
+      _url = "";
+      _reqHeaders = [];
+      _respHeaders = [];
+      _aborted = false;
+      open(method, url) {
+        this._method = method;
+        this._url = url;
+        this.readyState = 1;
+        this.onreadystatechange?.();
+      }
+      setRequestHeader(name, value) {
+        this._reqHeaders.push([name, value]);
+      }
+      getAllResponseHeaders() {
+        return this._respHeaders.map(([k, v]) => `${k}: ${v}`).join(`\r
+`);
+      }
+      getResponseHeader(name) {
+        const lc = name.toLowerCase();
+        const hit = this._respHeaders.find(([k]) => k.toLowerCase() === lc);
+        return hit ? hit[1] : null;
+      }
+      abort() {
+        this._aborted = true;
+        this.readyState = 0;
+      }
+      send(body) {
+        if (isExternalUrl2(this._url)) {
+          const real = new originalXHR;
+          real.open(this._method, this._url);
+          for (const [k, v] of this._reqHeaders)
+            real.setRequestHeader(k, v);
+          real.onload = () => {
+            this.status = real.status;
+            this.responseText = real.responseText;
+            this.response = real.response;
+            this.readyState = 4;
+            this.onreadystatechange?.();
+            this.onload?.();
+            this.onloadend?.();
+            this.dispatchEvent(new Event("load"));
+          };
+          real.onerror = () => {
+            this.onerror?.();
+            this.dispatchEvent(new Event("error"));
+          };
+          real.send(body);
+          return;
+        }
+        const relPath = normalizeToRelPath2(this._url);
+        httpReq(this._method, relPath, body ?? null, this._reqHeaders).then((r) => {
+          if (this._aborted)
+            return;
+          this.status = r.status;
+          this._respHeaders = r.headers ?? [];
+          this.responseText = new TextDecoder().decode(r.bytes);
+          if (this.responseType === "arraybuffer") {
+            this.response = r.bytes.buffer;
+          } else if (this.responseType === "blob") {
+            this.response = new Blob([r.bytes]);
+          } else if (this.responseType === "json") {
+            try {
+              this.response = JSON.parse(this.responseText);
+            } catch {
+              this.response = null;
+            }
+          } else {
+            this.response = this.responseText;
+          }
+          this.readyState = 4;
+          this.onreadystatechange?.();
+          this.onload?.();
+          this.onloadend?.();
+          this.dispatchEvent(new Event("load"));
+        }, () => {
+          if (this._aborted)
+            return;
+          this.onerror?.();
+          this.dispatchEvent(new Event("error"));
+        });
+      }
+    }
+
+    class TunnelEventSource extends EventTarget {
+      static CONNECTING = 0;
+      static OPEN = 1;
+      static CLOSED = 2;
+      readyState = 0;
+      url;
+      withCredentials = false;
+      onopen = null;
+      onmessage = null;
+      onerror = null;
+      constructor(url) {
+        super();
+        this.url = String(url);
+        (async () => {
+          try {
+            const relPath = normalizeToRelPath2(this.url);
+            const r = await httpReq("GET", relPath, null, [
+              ["accept", "text/event-stream"]
+            ]);
+            this.readyState = 1;
+            this.onopen?.(new Event("open"));
+            const text = new TextDecoder().decode(r.bytes);
+            for (const block of text.split(/\n\n/)) {
+              const data = block.split(`
+`).filter((l) => l.startsWith("data:")).map((l) => l.slice(5).trim()).join(`
+`);
+              if (data) {
+                const ev = new MessageEvent("message", { data });
+                this.onmessage?.(ev);
+                this.dispatchEvent(ev);
+              }
+            }
+            this.readyState = 2;
+          } catch {
+            this.onerror?.(new Event("error"));
+          }
+        })();
+      }
+      close() {
+        this.readyState = 2;
+      }
+    }
+    const SELF_HREF = (() => {
+      try {
+        return globalThis.location?.href ?? "";
+      } catch {
+        return "";
+      }
+    })();
+    const SELF_BASE_DIR = computeSelfBaseDir(SELF_HREF);
+    const objectUrls = new Set;
+    const objectUrlScripts = new Map;
+    function isSelfOriginUrl2(u) {
+      return isSelfOriginUrl(u, SELF_BASE_DIR, SELF_HREF, objectUrls);
+    }
+    function isExternalUrl2(u) {
+      return isExternalUrl(u, SELF_BASE_DIR, SELF_HREF, objectUrls);
+    }
+    function normalizeToRelPath2(u) {
+      return normalizeToRelPath(u, SELF_BASE_DIR);
+    }
+    const URL_ATTRS = new Set([
+      "src",
+      "srcset",
+      "href",
+      "poster",
+      "action",
+      "formaction",
+      "data",
+      "background",
+      "cite",
+      "longdesc",
+      "usemap",
+      "manifest"
+    ]);
+    const URL_STYLE_PROPS = new Set([
+      "background",
+      "backgroundImage",
+      "background-image",
+      "borderImage",
+      "border-image",
+      "borderImageSource",
+      "border-image-source",
+      "listStyle",
+      "list-style",
+      "listStyleImage",
+      "list-style-image",
+      "cursor",
+      "mask",
+      "maskImage",
+      "mask-image",
+      "webkitMask",
+      "-webkit-mask",
+      "webkitMaskImage",
+      "-webkit-mask-image",
+      "content",
+      "src"
+    ]);
+    const __BLOB_CACHE_MAX = 256;
+    const __BLOB_REVOKE_DELAY_MS = 30000;
+    const blobCache = new Map;
+    const blobStats = {
+      created: 0,
+      revoked: 0,
+      hits: 0,
+      misses: 0,
+      inFlightRevokes: 0
+    };
+    function __evictIfOverCap() {
+      while (blobCache.size > __BLOB_CACHE_MAX) {
+        const oldestKey = blobCache.keys().next().value;
+        if (oldestKey === undefined)
+          break;
+        const ent = blobCache.get(oldestKey);
+        blobCache.delete(oldestKey);
+        blobStats.inFlightRevokes++;
+        const t = setTimeout(() => {
+          ent.url.then((u) => {
+            if (typeof u === "string" && u.startsWith("blob:")) {
+              try {
+                URL.revokeObjectURL(u);
+                blobStats.revoked++;
+              } catch {}
+            }
+          }).finally(() => {
+            blobStats.inFlightRevokes--;
+          });
+        }, __BLOB_REVOKE_DELAY_MS);
+        ent.pendingRevoke = t;
+      }
+    }
+    function resolveToBlobUrl(rel) {
+      if (isExternalUrl2(rel))
+        return Promise.resolve(rel);
+      const hashIdx = rel.indexOf("#");
+      const pathPart = hashIdx >= 0 ? rel.slice(0, hashIdx) : rel;
+      const frag = hashIdx >= 0 ? rel.slice(hashIdx) : "";
+      const key = normalizeToRelPath2(pathPart);
+      let ent = blobCache.get(key);
+      if (ent) {
+        if (ent.pendingRevoke != null) {
+          clearTimeout(ent.pendingRevoke);
+          ent.pendingRevoke = undefined;
+          blobStats.inFlightRevokes--;
+        }
+        blobCache.delete(key);
+        blobCache.set(key, ent);
+        blobStats.hits++;
+      } else {
+        blobStats.misses++;
+        const url = httpReq("GET", key, null).then((r) => {
+          const ctHeader = r.headers.find(([k]) => k.toLowerCase() === "content-type");
+          const ct = ctHeader?.[1] ?? "application/octet-stream";
+          const blob = new Blob([r.bytes], { type: ct });
+          blobStats.created++;
+          return URL.createObjectURL(blob);
+        });
+        ent = { url };
+        blobCache.set(key, ent);
+        __evictIfOverCap();
+      }
+      return frag ? ent.url.then((b) => b + frag) : ent.url;
+    }
+    const HATCH_PIXEL_PREFIX = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
+    const HATCH_FRAG = "#hatch=";
+    function isHatchPlaceholder(url) {
+      return url.indexOf(HATCH_PIXEL_PREFIX + HATCH_FRAG) === 0;
+    }
+    function unwrapHatchPlaceholder(url) {
+      if (!isHatchPlaceholder(url))
+        return null;
+      return decodeURIComponent(url.slice((HATCH_PIXEL_PREFIX + HATCH_FRAG).length));
+    }
+    async function rewriteCssTextAsync(text) {
+      const re = /url\(\s*(['"]?)([^'")]+)\1\s*\)/g;
+      const tasks = [];
+      let m;
+      while ((m = re.exec(text)) !== null) {
+        tasks.push({ match: m[0], index: m.index, url: m[2].trim() });
+      }
+      if (tasks.length === 0)
+        return text;
+      const resolved = await Promise.all(tasks.map(async (t) => {
+        if (t.url.startsWith("blob:"))
+          return t.url;
+        const unwrapped = unwrapHatchPlaceholder(t.url);
+        if (unwrapped != null) {
+          try {
+            return await resolveToBlobUrl(unwrapped);
+          } catch {
+            return t.url;
+          }
+        }
+        if (isExternalUrl2(t.url))
+          return t.url;
+        try {
+          return await resolveToBlobUrl(t.url);
+        } catch {
+          return t.url;
+        }
+      }));
+      let out = "";
+      let last = 0;
+      tasks.forEach((t, i) => {
+        out += text.slice(last, t.index);
+        out += `url("${resolved[i]}")`;
+        last = t.index + t.match.length;
+      });
+      out += text.slice(last);
+      return out;
+    }
+    function rewriteCssText(text) {
+      return rewriteCssTextAsync(text);
+    }
+    const mediaSourceLoads = new WeakMap;
+    window.addEventListener("error", (event) => {
+      const source = event.target;
+      if (!event.isTrusted || !(source instanceof HTMLSourceElement) || !(source.parentElement instanceof HTMLMediaElement) || source.hasAttribute("src"))
+        return;
+      const state = mediaSourceLoads.get(source);
+      if (state === "pending" || state === undefined && source.hasAttribute("data-hatch-src")) {
+        event.stopImmediatePropagation();
+      }
+    }, true);
+    function isElement(el) {
+      if (el instanceof Element)
+        return true;
+      const ownerWindow = el?.ownerDocument?.defaultView;
+      return ownerWindow != null && el instanceof ownerWindow.Element;
+    }
+    function setAttr(el, name, value, ...rest) {
+      if (!isElement(el)) {
+        return el.setAttribute(name, value, ...rest);
+      }
+      name = String(name);
+      if (value == null) {
+        if (name.toLowerCase() === "src" && el instanceof HTMLSourceElement) {
+          mediaSourceLoads.set(el, "settled");
+        }
+        try {
+          el.removeAttribute(name);
+        } catch {}
+        return;
+      }
+      const v = String(value);
+      const lcName = name.toLowerCase();
+      const tag = el.tagName?.toUpperCase();
+      if ((tag === "A" || tag === "BASE" || tag === "AREA") && lcName === "href") {
+        el.setAttribute(name, v);
+        return;
+      }
+      if (!URL_ATTRS.has(lcName) && lcName !== "style" && lcName !== "srcset") {
+        el.setAttribute(name, v);
+        return;
+      }
+      if (lcName === "srcset") {
+        const parts = v.split(",").map((s) => s.trim()).filter(Boolean);
+        Promise.all(parts.map(async (p) => {
+          const segs = p.split(/\s+/);
+          const url = segs[0];
+          const rest = segs.slice(1).join(" ");
+          if (isExternalUrl2(url))
+            return p;
+          const resolved = await resolveToBlobUrl(url);
+          return rest ? `${resolved} ${rest}` : resolved;
+        })).then((rebuilt) => {
+          try {
+            el.setAttribute("srcset", rebuilt.join(", "));
+          } catch {}
+        });
+        return;
+      }
+      if (URL_ATTRS.has(lcName)) {
+        const isMediaSource = tag === "SOURCE" && lcName === "src";
+        if (isExternalUrl2(v)) {
+          if (isMediaSource)
+            mediaSourceLoads.set(el, "settled");
+          el.setAttribute(name, v);
+          return;
+        }
+        if (isMediaSource)
+          mediaSourceLoads.set(el, "pending");
+        if (tag === "IMG" || tag === "VIDEO" && lcName === "poster") {
+          el.setAttribute(name, TRANSPARENT_PIXEL);
+        }
+        resolveToBlobUrl(v).then((blobUrl) => {
+          if (isMediaSource)
+            mediaSourceLoads.set(el, "settled");
+          try {
+            el.setAttribute(name, blobUrl);
+            if (isMediaSource) {
+              const media = el.parentElement;
+              if (media instanceof HTMLMediaElement && media.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
+                const nextSibling = el.nextSibling;
+                el.remove();
+                media.insertBefore(el, nextSibling);
+              }
+            }
+          } catch {}
+        }, () => {
+          if (isMediaSource) {
+            mediaSourceLoads.set(el, "settled");
+            el.dispatchEvent(new Event("error"));
+          }
+        });
+        return;
+      }
+      if (lcName === "style") {
+        setStyleAttr(el, v);
+        return;
+      }
+      el.setAttribute(name, v);
+    }
+    function setAttrNS(el, ns, name, value, ...rest) {
+      if (!isElement(el)) {
+        return el.setAttributeNS(ns, name, value, ...rest);
+      }
+      name = String(name);
+      if (value == null) {
+        try {
+          el.removeAttributeNS(ns ?? null, name);
+        } catch {}
+        return;
+      }
+      const v = String(value);
+      const lcName = name.split(":").pop().toLowerCase();
+      if (lcName === "href" && URL_ATTRS.has("href")) {
+        if (isExternalUrl2(v)) {
+          el.setAttributeNS(ns ?? null, name, v);
+          return;
+        }
+        resolveToBlobUrl(v).then((blobUrl) => {
+          try {
+            el.setAttributeNS(ns ?? null, name, blobUrl);
+          } catch {}
+        }, () => {});
+        return;
+      }
+      try {
+        el.setAttributeNS(ns ?? null, name, v);
+      } catch {}
+    }
+    function setUrlProp(el, name, value) {
+      if (isElement(el)) {
+        setAttr(el, name.toLowerCase(), value);
+      } else {
+        el[name] = value;
+      }
+      return value;
+    }
+    const TRANSPARENT_PIXEL = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
+    const HTML_TAG_ATTRS = {
+      img: ["src", "srcset", "poster"],
+      image: ["href"],
+      video: ["src", "poster"],
+      audio: ["src"],
+      source: ["src", "srcset"],
+      script: ["src"],
+      link: ["href"],
+      iframe: ["src"],
+      embed: ["src"],
+      object: ["data"],
+      track: ["src"],
+      input: ["src"],
+      form: ["action"],
+      button: ["formaction"],
+      use: ["href"]
+    };
+    function rewriteHtmlString(html) {
+      return html.replace(/<([a-zA-Z][a-zA-Z0-9-]*)\b([^>]*)>/g, (m, tag, attrs) => {
+        const lc = String(tag).toLowerCase();
+        const candidates = HTML_TAG_ATTRS[lc];
+        if (!candidates)
+          return m;
+        let out = attrs;
+        for (const a of candidates) {
+          const re = new RegExp(`\\b${a}\\s*=\\s*("([^"]*)"|'([^']*)'|([^\\s>]+))`, "i");
+          const matched = out.match(re);
+          if (!matched)
+            continue;
+          const value = matched[2] ?? matched[3] ?? matched[4] ?? "";
+          if (isExternalUrl2(value))
+            continue;
+          out = out.replace(re, `data-hatch-${a}="${value.replace(/"/g, "&quot;")}"`);
+        }
+        const styleRe = /\bstyle\s*=\s*("([^"]*)"|'([^']*)')/i;
+        const sm = out.match(styleRe);
+        if (sm) {
+          const value = sm[2] ?? sm[3] ?? "";
+          if (value.includes("url(")) {
+            out = out.replace(styleRe, `data-hatch-style="${value.replace(/"/g, "&quot;")}"`);
+          }
+        }
+        return `<${tag}${out}>`;
+      });
+    }
+    const HTML_URL_ATTRS_BY_TAG = {
+      IMG: ["src", "srcset", "poster"],
+      IMAGE: ["href"],
+      VIDEO: ["src", "poster"],
+      AUDIO: ["src"],
+      SOURCE: ["src", "srcset"],
+      SCRIPT: ["src"],
+      LINK: ["href"],
+      IFRAME: ["src"],
+      EMBED: ["src"],
+      OBJECT: ["data"],
+      TRACK: ["src"],
+      INPUT: ["src"],
+      FORM: ["action"],
+      BUTTON: ["formaction"],
+      USE: ["href", "xlink:href"]
+    };
+    function rewriteSubtreeForTunnel(root) {
+      if (!root)
+        return;
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT);
+      let n = walker.currentNode;
+      if (root.nodeType === 1)
+        processOne(root);
+      while (n = walker.nextNode()) {
+        processOne(n);
+      }
+    }
+    function processOne(el) {
+      const tag = (el.tagName ?? "").toUpperCase();
+      const attrs = HTML_URL_ATTRS_BY_TAG[tag];
+      if (attrs) {
+        for (const a of attrs) {
+          const v = el.getAttribute(a);
+          if (v == null)
+            continue;
+          if (isExternalUrl2(v))
+            continue;
+          el.setAttribute("data-hatch-" + a, v);
+          el.removeAttribute(a);
+        }
+      }
+      const style = el.getAttribute("style");
+      if (style && style.includes("url(")) {
+        el.setAttribute("data-hatch-style", style);
+        el.removeAttribute("style");
+      }
+    }
+    function parseAndCleanHtml(html) {
+      const tpl = document.createElement("template");
+      tpl.innerHTML = html;
+      rewriteSubtreeForTunnel(tpl.content);
+      return tpl.content;
+    }
+    function setInnerHTML(el, html, which = "innerHTML") {
+      const s = html == null ? "" : String(html);
+      if (which === "innerHTML" && typeof el.tagName === "string" && el.tagName.toUpperCase() === "TEMPLATE") {
+        try {
+          el.innerHTML = s;
+        } catch {}
+        return;
+      }
+      if (which === "outerHTML") {
+        const frag = parseAndCleanHtml(s);
+        const wrap = document.createElement("div");
+        wrap.appendChild(frag);
+        try {
+          el.outerHTML = wrap.innerHTML;
+        } catch {}
+        queueMicrotask(() => processDataHatchAttrs(document.body));
+        return;
+      }
+      const frag = parseAndCleanHtml(s);
+      try {
+        while (el.firstChild)
+          el.removeChild(el.firstChild);
+        el.appendChild(frag);
+      } catch {}
+      queueMicrotask(() => processDataHatchAttrs(el));
+    }
+    function insertAdjacentHTMLT(el, position, html) {
+      const s = html == null ? "" : String(html);
+      const frag = parseAndCleanHtml(s);
+      const wrap = document.createElement("template");
+      wrap.content.appendChild(frag);
+      try {
+        el.insertAdjacentHTML(position, wrap.innerHTML);
+      } catch {}
+      queueMicrotask(() => processDataHatchAttrs(document.body));
+    }
+    function processDataHatchAttrs(root) {
+      const SELECTORS = "[data-hatch-src], [data-hatch-href], [data-hatch-srcset], [data-hatch-poster], [data-hatch-action], [data-hatch-data], [data-hatch-style]";
+      root.querySelectorAll(SELECTORS).forEach((el) => {
+        const attrs = el.getAttributeNames();
+        for (const a of attrs) {
+          if (!a.startsWith("data-hatch-"))
+            continue;
+          const real = a.slice("data-hatch-".length);
+          const value = el.getAttribute(a) ?? "";
+          el.removeAttribute(a);
+          if (real === "style")
+            setStyleAttr(el, value);
+          else
+            setAttr(el, real, value);
+        }
+      });
+    }
+    const styleProxyCache = new WeakMap;
+    function getStyle(el) {
+      if (el == null)
+        return el;
+      let real;
+      try {
+        real = el.style;
+      } catch {
+        return;
+      }
+      if (real == null || typeof real !== "object" && typeof real !== "function") {
+        return real;
+      }
+      let proxy = styleProxyCache.get(real);
+      if (proxy)
+        return proxy;
+      proxy = new Proxy(real, {
+        get(target, prop, _receiver) {
+          const v = Reflect.get(target, prop, target);
+          if (typeof v === "function")
+            return v.bind(target);
+          return v;
+        },
+        set(target, prop, value) {
+          if (typeof prop === "string") {
+            setStyle(el, prop, value);
+            return true;
+          }
+          return Reflect.set(target, prop, value, target);
+        }
+      });
+      styleProxyCache.set(real, proxy);
+      return proxy;
+    }
+    function setStyle(el, propName, value) {
+      const v = value == null ? "" : String(value);
+      if (propName.startsWith("--")) {
+        rewriteCssText(v).then((rewritten) => {
+          try {
+            el.style.setProperty(propName, rewritten);
+          } catch {}
+        });
+        return;
+      }
+      if (URL_STYLE_PROPS.has(propName) && v.includes("url(")) {
+        rewriteCssText(v).then((rewritten) => {
+          try {
+            el.style[propName] = rewritten;
+          } catch {}
+        });
+        return;
+      }
+      try {
+        el.style[propName] = v;
+      } catch {}
+    }
+    function setStyleAttr(el, attrValue) {
+      if (!attrValue.includes("url(")) {
+        el.setAttribute("style", attrValue);
+        return;
+      }
+      rewriteCssText(attrValue).then((rewritten) => {
+        try {
+          el.setAttribute("style", rewritten);
+        } catch {}
+      });
+    }
+    function setStyleText(styleEl, text) {
+      if (!(styleEl instanceof HTMLStyleElement)) {
+        try {
+          styleEl.textContent = text;
+        } catch {}
+        return;
+      }
+      if (!text.includes("url(")) {
+        styleEl.textContent = text;
+        return;
+      }
+      rewriteCssText(text).then((rewritten) => {
+        try {
+          styleEl.textContent = rewritten;
+        } catch {}
+      });
+    }
+    function tunnelImage(_w, _h) {
+      const img = new originalImage;
+      const desc = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, "src");
+      if (desc?.set) {
+        const origSet = desc.set;
+        const origGet = desc.get;
+        Object.defineProperty(img, "src", {
+          configurable: true,
+          get() {
+            return origGet.call(img);
+          },
+          set(v) {
+            if (v == null)
+              return origSet.call(img, "");
+            const s = String(v);
+            if (isExternalUrl2(s))
+              return origSet.call(img, s);
+            resolveToBlobUrl(s).then((b) => origSet.call(img, b), () => origSet.call(img, s));
+          }
+        });
+      }
+      return img;
+    }
+    function tunnelSendBeacon(url, data) {
+      tunnelFetch(url, { method: "POST", body: data, keepalive: true }).catch(() => {});
+      return true;
+    }
+    function tunnelWorker(url, options) {
+      const own = ownObjectUrl(url, objectUrls);
+      if (own === null || typeof originalWorker !== "function") {
+        throw new Error("[__tunnel] new Worker() is not supported in Muse Spaces.");
+      }
+      const script = objectUrlScripts.get(own);
+      return new originalWorker(script === undefined ? own : originalCreateObjectURL(workerScriptBlob(script)), options);
+    }
+    function tunnelImport(spec) {
+      throw new Error("[__tunnel] dynamic import() of '" + String(spec) + "' is not supported in Muse Spaces.");
+    }
+    function installCssObserver() {
+      try {
+        const proto = window.CSSStyleSheet?.prototype;
+        if (proto) {
+          const origInsertRule = proto.insertRule;
+          proto.insertRule = function(rule, index) {
+            if (typeof rule === "string" && rule.includes("url(")) {
+              const idx = origInsertRule.call(this, rule, index);
+              rewriteCssText(rule).then((rewritten) => {
+                if (rewritten !== rule) {
+                  try {
+                    this.deleteRule(idx);
+                    origInsertRule.call(this, rewritten, idx);
+                  } catch {}
+                }
+              });
+              return idx;
+            }
+            return origInsertRule.call(this, rule, index);
+          };
+          const origReplace = proto.replace;
+          if (origReplace) {
+            proto.replace = function(text) {
+              if (typeof text === "string" && text.includes("url(")) {
+                return rewriteCssText(text).then((rewritten) => origReplace.call(this, rewritten));
+              }
+              return origReplace.call(this, text);
+            };
+          }
+          const origReplaceSync = proto.replaceSync;
+          if (origReplaceSync) {
+            proto.replaceSync = function(text) {
+              if (typeof text === "string" && text.includes("url(")) {
+                const ret = origReplaceSync.call(this, text);
+                rewriteCssText(text).then((rewritten) => {
+                  try {
+                    origReplaceSync.call(this, rewritten);
+                  } catch {}
+                });
+                return ret;
+              }
+              return origReplaceSync.call(this, text);
+            };
+          }
+        }
+      } catch (e) {}
+      function sweepSheet(sheet) {
+        try {
+          const rules = sheet.cssRules;
+          for (let i = 0;i < rules.length; i++) {
+            const rule = rules[i];
+            const txt = rule.cssText;
+            if (txt && (txt.includes(HATCH_FRAG) || txt.includes("url(") && !/url\(\s*["']?(blob:|https?:|data:image\/gif;base64,R0)/.test(txt))) {
+              rewriteCssText(txt).then((rewritten) => {
+                if (rewritten !== txt) {
+                  try {
+                    sheet.deleteRule(i);
+                    sheet.insertRule(rewritten, i);
+                  } catch {}
+                }
+              });
+            }
+          }
+        } catch {}
+      }
+      function sweepAll() {
+        for (const sheet of Array.from(document.styleSheets)) {
+          sweepSheet(sheet);
+        }
+      }
+      const mo = new MutationObserver((mutations) => {
+        for (const m of mutations) {
+          for (const node of Array.from(m.addedNodes)) {
+            if (node instanceof HTMLStyleElement) {
+              const txt = node.textContent ?? "";
+              if (txt.includes("url(")) {
+                rewriteCssText(txt).then((rewritten) => {
+                  if (rewritten !== txt) {
+                    try {
+                      node.textContent = rewritten;
+                    } catch {}
+                  }
+                });
+              }
+            } else if (node instanceof HTMLLinkElement && node.rel === "stylesheet") {
+              node.addEventListener("load", () => sweepSheet(node.sheet), { once: true });
+            }
+          }
+        }
+      });
+      mo.observe(document, { subtree: true, childList: true });
+      Promise.resolve().then(sweepAll);
+      setTimeout(sweepAll, 0);
+      setTimeout(sweepAll, 50);
+      setTimeout(sweepAll, 250);
+    }
+    function rewriteAuthoredHtml() {
+      const SELECTORS = "[data-hatch-src], [data-hatch-href], [data-hatch-srcset]";
+      document.querySelectorAll(SELECTORS).forEach((el) => {
+        const src = el.getAttribute("data-hatch-src");
+        const href = el.getAttribute("data-hatch-href");
+        const srcset = el.getAttribute("data-hatch-srcset");
+        if (src)
+          setAttr(el, "src", src);
+        if (href)
+          setAttr(el, "href", href);
+        if (srcset)
+          setAttr(el, "srcset", srcset);
+      });
+    }
+    let historyUrlWarned = false;
+    function warnHistoryUrlDropped(method, url) {
+      if (url === undefined || url === null)
+        return;
+      if (historyUrlWarned)
+        return;
+      historyUrlWarned = true;
+      try {
+        console.warn("[__tunnel] history." + method + "() was called with a URL; the URL was ignored. A Muse web artifact " + "renders in an opaque origin with no navigable URL of its own, so " + "the browser rejects any URL change. State kept in the URL will not " + "persist or survive a reload — keep it in component state, or in " + "the artifact's database through a server action.");
+      } catch {}
+    }
+    const originalFetch = globalThis.fetch?.bind(globalThis) ?? (() => {
+      throw new Error("no native fetch");
+    });
+    const originalXHR = globalThis.XMLHttpRequest;
+    const originalWorker = globalThis.Worker;
+    const originalCreateObjectURL = URL.createObjectURL.bind(URL);
+    const originalImage = globalThis.Image;
+    const tunnel = {
+      fetch: tunnelFetch,
+      XHR: TunnelXHR,
+      WebSocket: TunnelWebSocket,
+      EventSource: TunnelEventSource,
+      Image: tunnelImage,
+      Worker: tunnelWorker,
+      import: tunnelImport,
+      sendBeacon: tunnelSendBeacon,
+      setAttr,
+      setAttrNS,
+      setUrlProp,
+      setStyle,
+      getStyle,
+      setStyleAttr,
+      setStyleText,
+      setInnerHTML,
+      insertAdjacentHTML: insertAdjacentHTMLT,
+      rewriteCssText,
+      resolveToBlobUrl,
+      processDataHatchAttrs,
+      rewriteHtmlString,
+      _resolveUrlString: (v) => v,
+      _resolveCssValue: (v) => v,
+      _resolveCssText: (v) => v,
+      _resolveStyleProp: (v) => v,
+      _importMeta: {
+        get url() {
+          return importMetaUrl(SELF_HREF, SELF_BASE_DIR);
+        }
+      },
+      _state: {
+        get port() {
+          return port;
+        },
+        get inFlight() {
+          return pending.size;
+        },
+        get blobCacheSize() {
+          return blobCache.size;
+        },
+        get blobStats() {
+          return { ...blobStats };
+        }
+      }
+    };
+    globalThis.__tunnel = tunnel;
+    window.__tunnel = tunnel;
+    try {
+      globalThis.fetch = tunnelFetch;
+      window.fetch = tunnelFetch;
+      globalThis.XMLHttpRequest = TunnelXHR;
+      window.XMLHttpRequest = TunnelXHR;
+      globalThis.WebSocket = TunnelWebSocket;
+      window.WebSocket = TunnelWebSocket;
+      globalThis.EventSource = TunnelEventSource;
+      window.EventSource = TunnelEventSource;
+      const nav = globalThis.navigator;
+      if (nav && typeof nav.sendBeacon === "function") {
+        nav.sendBeacon = (url, data) => tunnelSendBeacon(url, data);
+      }
+      const NativeURL = globalThis.URL;
+      const TunnelURL = function(url, base) {
+        return resolveTunnelUrl(url, base, SELF_HREF, NativeURL);
+      };
+      TunnelURL.prototype = NativeURL.prototype;
+      for (const k of Object.getOwnPropertyNames(NativeURL)) {
+        if (k === "prototype" || k === "length" || k === "name")
+          continue;
+        try {
+          TunnelURL[k] = NativeURL[k];
+        } catch {}
+      }
+      globalThis.URL = TunnelURL;
+      window.URL = TunnelURL;
+    } catch {}
+    try {
+      const hist = globalThis.history;
+      if (hist && typeof hist.pushState === "function" && typeof hist.replaceState === "function") {
+        const nativePushState = hist.pushState.bind(hist);
+        const nativeReplaceState = hist.replaceState.bind(hist);
+        hist.pushState = function(state, title, url) {
+          warnHistoryUrlDropped("pushState", url);
+          return nativePushState(state, title ?? "");
+        };
+        hist.replaceState = function(state, title, url) {
+          warnHistoryUrlDropped("replaceState", url);
+          return nativeReplaceState(state, title ?? "");
+        };
+      }
+    } catch {}
+    try {
+      const nativeCreateObjectURL = URL.createObjectURL.bind(URL);
+      const nativeRevokeObjectURL = URL.revokeObjectURL.bind(URL);
+      URL.createObjectURL = function(obj) {
+        const created = nativeCreateObjectURL(obj);
+        try {
+          objectUrls.add(created);
+          if (isWorkerScriptBlob(obj))
+            objectUrlScripts.set(created, obj);
+        } catch {}
+        return created;
+      };
+      URL.revokeObjectURL = function(objectUrl) {
+        try {
+          objectUrls.delete(objectUrl);
+          objectUrlScripts.delete(objectUrl);
+        } catch {}
+        nativeRevokeObjectURL(objectUrl);
+      };
+    } catch {}
+    const announceEpoch = Math.random().toString(36).slice(2) + "-" + Date.now().toString(36);
+    let announceTimer = null;
+    function announce() {
+      try {
+        window.parent.postMessage({ type: "bundle:ready", epoch: announceEpoch }, "*");
+      } catch {}
+    }
+    function startAnnouncing() {
+      announce();
+      announceTimer = setInterval(() => {
+        if (port != null) {
+          if (announceTimer != null)
+            clearInterval(announceTimer);
+          announceTimer = null;
+          return;
+        }
+        announce();
+      }, 120);
+    }
+    function onParentMessage(ev) {
+      const data = ev.data;
+      if (!data || typeof data !== "object")
+        return;
+      if (data.type === "bundle:init-port" && ev.ports && ev.ports[0]) {
+        if (port != null)
+          return;
+        if (announceTimer != null) {
+          clearInterval(announceTimer);
+          announceTimer = null;
+        }
+        port = ev.ports[0];
+        port.onmessage = (pe) => {
+          const msg = pe.data;
+          if (!msg || typeof msg !== "object")
+            return;
+          if (msg.type === "http.res") {
+            const ent = pending.get(msg.id);
+            if (ent) {
+              pending.delete(msg.id);
+              ent.resolve(msg);
+            }
+          } else if (msg.type === "ws.opened" || msg.type === "ws.message" || msg.type === "ws.closed" || msg.type === "ws.error") {
+            openWs.get(msg.id)?._handle(msg);
+          }
+        };
+        port.start?.();
+        portReadyResolve?.(port);
+        installCssObserver();
+        rewriteAuthoredHtml();
+        try {
+          window.parent.postMessage({ type: "bundle:port-attached" }, "*");
+        } catch {}
+      }
+    }
+    window.addEventListener("message", onParentMessage);
+    installDownloadLinks(tunnelFetch, isExternalUrl2, __BLOB_REVOKE_DELAY_MS);
+    if (document.readyState === "complete" || document.readyState === "interactive") {
+      startAnnouncing();
+    } else {
+      document.addEventListener("DOMContentLoaded", startAnnouncing);
+    }
+  })();
+})();
+
+;
+"use strict";
+var CHEFS = [{
+  id: "mahin",
+  name: "Mahin K.",
+  fa: "مهین",
+  area: "Richmond Hill",
+  spec: "Slow-cooked stews & khoresh",
+  rating: 4.9,
+  reviews: 412,
+  color: "#17452e",
+  since: "Cooking on Sofreh since 2025"
+}, {
+  id: "parvin",
+  name: "Parvin S.",
+  fa: "پروین",
+  area: "North York",
+  spec: "Fesenjan & saffron desserts",
+  rating: 4.8,
+  reviews: 298,
+  color: "#a62b25",
+  since: "Cooking on Sofreh since 2025"
+}, {
+  id: "reza",
+  name: "Reza T.",
+  fa: "رضا",
+  area: "Thornhill",
+  spec: "Tahdig & family platters",
+  rating: 4.9,
+  reviews: 356,
+  color: "#b97f16",
+  since: "Cooking on Sofreh since 2024"
+}, {
+  id: "shirin",
+  name: "Shirin A.",
+  fa: "شیرین",
+  area: "Markham",
+  spec: "Rice dishes & zereshk polo",
+  rating: 4.8,
+  reviews: 264,
+  color: "#7a4a21",
+  since: "Cooking on Sofreh since 2025"
+}, {
+  id: "farhad",
+  name: "Farhad N.",
+  fa: "فرهاد",
+  area: "Vaughan",
+  spec: "Charcoal kebabs",
+  rating: 4.9,
+  reviews: 481,
+  color: "#33526b",
+  since: "Cooking on Sofreh since 2024"
+}, {
+  id: "leila",
+  name: "Leila M.",
+  fa: "لیلا",
+  area: "Downtown Toronto",
+  spec: "Ash, soups & fresh salads",
+  rating: 4.7,
+  reviews: 189,
+  color: "#5b4a8a",
+  since: "Cooking on Sofreh since 2026"
+}];
+function chefById(id) {
+  for (var i = 0; i < CHEFS.length; i++) if (CHEFS[i].id === id) return CHEFS[i];
+  return CHEFS[0];
+}
+function initials(name) {
+  return name.split(" ").map(function (w) {
+    return w[0];
+  }).join("").slice(0, 2).toUpperCase();
+}
+var DISHES = [{
+  id: "ghormeh",
+  name: "Ghormeh Sabzi",
+  fa: "قورمه‌سبزی",
+  chef: "mahin",
+  cat: "stews",
+  price: 18.50,
+  img: "assets/ghormeh.jpg",
+  alt: "A steaming bowl of ghormeh sabzi herb stew with beef and kidney beans beside saffron rice",
+  rating: 4.9,
+  reviews: 212,
+  mins: 40,
+  tag: "Most loved",
+  badges: ["gluten-free"],
+  spice: 1,
+  desc: "Iran's national stew, the way Mahin learned it from her mother in Rasht: a deep-green tangle of fried herbs, tender beef, kidney beans and dried lime, simmered for six hours until the oil rises. Served with fluffy basmati and a wedge of saffron tahdig.",
+  ing: ["Fenugreek & herbs", "Beef", "Kidney beans", "Dried lime", "Basmati rice", "Saffron tahdig"]
+}, {
+  id: "fesenjan",
+  name: "Fesenjan",
+  fa: "فسنجان",
+  chef: "parvin",
+  cat: "stews",
+  price: 21.00,
+  img: "assets/fesenjan.jpg",
+  alt: "Fesenjan chicken stew in dark pomegranate walnut sauce topped with pomegranate seeds",
+  rating: 4.8,
+  reviews: 164,
+  mins: 45,
+  tag: "Chef's signature",
+  badges: [],
+  spice: 0,
+  desc: "Chicken braised low and slow in a glossy sauce of ground walnuts and pomegranate molasses — sweet, sour and rich all at once. Parvin balances hers on the sour side, finished with fresh pomegranate seeds.",
+  ing: ["Walnuts", "Pomegranate molasses", "Chicken", "Onion", "Basmati rice"]
+}, {
+  id: "gheimeh",
+  name: "Gheimeh",
+  fa: "قیمه",
+  chef: "mahin",
+  cat: "stews",
+  price: 16.75,
+  img: "assets/gheimeh.jpg",
+  alt: "Gheimeh stew with yellow split peas and beef in a copper bowl, topped with crispy potato sticks",
+  rating: 4.8,
+  reviews: 143,
+  mins: 35,
+  tag: "",
+  badges: ["gluten-free"],
+  spice: 1,
+  desc: "Tomato-braised beef and yellow split peas with dried lime and a whisper of cinnamon, crowned with a tangle of crispy hand-cut potato sticks. Comfort food, Isfahan style.",
+  ing: ["Yellow split peas", "Beef", "Tomato", "Dried lime", "Cinnamon", "Crispy potato"]
+}, {
+  id: "zereshk",
+  name: "Zereshk Polo ba Morgh",
+  fa: "زرشک‌پلو با مرغ",
+  chef: "shirin",
+  cat: "rice",
+  price: 19.25,
+  img: "assets/zereshk.jpg",
+  alt: "Zereshk polo — saffron rice with red barberries and a roasted chicken leg",
+  rating: 4.9,
+  reviews: 198,
+  mins: 40,
+  tag: "Most loved",
+  badges: ["gluten-free"],
+  spice: 0,
+  desc: "Jeweled saffron rice scattered with tart barberries and slivered pistachio, beside a chicken leg braised in tomato and saffron until it falls off the bone. Shirin's Friday-night specialty.",
+  ing: ["Basmati rice", "Barberries", "Saffron", "Chicken", "Pistachio", "Almond"]
+}, {
+  id: "platter",
+  name: "Sofreh Family Platter",
+  fa: "سفرهٔ خانوادگی",
+  chef: "reza",
+  cat: "rice",
+  price: 54.00,
+  img: "assets/hero.jpg",
+  alt: "A full Persian family platter with kebabs, saffron rice, stews, bread and fresh herbs",
+  rating: 5.0,
+  reviews: 87,
+  mins: 55,
+  tag: "Serves 4",
+  badges: [],
+  spice: 1,
+  desc: "The whole sofreh on one tray for four people: koobideh and joojeh kebabs, a whole saffron chicken, two stews of the day, jeweled rice, warm sangak, sabzi khordan and Shirazi salad. Built for a family table.",
+  ing: ["Koobideh & joojeh", "Saffron chicken", "Two stews", "Jeweled rice", "Sangak", "Sabzi khordan", "Shirazi salad"]
+}, {
+  id: "tahdig",
+  name: "Saffron Tahdig",
+  fa: "ته‌دیگ زعفرانی",
+  chef: "reza",
+  cat: "rice",
+  price: 9.50,
+  img: "assets/tahdig.jpg",
+  alt: "Golden saffron tahdig — a round of crispy rice with a wedge cut out showing fluffy rice inside",
+  rating: 4.9,
+  reviews: 231,
+  mins: 25,
+  tag: "",
+  badges: ["vegetarian"],
+  spice: 0,
+  desc: "The prize at the bottom of the pot: a whole golden round of crispy saffron rice, shattering on the outside and soft within. Reza unmoulds each one to order — expect friendly arguments over the crispiest piece.",
+  ing: ["Basmati rice", "Saffron", "Yogurt", "Butter"]
+}, {
+  id: "koobideh",
+  name: "Kabab Koobideh",
+  fa: "کباب کوبیده",
+  chef: "farhad",
+  cat: "kebabs",
+  price: 22.00,
+  img: "assets/koobideh.jpg",
+  alt: "Two skewers of koobideh kebab over saffron rice with grilled tomato",
+  rating: 4.9,
+  reviews: 276,
+  mins: 35,
+  tag: "Off the charcoal",
+  badges: ["gluten-free"],
+  spice: 1,
+  desc: "Hand-minced beef and lamb with grated onion and sumac, pressed onto wide skewers and grilled over real charcoal. Two skewers over saffron rice with a blistered tomato and warm lavash.",
+  ing: ["Beef & lamb", "Onion", "Sumac", "Saffron rice", "Grilled tomato", "Lavash"]
+}, {
+  id: "joojeh",
+  name: "Joojeh Kabab",
+  fa: "جوجه‌کباب",
+  chef: "farhad",
+  cat: "kebabs",
+  price: 20.50,
+  img: "assets/joojeh.jpg",
+  alt: "Joojeh kabab — golden saffron chicken kebab skewer with rice and grilled tomato",
+  rating: 4.8,
+  reviews: 203,
+  mins: 35,
+  tag: "",
+  badges: ["gluten-free"],
+  spice: 0,
+  desc: "Chicken marinated overnight in saffron, yogurt, lemon and onion, then charred at the edges on the grill. Served with saffron rice, grilled tomato and a lemon wedge.",
+  ing: ["Chicken", "Saffron", "Yogurt", "Lemon", "Saffron rice", "Grilled tomato"]
+}, {
+  id: "ash",
+  name: "Ash Reshteh",
+  fa: "آش رشته",
+  chef: "leila",
+  cat: "soups",
+  price: 11.00,
+  img: "assets/ash.jpg",
+  alt: "A bowl of ash reshteh noodle and herb soup topped with kashk and crispy fried onions",
+  rating: 4.8,
+  reviews: 156,
+  mins: 30,
+  tag: "",
+  badges: ["vegetarian"],
+  spice: 0,
+  desc: "A thick, herby noodle soup with chickpeas, kidney beans and lentils, finished with kashk, mint oil and a pile of crispy fried onions. Leila makes a big pot every morning — it sells out most days.",
+  ing: ["Reshteh noodles", "Herbs", "Chickpeas", "Kidney beans", "Kashk", "Fried onion", "Mint oil"]
+}, {
+  id: "shirazi",
+  name: "Salad Shirazi",
+  fa: "سالاد شیرازی",
+  chef: "leila",
+  cat: "sides",
+  price: 7.50,
+  img: "assets/shirazi.jpg",
+  alt: "Salad Shirazi — finely diced cucumber, tomato and onion salad with fresh mint",
+  rating: 4.7,
+  reviews: 118,
+  mins: 15,
+  tag: "",
+  badges: ["vegan", "gluten-free"],
+  spice: 0,
+  desc: "Cucumber, tomato and red onion diced small the Shirazi way, dressed with dried mint, olive oil and verjuice. The bright, crunchy counterpoint to every rich stew.",
+  ing: ["Cucumber", "Tomato", "Red onion", "Dried mint", "Verjuice", "Olive oil"]
+}, {
+  id: "sholeh",
+  name: "Sholeh Zard",
+  fa: "شله‌زرد",
+  chef: "parvin",
+  cat: "desserts",
+  price: 8.00,
+  img: "assets/sholeh.jpg",
+  alt: "Sholeh zard saffron rice pudding decorated with cinnamon patterns and slivered almonds",
+  rating: 4.9,
+  reviews: 134,
+  mins: 15,
+  tag: "",
+  badges: ["vegan", "gluten-free"],
+  spice: 0,
+  desc: "Silky saffron rice pudding with rosewater, decorated by hand with cinnamon, slivered almonds and pistachio. Parvin's pattern is different every day — no two bowls alike.",
+  ing: ["Rice", "Saffron", "Rosewater", "Almond", "Pistachio", "Cinnamon"]
+}, {
+  id: "faloodeh",
+  name: "Faloodeh Shirazi",
+  fa: "فالوده شیرازی",
+  chef: "shirin",
+  cat: "desserts",
+  price: 8.50,
+  img: "assets/faloodeh.webp",
+  alt: "Faloodeh Shirazi — frozen rice noodles in rosewater syrup with pistachio and rose petals",
+  rating: 4.8,
+  reviews: 97,
+  mins: 15,
+  tag: "Summer favourite",
+  badges: ["vegan", "gluten-free"],
+  spice: 0,
+  desc: "Frozen rice noodles in rosewater and lime syrup, topped with pistachio and rose petals. Shirin serves it the Shiraz way — with a squeeze of fresh lime and, if you ask, a scoop of saffron ice cream on the side.",
+  ing: ["Rice noodles", "Rosewater", "Lime", "Pistachio", "Rose petals"]
+}];
+function dishById(id) {
+  for (var i = 0; i < DISHES.length; i++) if (DISHES[i].id === id) return DISHES[i];
+  return DISHES[0];
+}
+var CATS = [{
+  id: "all",
+  label: "All",
+  fa: "همه"
+}, {
+  id: "stews",
+  label: "Stews · Khoresh",
+  fa: "خورش"
+}, {
+  id: "rice",
+  label: "Rice & Tahdig",
+  fa: "پلو"
+}, {
+  id: "kebabs",
+  label: "Kebabs",
+  fa: "کباب"
+}, {
+  id: "soups",
+  label: "Soups · Ash",
+  fa: "آش"
+}, {
+  id: "sides",
+  label: "Sides & Salads",
+  fa: "سالاد"
+}, {
+  id: "desserts",
+  label: "Desserts",
+  fa: "دسر"
+}];
+var EXTRAS = [{
+  id: "ext-tahdig",
+  label: "Extra tahdig",
+  price: 3.00
+}, {
+  id: "ext-mast",
+  label: "Mast-o-khiar",
+  price: 4.00
+}, {
+  id: "ext-rice",
+  label: "Extra saffron rice",
+  price: 2.50
+}, {
+  id: "ext-bread",
+  label: "Warm sangak",
+  price: 2.00
+}];
+var STEPS = ["Received", "Chef confirmed", "Cooking", "On the way", "Delivered"];
+var state = {
+  view: "home",
+  cat: "all",
+  query: "",
+  sort: "popular",
+  chefFilter: null,
+  favs: {
+    fesenjan: true,
+    tahdig: true
+  },
+  cart: [],
+  orders: [{
+    id: "SF-1042",
+    date: "Last Friday · Nov 13",
+    status: 4,
+    total: 47.20,
+    chef: "mahin",
+    items: [{
+      name: "Ghormeh Sabzi",
+      qty: 2,
+      price: 18.50
+    }, {
+      name: "Salad Shirazi",
+      qty: 1,
+      price: 7.50
+    }, {
+      name: "Warm sangak (extra)",
+      qty: 1,
+      price: 2.00
+    }]
+  }, {
+    id: "SF-1027",
+    date: "Nov 8",
+    status: 4,
+    total: 31.50,
+    chef: "farhad",
+    items: [{
+      name: "Joojeh Kabab",
+      qty: 1,
+      price: 20.50
+    }, {
+      name: "Ash Reshteh",
+      qty: 1,
+      price: 11.00
+    }]
+  }],
+  drawerStep: "cart",
+  payMethod: "card",
+  slot: "Today, 6:30–7:00 pm",
+  lastOrderId: null
+};
+var orderSeq = 1051;
+function $(id) {
+  return document.getElementById(id);
+}
+function money(n) {
+  return "$" + n.toFixed(2);
+}
+function esc(s) {
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+}
+var toastTimer = null;
+function toast(msg) {
+  var t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function () {
+    t.classList.remove("show");
+  }, 2400);
+}
+function spiceText(n) {
+  return n === 0 ? "No heat" : n === 1 ? "Gently spiced" : "Properly hot";
+}
+function go(view) {
+  state.view = view;
+  var views = ["home", "orders", "favorites", "profile"];
+  views.forEach(function (v) {
+    $("view-" + v).classList.toggle("active", v === view);
+  });
+  document.querySelectorAll("[data-nav]").forEach(function (b) {
+    if (b.classList.contains("brand")) return;
+    if (b.getAttribute("data-nav") === view) __tunnel.setAttr(b, "aria-current", "page");else b.removeAttribute("aria-current");
+  });
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+  var mainEl = document.querySelector("main");
+  if (mainEl) mainEl.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+  if (view === "orders") renderOrders();
+  if (view === "favorites") renderFavs();
+}
+document.querySelectorAll("[data-nav]").forEach(function (b) {
+  b.addEventListener("click", function (e) {
+    e.preventDefault();
+    go(b.getAttribute("data-nav"));
+  });
+});
+function renderCats() {
+  __tunnel.setInnerHTML($("catChips"), CATS.map(function (c) {
+    return '<button type="button" class="chip" data-cat="' + c.id + '" aria-pressed="' + (state.cat === c.id) + '">' + esc(c.label) + ' <span class="fa" lang="fa" dir="rtl">' + c.fa + '</span></button>';
+  }).join(""), "innerHTML");
+  document.querySelectorAll("#catChips .chip").forEach(function (ch) {
+    ch.addEventListener("click", function () {
+      state.cat = ch.getAttribute("data-cat");
+      state.chefFilter = null;
+      renderCats();
+      renderMenu();
+    });
+  });
+}
+function filteredDishes() {
+  var q = state.query.trim().toLowerCase();
+  var list = DISHES.filter(function (d) {
+    if (state.chefFilter && d.chef !== state.chefFilter) return false;
+    if (state.cat !== "all" && d.cat !== state.cat) return false;
+    if (q) {
+      var chef = chefById(d.chef);
+      var hay = (d.name + " " + d.fa + " " + chef.name + " " + d.ing.join(" ")).toLowerCase();
+      if (hay.indexOf(q) === -1) return false;
+    }
+    return true;
+  });
+  if (state.sort === "priceAsc") list.sort(function (a, b) {
+    return a.price - b.price;
+  });
+  if (state.sort === "priceDesc") list.sort(function (a, b) {
+    return b.price - a.price;
+  });
+  if (state.sort === "fastest") list.sort(function (a, b) {
+    return a.mins - b.mins;
+  });
+  if (state.sort === "rating") list.sort(function (a, b) {
+    return b.rating - a.rating;
+  });
+  if (state.sort === "popular") list.sort(function (a, b) {
+    return b.reviews - a.reviews;
+  });
+  return list;
+}
+function dishCard(d) {
+  var chef = chefById(d.chef);
+  var fav = state.favs[d.id] ? " on" : "";
+  var badges = d.badges.map(function (b) {
+    return '<span class="bdg">' + b.replace("-", " ") + '</span>';
+  }).join("") + (d.spice > 0 ? '<span class="bdg hot">' + spiceText(d.spice) + '</span>' : '');
+  return '<article class="card">' + '<div class="card-img" data-open="' + d.id + '" role="button" tabindex="0" aria-label="View ' + esc(d.name) + '">' + '<img src="' + d.img + '" alt="' + esc(d.alt) + '" loading="lazy" />' + (d.tag ? '<span class="tag">' + esc(d.tag) + '</span>' : '') + '<button type="button" class="fav-btn' + fav + '" data-fav="' + d.id + '" aria-label="Save ' + esc(d.name) + ' to favourites" aria-pressed="' + !!state.favs[d.id] + '">' + '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5C7 16.5 3 13.3 3 9.3A4.8 4.8 0 0 1 12 6a4.8 4.8 0 0 1 9 3.3c0 4-4 7.2-9 11.2z"/></svg></button>' + '</div>' + '<div class="card-body">' + '<div class="card-title"><div><h3>' + esc(d.name) + '</h3><span class="fa" lang="fa" dir="rtl">' + d.fa + '</span></div><span class="price">' + money(d.price) + '</span></div>' + '<div class="chef-line"><span class="chef-ava" aria-hidden="true">' + initials(chef.name) + '</span><span>by <strong>' + esc(chef.name) + '</strong> · ' + esc(chef.area) + '</span></div>' + '<div class="meta-line"><span><span class="stars">★</span> ' + d.rating.toFixed(1) + ' (' + d.reviews + ')</span><span>' + d.mins + ' min</span></div>' + (badges ? '<div class="badges">' + badges + '</div>' : '') + '<div class="card-foot"><button type="button" class="btn-add" data-add="' + d.id + '">Add to basket</button>' + '<button type="button" class="btn-view" data-open="' + d.id + '">Details</button></div>' + '</div></article>';
+}
+function bindCards(root) {
+  root.querySelectorAll("[data-add]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      addToCart(b.getAttribute("data-add"), 1, []);
+    });
+  });
+  root.querySelectorAll("[data-open]").forEach(function (el) {
+    el.addEventListener("click", function (e) {
+      if (e.target.closest("[data-fav]")) return;
+      openDish(el.getAttribute("data-open"));
+    });
+    el.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        openDish(el.getAttribute("data-open"));
+      }
+    });
+  });
+  root.querySelectorAll("[data-fav]").forEach(function (b) {
+    b.addEventListener("click", function (e) {
+      e.stopPropagation();
+      toggleFav(b.getAttribute("data-fav"));
+    });
+  });
+}
+function renderMenu() {
+  var list = filteredDishes();
+  __tunnel.setInnerHTML($("dishGrid"), list.map(dishCard).join(""), "innerHTML");
+  $("noResults").hidden = list.length > 0;
+  bindCards($("dishGrid"));
+  if (state.chefFilter) {
+    var c = chefById(state.chefFilter);
+    $("menuTitle").textContent = "Cooking by " + c.name;
+    $("menuSub").textContent = c.spec + " · " + c.area + " · ★ " + c.rating.toFixed(1) + " (" + c.reviews + " reviews)";
+  } else if (state.query) {
+    $("menuTitle").textContent = "Results for “" + state.query + "”";
+    $("menuSub").textContent = list.length + (list.length === 1 ? " dish" : " dishes") + " cooking today near you.";
+  } else {
+    $("menuTitle").textContent = "Today's sofreh";
+    $("menuSub").textContent = "Cooked today in small batches — when it's gone, it's gone.";
+  }
+}
+function renderChefs() {
+  __tunnel.setInnerHTML($("chefGrid"), CHEFS.map(function (c) {
+    var count = DISHES.filter(function (d) {
+      return d.chef === c.id;
+    }).length;
+    return '<button type="button" class="chef-card" data-chef="' + c.id + '">' + '<span class="big-ava" style="background:' + c.color + '" aria-hidden="true">' + initials(c.name) + '</span>' + '<span><h3>' + esc(c.name) + ' <span class="fa" lang="fa" dir="rtl" style="color:var(--ink-3);font-size:.9rem">' + c.fa + '</span></h3>' + '<p>' + esc(c.spec) + '</p><p>' + esc(c.area) + ' · ' + count + ' dishes today</p>' + '<span class="stars">★ ' + c.rating.toFixed(1) + ' (' + c.reviews + ')</span></span></button>';
+  }).join(""), "innerHTML");
+  document.querySelectorAll("[data-chef]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      state.chefFilter = b.getAttribute("data-chef");
+      state.cat = "all";
+      state.query = "";
+      $("searchDesk").value = "";
+      $("searchMob").value = "";
+      renderCats();
+      renderMenu();
+      $("menu").scrollIntoView({
+        behavior: "smooth"
+      });
+      toast("Showing dishes by " + chefById(state.chefFilter).name);
+    });
+  });
+}
+function toggleFav(id) {
+  if (state.favs[id]) {
+    delete state.favs[id];
+    toast(dishById(id).name + " removed from favourites");
+  } else {
+    state.favs[id] = true;
+    toast(dishById(id).name + " saved to favourites");
+  }
+  renderMenu();
+  if (state.view === "favorites") renderFavs();
+}
+function renderFavs() {
+  var list = DISHES.filter(function (d) {
+    return state.favs[d.id];
+  });
+  __tunnel.setInnerHTML($("favGrid"), list.map(dishCard).join(""), "innerHTML");
+  $("favEmpty").hidden = list.length > 0;
+  bindCards($("favGrid"));
+}
+function setQuery(q) {
+  state.query = q;
+  if (state.view !== "home") go("home");
+  renderMenu();
+}
+$("searchDesk").addEventListener("input", function () {
+  $("searchMob").value = this.value;
+  setQuery(this.value);
+});
+$("searchMob").addEventListener("input", function () {
+  $("searchDesk").value = this.value;
+  setQuery(this.value);
+});
+$("sortSel").addEventListener("change", function () {
+  state.sort = this.value;
+  renderMenu();
+});
+$("clearFilters").addEventListener("click", function () {
+  state.query = "";
+  state.cat = "all";
+  state.chefFilter = null;
+  $("searchDesk").value = "";
+  $("searchMob").value = "";
+  renderCats();
+  renderMenu();
+});
+$("locBtn").addEventListener("click", function () {
+  var areas = ["Richmond Hill", "North York", "Thornhill", "Markham", "Vaughan", "Downtown Toronto"];
+  var cur = areas.indexOf($("locText").textContent);
+  var next = areas[(cur + 1) % areas.length];
+  $("locText").textContent = next;
+  toast("Delivering to " + next + " — showing chefs nearby");
+});
+var modalDish = null,
+  modalQty = 1,
+  modalExtras = {};
+function openDish(id) {
+  modalDish = dishById(id);
+  modalQty = 1;
+  modalExtras = {};
+  var d = modalDish,
+    chef = chefById(d.chef);
+  __tunnel.setInnerHTML($("modalCard"), '<img src="' + d.img + '" alt="' + esc(d.alt) + '" />' + '<button type="button" class="modal-x" id="modalClose" aria-label="Close details">✕</button>' + '<div class="modal-body">' + '<div class="card-title"><div><h2 id="modalName">' + esc(d.name) + '</h2><span class="fa fa-name" lang="fa" dir="rtl">' + d.fa + '</span></div><span class="price" style="font-size:1.3rem">' + money(d.price) + '</span></div>' + '<div class="chef-line" style="margin-top:10px"><span class="chef-ava" aria-hidden="true">' + initials(chef.name) + '</span><span>Cooked by <strong>' + esc(chef.name) + '</strong> · ' + esc(chef.area) + ' · ' + esc(chef.since) + '</span></div>' + '<div class="meta-line" style="margin-top:8px"><span><span class="stars">★</span> ' + d.rating.toFixed(1) + ' (' + d.reviews + ' reviews)</span><span>Ready in ~' + d.mins + ' min</span><span>' + spiceText(d.spice) + '</span></div>' + '<p class="modal-desc">' + esc(d.desc) + '</p>' + '<p class="opt-label">What&#39;s in it</p><div class="ing">' + d.ing.map(function (i) {
+    return '<span>' + esc(i) + '</span>';
+  }).join("") + '</div>' + '<p class="opt-label">Make it yours</p><div class="extra-row" id="extraRow">' + EXTRAS.map(function (x) {
+    return '<button type="button" class="chip" data-extra="' + x.id + '" aria-pressed="false">' + esc(x.label) + ' · +' + money(x.price) + '</button>';
+  }).join("") + '</div>' + '<div class="field" style="margin-top:18px"><label for="dishNote">Note for the chef (optional)</label>' + '<textarea id="dishNote" placeholder="e.g. Less salt, extra herbs on the side…"></textarea></div>' + '<div class="modal-foot"><span class="qty" aria-label="Quantity"><button type="button" id="qMinus" aria-label="One less">−</button><output id="qOut">1</output><button type="button" id="qPlus" aria-label="One more">+</button></span>' + '<button type="button" class="btn-add" id="modalAdd">Add to basket · <span id="modalTotal">' + money(d.price) + '</span></button></div>' + '</div>', "innerHTML");
+  $("dishModal").classList.add("open");
+  __tunnel.setStyle(document.body, "overflow", "hidden");
+  $("modalClose").addEventListener("click", closeDish);
+  $("qMinus").addEventListener("click", function () {
+    if (modalQty > 1) {
+      modalQty--;
+      syncModal();
+    }
+  });
+  $("qPlus").addEventListener("click", function () {
+    if (modalQty < 12) {
+      modalQty++;
+      syncModal();
+    }
+  });
+  document.querySelectorAll("[data-extra]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var id = b.getAttribute("data-extra");
+      if (modalExtras[id]) {
+        delete modalExtras[id];
+        __tunnel.setAttr(b, "aria-pressed", "false");
+      } else {
+        modalExtras[id] = true;
+        __tunnel.setAttr(b, "aria-pressed", "true");
+      }
+      syncModal();
+    });
+  });
+  $("modalAdd").addEventListener("click", function () {
+    var extras = EXTRAS.filter(function (x) {
+      return modalExtras[x.id];
+    });
+    var note = $("dishNote").value.trim();
+    addToCart(d.id, modalQty, extras, note);
+    closeDish();
+  });
+  $("modalClose").focus();
+}
+function syncModal() {
+  var extraSum = EXTRAS.filter(function (x) {
+    return modalExtras[x.id];
+  }).reduce(function (s, x) {
+    return s + x.price;
+  }, 0);
+  $("qOut").textContent = modalQty;
+  $("modalTotal").textContent = money((modalDish.price + extraSum) * modalQty);
+}
+function closeDish() {
+  $("dishModal").classList.remove("open");
+  __tunnel.setStyle(document.body, "overflow", "");
+}
+$("dishModal").addEventListener("click", function (e) {
+  if (e.target === this) closeDish();
+});
+document.addEventListener("keydown", function (e) {
+  if (e.key === "Escape") {
+    closeDish();
+    closeDrawer();
+  }
+});
+function cartCount() {
+  return state.cart.reduce(function (s, i) {
+    return s + i.qty;
+  }, 0);
+}
+function cartSubtotal() {
+  return state.cart.reduce(function (s, i) {
+    return s + i.unit * i.qty;
+  }, 0);
+}
+function addToCart(dishId, qty, extras, note) {
+  var d = dishById(dishId);
+  extras = extras || [];
+  var extraSum = extras.reduce(function (s, x) {
+    return s + x.price;
+  }, 0);
+  var extraNames = extras.map(function (x) {
+    return x.label;
+  }).join(", ");
+  var key = dishId + "|" + extraNames + "|" + (note || "");
+  var found = null;
+  state.cart.forEach(function (i) {
+    if (i.key === key) found = i;
+  });
+  if (found) found.qty += qty;else state.cart.push({
+    key: key,
+    dishId: dishId,
+    name: d.name + (extraNames ? " + " + extraNames : ""),
+    unit: d.price + extraSum,
+    qty: qty,
+    img: d.img,
+    note: note || ""
+  });
+  syncCartUI();
+  toast(d.name + " added to your basket");
+}
+function syncCartUI() {
+  var n = cartCount(),
+    sub = cartSubtotal();
+  var badge = $("cartBadge");
+  badge.hidden = n === 0;
+  badge.textContent = n;
+  $("cartBar").classList.toggle("show", n > 0 && state.view === "home");
+  $("cartBarCount").textContent = n + (n === 1 ? " item" : " items");
+  $("cartBarTotal").textContent = money(sub);
+  if ($("drawer").classList.contains("open") && state.drawerStep === "cart") renderCartStep();
+}
+function changeQty(key, delta) {
+  state.cart.forEach(function (i) {
+    if (i.key === key) i.qty += delta;
+  });
+  state.cart = state.cart.filter(function (i) {
+    return i.qty > 0;
+  });
+  syncCartUI();
+}
+function removeItem(key) {
+  state.cart = state.cart.filter(function (i) {
+    return i.key !== key;
+  });
+  syncCartUI();
+}
+function openDrawer() {
+  state.drawerStep = "cart";
+  renderCartStep();
+  $("drawer").classList.add("open");
+  $("scrim").classList.add("open");
+  __tunnel.setAttr($("drawer"), "aria-hidden", "false");
+  __tunnel.setStyle(document.body, "overflow", "hidden");
+}
+function closeDrawer() {
+  $("drawer").classList.remove("open");
+  $("scrim").classList.remove("open");
+  __tunnel.setAttr($("drawer"), "aria-hidden", "true");
+  __tunnel.setStyle(document.body, "overflow", "");
+}
+$("cartBtn").addEventListener("click", openDrawer);
+$("cartBar").addEventListener("click", openDrawer);
+$("drawerClose").addEventListener("click", closeDrawer);
+$("scrim").addEventListener("click", closeDrawer);
+function totalsHTML() {
+  var sub = cartSubtotal();
+  var fee = sub === 0 ? 0 : sub >= 45 ? 0 : 3.95;
+  var tax = sub * 0.13;
+  var total = sub + fee + tax;
+  return {
+    sub: sub,
+    fee: fee,
+    tax: tax,
+    total: total,
+    html: '<div class="totals"><div><span>Subtotal</span><span>' + money(sub) + '</span></div>' + '<div><span>Delivery</span><span>' + (fee === 0 && sub > 0 ? '<span class="free">Free</span>' : money(fee)) + '</span></div>' + '<div><span>HST (13%)</span><span>' + money(tax) + '</span></div>' + '<div class="grand"><span>Total</span><span>' + money(total) + '</span></div></div>'
+  };
+}
+function renderCartStep() {
+  state.drawerStep = "cart";
+  $("drawerTitle").textContent = "Your basket";
+  if (state.cart.length === 0) {
+    __tunnel.setInnerHTML($("drawerBody"), '<div class="empty" style="margin-top:10px"><h3>Your basket is empty</h3><p>The sofreh is full though — add something delicious.</p></div>', "innerHTML");
+    __tunnel.setInnerHTML($("drawerFoot"), '<button type="button" class="btn-block" id="footBrowse">Browse the menu</button>', "innerHTML");
+    $("footBrowse").addEventListener("click", function () {
+      closeDrawer();
+      go("home");
+    });
+    return;
+  }
+  __tunnel.setInnerHTML($("drawerBody"), state.cart.map(function (i) {
+    return '<div class="cart-item"><img src="' + i.img + '" alt="" />' + '<div><h4>' + esc(i.name) + '</h4><p class="ci-meta">' + money(i.unit) + ' each' + (i.note ? ' · “' + esc(i.note) + '”' : '') + '</p>' + '<span class="qty" style="margin-top:7px"><button type="button" data-dec="' + esc(i.key) + '" aria-label="One less">−</button><output>' + i.qty + '</output><button type="button" data-inc="' + esc(i.key) + '" aria-label="One more">+</button></span></div>' + '<div class="ci-right"><span class="ci-price">' + money(i.unit * i.qty) + '</span><button type="button" class="remove-btn" data-rem="' + esc(i.key) + '">Remove</button></div></div>';
+  }).join("") + '<p style="font-size:.85rem;color:var(--ink-3);margin-top:14px">Free delivery on orders over $45 — you are ' + (cartSubtotal() >= 45 ? 'there. Nice.' : money(45 - cartSubtotal()) + ' away') + '</p>', "innerHTML");
+  var t = totalsHTML();
+  __tunnel.setInnerHTML($("drawerFoot"), t.html + '<button type="button" class="btn-block" id="footCheckout">Go to checkout · ' + money(t.total) + '</button>', "innerHTML");
+  document.querySelectorAll("[data-inc]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      changeQty(b.getAttribute("data-inc"), 1);
+    });
+  });
+  document.querySelectorAll("[data-dec]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      changeQty(b.getAttribute("data-dec"), -1);
+    });
+  });
+  document.querySelectorAll("[data-rem]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      removeItem(b.getAttribute("data-rem"));
+    });
+  });
+  $("footCheckout").addEventListener("click", renderCheckoutStep);
+}
+function renderCheckoutStep() {
+  state.drawerStep = "checkout";
+  $("drawerTitle").textContent = "Checkout";
+  var slots = ["Today, 5:30–6:00 pm", "Today, 6:30–7:00 pm", "Today, 7:30–8:00 pm", "Tomorrow, 12:00–12:30 pm"];
+  __tunnel.setInnerHTML($("drawerBody"), '<div class="field"><label for="coName">Your name</label><input id="coName" value="Mehrdad K." autocomplete="name" /></div>' + '<div class="field"><label for="coAddr">Delivery address</label><input id="coAddr" value="Richmond Hill, ON" autocomplete="street-address" /></div>' + '<div class="field"><label for="coPhone">Phone for the driver</label><input id="coPhone" value="+1 647-886-3734" autocomplete="tel" inputmode="tel" /></div>' + '<div class="field"><label>Delivery window</label><div class="seg" id="slotSeg">' + slots.map(function (s) {
+    return '<button type="button" data-slot="' + s + '" aria-pressed="' + (state.slot === s) + '">' + s + '</button>';
+  }).join("") + '</div></div>' + '<div class="field"><label>Payment</label><div class="seg" id="paySeg">' + '<button type="button" data-pay="card" aria-pressed="' + (state.payMethod === "card") + '">Visa •••• 4242</button>' + '<button type="button" data-pay="apple" aria-pressed="' + (state.payMethod === "apple") + '">Apple Pay</button>' + '<button type="button" data-pay="cash" aria-pressed="' + (state.payMethod === "cash") + '">Cash at the door</button></div></div>' + '<div class="pay-note" id="payNote"></div>' + '<div class="field"><label for="coNote">Note for the driver (optional)</label><textarea id="coNote" placeholder="e.g. Leave at the porch, please ring the bell"></textarea></div>', "innerHTML");
+  __tunnel.setInnerHTML($("drawerFoot"), totalsHTML().html + '<button type="button" class="btn-block" id="footPlace">Place order</button>' + '<button type="button" class="btn-small" id="footBack" style="width:100%;margin-top:8px">Back to basket</button>', "innerHTML");
+  function payNote() {
+    __tunnel.setInnerHTML($("payNote"), state.payMethod === "card" ? "<strong>Front-end demo:</strong> no real payment is taken. In the live app this step charges your saved card securely." : state.payMethod === "apple" ? "<strong>Front-end demo:</strong> no real payment is taken. In the live app, Apple Pay confirms here." : "<strong>Pay at the door:</strong> please have cash or a card ready when the driver arrives.", "innerHTML");
+  }
+  payNote();
+  document.querySelectorAll("[data-slot]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      state.slot = b.getAttribute("data-slot");
+      document.querySelectorAll("[data-slot]").forEach(function (x) {
+        __tunnel.setAttr(x, "aria-pressed", String(x === b));
+      });
+    });
+  });
+  document.querySelectorAll("[data-pay]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      state.payMethod = b.getAttribute("data-pay");
+      document.querySelectorAll("[data-pay]").forEach(function (x) {
+        __tunnel.setAttr(x, "aria-pressed", String(x === b));
+      });
+      payNote();
+    });
+  });
+  $("footBack").addEventListener("click", renderCartStep);
+  $("footPlace").addEventListener("click", placeOrder);
+}
+function placeOrder() {
+  var name = $("coName").value.trim(),
+    addr = $("coAddr").value.trim(),
+    phone = $("coPhone").value.trim();
+  if (!name || !addr || !phone) {
+    toast("Please fill in your name, address and phone");
+    return;
+  }
+  var t = totalsHTML();
+  var order = {
+    id: "SF-" + orderSeq++,
+    date: "Today · just now",
+    status: 0,
+    total: t.total,
+    live: true,
+    slot: state.slot,
+    chef: state.cart.length ? dishById(state.cart[0].dishId).chef : "mahin",
+    items: state.cart.map(function (i) {
+      return {
+        name: i.name,
+        qty: i.qty,
+        price: i.unit
+      };
+    })
+  };
+  state.orders.unshift(order);
+  state.lastOrderId = order.id;
+  state.cart = [];
+  syncCartUI();
+  renderDoneStep(order);
+  startLiveTracking(order);
+}
+function renderDoneStep(order) {
+  state.drawerStep = "done";
+  $("drawerTitle").textContent = "Order placed";
+  __tunnel.setInnerHTML($("drawerBody"), '<div class="success">' + '<div class="tick"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><path d="m4 12.5 5 5L20 6.5"/></svg></div>' + '<h3>Order ' + order.id + ' is with the chef</h3>' + '<p>' + esc(chefById(order.chef).name) + ' has your order. Delivery window: <strong>' + esc(order.slot || "") + '</strong>.<br/>We will text updates as it moves from the stove to your door.</p>' + '<p style="margin-top:14px"><strong>Total: ' + money(order.total) + '</strong></p></div>', "innerHTML");
+  __tunnel.setInnerHTML($("drawerFoot"), '<button type="button" class="btn-block" id="footTrack">Track my order</button>' + '<button type="button" class="btn-small" id="footDone" style="width:100%;margin-top:8px">Keep browsing</button>', "innerHTML");
+  $("footTrack").addEventListener("click", function () {
+    closeDrawer();
+    go("orders");
+  });
+  $("footDone").addEventListener("click", closeDrawer);
+}
+function startLiveTracking(order) {
+  var delays = [9000, 16000, 16000, 14000];
+  delays.forEach(function (ms, idx) {
+    setTimeout(function () {
+      if (order.status < idx + 1) {
+        order.status = idx + 1;
+        if (state.view === "orders") renderOrders();
+        if (order.status === 4) toast("Order " + order.id + " delivered — enjoy your meal!");else toast("Order " + order.id + ": " + STEPS[order.status]);
+      }
+    }, delays.slice(0, idx + 1).reduce(function (a, b) {
+      return a + b;
+    }, 0));
+  });
+}
+function trackerHTML(order) {
+  if (!order.live && order.status < 4) return "";
+  var pct = order.status === 0 ? 0 : order.status / (STEPS.length - 1) * 84;
+  return '<div class="tracker"><div class="track-steps"><span class="track-fill" style="width:' + pct + '%"></span>' + STEPS.map(function (s, i) {
+    return '<div class="tstep' + (i <= order.status ? " hit" : "") + '"><span class="dot">' + (i < order.status ? "✓" : i + 1) + '</span><span>' + s + '</span></div>';
+  }).join("") + '</div></div>';
+}
+function renderOrders() {
+  if (state.orders.length === 0) {
+    __tunnel.setInnerHTML($("ordersList"), '<div class="empty"><h3>No orders yet</h3><p>Your first home-cooked dinner is a few taps away.</p></div>', "innerHTML");
+    return;
+  }
+  __tunnel.setInnerHTML($("ordersList"), state.orders.map(function (o) {
+    var done = o.status >= 4;
+    return '<article class="order-card"><div class="order-top"><div><h3>Order ' + o.id + ' · ' + esc(chefById(o.chef).name) + '</h3>' + '<p>' + esc(o.date) + (o.slot ? ' · ' + esc(o.slot) : '') + '</p></div>' + '<span class="status-pill' + (done ? " done" : "") + '">' + (done ? "Delivered" : STEPS[o.status]) + '</span></div>' + trackerHTML(o) + '<div class="order-items">' + o.items.map(function (i) {
+      return '<div><span>' + i.qty + ' × ' + esc(i.name) + '</span><span>' + money(i.price * i.qty) + '</span></div>';
+    }).join("") + '</div>' + '<div class="order-foot"><span class="order-total">' + money(o.total) + '</span>' + '<span style="display:flex;gap:8px"><button type="button" class="btn-small" data-help="' + o.id + '">Get help</button>' + '<button type="button" class="btn-small" data-reorder="' + o.id + '">Order again</button></span></div></article>';
+  }).join(""), "innerHTML");
+  document.querySelectorAll("[data-reorder]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var o = null;
+      state.orders.forEach(function (x) {
+        if (x.id === b.getAttribute("data-reorder")) o = x;
+      });
+      if (!o) return;
+      var added = 0;
+      o.items.forEach(function (it) {
+        DISHES.forEach(function (d) {
+          if (it.name.indexOf(d.name) === 0) {
+            addToCart(d.id, it.qty, []);
+            added++;
+          }
+        });
+      });
+      if (added) openDrawer();else toast("Those dishes are not cooking today");
+    });
+  });
+  document.querySelectorAll("[data-help]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      toast("Support will reach out about order " + b.getAttribute("data-help"));
+    });
+  });
+}
+$("addAddrBtn").addEventListener("click", function () {
+  toast("Address book opens here in the live app");
+});
+$("helpBtn").addEventListener("click", function () {
+  toast("Support chat opens here in the live app");
+});
+$("chefApplyBtn").addEventListener("click", function () {
+  toast("Chef applications open on the Sofreh chef site");
+});
+["prefSms", "prefEmail", "prefOffers"].forEach(function (id) {
+  $(id).addEventListener("change", function () {
+    toast("Preference updated for this session");
+  });
+});
+$("prefSpice").addEventListener("change", function () {
+  toast("Default spice level: " + this.value);
+});
+renderCats();
+renderMenu();
+renderChefs();
+renderOrders();
+syncCartUI();</script>
+</body>
+</html>

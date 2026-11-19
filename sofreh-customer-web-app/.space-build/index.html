@@ -1,0 +1,1167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>Sofreh — Customer Web App | Order Persian Home Cooking in Toronto</title>
+<meta name="description" content="The Sofreh customer web app: browse today's Persian home cooking from certified neighbourhood cooks across the GTA, order for pickup or local delivery, track your dish from pot to pickup, and save your favourite cooks." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#fffdf8; --surface:#ffffff; --wash:#f7f1e5; --ink:#20302a; --muted:#5a6a60;
+    --green:#17604a; --green-deep:#0d3d2e; --green-tint:#e3efe7;
+    --saffron:#dd9413; --saffron-soft:#fbeecd; --pom:#a62b25; --pom-soft:#f9e6e3;
+    --line:#e6dcc8; --chip:#f3ecdc; --shadow:0 14px 34px rgba(23,50,38,.13);
+    --shadow-sm:0 4px 14px rgba(23,50,38,.09);
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#0f1512; --surface:#18211b; --wash:#141d17; --ink:#edf3ee; --muted:#a7b7ab;
+      --green:#4db58c; --green-deep:#0a2c20; --green-tint:#1c2f24;
+      --saffron:#eda92e; --saffron-soft:#3a2d10; --pom:#e0786e; --pom-soft:#3a211e;
+      --line:#2b3a2f; --chip:#1f2b22; --shadow:0 14px 34px rgba(0,0,0,.45); --shadow-sm:0 4px 14px rgba(0,0,0,.35); }
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} *{transition:none!important; animation:none!important} }
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Vazirmatn",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.55;font-size:16px}
+  h1,h2,h3{font-family:"Lora","Vazirmatn",Georgia,serif;line-height:1.2;margin:0}
+  html[lang="fa"] h1, html[lang="fa"] h2, html[lang="fa"] h3{font-family:"Vazirmatn",sans-serif;font-weight:800}
+  img{display:block;max-width:100%}
+  button,[role="button"],select,summary,input:not([type="checkbox"],[type="radio"]){min-height:2.75rem}
+  :focus-visible{outline:3px solid var(--saffron);outline-offset:2px;border-radius:4px}
+  .wrap{max-width:1240px;margin:0 auto;padding:0 20px}
+  .btn{background:var(--green);color:#fff;border:0;border-radius:12px;padding:11px 20px;font:inherit;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;justify-content:center;text-decoration:none}
+  @media (prefers-color-scheme: dark){ .btn{color:#08130d} }
+  .btn:hover{filter:brightness(1.07)}
+  .btn:disabled{opacity:.45;cursor:not-allowed;filter:none}
+  .btn.saffron{background:var(--saffron);color:#261a00}
+  .btn.ghost{background:transparent;color:var(--green);border:1.5px solid var(--green)}
+  .btn.small{padding:8px 14px;min-height:2.5rem;font-size:.93rem}
+  .btn.block{width:100%}
+
+  /* ===== app header ===== */
+  header.app{position:sticky;top:0;z-index:60;background:color-mix(in srgb, var(--bg) 94%, transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .bar{display:flex;align-items:center;gap:14px;padding:10px 0;flex-wrap:wrap}
+  .brand{font-family:"Lora",serif;font-weight:700;font-size:1.5rem;color:var(--ink);text-decoration:none;display:flex;align-items:baseline;gap:8px;white-space:nowrap}
+  .brand .fa{font-family:"Vazirmatn",sans-serif;font-size:1rem;color:var(--pom);font-weight:700}
+  .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--saffron);display:inline-block}
+  .locbtn{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:18px;padding:8px 14px;font:inherit;cursor:pointer;max-width:300px;flex:none}
+  .locbtn small{display:block;color:var(--muted);font-size:.72rem;line-height:1.1;text-align:start}
+  .locbtn b{font-size:.9rem;line-height:1.25}
+  .locbtn .pin{color:var(--pom);font-size:1.05rem}
+  .searchbar{flex:1 1 220px;display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:0 16px}
+  .searchbar input{flex:1;border:0;background:transparent;font:inherit;color:var(--ink);min-width:0}
+  .searchbar input:focus{outline:none}
+  .searchbar:focus-within{border-color:var(--green);box-shadow:0 0 0 3px var(--green-tint)}
+  .iconbtn{position:relative;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;width:46px;height:46px;display:grid;place-items:center;cursor:pointer;font-size:1.1rem;flex:none}
+  .iconbtn .n{position:absolute;top:-5px;inset-inline-end:-5px;background:var(--pom);color:#fff;border-radius:999px;min-width:21px;height:21px;display:grid;place-items:center;font-size:.72rem;font-weight:800;padding:0 5px}
+  .langbtn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 15px;font:inherit;font-weight:700;cursor:pointer}
+  .avatarbtn{width:46px;height:46px;border-radius:50%;background:var(--green-deep);color:#fff;border:0;font-weight:800;font-size:1.05rem;cursor:pointer;flex:none}
+
+  /* tabs */
+  .tabbar{border-bottom:1px solid var(--line);background:var(--bg)}
+  .tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{border:0;background:transparent;color:var(--muted);font:inherit;font-weight:700;padding:13px 18px;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;display:inline-flex;gap:8px;align-items:center}
+  .tab[aria-selected="true"]{color:var(--green-deep);border-bottom-color:var(--saffron)}
+  @media (prefers-color-scheme: dark){ .tab[aria-selected="true"]{color:var(--ink)} }
+  .tab .n{background:var(--pom);color:#fff;border-radius:999px;min-width:20px;height:20px;display:inline-grid;place-items:center;font-size:.72rem;padding:0 5px}
+
+  main{padding-bottom:110px}
+  .view{display:none;padding:26px 0 10px}
+  .view.active{display:block}
+
+  /* discover hero strip */
+  .greet{display:flex;gap:22px;align-items:center;background:var(--green-deep);color:#eaf4ee;border-radius:22px;padding:26px 28px;overflow:hidden;position:relative}
+  .greet h1{color:#fff;font-size:clamp(1.5rem,3vw,2.1rem);max-width:22ch}
+  .greet p{color:#bcd6c7;margin:8px 0 0;max-width:52ch}
+  .greet .side{margin-inline-start:auto;text-align:center;flex:none;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:16px;padding:14px 18px}
+  .greet .side b{display:block;font-family:"Lora",serif;font-size:1.7rem;color:var(--saffron)}
+  .greet .side span{font-size:.85rem;color:#c4dccd}
+  @media (max-width:640px){ .greet{flex-direction:column;align-items:flex-start} .greet .side{margin-inline-start:0} }
+
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0 6px;align-items:center}
+  .fchip{border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 16px;font:inherit;font-weight:600;cursor:pointer;min-height:2.6rem}
+  .fchip[aria-pressed="true"]{background:var(--green-deep);color:#fff;border-color:var(--green-deep)}
+  .filters select{border:1px solid var(--line);border-radius:12px;padding:9px 12px;font:inherit;background:var(--surface);color:var(--ink)}
+  .filters .sp{flex:1}
+  .switchrow{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:.93rem;cursor:pointer;padding:8px 4px}
+  .switchrow input{accent-color:var(--green);width:19px;height:19px}
+
+  .layout{display:grid;grid-template-columns:1fr 340px;gap:26px;align-items:start;margin-top:14px}
+  @media (max-width:1020px){ .layout{grid-template-columns:1fr} }
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  @media (max-width:1180px){ .grid{grid-template-columns:repeat(2,1fr)} }
+  @media (max-width:560px){ .grid{grid-template-columns:1fr} }
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow-sm)}
+  .card .ph{aspect-ratio:16/10;overflow:hidden;background:var(--chip);position:relative}
+  .card .ph img{width:100%;height:100%;object-fit:cover}
+  .favbtn{position:absolute;top:10px;inset-inline-end:10px;width:40px;height:40px;border-radius:50%;border:0;background:var(--surface);color:var(--ink);font-size:1.1rem;cursor:pointer;box-shadow:var(--shadow-sm);display:grid;place-items:center}
+  .favbtn[aria-pressed="true"]{color:var(--pom)}
+  .leftbadge{position:absolute;bottom:10px;inset-inline-start:10px;background:rgba(13,40,30,.88);color:#fff;border-radius:999px;padding:4px 11px;font-size:.8rem;font-weight:700}
+  .leftbadge.low{background:var(--pom)}
+  .card .bd{padding:16px 18px 18px;display:flex;flex-direction:column;gap:7px;flex:1}
+  .card h3{font-size:1.22rem}
+  .card .faname{font-weight:700;color:var(--pom)}
+  .card p.desc{color:var(--muted);margin:0;font-size:.94rem;flex:1}
+  .cookline{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--muted);flex-wrap:wrap}
+  .avatar{width:32px;height:32px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-weight:800;flex:none;font-size:.9rem}
+  .avatar.pom{background:var(--pom)} .avatar.saf{background:var(--saffron);color:#261a00}
+  .stars{color:var(--saffron);letter-spacing:1px;font-size:.85rem}
+  .tags{display:flex;gap:6px;flex-wrap:wrap}
+  .tag{background:var(--chip);border-radius:999px;padding:3px 10px;font-size:.78rem;font-weight:600}
+  .tag.veg{background:#e2f0e4;color:#14532d}
+  @media (prefers-color-scheme: dark){ .tag.veg{background:#17301d;color:#9fd8ab} }
+  .card .foot{display:flex;align-items:center;gap:10px;margin-top:4px}
+  .price{font-size:1.18rem;font-weight:800}
+  .price small{color:var(--muted);font-weight:500;font-size:.8rem}
+  .addbtn{margin-inline-start:auto}
+  .soldout{opacity:.62}
+  .emptybox{border:1.5px dashed var(--line);border-radius:16px;padding:36px 24px;text-align:center;color:var(--muted)}
+  .emptybox h3{color:var(--ink);margin-bottom:6px}
+  .emptybox p{margin:0 auto 14px;max-width:44ch}
+
+  /* cart panel */
+  .cartpanel{position:sticky;top:132px;background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:hidden}
+  @media (max-width:1020px){ .cartpanel{display:none} }
+  .cartpanel .hd{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+  .cartpanel .hd h2{font-size:1.15rem}
+  .cartpanel .bd{padding:6px 20px 18px;max-height:52vh;overflow:auto}
+  .fulfil{display:flex;background:var(--chip);border-radius:12px;padding:4px;gap:4px;margin:14px 0 4px}
+  .fulfil button{flex:1;border:0;background:transparent;font:inherit;font-weight:700;border-radius:9px;padding:9px;cursor:pointer;color:var(--muted);min-height:2.5rem}
+  .fulfil button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow-sm)}
+  .citem{display:flex;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
+  .citem img{width:52px;height:52px;border-radius:10px;object-fit:cover;flex:none}
+  .citem .inf{flex:1;min-width:0}
+  .citem b{display:block;font-size:.95rem;line-height:1.3}
+  .citem small{color:var(--muted);display:block;font-size:.82rem}
+  .qtyctl{display:inline-flex;align-items:center;gap:2px;border:1.5px solid var(--line);border-radius:999px;padding:2px;margin-top:6px}
+  .qtyctl button{width:32px;height:32px;min-height:32px;border-radius:50%;border:0;background:transparent;color:var(--ink);font-size:1.05rem;cursor:pointer}
+  .qtyctl b{min-width:22px;text-align:center}
+  .citem .lp{font-weight:800;white-space:nowrap}
+  .trow{display:flex;justify-content:space-between;gap:12px;padding:5px 0;font-size:.96rem}
+  .trow span{color:var(--muted)} .trow.total{font-size:1.08rem;border-top:1px solid var(--line);margin-top:8px;padding-top:12px}
+  .trow.total span{color:var(--ink);font-weight:700}
+  .cartempty{text-align:center;color:var(--muted);padding:26px 10px}
+  .cartempty .big{font-size:2rem;display:block;margin-bottom:6px}
+
+  /* mobile cart bar + drawer */
+  .mobilecart{position:fixed;left:16px;right:16px;bottom:86px;z-index:55;display:none}
+  @media (max-width:1020px){ .mobilecart.show{display:block} }
+  .mobilecart button{width:100%;background:var(--green-deep);color:#fff;border:0;border-radius:16px;padding:15px 18px;font:inherit;font-weight:800;display:flex;justify-content:space-between;box-shadow:var(--shadow);cursor:pointer}
+  .drawer{position:fixed;inset:0;z-index:70;display:none}
+  .drawer.open{display:block}
+  .drawer .scrim{position:absolute;inset:0;background:rgba(10,25,18,.55)}
+  .drawer .sheet{position:absolute;top:0;bottom:0;inset-inline-end:0;width:min(430px,94vw);background:var(--surface);overflow:auto;padding:20px;box-shadow:var(--shadow)}
+  .drawer .sheet .cartpanel{position:static;display:block;box-shadow:none;border:0}
+  .sheetclose{position:absolute;top:12px;inset-inline-end:12px;z-index:2}
+
+  /* bottom nav (mobile) */
+  .bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:58;background:var(--surface);border-top:1px solid var(--line);display:none;padding-bottom:env(safe-area-inset-bottom)}
+  @media (max-width:760px){ .bottomnav{display:grid;grid-template-columns:repeat(5,1fr)} .tabbar{display:none} main{padding-bottom:210px} .mobilecart{bottom:78px} .view{scroll-margin-bottom:120px} .filters select{scroll-margin-bottom:130px} }
+  .bottomnav button{border:0;background:transparent;color:var(--muted);font:inherit;font-size:.72rem;font-weight:700;padding:9px 2px 7px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:56px;position:relative}
+  .bottomnav button .ic{font-size:1.25rem;line-height:1}
+  .bottomnav button[aria-selected="true"]{color:var(--green)}
+  .bottomnav .n{position:absolute;top:4px;inset-inline-start:calc(50% + 4px);background:var(--pom);color:#fff;border-radius:999px;min-width:19px;height:19px;display:grid;place-items:center;font-size:.68rem;padding:0 4px}
+
+  /* cooks view */
+  .cookgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+  @media (max-width:760px){ .cookgrid{grid-template-columns:1fr} }
+  .cookcard{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:var(--shadow-sm)}
+  .cookcard .top{display:flex;gap:14px;align-items:center}
+  .cookcard .avatar{width:58px;height:58px;font-size:1.4rem}
+  .cookcard h3{font-size:1.25rem}
+  .cookcard .hood{color:var(--pom);font-weight:700;font-size:.9rem}
+  .cookcard p{color:var(--muted);margin:12px 0}
+  .cookcard .dishrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+  .cookcard .dishrow button{border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:6px 8px 6px 6px;font:inherit;font-size:.88rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;color:var(--ink)}
+  html[dir="rtl"] .cookcard .dishrow button{padding:6px 6px 6px 8px}
+  .cookcard .dishrow img{width:36px;height:36px;border-radius:8px;object-fit:cover}
+  .followbtn{margin-inline-start:auto}
+
+  /* orders view */
+  .ordercard{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px;margin-bottom:18px;box-shadow:var(--shadow-sm)}
+  .ordercard .hd{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+  .ordercard .hd h3{font-size:1.15rem}
+  .ordercard .meta{color:var(--muted);font-size:.9rem}
+  .statuspill{margin-inline-start:auto;background:var(--saffron-soft);color:#7a5200;border-radius:999px;padding:5px 13px;font-weight:800;font-size:.85rem}
+  @media (prefers-color-scheme: dark){ .statuspill{color:var(--saffron)} }
+  .statuspill.ready{background:#e2f0e4;color:#14532d}
+  @media (prefers-color-scheme: dark){ .statuspill.ready{background:#17301d;color:#9fd8ab} }
+  .statuspill.done{background:var(--chip);color:var(--muted)}
+  .timeline{display:flex;gap:0;margin:20px 0 6px}
+  .tstep{flex:1;text-align:center;position:relative;padding-top:22px;font-size:.8rem;color:var(--muted);font-weight:600}
+  .tstep::before{content:"";position:absolute;top:6px;left:50%;transform:translateX(-50%);width:14px;height:14px;border-radius:50%;background:var(--chip);border:2px solid var(--line);z-index:1}
+  html[dir="rtl"] .tstep::before{transform:translateX(50%)}
+  .tstep::after{content:"";position:absolute;top:12px;inset-inline-start:-50%;width:100%;height:3px;background:var(--line)}
+  .tstep:first-child::after{display:none}
+  .tstep.on{color:var(--green-deep)}
+  @media (prefers-color-scheme: dark){ .tstep.on{color:var(--ink)} }
+  .tstep.on::before{background:var(--saffron);border-color:var(--saffron)}
+  .tstep.on::after{background:var(--saffron)}
+  .pickupcode{background:var(--green-tint);border-radius:14px;padding:14px 18px;display:flex;gap:14px;align-items:center;margin-top:14px;flex-wrap:wrap}
+  .pickupcode b.code{font-size:1.5rem;letter-spacing:3px;font-family:"Lora",serif}
+  .oline{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:.95rem}
+  .oline small{color:var(--muted);display:block}
+
+  /* account view */
+  .acctgrid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+  @media (max-width:820px){ .acctgrid{grid-template-columns:1fr} }
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:24px;box-shadow:var(--shadow-sm)}
+  .panel h3{font-size:1.2rem;margin-bottom:6px}
+  .panel p.sub{color:var(--muted);margin:0 0 16px;font-size:.94rem}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-weight:700;font-size:.92rem;margin-bottom:6px}
+  .field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:11px 13px;font:inherit;background:var(--bg);color:var(--ink)}
+  .field .hint{color:var(--muted);font-size:.82rem;margin-top:4px}
+  .addrrow{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:13px 15px;margin-bottom:10px}
+  .addrrow .inf{flex:1} .addrrow b{display:block} .addrrow span{color:var(--muted);font-size:.9rem}
+  .defbadge{background:var(--green-tint);color:var(--green-deep);border-radius:999px;padding:2px 10px;font-size:.75rem;font-weight:800}
+  @media (prefers-color-scheme: dark){ .defbadge{color:var(--green)} }
+  .prefrow{display:flex;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
+  .prefrow:last-child{border-bottom:0}
+  .prefrow .inf{flex:1} .prefrow b{display:block;font-size:.97rem} .prefrow span{color:var(--muted);font-size:.88rem}
+  .prefrow input{width:21px;height:21px;accent-color:var(--green)}
+
+  /* dialogs */
+  dialog{border:1px solid var(--line);border-radius:22px;background:var(--surface);color:var(--ink);max-width:560px;width:calc(100% - 28px);padding:0;box-shadow:var(--shadow)}
+  dialog::backdrop{background:rgba(10,25,18,.55)}
+  .dlg-bd{padding:0 24px 24px;max-height:82vh;overflow:auto}
+  .dlg-hero{margin:0 -24px 16px;position:relative}
+  .dlg-hero img{width:100%;aspect-ratio:16/8.5;object-fit:cover}
+  .x{position:absolute;top:12px;inset-inline-end:12px;width:44px;height:44px;border-radius:50%;border:0;background:var(--surface);color:var(--ink);font-size:1.1rem;cursor:pointer;box-shadow:var(--shadow);z-index:2}
+  .opt{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+  .opt label{border:1.5px solid var(--line);border-radius:12px;padding:10px 14px;cursor:pointer;display:flex;gap:8px;align-items:center;min-height:48px;font-weight:600}
+  .opt label:has(input:checked){border-color:var(--green);background:var(--green-tint)}
+  .opt input{accent-color:var(--green);width:18px;height:18px}
+  .extra{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:8px;cursor:pointer;min-height:52px}
+  .extra input{width:19px;height:19px;accent-color:var(--green)}
+  .extra .p{margin-inline-start:auto;font-weight:700}
+  .ingbox{background:var(--wash);border-radius:14px;padding:14px 16px;font-size:.92rem;color:var(--muted);margin-top:14px}
+  .ingbox b{color:var(--ink)}
+  .qtyrow{display:flex;align-items:center;gap:14px;margin:14px 0}
+  .qtyrow button{width:46px;height:46px;border-radius:50%;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-size:1.25rem;cursor:pointer}
+  .dlg-actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+  .dlg-actions .btn{flex:1}
+  #dishForm .dlg-actions{position:sticky;bottom:0;background:var(--surface);padding:12px 0 2px;margin-top:10px;box-shadow:0 -10px 14px -10px rgba(23,50,38,.25);z-index:2}
+  #checkoutDlg .field{margin-bottom:10px}
+  #checkoutDlg .dlg-bd{max-height:94vh}
+  .cofoot{position:sticky;bottom:0;background:var(--surface);padding:10px 0 2px;box-shadow:0 -10px 14px -10px rgba(23,50,38,.25);z-index:2}
+  .cofoot .trow{padding:3px 0}
+  .cofoot .trow.total{margin-top:5px;padding-top:9px}
+
+  /* checkout */
+  .payrow{display:flex;gap:10px}
+  .payrow .field{flex:1}
+  .ordersuccess{text-align:center;padding:10px 0 4px}
+  .ordersuccess .ring{width:74px;height:74px;border-radius:50%;background:var(--green-tint);display:grid;place-items:center;font-size:2rem;margin:0 auto 14px;color:var(--green)}
+  .toast{position:fixed;bottom:96px;inset-inline-start:50%;transform:translateX(-50%);background:var(--green-deep);color:#fff;padding:13px 22px;border-radius:999px;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .25s;z-index:90;max-width:calc(100% - 32px);text-align:center;font-weight:600}
+  html[dir="rtl"] .toast{transform:translateX(50%)}
+  @media (max-width:760px){ .toast{bottom:150px} }
+  .toast.show{opacity:1}
+  .sec-head{margin:26px 0 16px}
+  .sec-head h2{font-size:clamp(1.45rem,2.8vw,1.9rem)}
+  .sec-head p{color:var(--muted);margin:6px 0 0;max-width:56ch}
+  footer.app{border-top:1px solid var(--line);background:var(--wash);padding:26px 0 90px;margin-top:44px}
+  @media (max-width:760px){ footer.app{padding-bottom:110px} }
+  footer.app .wrap{display:flex;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:.9rem;align-items:center}
+  footer.app a{color:var(--green);font-weight:600}
+</style>
+</head>
+<body>
+
+<header class="app">
+  <div class="wrap bar">
+    <a class="brand" href="#" id="brandHome">Sofreh <span class="dot" aria-hidden="true"></span> <span class="fa" lang="fa">سفره</span></a>
+    <button class="locbtn" id="locBtn" type="button" aria-haspopup="dialog">
+      <span class="pin" aria-hidden="true">◉</span>
+      <span><small data-i18n="deliver_to">Deliver to</small><b id="locLabel">Richmond Hill · Yonge &amp; Elgin Mills</b></span>
+      <span aria-hidden="true">▾</span>
+    </button>
+    <div class="searchbar" role="search">
+      <span aria-hidden="true">⌕</span>
+      <input id="searchInput" type="search" data-i18n-ph="search_ph" placeholder="Search ghormeh sabzi, tahchin, a cook…" autocomplete="off" aria-label="Search dishes and cooks" />
+    </div>
+    <button class="langbtn" id="langToggle" type="button">فارسی</button>
+    <button class="iconbtn" id="favBtn" type="button" aria-label="Saved dishes">♥<span class="n" id="favCount" hidden>0</span></button>
+    <button class="iconbtn" id="cartBtnTop" type="button" aria-label="Your order">🛎<span class="n" id="cartCountTop" hidden>0</span></button>
+    <button class="avatarbtn" id="avatarBtn" type="button" aria-label="Account">M</button>
+  </div>
+  <div class="tabbar">
+    <div class="wrap tabs" role="tablist" aria-label="Sofreh app sections">
+      <button class="tab" role="tab" data-view="discover" aria-selected="true" data-i18n="tab_discover">Discover</button>
+      <button class="tab" role="tab" data-view="cooks" aria-selected="false" data-i18n="tab_cooks">Cooks</button>
+      <button class="tab" role="tab" data-view="orders" aria-selected="false"><span data-i18n="tab_orders">My orders</span><span class="n" id="orderBadge" hidden>0</span></button>
+      <button class="tab" role="tab" data-view="saved" aria-selected="false" data-i18n="tab_saved">Saved</button>
+      <button class="tab" role="tab" data-view="account" aria-selected="false" data-i18n="tab_account">Account</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ DISCOVER ============ -->
+  <section class="view active" id="view-discover" aria-label="Discover">
+    <div class="greet" style="margin-top:24px">
+      <div>
+        <h1 data-i18n="greet_h">Dinner from a neighbour's kitchen, tonight.</h1>
+        <p data-i18n="greet_p">Nine pots are on across the GTA today. Order by 2 pm, pick up from 5 pm — or get it delivered inside the cook's neighbourhood.</p>
+      </div>
+      <div class="side"><b>9</b><span data-i18n="greet_side">dishes cooking today</span></div>
+    </div>
+
+    <div class="filters" role="group" aria-label="Filter dishes">
+      <button class="fchip" type="button" data-cat="all" aria-pressed="true" data-i18n="c_all">All dishes</button>
+      <button class="fchip" type="button" data-cat="stew" aria-pressed="false" data-i18n="c_stew">Stews</button>
+      <button class="fchip" type="button" data-cat="rice" aria-pressed="false" data-i18n="c_rice">Rice dishes</button>
+      <button class="fchip" type="button" data-cat="grill" aria-pressed="false" data-i18n="c_grill">Grills</button>
+      <button class="fchip" type="button" data-cat="veg" aria-pressed="false" data-i18n="c_veg">Vegetarian</button>
+      <span class="sp"></span>
+      <select id="hoodFilter" aria-label="Neighbourhood">
+        <option value="" data-i18n="all_hoods">All neighbourhoods</option>
+        <option>Richmond Hill</option><option>North York</option><option>Thornhill</option>
+        <option>Scarborough</option><option>Downtown Toronto</option><option>Mississauga</option>
+      </select>
+      <select id="sortSel" aria-label="Sort dishes">
+        <option value="pop" data-i18n="sort_pop">Most loved</option>
+        <option value="low" data-i18n="sort_low">Price: low to high</option>
+        <option value="high" data-i18n="sort_high">Price: high to low</option>
+        <option value="left" data-i18n="sort_left">Almost gone first</option>
+      </select>
+    </div>
+
+    <div class="layout">
+      <div>
+        <div class="grid" id="dishGrid"></div>
+        <div class="emptybox" id="emptyMsg" hidden>
+          <h3 data-i18n="empty_h">Nothing matches — yet</h3>
+          <p data-i18n="empty_p">Try another dish name or neighbourhood. Cooks post a second round of pots around 11 am.</p>
+          <button class="btn ghost" type="button" id="clearFilters" data-i18n="empty_btn">Clear search &amp; filters</button>
+        </div>
+      </div>
+      <aside id="cartAside" aria-label="Your order"></aside>
+    </div>
+  </section>
+
+  <!-- ============ COOKS ============ -->
+  <section class="view" id="view-cooks" aria-label="Cooks">
+    <div class="sec-head">
+      <h2 data-i18n="cooks_h">Cooks near you</h2>
+      <p data-i18n="cooks_p">Every Sofreh cook holds an Ontario Food Handler Certificate and cooks from a kitchen that passed the onboarding checklist. Follow a cook and their new pots surface first in your Discover feed.</p>
+    </div>
+    <div class="cookgrid" id="cookGrid"></div>
+  </section>
+
+  <!-- ============ ORDERS ============ -->
+  <section class="view" id="view-orders" aria-label="My orders">
+    <div class="sec-head">
+      <h2 data-i18n="orders_h">My orders</h2>
+      <p data-i18n="orders_p">Live status for today's orders, and everything you've ordered before — reorder a favourite in two taps.</p>
+    </div>
+    <div id="orderList"></div>
+    <div class="emptybox" id="ordersEmpty">
+      <h3 data-i18n="orders_empty_h">No orders yet</h3>
+      <p data-i18n="orders_empty_p">When you place an order it appears here, with its status from the moment the cook confirms until your dish is ready for pickup.</p>
+      <button class="btn" type="button" data-goto="discover" data-i18n="orders_empty_btn">Browse today's dishes</button>
+    </div>
+  </section>
+
+  <!-- ============ SAVED ============ -->
+  <section class="view" id="view-saved" aria-label="Saved">
+    <div class="sec-head">
+      <h2 data-i18n="saved_h">Saved dishes &amp; cooks</h2>
+      <p data-i18n="saved_p">Tap the heart on any dish to keep it here — handy on Friday when the family sizes go up.</p>
+    </div>
+    <div class="grid" id="savedGrid" style="grid-template-columns:repeat(3,1fr)"></div>
+    <div class="emptybox" id="savedEmpty">
+      <h3 data-i18n="saved_empty_h">Nothing saved yet</h3>
+      <p data-i18n="saved_empty_p">Tap ♥ on a dish and it will wait for you here.</p>
+      <button class="btn" type="button" data-goto="discover" data-i18n="orders_empty_btn">Browse today's dishes</button>
+    </div>
+  </section>
+
+  <!-- ============ ACCOUNT ============ -->
+  <section class="view" id="view-account" aria-label="Account">
+    <div class="sec-head">
+      <h2 data-i18n="acct_h">Your account</h2>
+      <p data-i18n="acct_p">Details used at checkout — your name and phone go on the dish label so the cook hands the right bag to the right person.</p>
+    </div>
+    <div class="acctgrid">
+      <div class="panel">
+        <h3 data-i18n="prof_h">Profile</h3>
+        <p class="sub" data-i18n="prof_p">How cooks and Sofreh reach you about an order.</p>
+        <form id="profileForm">
+          <div class="field"><label for="pfName" data-i18n="f_name">Full name</label><input id="pfName" value="Mehrdad Kheirollahi" autocomplete="name" /></div>
+          <div class="field"><label for="pfPhone" data-i18n="f_phone">Mobile phone</label><input id="pfPhone" value="+1 647-886-3734" autocomplete="tel" inputmode="tel" /><p class="hint" data-i18n="f_phone_hint">The cook calls this number if pickup runs late.</p></div>
+          <div class="field"><label for="pfEmail" data-i18n="f_email">Email for receipts</label><input id="pfEmail" type="email" value="mehrdadkh@yahoo.com" autocomplete="email" /></div>
+          <div class="field"><label for="pfLang" data-i18n="f_lang">Preferred language</label>
+            <select id="pfLang"><option value="en">English</option><option value="fa">فارسی</option><option value="both" selected>English + فارسی</option></select></div>
+          <button class="btn" type="submit" data-i18n="save">Save changes</button>
+        </form>
+      </div>
+      <div>
+        <div class="panel" style="margin-bottom:20px">
+          <h3 data-i18n="addr_h">Saved addresses</h3>
+          <p class="sub" data-i18n="addr_p">Delivery runs inside each cook's own neighbourhood.</p>
+          <div id="addrList"></div>
+          <form id="addrForm" style="margin-top:14px">
+            <div class="field"><label for="adLabel" data-i18n="ad_label">Label</label><input id="adLabel" placeholder="e.g. Office" data-i18n-ph="ad_label_ph" /></div>
+            <div class="field"><label for="adText" data-i18n="ad_text">Address</label><input id="adText" placeholder="Street, neighbourhood" data-i18n-ph="ad_text_ph" /></div>
+            <button class="btn ghost" type="submit" data-i18n="ad_add">Add address</button>
+          </form>
+        </div>
+        <div class="panel">
+          <h3 data-i18n="pref_h">Food preferences</h3>
+          <p class="sub" data-i18n="pref_p">Dishes that clash with these are flagged before you order.</p>
+          <div id="prefList"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="app">
+  <div class="wrap">
+    <span><b>Sofreh</b> · <span data-i18n="foot_line">Persian home cooking from certified neighbourhood cooks — Toronto &amp; the GTA.</span></span>
+    <span style="margin-inline-start:auto"></span>
+    <a href="mailto:hello@sofreh.ca">hello@sofreh.ca</a>
+    <span data-i18n="foot_fees">Dish price + 10% service fee (max $4) · Pickup free · Delivery $4.95</span>
+  </div>
+</footer>
+
+<!-- mobile bottom nav -->
+<nav class="bottomnav" aria-label="Sofreh app sections">
+  <button type="button" data-view="discover" aria-selected="true"><span class="ic" aria-hidden="true">⌂</span><span data-i18n="tab_discover">Discover</span></button>
+  <button type="button" data-view="cooks" aria-selected="false"><span class="ic" aria-hidden="true">♨</span><span data-i18n="tab_cooks">Cooks</span></button>
+  <button type="button" data-view="orders" aria-selected="false"><span class="ic" aria-hidden="true">🧾</span><span data-i18n="tab_orders">My orders</span><span class="n" id="orderBadgeM" hidden>0</span></button>
+  <button type="button" data-view="saved" aria-selected="false"><span class="ic" aria-hidden="true">♥</span><span data-i18n="tab_saved">Saved</span></button>
+  <button type="button" data-view="account" aria-selected="false"><span class="ic" aria-hidden="true">◐</span><span data-i18n="tab_account">Account</span></button>
+</nav>
+
+<!-- mobile cart bar -->
+<div class="mobilecart" id="mobileCartBar">
+  <button type="button" id="mobileCartBtn"><span id="mcLeft">View order</span><span id="mcTotal">$0.00</span></button>
+</div>
+
+<!-- cart drawer (mobile / top cart button) -->
+<div class="drawer" id="cartDrawer" aria-hidden="true">
+  <div class="scrim" id="drawerScrim"></div>
+  <div class="sheet" role="dialog" aria-label="Your order">
+    <button class="x sheetclose" type="button" id="drawerClose" aria-label="Close">✕</button>
+    <div id="cartDrawerBody"></div>
+  </div>
+</div>
+
+<!-- dish dialog -->
+<dialog id="dishDlg" aria-labelledby="dlgTitle">
+  <div class="dlg-bd" style="position:relative">
+    <div class="dlg-hero">
+      <img id="dlgImg" src="assets/ghormeh.webp" alt="" />
+      <button class="x" type="button" id="dlgClose" aria-label="Close">✕</button>
+    </div>
+    <h2 id="dlgTitle">Dish</h2>
+    <p id="dlgMeta" style="color:var(--muted);margin:6px 0 0"></p>
+    <p id="dlgDesc" style="color:var(--muted);margin:10px 0 0"></p>
+    <form id="dishForm">
+      <fieldset style="border:0;padding:0;margin:16px 0 0">
+        <legend style="font-weight:700" data-i18n="size">Size</legend>
+        <div class="opt">
+          <label><input type="radio" name="dsize" value="single" checked /> <span data-i18n="single">Single</span> · <b id="singlePrice"></b></label>
+          <label><input type="radio" name="dsize" value="family" /> <span data-i18n="family">Family · feeds 4</span> · <b id="familyPrice"></b></label>
+        </div>
+      </fieldset>
+      <fieldset style="border:0;padding:0;margin:8px 0 0">
+        <legend style="font-weight:700;margin-bottom:8px" data-i18n="extras">Make it a full sofreh</legend>
+        <div id="extraList"></div>
+      </fieldset>
+      <div class="ingbox" id="dlgIng"></div>
+      <div class="qtyrow">
+        <span style="font-weight:700" data-i18n="qty">Quantity</span>
+        <button type="button" id="qMinus" aria-label="One less">−</button>
+        <b id="qVal" aria-live="polite">1</b>
+        <button type="button" id="qPlus" aria-label="One more">+</button>
+        <span id="dlgLeft" style="margin-inline-start:auto;color:var(--muted);font-size:.9rem"></span>
+      </div>
+      <div class="dlg-actions">
+        <button class="btn block" type="submit" id="dlgAddBtn">Add to order · $0.00</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+<!-- checkout dialog -->
+<dialog id="checkoutDlg" aria-labelledby="coTitle">
+  <div class="dlg-bd" style="position:relative;padding-top:24px">
+    <button class="x" type="button" id="coClose" aria-label="Close" style="top:0;inset-inline-end:0;box-shadow:none">✕</button>
+    <div id="coStepForm">
+      <h2 id="coTitle" data-i18n="co_h">Checkout</h2>
+      <p style="color:var(--muted);margin:6px 0 0" data-i18n="co_p">Confirm where the food goes and how you pay. The total below is final — nothing is added later.</p>
+      <form id="checkoutForm">
+        <div class="fulfil" role="group" aria-label="Pickup or delivery" style="margin-top:18px">
+          <button type="button" id="coPickup" aria-pressed="true" data-i18n="pickup">Pickup · Free</button>
+          <button type="button" id="coDelivery" aria-pressed="false" data-i18n="delivery">Delivery · $4.95</button>
+        </div>
+        <div class="payrow" style="margin-top:14px">
+          <div class="field"><label for="coName" data-i18n="f_name">Full name</label><input id="coName" required autocomplete="name" /></div>
+          <div class="field"><label for="coPhone" data-i18n="f_phone">Mobile phone</label><input id="coPhone" required autocomplete="tel" inputmode="tel" /></div>
+        </div>
+        <div class="field" id="coAddrWrap" hidden><label for="coAddr" data-i18n="co_addr">Delivery address</label>
+          <select id="coAddr"></select></div>
+        <div class="payrow">
+          <div class="field"><label for="coWindow" data-i18n="co_window">Pickup / delivery window</label>
+            <select id="coWindow"><option>17:00 – 18:00</option><option selected>18:00 – 19:00</option><option>19:00 – 20:00</option></select></div>
+          <div class="field"><label for="coNote" data-i18n="co_note">Note for the cook (optional)</label><input id="coNote" placeholder="e.g. Less spicy, extra tahdig if you can" data-i18n-ph="co_note_ph" /></div>
+        </div>
+        <fieldset style="border:1px solid var(--line);border-radius:14px;padding:14px 16px 4px;margin:6px 0 14px">
+          <legend style="font-weight:700;padding:0 6px" data-i18n="pay_h">Payment</legend>
+          <div class="payrow">
+            <div class="field" style="flex:2"><label for="coCard" data-i18n="pay_card">Card number</label><input id="coCard" inputmode="numeric" autocomplete="cc-number" placeholder="4242 4242 4242 4242" required /></div>
+            <div class="field"><label for="coExp" data-i18n="pay_exp">Expiry</label><input id="coExp" inputmode="numeric" placeholder="MM / YY" required /></div>
+            <div class="field"><label for="coCvc" data-i18n="pay_cvc">CVC</label><input id="coCvc" inputmode="numeric" placeholder="123" required /></div>
+          </div>
+        </fieldset>
+        <div class="cofoot">
+          <div id="coTotals"></div>
+          <div class="dlg-actions">
+            <button class="btn block" type="submit" id="coSubmit">Place order</button>
+          </div>
+          <p style="color:var(--muted);font-size:.85rem;text-align:center;margin:10px 0 0" data-i18n="co_cancel">Free cancellation until the cook starts preparing your dish.</p>
+        </div>
+      </form>
+    </div>
+    <div id="coStepDone" hidden>
+      <div class="ordersuccess">
+        <div class="ring" aria-hidden="true">✓</div>
+        <h2 data-i18n="done_h">Order placed</h2>
+        <p style="color:var(--muted)" id="doneText"></p>
+        <div class="pickupcode" style="text-align:start">
+          <div><span style="color:var(--muted);font-size:.85rem;display:block" data-i18n="done_code">Show this code at pickup</span><b class="code" id="doneCode">—</b></div>
+          <button class="btn saffron" type="button" id="doneTrack" style="margin-inline-start:auto" data-i18n="done_track">Track my order</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<!-- location dialog -->
+<dialog id="locDlg" aria-labelledby="locTitle">
+  <div class="dlg-bd" style="padding-top:24px;position:relative">
+    <button class="x" type="button" id="locClose" aria-label="Close" style="top:0;inset-inline-end:0;box-shadow:none">✕</button>
+    <h2 id="locTitle" data-i18n="loc_h">Where are you eating?</h2>
+    <p style="color:var(--muted);margin:6px 0 14px" data-i18n="loc_p">Sofreh cooks deliver inside their own neighbourhood. Pick yours to see the pots closest to you first.</p>
+    <div id="locList" style="display:grid;gap:8px"></div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* ================= DATA — same menu, cooks & prices as the Sofreh public site ================= */
+var DISHES = [
+  { id:"ghormeh", name:"Ghormeh Sabzi", fa:"قورمه‌سبزی", img:"assets/ghormeh.webp", alt:"Ghormeh sabzi — dark green herb stew with beef and kidney beans, served with saffron rice",
+    price:18.50, family:64, cat:["stew"], hood:"Richmond Hill", cook:"Maryam", av:"", rating:4.9, orders:412, left:7,
+    descEn:"Slow-simmered herbs, beef, kidney beans and dried lime. The dish every Iranian abroad misses first.",
+    descFa:"سبزی آرام‌پز با گوشت، لوبیا قرمز و لیمو عمانی؛ غذایی که هر ایرانی دور از خانه اول از همه دلش برایش تنگ می‌شود.",
+    tagsEn:["Beef","Saffron rice included"], tagsFa:["گوشت گوساله","برنج زعفرانی دارد"],
+    ingEn:"Beef, kidney beans, spinach, parsley, cilantro, fenugreek, dried lime, onion, turmeric, saffron rice.", allEn:"No major allergens. Cooked in a home kitchen that also handles nuts and dairy." },
+  { id:"zereshk", name:"Zereshk Polo ba Morgh", fa:"زرشک‌پلو با مرغ", img:"assets/zereshk.jpg", alt:"Zereshk polo — saffron rice with barberries and roasted chicken",
+    price:19, family:68, cat:["rice"], hood:"North York", cook:"Sara", av:"pom", rating:4.8, orders:365, left:9,
+    descEn:"Basmati rice with tart barberries and saffron, chicken braised in tomato and saffron until it falls apart.",
+    descFa:"برنج باسماتی با زرشک و زعفران، مرغ پخته در سس گوجه و زعفران تا نرم و لعاب‌دار شود.",
+    tagsEn:["Chicken","Family favourite"], tagsFa:["مرغ","محبوب خانواده‌ها"],
+    ingEn:"Basmati rice, chicken, barberries, saffron, tomato, onion, butter.", allEn:"Contains dairy (butter). Barberries are washed and sorted by hand." },
+  { id:"tahchin", name:"Tahchin-e Morgh", fa:"تهچین مرغ", img:"assets/tahchin.jpg", alt:"Tahchin — golden saffron rice cake layered with chicken, cut to show the crust",
+    price:21, family:74, cat:["rice"], hood:"Thornhill", cook:"Leila", av:"saf", rating:5.0, orders:298, left:4,
+    descEn:"Saffron rice cake with a deep golden crust, layered with chicken and finished with barberries and pistachio.",
+    descFa:"برنج زعفرانی با ته‌دیگ طلایی عمیق، لایه‌لایه با مرغ و رویش زرشک و خلال پسته.",
+    tagsEn:["Chicken","Weekend special"], tagsFa:["مرغ","ویژهٔ آخر هفته"],
+    ingEn:"Basmati rice, chicken, yogurt, egg, saffron, barberries, pistachio, butter.", allEn:"Contains dairy, egg and tree nuts (pistachio)." },
+  { id:"ash", name:"Ash Reshteh", fa:"آش رشته", img:"assets/ash.jpg", alt:"Ash reshteh — thick herb, bean and noodle soup with kashk and crispy onions",
+    price:13.50, family:46, cat:["stew","veg"], hood:"Scarborough", cook:"Fatemeh", av:"", rating:4.9, orders:441, left:12,
+    descEn:"Thick herb, bean and noodle soup with kashk, mint oil and crispy onions. Vegetarian, and made for cold Toronto evenings.",
+    descFa:"آش غلیظ سبزی، حبوبات و رشته با کشک، نعناع‌داغ و پیازداغ؛ گیاهی و ساخته‌شده برای شب‌های سرد تورنتو.",
+    tagsEn:["Vegetarian","Freezes well"], tagsFa:["گیاهی","برای فریزر مناسب است"], veg:true,
+    ingEn:"Reshteh noodles, chickpeas, kidney beans, lentils, spinach, herbs, kashk, mint, onion.", allEn:"Contains gluten (noodles) and dairy (kashk). Vegetarian." },
+  { id:"fesenjan", name:"Fesenjan", fa:"فسنجان", img:"assets/fesenjan.jpg", alt:"Fesenjan — chicken in dark walnut and pomegranate sauce with pomegranate seeds",
+    price:22, family:78, cat:["stew"], hood:"Downtown Toronto", cook:"Nasrin", av:"pom", rating:4.8, orders:187, left:6,
+    descEn:"Chicken in ground-walnut and pomegranate sauce — sweet, sour and dark. Nasrin cooks hers the Gilan way, on the sour side.",
+    descFa:"مرغ در سس گردو و رب انار؛ ترش و شیرین و تیره. نسرین به روش گیلانی و متمایل به ترش می‌پزد.",
+    tagsEn:["Chicken","Contains walnuts"], tagsFa:["مرغ","گردو دارد"],
+    ingEn:"Chicken, ground walnuts, pomegranate molasses, onion, saffron rice.", allEn:"Contains tree nuts (walnut)." },
+  { id:"koobideh", name:"Kabab Koobideh", fa:"کباب کوبیده", img:"assets/koobideh.webp", alt:"Kabab koobideh — two grilled ground-meat skewers with saffron rice and grilled tomato",
+    price:23, family:82, cat:["grill"], hood:"North York", cook:"Reza", av:"saf", rating:4.9, orders:503, left:8,
+    descEn:"Two hand-minced beef and lamb skewers grilled over charcoal, with saffron rice, grilled tomato and sumac onion.",
+    descFa:"دو سیخ کوبیده دست‌ساز گوساله و گوسفند روی زغال، با برنج زعفرانی، گوجه کبابی و پیاز سماق.",
+    tagsEn:["Beef & lamb","Charcoal grilled"], tagsFa:["گوساله و گوسفند","کباب روی زغال"],
+    ingEn:"Beef, lamb, onion, saffron rice, tomato, sumac.", allEn:"No major allergens. Grilled over charcoal." },
+  { id:"gheymeh", name:"Gheymeh", fa:"خورش قیمه", img:"assets/gheymeh.jpg", alt:"Gheymeh — tomato stew with split peas, beef, dried lime and crispy potato straws",
+    price:17.50, family:61, cat:["stew"], hood:"Mississauga", cook:"Zahra", av:"", rating:4.7, orders:264, left:5,
+    descEn:"Tomato and split-pea stew with beef and dried lime, topped with crispy potato straws — the way it is served at home, not in restaurants.",
+    descFa:"خورش گوجه و لپه با گوشت و لیمو عمانی، رویش سیب‌زمینی خلالی سرخ‌شده؛ همان‌طور که در خانه سرو می‌شود.",
+    tagsEn:["Beef","Saffron rice included"], tagsFa:["گوشت گوساله","برنج زعفرانی دارد"],
+    ingEn:"Beef, yellow split peas, tomato, dried lime, potato, onion, saffron rice.", allEn:"No major allergens." },
+  { id:"baghali", name:"Baghali Polo ba Mahicheh", fa:"باقالی‌پلو با ماهیچه", img:"assets/baghali.jpg", alt:"Baghali polo — dill and fava bean rice with braised lamb shank and tahdig",
+    price:26, family:92, cat:["rice"], hood:"Richmond Hill", cook:"Ali", av:"pom", rating:5.0, orders:176, left:3,
+    descEn:"Dill and fava-bean rice with a lamb shank braised until it gives way at a touch. Ali makes twelve portions on Saturdays — they go first.",
+    descFa:"برنج شوید و باقالی با ماهیچه‌ای که آن‌قدر پخته تا با یک اشاره از هم باز شود. علی شنبه‌ها فقط دوازده پرس می‌پزد.",
+    tagsEn:["Lamb","Saturday only"], tagsFa:["گوشت گوسفند","فقط شنبه‌ها"],
+    ingEn:"Basmati rice, lamb shank, fava beans, dill, saffron, garlic.", allEn:"No major allergens." },
+  { id:"kookoo", name:"Kookoo Sabzi", fa:"کوکو سبزی", img:"assets/kookoo.jpg", alt:"Kookoo sabzi — green herb frittata with barberries and walnuts, sliced",
+    price:14, family:48, cat:["veg"], hood:"North York", cook:"Sara", av:"pom", rating:4.8, orders:229, left:10,
+    descEn:"Dense herb frittata with barberries and walnuts, served with sangak and pickled garlic. Sara's Nowruz recipe, all year round.",
+    descFa:"کوکوی پرسبزی با زرشک و گردو، با نان سنگک و سیرترشی؛ دستور نوروزی سارا، در تمام سال.",
+    tagsEn:["Vegetarian","Contains walnuts"], tagsFa:["گیاهی","گردو دارد"], veg:true,
+    ingEn:"Eggs, parsley, cilantro, spinach, barberries, walnuts, sangak bread.", allEn:"Contains egg, gluten and tree nuts (walnut). Vegetarian." }
+];
+var COOKS = [
+  { name:"Maryam", hood:"Richmond Hill", av:"", rating:4.9, cooksOn:"Tue · Thu · Sat", dishes:["ghormeh"],
+    bioEn:"Cooking ghormeh sabzi the way her mother taught her in Tehran — fenugreek measured by eye, never by spoon.",
+    bioFa:"قورمه‌سبزی را همان‌طور می‌پزد که مادرش در تهران یادش داده؛ شنبلیله را چشمی اندازه می‌گیرد، نه با قاشق." },
+  { name:"Sara", hood:"North York", av:"pom", rating:4.8, cooksOn:"Wed · Fri · Sun", dishes:["zereshk","kookoo"],
+    bioEn:"A former bakery assistant who turned her zereshk polo and kookoo sabzi into North York's worst-kept secret.",
+    bioFa:"کمک‌نانوای سابق که زرشک‌پلو و کوکو سبزی‌اش را به راز آشکار نورث‌یورک تبدیل کرده است." },
+  { name:"Leila", hood:"Thornhill", av:"saf", rating:5.0, cooksOn:"Fri · Sat", dishes:["tahchin"],
+    bioEn:"Known for a tahchin crust her neighbours describe as “the whole point of the dish” — deep gold, never burnt.",
+    bioFa:"معروف به ته‌دیگ تهچینی که همسایه‌ها می‌گویند «اصلِ خودِ غذاست»؛ طلایی عمیق، هیچ‌وقت سوخته نه." },
+  { name:"Fatemeh", hood:"Scarborough", av:"", rating:4.9, cooksOn:"Mon · Thu", dishes:["ash"],
+    bioEn:"Her ash reshteh feeds half of Scarborough on cold weeks — thick, herby, and always with extra kashk.",
+    bioFa:"آش رشته‌اش در هفته‌های سرد نیمی از اسکاربورو را سیر می‌کند؛ غلیظ، پرسبزی و همیشه با کشک اضافه." },
+  { name:"Nasrin", hood:"Downtown Toronto", av:"pom", rating:4.8, cooksOn:"Wed · Sat", dishes:["fesenjan"],
+    bioEn:"From Rasht, cooking fesenjan the Gilan way — walnuts ground fine, pomegranate kept properly sour.",
+    bioFa:"اهل رشت، فسنجان را به روش گیلانی می‌پزد؛ گردوی ریزساب و رب انارِ حسابی ترش." },
+  { name:"Reza", hood:"North York", av:"saf", rating:4.9, cooksOn:"Fri · Sat · Sun", dishes:["koobideh"],
+    bioEn:"Grills koobideh over real charcoal in his backyard, the way his father did in Karaj — no gas, no shortcuts.",
+    bioFa:"کوبیده را روی زغال واقعی در حیاط خانه کباب می‌کند، مثل پدرش در کرج؛ بدون گاز، بدون میان‌بُر." },
+  { name:"Zahra", hood:"Mississauga", av:"", rating:4.7, cooksOn:"Tue · Fri", dishes:["gheymeh"],
+    bioEn:"Her gheymeh comes with hand-cut potato straws, fried to order — never from a bag.",
+    bioFa:"قیمه‌اش با سیب‌زمینی خلالی دست‌بُر سرو می‌شود که همان لحظه سرخ می‌شود، نه از پاکت آماده." },
+  { name:"Ali", hood:"Richmond Hill", av:"pom", rating:5.0, cooksOn:"Sat only", dishes:["baghali"],
+    bioEn:"Twelve lamb shanks every Saturday, braised four hours. When they're gone, they're gone until next week.",
+    bioFa:"هر شنبه فقط دوازده ماهیچه، چهار ساعت آرام‌پز. وقتی تمام شد، تا هفتهٔ بعد خبری نیست." }
+];
+var EXTRAS = [
+  { id:"doogh", nameEn:"Doogh (mint yogurt drink)", nameFa:"دوغ نعنایی", price:3.50 },
+  { id:"salad", nameEn:"Salad Shirazi", nameFa:"سالاد شیرازی", price:6 },
+  { id:"torshi", nameEn:"Torshi (pickled vegetables)", nameFa:"ترشی مخلوط", price:4.50 },
+  { id:"extra-rice", nameEn:"Extra saffron rice", nameFa:"برنج زعفرانی اضافه", price:5 },
+  { id:"mast", nameEn:"Mast-o-Khiar (cucumber yogurt)", nameFa:"ماست و خیار", price:5.50 }
+];
+var HOODS = ["Richmond Hill","North York","Thornhill","Scarborough","Downtown Toronto","Mississauga"];
+
+/* ================= I18N ================= */
+var T = {
+  en:{ deliver_to:"Deliver to", search_ph:"Search ghormeh sabzi, tahchin, a cook…", tab_discover:"Discover", tab_cooks:"Cooks", tab_orders:"My orders", tab_saved:"Saved", tab_account:"Account",
+    greet_h:"Dinner from a neighbour's kitchen, tonight.", greet_p:"Nine pots are on across the GTA today. Order by 2 pm, pick up from 5 pm — or get it delivered inside the cook's neighbourhood.", greet_side:"dishes cooking today",
+    c_all:"All dishes", c_stew:"Stews", c_rice:"Rice dishes", c_grill:"Grills", c_veg:"Vegetarian", all_hoods:"All neighbourhoods", sort_pop:"Most loved", sort_low:"Price: low to high", sort_high:"Price: high to low", sort_left:"Almost gone first",
+    empty_h:"Nothing matches — yet", empty_p:"Try another dish name or neighbourhood. Cooks post a second round of pots around 11 am.", empty_btn:"Clear search & filters",
+    cooks_h:"Cooks near you", cooks_p:"Every Sofreh cook holds an Ontario Food Handler Certificate and cooks from a kitchen that passed the onboarding checklist. Follow a cook and their new pots surface first in your Discover feed.",
+    orders_h:"My orders", orders_p:"Live status for today's orders, and everything you've ordered before — reorder a favourite in two taps.",
+    orders_empty_h:"No orders yet", orders_empty_p:"When you place an order it appears here, with its status from the moment the cook confirms until your dish is ready for pickup.", orders_empty_btn:"Browse today's dishes",
+    saved_h:"Saved dishes & cooks", saved_p:"Tap the heart on any dish to keep it here — handy on Friday when the family sizes go up.",
+    saved_empty_h:"Nothing saved yet", saved_empty_p:"Tap ♥ on a dish and it will wait for you here.",
+    acct_h:"Your account", acct_p:"Details used at checkout — your name and phone go on the dish label so the cook hands the right bag to the right person.",
+    prof_h:"Profile", prof_p:"How cooks and Sofreh reach you about an order.", f_name:"Full name", f_phone:"Mobile phone", f_phone_hint:"The cook calls this number if pickup runs late.", f_email:"Email for receipts", f_lang:"Preferred language", save:"Save changes",
+    addr_h:"Saved addresses", addr_p:"Delivery runs inside each cook's own neighbourhood.", ad_label:"Label", ad_label_ph:"e.g. Office", ad_text:"Address", ad_text_ph:"Street, neighbourhood", ad_add:"Add address",
+    pref_h:"Food preferences", pref_p:"Dishes that clash with these are flagged before you order.",
+    foot_line:"Persian home cooking from certified neighbourhood cooks — Toronto & the GTA.", foot_fees:"Dish price + 10% service fee (max $4) · Pickup free · Delivery $4.95",
+    size:"Size", single:"Single", family:"Family · feeds 4", extras:"Make it a full sofreh", qty:"Quantity",
+    co_h:"Checkout", co_p:"Confirm where the food goes and how you pay. The total below is final — nothing is added later.",
+    pickup:"Pickup · Free", delivery:"Delivery · $4.95", co_addr:"Delivery address", co_window:"Pickup / delivery window", co_note:"Note for the cook (optional)", co_note_ph:"e.g. Less spicy, extra tahdig if you can",
+    pay_h:"Payment", pay_card:"Card number", pay_exp:"Expiry", pay_cvc:"CVC", co_cancel:"Free cancellation until the cook starts preparing your dish.",
+    done_h:"Order placed", done_code:"Show this code at pickup", done_track:"Track my order",
+    loc_h:"Where are you eating?", loc_p:"Sofreh cooks deliver inside their own neighbourhood. Pick yours to see the pots closest to you first." },
+  fa:{ deliver_to:"تحویل به", search_ph:"جستجو: قورمه‌سبزی، تهچین، اسم آشپز…", tab_discover:"کشف غذا", tab_cooks:"آشپزها", tab_orders:"سفارش‌های من", tab_saved:"ذخیره‌ها", tab_account:"حساب من",
+    greet_h:"شام امشب، از آشپزخانهٔ همسایه.", greet_p:"امروز نه دیگ در سراسر GTA روی گاز است. تا ساعت ۲ سفارش بده، از ۵ تحویل بگیر — یا در محلهٔ خود آشپز برایت می‌آورند.", greet_side:"غذا امروز در حال پخت است",
+    c_all:"همهٔ غذاها", c_stew:"خورش‌ها", c_rice:"پلوها", c_grill:"کباب‌ها", c_veg:"گیاهی", all_hoods:"همهٔ محله‌ها", sort_pop:"محبوب‌ترین", sort_low:"قیمت: کم به زیاد", sort_high:"قیمت: زیاد به کم", sort_left:"در حال تمام‌شدن",
+    empty_h:"چیزی پیدا نشد — هنوز", empty_p:"اسم غذای دیگری یا محلهٔ دیگری را امتحان کن. آشپزها حدود ساعت ۱۱ دور دوم غذاها را می‌گذارند.", empty_btn:"پاک‌کردن جستجو و فیلترها",
+    cooks_h:"آشپزهای نزدیک تو", cooks_p:"همهٔ آشپزهای سفره گواهی بهداشت مواد غذایی انتاریو دارند و در آشپزخانه‌ای پخت می‌کنند که چک‌لیست سفره را گذرانده است. آشپزی را دنبال کن تا غذاهای تازه‌اش اول در صفحهٔ تو بیاید.",
+    orders_h:"سفارش‌های من", orders_p:"وضعیت زندهٔ سفارش‌های امروز و همهٔ سفارش‌های قبلی — غذای محبوبت را با دو لمس دوباره سفارش بده.",
+    orders_empty_h:"هنوز سفارشی نداده‌ای", orders_empty_p:"وقتی سفارش بدهی، همین‌جا می‌آید؛ با وضعیتش از لحظهٔ تأیید آشپز تا آماده‌شدن غذا برای تحویل.", orders_empty_btn:"دیدن غذاهای امروز",
+    saved_h:"غذاها و آشپزهای ذخیره‌شده", saved_p:"روی قلب هر غذا بزن تا اینجا بماند — جمعه‌ها که سایز خانوادگی می‌آید به کارت می‌آید.",
+    saved_empty_h:"هنوز چیزی ذخیره نکرده‌ای", saved_empty_p:"روی ♥ هر غذا بزن تا اینجا منتظرت بماند.",
+    acct_h:"حساب تو", acct_p:"اطلاعاتی که هنگام پرداخت استفاده می‌شود — اسم و تلفنت روی برچسب غذا می‌آید تا آشپز بسته را به دست آدم درست بدهد.",
+    prof_h:"مشخصات", prof_p:"آشپز و سفره با این اطلاعات دربارهٔ سفارشت با تو در تماس می‌شوند.", f_name:"نام کامل", f_phone:"شمارهٔ موبایل", f_phone_hint:"اگر تحویل دیر شد، آشپز به این شماره زنگ می‌زند.", f_email:"ایمیل برای رسید", f_lang:"زبان ترجیحی", save:"ذخیرهٔ تغییرات",
+    addr_h:"نشانی‌های ذخیره‌شده", addr_p:"ارسال فقط داخل محلهٔ خود آشپز انجام می‌شود.", ad_label:"عنوان", ad_label_ph:"مثلاً: دفتر کار", ad_text:"نشانی", ad_text_ph:"خیابان و محله", ad_add:"افزودن نشانی",
+    pref_h:"سلیقه و محدودیت غذایی", pref_p:"غذاهایی که با این‌ها ناسازگارند پیش از سفارش علامت می‌خورند.",
+    foot_line:"غذای خانگی ایرانی از آشپزهای محلهٔ دارای گواهی — تورنتو و GTA.", foot_fees:"قیمت غذا + ۱۰٪ هزینهٔ خدمات (حداکثر ۴ دلار) · تحویل حضوری رایگان · ارسال ۴٫۹۵ دلار",
+    size:"اندازه", single:"تکی", family:"خانوادگی · برای ۴ نفر", extras:"سفره را کامل کن", qty:"تعداد",
+    co_h:"پرداخت و تأیید", co_p:"مقصد غذا و روش پرداخت را تأیید کن. مبلغ زیر نهایی است — بعداً چیزی اضافه نمی‌شود.",
+    pickup:"تحویل حضوری · رایگان", delivery:"ارسال · ۴٫۹۵ دلار", co_addr:"نشانی تحویل", co_window:"بازهٔ تحویل", co_note:"یادداشت برای آشپز (اختیاری)", co_note_ph:"مثلاً: کم‌تند، ته‌دیگ اضافه اگر شد",
+    pay_h:"پرداخت", pay_card:"شمارهٔ کارت", pay_exp:"تاریخ انقضا", pay_cvc:"CVC", co_cancel:"لغو رایگان تا وقتی آشپز پخت غذایت را شروع نکرده است.",
+    done_h:"سفارش ثبت شد", done_code:"این کد را هنگام تحویل نشان بده", done_track:"پیگیری سفارش",
+    loc_h:"کجا غذا می‌خوری؟", loc_p:"آشپزهای سفره فقط داخل محلهٔ خودشان ارسال دارند. محله‌ات را انتخاب کن تا نزدیک‌ترین دیگ‌ها را اول ببینی." }
+};
+var lang = "en";
+function t(k){ return (T[lang] && T[lang][k]) || T.en[k] || k; }
+function money(n){ return "$" + n.toFixed(2); }
+function dishById(id){ for (var i=0;i<DISHES.length;i++) if (DISHES[i].id===id) return DISHES[i]; return null; }
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
+
+/* ================= STATE (in-memory for this session) ================= */
+var state = {
+  view:"discover", cat:"all", hood:"", query:"", sort:"pop", homeHood:"Richmond Hill",
+  favs:{ tahchin:true }, following:{},
+  cart:[], /* {key, dishId, size, extras:[ids], qty} */
+  fulfil:"pickup",
+  orders:[], orderSeq:1042,
+  addresses:[
+    { label:"Home", text:"Yonge St & Elgin Mills Rd, Richmond Hill", def:true },
+    { label:"Office", text:"Yonge St & Finch Ave, North York", def:false }
+  ],
+  prefs:[
+    { id:"nuts", labelEn:"No nuts", labelFa:"بدون مغزها", on:false, hintEn:"Flags fesenjan, tahchin & kookoo sabzi", hintFa:"فسنجان، تهچین و کوکو سبزی علامت می‌خورند" },
+    { id:"spicy", labelEn:"Mild only", labelFa:"فقط ملایم", on:false, hintEn:"Hides dishes marked spicy by the cook", hintFa:"غذاهای تندِ علامت‌خورده پنهان می‌شوند" },
+    { id:"veg", labelEn:"Vegetarian first", labelFa:"گیاهی‌ها اول", on:true, hintEn:"Vegetarian dishes sort to the top", hintFa:"غذاهای گیاهی اول فهرست می‌آیند" }
+  ],
+  profile:{ name:"Mehrdad Kheirollahi", phone:"+1 647-886-3734" }
+};
+
+/* ================= TOAST ================= */
+var toastTimer=null;
+function toast(msg){ var el=document.getElementById("toast"); el.textContent=msg; el.classList.add("show"); clearTimeout(toastTimer); toastTimer=setTimeout(function(){ el.classList.remove("show"); },2600); }
+
+/* ================= DISH CARDS ================= */
+function starStr(r){ var full=Math.round(r); var s=""; for(var i=0;i<5;i++) s+= i<full ? "★":"☆"; return s; }
+function cardHTML(d){
+  var fav = !!state.favs[d.id];
+  var leftBadge = d.left<=0 ? "" :
+    '<span class="leftbadge'+(d.left<=4?" low":"")+'">'+(lang==="fa" ? "فقط "+d.left+" پرس مانده" : "Only "+d.left+" left today")+'</span>';
+  var tags = (lang==="fa"? d.tagsFa : d.tagsEn).map(function(x){ return '<span class="tag'+(x==="Vegetarian"||x==="گیاهی"?" veg":"")+'">'+esc(x)+'</span>'; }).join("");
+  return '<article class="card'+(d.left<=0?" soldout":"")+'" data-id="'+d.id+'">'
+    + '<div class="ph"><img src="'+d.img+'" alt="'+esc(d.alt)+'" loading="lazy" />'+leftBadge
+    + '<button class="favbtn" type="button" data-fav="'+d.id+'" aria-pressed="'+fav+'" aria-label="Save '+esc(d.name)+'">'+(fav?"♥":"♡")+'</button></div>'
+    + '<div class="bd"><div><h3>'+esc(d.name)+'</h3> <span class="faname" lang="fa">'+d.fa+'</span></div>'
+    + '<p class="desc">'+esc(lang==="fa"? d.descFa : d.descEn)+'</p>'
+    + '<div class="cookline"><span class="avatar '+d.av+'" aria-hidden="true">'+d.cook.charAt(0)+'</span><span>'+esc(d.cook)+' · '+esc(d.hood)+'</span>'
+    + '<span class="stars" aria-hidden="true">'+starStr(d.rating)+'</span><span>'+d.rating.toFixed(1)+' ('+d.orders+')</span></div>'
+    + '<div class="tags">'+tags+'</div>'
+    + '<div class="foot"><span class="price">'+money(d.price)+' <small>'+(lang==="fa"?"تکی":"/ single")+'</small></span>'
+    + (d.left<=0
+        ? '<button class="btn small addbtn" type="button" disabled>'+(lang==="fa"?"تمام شد":"Sold out")+'</button>'
+        : '<button class="btn small addbtn" type="button" data-open="'+d.id+'">'+(lang==="fa"?"افزودن +":"Add +")+'</button>')
+    + '</div></div></article>';
+}
+function visibleDishes(){
+  var q = state.query.trim().toLowerCase();
+  var list = DISHES.filter(function(d){
+    if (state.cat!=="all" && d.cat.indexOf(state.cat)===-1) return false;
+    if (state.hood && d.hood!==state.hood) return false;
+    if (q){ var hay=(d.name+" "+d.fa+" "+d.cook+" "+d.hood).toLowerCase(); if (hay.indexOf(q)===-1) return false; }
+    return true;
+  });
+  var vegFirst = state.prefs[2].on;
+  list.sort(function(a,b){
+    if (state.sort==="low") return a.price-b.price;
+    if (state.sort==="high") return b.price-a.price;
+    if (state.sort==="left") return a.left-b.left;
+    if (vegFirst && (!!a.veg)!==(!!b.veg)) return a.veg?-1:1;
+    return b.rating*b.orders - a.rating*a.orders;
+  });
+  return list;
+}
+function renderGrid(){
+  var list = visibleDishes();
+  document.getElementById("dishGrid").innerHTML = list.map(cardHTML).join("");
+  document.getElementById("emptyMsg").hidden = list.length>0;
+  document.getElementById("dishGrid").style.display = list.length? "" : "none";
+}
+function renderSaved(){
+  var list = DISHES.filter(function(d){ return state.favs[d.id]; });
+  var g = document.getElementById("savedGrid");
+  g.innerHTML = list.map(cardHTML).join("");
+  g.style.display = list.length? "" : "none";
+  document.getElementById("savedEmpty").hidden = list.length>0;
+  var n = list.length;
+  var fc = document.getElementById("favCount"); fc.textContent=n; fc.hidden = n===0;
+}
+
+/* ================= COOKS ================= */
+function renderCooks(){
+  document.getElementById("cookGrid").innerHTML = COOKS.map(function(c){
+    var dishBtns = c.dishes.map(function(id){ var d=dishById(id); return '<button type="button" data-open="'+d.id+'"><img src="'+d.img+'" alt="" />'+esc(d.name)+' · '+money(d.price)+'</button>'; }).join("");
+    var fol = !!state.following[c.name];
+    return '<article class="cookcard"><div class="top"><span class="avatar '+c.av+'" aria-hidden="true">'+c.name.charAt(0)+'</span>'
+      + '<div><h3>'+esc(c.name)+'</h3><span class="hood">'+esc(c.hood)+'</span><div class="cookline"><span class="stars" aria-hidden="true">'+starStr(c.rating)+'</span><span>'+c.rating.toFixed(1)+'</span><span>· '+(lang==="fa"?"روزهای پخت: ":"Cooks ")+esc(c.cooksOn)+'</span></div></div>'
+      + '<button class="btn small '+(fol?"":"ghost")+' followbtn" type="button" data-follow="'+esc(c.name)+'">'+(fol ? (lang==="fa"?"دنبال می‌کنی ✓":"Following ✓") : (lang==="fa"?"دنبال‌کردن":"Follow"))+'</button></div>'
+      + '<p>'+esc(lang==="fa"? c.bioFa : c.bioEn)+'</p>'
+      + '<div style="font-weight:700;font-size:.9rem">'+(lang==="fa"?"امروز می‌پزد:":"Cooking today:")+'</div><div class="dishrow">'+dishBtns+'</div></article>';
+  }).join("");
+}
+
+/* ================= CART ================= */
+function cartCount(){ return state.cart.reduce(function(s,i){ return s+i.qty; },0); }
+function cartSubtotal(){ return state.cart.reduce(function(s,i){ var d=dishById(i.dishId); var unit=(i.size==="family"? d.family : d.price) + i.extras.reduce(function(es,eid){ var e=EXTRAS.filter(function(x){return x.id===eid;})[0]; return es+(e?e.price:0); },0); return s+unit*i.qty; },0); }
+function cartTotals(){
+  var sub = cartSubtotal();
+  var fee = sub>0 ? Math.min(sub*0.10, 4) : 0;
+  var del = (state.fulfil==="delivery" && sub>0) ? 4.95 : 0;
+  return { sub:sub, fee:fee, del:del, total:sub+fee+del };
+}
+function cartPanelHTML(idPrefix){
+  var tt = cartTotals();
+  var head = '<div class="cartpanel"><div class="hd"><h2>'+(lang==="fa"?"سفارش تو":"Your order")+'</h2>'
+    + '<span style="margin-inline-start:auto;color:var(--muted);font-size:.88rem">'+esc(state.homeHood)+'</span></div><div class="bd">';
+  if (!state.cart.length){
+    return head + '<div class="cartempty"><span class="big" aria-hidden="true">🍽</span>'
+      + (lang==="fa" ? "سبدت خالی است.<br/>از غذاهای امروز یکی را انتخاب کن." : "Your order is empty.<br/>Pick a dish from today's pots.")
+      + '</div></div></div>';
+  }
+  var items = state.cart.map(function(it, idx){
+    var d = dishById(it.dishId);
+    var unit = (it.size==="family"? d.family : d.price) + it.extras.reduce(function(es,eid){ var e=EXTRAS.filter(function(x){return x.id===eid;})[0]; return es+(e?e.price:0); },0);
+    var extraNames = it.extras.map(function(eid){ var e=EXTRAS.filter(function(x){return x.id===eid;})[0]; return e ? (lang==="fa"? e.nameFa : e.nameEn) : ""; }).filter(Boolean).join(", ");
+    return '<div class="citem"><img src="'+d.img+'" alt="" /><div class="inf"><b>'+esc(d.name)+'</b>'
+      + '<small>'+(it.size==="family" ? (lang==="fa"?"خانوادگی":"Family") : (lang==="fa"?"تکی":"Single"))+' · '+esc(d.cook)+(extraNames? '<br/>+ '+esc(extraNames):'')+'</small>'
+      + '<span class="qtyctl"><button type="button" data-cqty="'+idx+'|-1" aria-label="Less">−</button><b>'+it.qty+'</b><button type="button" data-cqty="'+idx+'|1" aria-label="More">+</button></span></div>'
+      + '<span class="lp">'+money(unit*it.qty)+'</span></div>';
+  }).join("");
+  var fulfil = '<div class="fulfil" role="group" aria-label="Pickup or delivery">'
+    + '<button type="button" data-fulfil="pickup" aria-pressed="'+(state.fulfil==="pickup")+'">'+(lang==="fa"?"تحویل حضوری · رایگان":"Pickup · Free")+'</button>'
+    + '<button type="button" data-fulfil="delivery" aria-pressed="'+(state.fulfil==="delivery")+'">'+(lang==="fa"?"ارسال · $4.95":"Delivery · $4.95")+'</button></div>';
+  var totals = '<div style="margin-top:12px">'
+    + '<div class="trow"><span>'+(lang==="fa"?"جمع غذاها":"Subtotal")+'</span><b>'+money(tt.sub)+'</b></div>'
+    + '<div class="trow"><span>'+(lang==="fa"?"هزینهٔ خدمات (۱۰٪، حداکثر $۴)":"Service fee (10%, max $4)")+'</span><b>'+money(tt.fee)+'</b></div>'
+    + '<div class="trow"><span>'+(lang==="fa"?"ارسال":"Delivery")+'</span><b>'+(tt.del? money(tt.del) : (lang==="fa"?"رایگان":"Free"))+'</b></div>'
+    + '<div class="trow total"><span>'+(lang==="fa"?"مبلغ نهایی":"Total")+'</span><b>'+money(tt.total)+'</b></div>'
+    + '<p style="color:var(--muted);font-size:.82rem;margin:8px 0 12px">'+(lang==="fa"?"مالیات داخل قیمت غذاست.":"Taxes are included in dish prices.")+'</p>'
+    + '<button class="btn block" type="button" data-checkout="1">'+(lang==="fa"?"ادامه و پرداخت · ":"Checkout · ")+money(tt.total)+'</button></div>';
+  return head + fulfil + items + totals + '</div></div>';
+}
+function renderCart(){
+  document.getElementById("cartAside").innerHTML = cartPanelHTML("a");
+  document.getElementById("cartDrawerBody").innerHTML = cartPanelHTML("d");
+  var n = cartCount(), tt = cartTotals();
+  var top = document.getElementById("cartCountTop"); top.textContent=n; top.hidden = n===0;
+  var bar = document.getElementById("mobileCartBar");
+  bar.classList.toggle("show", n>0 && state.view==="discover");
+  document.getElementById("mcLeft").textContent = (lang==="fa"?"دیدن سفارش":"View order")+" · "+n+(lang==="fa"?" قلم":" items");
+  document.getElementById("mcTotal").textContent = money(tt.total);
+}
+function addToCart(dishId, size, extras, qty){
+  var key = dishId+"|"+size+"|"+extras.slice().sort().join(",");
+  for (var i=0;i<state.cart.length;i++){ if (state.cart[i].key===key){ state.cart[i].qty += qty; renderCart(); return; } }
+  state.cart.push({ key:key, dishId:dishId, size:size, extras:extras.slice(), qty:qty });
+  renderCart();
+}
+
+/* ================= ORDERS ================= */
+var STAGES_EN = ["Received","Cook confirmed","Cooking","Ready for pickup"];
+var STAGES_FA = ["دریافت شد","آشپز تأیید کرد","در حال پخت","آمادهٔ تحویل"];
+function renderOrders(){
+  var list = document.getElementById("orderList");
+  document.getElementById("ordersEmpty").hidden = state.orders.length>0;
+  var active = state.orders.filter(function(o){ return o.stage<4; }).length;
+  ["orderBadge","orderBadgeM"].forEach(function(id){ var b=document.getElementById(id); b.textContent=active; b.hidden = active===0; });
+  list.innerHTML = state.orders.map(function(o, oi){
+    var stages = lang==="fa"? STAGES_FA : STAGES_EN;
+    var steps = stages.map(function(s, si){
+      var cls = si < o.stage ? "on" : (si===o.stage && o.stage<4 ? "on" : "");
+      if (o.stage>=4) cls="on";
+      return '<div class="tstep '+cls+'">'+s+'</div>';
+    }).join("");
+    var pillCls = o.stage>=4 ? "done" : (o.stage===3 ? "ready" : "");
+    var pillTxt = o.stage>=4 ? (lang==="fa"?"تحویل شد":"Picked up") : stages[Math.min(o.stage,3)];
+    var lines = o.items.map(function(it){ var d=dishById(it.dishId); return '<div class="oline"><span>'+it.qty+' × '+esc(d.name)+'<small>'+(it.size==="family"?(lang==="fa"?"خانوادگی":"Family"):(lang==="fa"?"تکی":"Single"))+' · '+esc(d.cook)+'</small></span><b>'+money(it.line)+'</b></div>'; }).join("");
+    var code = o.stage>=3 ? '<div class="pickupcode"><div><span style="color:var(--muted);font-size:.85rem;display:block">'+(lang==="fa"?"کد تحویل":"Pickup code")+'</span><b class="code">'+o.code+'</b></div><span style="color:var(--muted)">'+(o.fulfil==="delivery" ? (lang==="fa"?"پیک کد را هنگام تحویل وارد می‌کند.":"The courier confirms this code on arrival.") : (lang==="fa"?"کد را به آشپز نشان بده: ":"Show it to ")+esc(o.cookName))+'</span></div>' : "";
+    var again = o.items.map(function(it){ return it.dishId; });
+    return '<article class="ordercard"><div class="hd"><div><h3>'+(lang==="fa"?"سفارش ":"Order ")+'#'+o.num+'</h3><span class="meta">'+esc(o.when)+' · '+esc(o.window)+' · '+(o.fulfil==="delivery"?(lang==="fa"?"ارسال":"Delivery"):(lang==="fa"?"تحویل حضوری از ":"Pickup · ")+esc(o.cookName))+'</span></div>'
+      + '<span class="statuspill '+pillCls+'">'+pillTxt+'</span></div>'
+      + '<div class="timeline" aria-label="Order status">'+steps+'</div>' + lines
+      + '<div class="trow total" style="margin-top:10px"><span>'+(lang==="fa"?"مبلغ نهایی":"Total paid")+'</span><b>'+money(o.total)+'</b></div>'
+      + code
+      + '<div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap"><button class="btn small ghost" type="button" data-reorder="'+oi+'">'+(lang==="fa"?"سفارش دوباره":"Order again")+'</button>'
+      + (o.stage<3 ? '<button class="btn small" type="button" style="background:var(--pom)" data-cancel="'+oi+'">'+(lang==="fa"?"لغو سفارش":"Cancel order")+'</button>' : "")
+      + '</div></article>';
+  }).join("");
+}
+function advanceOrders(){
+  var changed=false;
+  state.orders.forEach(function(o){ if (o.stage<4){ o.stage++; changed=true; if (o.stage===3) toast(lang==="fa" ? "سفارش #"+o.num+" آمادهٔ تحویل است!" : "Order #"+o.num+" is ready for pickup!"); } });
+  if (changed && state.view==="orders") renderOrders();
+  if (changed) renderOrdersBadgeOnly();
+}
+function renderOrdersBadgeOnly(){
+  var active = state.orders.filter(function(o){ return o.stage<4; }).length;
+  ["orderBadge","orderBadgeM"].forEach(function(id){ var b=document.getElementById(id); b.textContent=active; b.hidden = active===0; });
+}
+setInterval(advanceOrders, 22000);
+
+/* ================= ACCOUNT ================= */
+function renderAddresses(){
+  document.getElementById("addrList").innerHTML = state.addresses.map(function(a, i){
+    return '<div class="addrrow"><span aria-hidden="true">◉</span><div class="inf"><b>'+esc(a.label)+(a.def? ' <span class="defbadge">'+(lang==="fa"?"پیش‌فرض":"Default")+'</span>':'')+'</b><span>'+esc(a.text)+'</span></div>'
+      + (a.def? "" : '<button class="btn small ghost" type="button" data-defaddr="'+i+'">'+(lang==="fa"?"پیش‌فرض شود":"Make default")+'</button>')
+      + '<button class="btn small ghost" type="button" data-deladdr="'+i+'" aria-label="Remove address">✕</button></div>';
+  }).join("");
+  var sel = document.getElementById("coAddr");
+  sel.innerHTML = state.addresses.map(function(a){ return '<option'+(a.def?" selected":"")+'>'+esc(a.label)+" — "+esc(a.text)+'</option>'; }).join("");
+}
+function renderPrefs(){
+  document.getElementById("prefList").innerHTML = state.prefs.map(function(p, i){
+    return '<label class="prefrow"><span class="inf"><b>'+(lang==="fa"? p.labelFa : p.labelEn)+'</b><span>'+(lang==="fa"? p.hintFa : p.hintEn)+'</span></span><input type="checkbox" data-pref="'+i+'" '+(p.on?"checked":"")+' /></label>';
+  }).join("");
+}
+
+/* ================= VIEWS ================= */
+function showView(v){
+  state.view = v;
+  document.querySelectorAll(".view").forEach(function(s){ s.classList.toggle("active", s.id==="view-"+v); });
+  document.querySelectorAll(".tab").forEach(function(b){ b.setAttribute("aria-selected", b.dataset.view===v ? "true":"false"); });
+  document.querySelectorAll(".bottomnav button").forEach(function(b){ b.setAttribute("aria-selected", b.dataset.view===v ? "true":"false"); });
+  document.getElementById("mobileCartBar").classList.toggle("show", cartCount()>0 && v==="discover");
+  window.scrollTo({ top:0, behavior:"smooth" });
+}
+
+/* ================= DISH DIALOG ================= */
+var dlgDish=null, dlgQty=1;
+function openDish(id){
+  var d = dishById(id); if (!d) return;
+  dlgDish = d; dlgQty = 1;
+  document.getElementById("dlgImg").src = d.img;
+  document.getElementById("dlgImg").alt = d.alt;
+  document.getElementById("dlgTitle").innerHTML = esc(d.name)+' <span class="faname" lang="fa" style="color:var(--pom);font-size:1.05rem">'+d.fa+'</span>';
+  document.getElementById("dlgMeta").innerHTML = '<span class="stars" aria-hidden="true">'+starStr(d.rating)+'</span> '+d.rating.toFixed(1)+' · '+esc(d.cook)+' · '+esc(d.hood)+' · '+d.orders+(lang==="fa"?" سفارش تا امروز":" orders so far");
+  document.getElementById("dlgDesc").textContent = lang==="fa"? d.descFa : d.descEn;
+  document.getElementById("singlePrice").textContent = money(d.price);
+  document.getElementById("familyPrice").textContent = money(d.family);
+  document.querySelector('input[name="dsize"][value="single"]').checked = true;
+  document.getElementById("extraList").innerHTML = EXTRAS.map(function(e){
+    return '<label class="extra"><input type="checkbox" data-extra="'+e.id+'" /> '+(lang==="fa"? e.nameFa : e.nameEn)+'<span class="p">+'+money(e.price)+'</span></label>';
+  }).join("");
+  document.getElementById("dlgIng").innerHTML = "<b>"+(lang==="fa"?"مواد و حساسیت‌ها: ":"Ingredients & allergens: ")+"</b>"+esc(d.ingEn)+" "+esc(d.allEn);
+  document.getElementById("dlgLeft").textContent = d.left>0 ? (lang==="fa" ? "امروز "+d.left+" پرس مانده" : d.left+" portions left today") : "";
+  updateDlg();
+  document.getElementById("dishDlg").showModal();
+}
+function dlgUnit(){
+  var size = document.querySelector('input[name="dsize"]:checked').value;
+  var unit = size==="family"? dlgDish.family : dlgDish.price;
+  document.querySelectorAll("[data-extra]").forEach(function(cb){ if (cb.checked){ var e=EXTRAS.filter(function(x){return x.id===cb.dataset.extra;})[0]; if (e) unit+=e.price; } });
+  return { size:size, unit:unit };
+}
+function updateDlg(){
+  document.getElementById("qVal").textContent = dlgQty;
+  var u = dlgUnit();
+  document.getElementById("dlgAddBtn").textContent = (lang==="fa"?"افزودن به سفارش · ":"Add to order · ")+money(u.unit*dlgQty);
+}
+
+/* ================= CHECKOUT ================= */
+function totalsHTML(){
+  var tt = cartTotals();
+  return '<div class="trow"><span>'+(lang==="fa"?"جمع غذاها":"Subtotal")+'</span><b>'+money(tt.sub)+'</b></div>'
+    + '<div class="trow"><span>'+(lang==="fa"?"هزینهٔ خدمات":"Service fee")+'</span><b>'+money(tt.fee)+'</b></div>'
+    + '<div class="trow"><span>'+(lang==="fa"?"ارسال":"Delivery")+'</span><b>'+(tt.del? money(tt.del) : (lang==="fa"?"رایگان":"Free"))+'</b></div>'
+    + '<div class="trow total"><span>'+(lang==="fa"?"مبلغ نهایی":"Total")+'</span><b>'+money(tt.total)+'</b></div>';
+}
+function openCheckout(){
+  if (!state.cart.length) return;
+  closeDrawer();
+  document.getElementById("coStepForm").hidden = false;
+  document.getElementById("coStepDone").hidden = true;
+  document.getElementById("coName").value = state.profile.name;
+  document.getElementById("coPhone").value = state.profile.phone;
+  syncCoFulfil();
+  document.getElementById("checkoutDlg").showModal();
+}
+function syncCoFulfil(){
+  document.getElementById("coPickup").setAttribute("aria-pressed", state.fulfil==="pickup" ? "true":"false");
+  document.getElementById("coDelivery").setAttribute("aria-pressed", state.fulfil==="delivery" ? "true":"false");
+  document.getElementById("coAddrWrap").hidden = state.fulfil!=="delivery";
+  document.getElementById("coTotals").innerHTML = totalsHTML();
+  var tt = cartTotals();
+  document.getElementById("coSubmit").textContent = (lang==="fa"?"ثبت سفارش · ":"Place order · ")+money(tt.total);
+}
+function placeOrder(){
+  var tt = cartTotals();
+  var firstDish = dishById(state.cart[0].dishId);
+  var num = state.orderSeq++;
+  var code = String(1000 + (num*37) % 9000);
+  var items = state.cart.map(function(it){ var d=dishById(it.dishId); var unit=(it.size==="family"? d.family : d.price) + it.extras.reduce(function(es,eid){ var e=EXTRAS.filter(function(x){return x.id===eid;})[0]; return es+(e?e.price:0); },0); return { dishId:it.dishId, size:it.size, extras:it.extras.slice(), qty:it.qty, line:unit*it.qty }; });
+  state.cart.forEach(function(it){ var d=dishById(it.dishId); d.left = Math.max(0, d.left - it.qty); });
+  state.orders.unshift({ num:num, code:code, stage:0, items:items, total:tt.total, fulfil:state.fulfil,
+    cookName:firstDish.cook, window:document.getElementById("coWindow").value,
+    when: lang==="fa" ? "امروز" : "Today" });
+  state.cart = [];
+  renderCart(); renderGrid(); renderOrders();
+  document.getElementById("doneText").textContent = lang==="fa"
+    ? "سفارش #"+num+" برای "+firstDish.cook+" در "+firstDish.hood+" فرستاده شد. بازهٔ تحویل: "+document.getElementById("coWindow").value
+    : "Order #"+num+" is with "+firstDish.cook+" in "+firstDish.hood+". Your window: "+document.getElementById("coWindow").value+".";
+  document.getElementById("doneCode").textContent = code;
+  document.getElementById("coStepForm").hidden = true;
+  document.getElementById("coStepDone").hidden = false;
+}
+
+/* ================= DRAWER ================= */
+function openDrawer(){ document.getElementById("cartDrawer").classList.add("open"); document.getElementById("cartDrawer").setAttribute("aria-hidden","false"); }
+function closeDrawer(){ document.getElementById("cartDrawer").classList.remove("open"); document.getElementById("cartDrawer").setAttribute("aria-hidden","true"); }
+
+/* ================= LANGUAGE ================= */
+function applyLang(){
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang==="fa" ? "rtl" : "ltr";
+  document.getElementById("langToggle").textContent = lang==="fa" ? "English" : "فارسی";
+  document.querySelectorAll("[data-i18n]").forEach(function(el){ var k=el.getAttribute("data-i18n"); if (T[lang][k]) el.textContent = T[lang][k]; });
+  document.querySelectorAll("[data-i18n-ph]").forEach(function(el){ var k=el.getAttribute("data-i18n-ph"); if (T[lang][k]) el.setAttribute("placeholder", T[lang][k]); });
+  renderGrid(); renderSaved(); renderCooks(); renderCart(); renderOrders(); renderAddresses(); renderPrefs();
+}
+
+/* ================= EVENTS ================= */
+document.addEventListener("click", function(ev){
+  var el;
+  if ((el = ev.target.closest("[data-view]")) && (el.classList.contains("tab") || el.closest(".bottomnav"))){ showView(el.dataset.view); return; }
+  if ((el = ev.target.closest("[data-goto]"))){ showView(el.dataset.goto); return; }
+  if ((el = ev.target.closest("[data-fav]"))){
+    var id = el.dataset.fav;
+    state.favs[id] = !state.favs[id];
+    if (!state.favs[id]) delete state.favs[id];
+    renderGrid(); renderSaved();
+    toast(state.favs[id] ? (lang==="fa"?"به ذخیره‌ها اضافه شد":"Saved to your list") : (lang==="fa"?"از ذخیره‌ها حذف شد":"Removed from saved"));
+    return;
+  }
+  if ((el = ev.target.closest("[data-open]"))){ openDish(el.dataset.open); return; }
+  if ((el = ev.target.closest("[data-follow]"))){
+    var n = el.dataset.follow; state.following[n] = !state.following[n];
+    renderCooks();
+    toast(state.following[n] ? (lang==="fa"? n+" را دنبال می‌کنی" : "Following "+n+" — their new pots come first") : (lang==="fa"?"دنبال‌کردن لغو شد":"Unfollowed "+n));
+    return;
+  }
+  if ((el = ev.target.closest("[data-cqty]"))){
+    var parts = el.dataset.cqty.split("|"); var idx = +parts[0], delta = +parts[1];
+    state.cart[idx].qty += delta;
+    if (state.cart[idx].qty<=0) state.cart.splice(idx,1);
+    renderCart(); return;
+  }
+  if ((el = ev.target.closest("[data-fulfil]"))){ state.fulfil = el.dataset.fulfil; renderCart(); return; }
+  if ((el = ev.target.closest("[data-checkout]"))){ openCheckout(); return; }
+  if ((el = ev.target.closest("[data-reorder]"))){
+    var o = state.orders[+el.dataset.reorder];
+    o.items.forEach(function(it){ addToCart(it.dishId, it.size, it.extras, it.qty); });
+    toast(lang==="fa" ? "سفارش قبلی به سبد اضافه شد" : "Added your previous order to the cart");
+    showView("discover"); openDrawer(); return;
+  }
+  if ((el = ev.target.closest("[data-cancel]"))){
+    var oi = +el.dataset.cancel;
+    state.orders[oi].items.forEach(function(it){ var d=dishById(it.dishId); d.left += it.qty; });
+    state.orders.splice(oi,1);
+    renderOrders(); renderGrid();
+    toast(lang==="fa" ? "سفارش لغو شد — مبلغ کامل برمی‌گردد" : "Order cancelled — full refund on its way");
+    return;
+  }
+  if ((el = ev.target.closest("[data-defaddr]"))){
+    state.addresses.forEach(function(a){ a.def=false; }); state.addresses[+el.dataset.defaddr].def=true; renderAddresses(); return;
+  }
+  if ((el = ev.target.closest("[data-deladdr]"))){ state.addresses.splice(+el.dataset.deladdr,1); renderAddresses(); return; }
+  if ((el = ev.target.closest("[data-loc]"))){
+    state.homeHood = el.dataset.loc;
+    document.getElementById("locLabel").textContent = state.homeHood === "Richmond Hill" ? "Richmond Hill · Yonge & Elgin Mills" : state.homeHood;
+    document.getElementById("locDlg").close();
+    state.hood = ""; document.getElementById("hoodFilter").value = "";
+    toast(lang==="fa" ? "محله: "+state.homeHood : "Showing Sofreh near "+state.homeHood);
+    return;
+  }
+});
+document.querySelectorAll(".fchip").forEach(function(chip){
+  chip.addEventListener("click", function(){
+    document.querySelectorAll(".fchip").forEach(function(c){ c.setAttribute("aria-pressed","false"); });
+    chip.setAttribute("aria-pressed","true");
+    state.cat = chip.dataset.cat; renderGrid();
+  });
+});
+document.getElementById("hoodFilter").addEventListener("change", function(e){ state.hood = e.target.value; renderGrid(); });
+document.getElementById("sortSel").addEventListener("change", function(e){ state.sort = e.target.value; renderGrid(); });
+document.getElementById("searchInput").addEventListener("input", function(e){
+  state.query = e.target.value;
+  if (state.view!=="discover") showView("discover");
+  renderGrid();
+});
+document.getElementById("clearFilters").addEventListener("click", function(){
+  state.query=""; state.cat="all"; state.hood="";
+  document.getElementById("searchInput").value=""; document.getElementById("hoodFilter").value="";
+  document.querySelectorAll(".fchip").forEach(function(c){ c.setAttribute("aria-pressed", c.dataset.cat==="all" ? "true":"false"); });
+  renderGrid();
+});
+document.getElementById("favBtn").addEventListener("click", function(){ showView("saved"); });
+document.getElementById("avatarBtn").addEventListener("click", function(){ showView("account"); });
+document.getElementById("brandHome").addEventListener("click", function(e){ e.preventDefault(); showView("discover"); });
+document.getElementById("cartBtnTop").addEventListener("click", openDrawer);
+document.getElementById("mobileCartBtn").addEventListener("click", openDrawer);
+document.getElementById("drawerClose").addEventListener("click", closeDrawer);
+document.getElementById("drawerScrim").addEventListener("click", closeDrawer);
+document.getElementById("langToggle").addEventListener("click", function(){ lang = lang==="en" ? "fa" : "en"; applyLang(); });
+
+/* dish dialog events */
+document.getElementById("dlgClose").addEventListener("click", function(){ document.getElementById("dishDlg").close(); });
+document.getElementById("qMinus").addEventListener("click", function(){ if (dlgQty>1){ dlgQty--; updateDlg(); } });
+document.getElementById("qPlus").addEventListener("click", function(){ if (dlgQty<dlgDish.left){ dlgQty++; updateDlg(); } });
+document.getElementById("dishForm").addEventListener("change", updateDlg);
+document.getElementById("dishForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  var extras=[]; document.querySelectorAll("[data-extra]").forEach(function(cb){ if (cb.checked) extras.push(cb.dataset.extra); });
+  var size = document.querySelector('input[name="dsize"]:checked').value;
+  addToCart(dlgDish.id, size, extras, dlgQty);
+  document.getElementById("dishDlg").close();
+  toast(lang==="fa" ? dlgDish.name+" به سفارش اضافه شد" : dlgDish.name+" added to your order");
+  if (window.innerWidth>1020){ /* desktop: cart panel is visible */ } else { openDrawer(); }
+});
+
+/* checkout events */
+document.getElementById("coClose").addEventListener("click", function(){ document.getElementById("checkoutDlg").close(); });
+document.getElementById("coPickup").addEventListener("click", function(){ state.fulfil="pickup"; syncCoFulfil(); renderCart(); });
+document.getElementById("coDelivery").addEventListener("click", function(){ state.fulfil="delivery"; syncCoFulfil(); renderCart(); });
+document.getElementById("coCard").addEventListener("input", function(e){
+  var v = e.target.value.replace(/\D/g,"").slice(0,16);
+  e.target.value = v.replace(/(.{4})/g,"$1 ").trim();
+});
+document.getElementById("coExp").addEventListener("input", function(e){
+  var v = e.target.value.replace(/\D/g,"").slice(0,4);
+  e.target.value = v.length>2 ? v.slice(0,2)+" / "+v.slice(2) : v;
+});
+document.getElementById("coCvc").addEventListener("input", function(e){ e.target.value = e.target.value.replace(/\D/g,"").slice(0,4); });
+document.getElementById("checkoutForm").addEventListener("submit", function(e){ e.preventDefault(); placeOrder(); });
+document.getElementById("doneTrack").addEventListener("click", function(){ document.getElementById("checkoutDlg").close(); showView("orders"); });
+
+/* location dialog */
+document.getElementById("locBtn").addEventListener("click", function(){
+  document.getElementById("locList").innerHTML = HOODS.map(function(h){
+    return '<button class="btn '+(h===state.homeHood?"":"ghost")+'" type="button" data-loc="'+h+'" style="justify-content:space-between">'+h+(h===state.homeHood?" ✓":"")+'</button>';
+  }).join("");
+  document.getElementById("locDlg").showModal();
+});
+document.getElementById("locClose").addEventListener("click", function(){ document.getElementById("locDlg").close(); });
+
+/* account forms */
+document.getElementById("profileForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  state.profile.name = document.getElementById("pfName").value;
+  state.profile.phone = document.getElementById("pfPhone").value;
+  document.getElementById("avatarBtn").textContent = (state.profile.name.trim().charAt(0) || "M").toUpperCase();
+  toast(lang==="fa" ? "مشخصات ذخیره شد" : "Profile saved");
+});
+document.getElementById("addrForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  var label = document.getElementById("adLabel").value.trim(), text = document.getElementById("adText").value.trim();
+  if (!label || !text) return;
+  state.addresses.push({ label:label, text:text, def:false });
+  document.getElementById("adLabel").value=""; document.getElementById("adText").value="";
+  renderAddresses(); toast(lang==="fa" ? "نشانی اضافه شد" : "Address added");
+});
+document.addEventListener("change", function(e){
+  if (e.target.matches("[data-pref]")){
+    var i = +e.target.getAttribute("data-pref");
+    state.prefs[i].on = e.target.checked;
+    if (i===2) renderGrid();
+    toast(lang==="fa" ? "سلیقهٔ غذایی به‌روز شد" : "Preference updated");
+  }
+});
+
+/* ================= INIT ================= */
+renderGrid(); renderSaved(); renderCooks(); renderCart(); renderOrders(); renderAddresses(); renderPrefs();
+</script>
+</body>
+</html>

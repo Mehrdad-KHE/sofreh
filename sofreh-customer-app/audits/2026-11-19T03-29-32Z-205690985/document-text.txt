@@ -1,0 +1,328 @@
+Sofreh
+سفره
+[button:
+Deliver to
+Richmond Hill
+]
+[input search: Search dishes and chefs]
+[button: Home] [button: Orders] [button: Favourites] [button: Profile]
+[button:
+[hidden] 0
+] [button: M]
+[hidden] [input search: Search dishes and chefs]
+[image: A shared Persian sofreh spread with kebabs, saffron rice, stews and fresh herbs on a wooden table]
+# Real Persian home cooking, from kitchens near you
+Order from vetted home chefs across the GTA — slow-cooked stews, saffron rice with proper tahdig, and kebabs off the grill, delivered to your door.
+Browse today's menu [button: Track an order]
+6 home chefs near you
+★ 4.8 average rating
+Delivery in 35–55 min
+[button: All
+همه
+] [button: Stews · Khoresh
+خورش
+] [button: Rice & Tahdig
+پلو
+] [button: Kebabs
+کباب
+] [button: Soups · Ash
+آش
+] [button: Sides & Salads
+سالاد
+] [button: Desserts
+دسر
+]
+## Today's sofreh
+Cooked today in small batches — when it's gone, it's gone.
+[select: Sort dishes = Most popular* | Price: low to high | Price: high to low | Fastest delivery | Highest rated]
+[image: Two skewers of koobideh kebab over saffron rice with grilled tomato]
+Off the charcoal
+[button:
+]
+### Kabab Koobideh
+کباب کوبیده
+$22.00
+[hidden] FN
+by Farhad N. · Vaughan
+★ 4.9 (276)
+35 min
+gluten free
+Gently spiced
+[button: Add to basket] [button: Details]
+[image: Golden saffron tahdig — a round of crispy rice with a wedge cut out showing fluffy rice inside] [button:
+]
+### Saffron Tahdig
+ته‌دیگ زعفرانی
+$9.50
+[hidden] RT
+by Reza T. · Thornhill
+★ 4.9 (231)
+25 min
+vegetarian
+[button: Add to basket] [button: Details]
+[image: A steaming bowl of ghormeh sabzi herb stew with beef and kidney beans beside saffron rice]
+Most loved
+[button:
+]
+### Ghormeh Sabzi
+قورمه‌سبزی
+$18.50
+[hidden] MK
+by Mahin K. · Richmond Hill
+★ 4.9 (212)
+40 min
+gluten free
+Gently spiced
+[button: Add to basket] [button: Details]
+[image: Joojeh kabab — golden saffron chicken kebab skewer with rice and grilled tomato] [button:
+]
+### Joojeh Kabab
+جوجه‌کباب
+$20.50
+[hidden] FN
+by Farhad N. · Vaughan
+★ 4.8 (203)
+35 min
+gluten free
+[button: Add to basket] [button: Details]
+[image: Zereshk polo — saffron rice with red barberries and a roasted chicken leg]
+Most loved
+[button:
+]
+### Zereshk Polo ba Morgh
+زرشک‌پلو با مرغ
+$19.25
+[hidden] SA
+by Shirin A. · Markham
+★ 4.9 (198)
+40 min
+gluten free
+[button: Add to basket] [button: Details]
+[image: Fesenjan chicken stew in dark pomegranate walnut sauce topped with pomegranate seeds]
+Chef's signature
+[button:
+]
+### Fesenjan
+فسنجان
+$21.00
+[hidden] PS
+by Parvin S. · North York
+★ 4.8 (164)
+45 min
+[button: Add to basket] [button: Details]
+[image: A bowl of ash reshteh noodle and herb soup topped with kashk and crispy fried onions] [button:
+]
+### Ash Reshteh
+آش رشته
+$11.00
+[hidden] LM
+by Leila M. · Downtown Toronto
+★ 4.8 (156)
+30 min
+vegetarian
+[button: Add to basket] [button: Details]
+[image: Gheimeh stew with yellow split peas and beef in a copper bowl, topped with crispy potato sticks] [button:
+]
+### Gheimeh
+قیمه
+$16.75
+[hidden] MK
+by Mahin K. · Richmond Hill
+★ 4.8 (143)
+35 min
+gluten free
+Gently spiced
+[button: Add to basket] [button: Details]
+[image: Sholeh zard saffron rice pudding decorated with cinnamon patterns and slivered almonds] [button:
+]
+### Sholeh Zard
+شله‌زرد
+$8.00
+[hidden] PS
+by Parvin S. · North York
+★ 4.9 (134)
+15 min
+vegan
+gluten free
+[button: Add to basket] [button: Details]
+[image: Salad Shirazi — finely diced cucumber, tomato and onion salad with fresh mint] [button:
+]
+### Salad Shirazi
+سالاد شیرازی
+$7.50
+[hidden] LM
+by Leila M. · Downtown Toronto
+★ 4.7 (118)
+15 min
+vegan
+gluten free
+[button: Add to basket] [button: Details]
+[image: Faloodeh Shirazi — frozen rice noodles in rosewater syrup with pistachio and rose petals]
+Summer favourite
+[button:
+]
+### Faloodeh Shirazi
+فالوده شیرازی
+$8.50
+[hidden] SA
+by Shirin A. · Markham
+★ 4.8 (97)
+15 min
+vegan
+gluten free
+[button: Add to basket] [button: Details]
+[image: A full Persian family platter with kebabs, saffron rice, stews, bread and fresh herbs]
+Serves 4
+[button:
+]
+### Sofreh Family Platter
+سفرهٔ خانوادگی
+$54.00
+[hidden] RT
+by Reza T. · Thornhill
+★ 5.0 (87)
+55 min
+Gently spiced
+[button: Add to basket] [button: Details]
+[hidden] ### Nothing on the sofreh matches that
+[hidden] Try a different search, or clear the category filter to see everything cooking today.
+[hidden] [button: Clear search & filters]
+## Meet the chefs
+Neighbours cooking the food they grew up with. Tap a chef to see only their dishes.
+[button:
+[hidden] MK
+### Mahin K. مهین
+Slow-cooked stews & khoresh
+Richmond Hill · 2 dishes today
+★ 4.9 (412)
+] [button:
+[hidden] PS
+### Parvin S. پروین
+Fesenjan & saffron desserts
+North York · 2 dishes today
+★ 4.8 (298)
+] [button:
+[hidden] RT
+### Reza T. رضا
+Tahdig & family platters
+Thornhill · 2 dishes today
+★ 4.9 (356)
+] [button:
+[hidden] SA
+### Shirin A. شیرین
+Rice dishes & zereshk polo
+Markham · 2 dishes today
+★ 4.8 (264)
+] [button:
+[hidden] FN
+### Farhad N. فرهاد
+Charcoal kebabs
+Vaughan · 2 dishes today
+★ 4.9 (481)
+] [button:
+[hidden] LM
+### Leila M. لیلا
+Ash, soups & fresh salads
+Downtown Toronto · 2 dishes today
+★ 4.7 (189)
+]
+## How Sofreh works
+1
+### Pick a home chef
+Every chef is ID-verified and their kitchen is food-safety certified before the first order.
+2
+### Order by 4 pm
+Dishes are cooked the same day in small batches. Choose a delivery window that suits your evening.
+3
+### Dinner arrives hot
+Track your order from the chef's stove to your door, and rate the meal to help great chefs grow.
+Sofreh — home-cooked Persian food in the Greater Toronto Area.
+Prices in CAD. Delivery $3.95, free over $45.
+[hidden] ## Your orders
+[hidden] Live tracking for today's order, and your recent meals below.
+[hidden] ### Order SF-1042 · Mahin K.
+[hidden] Last Friday · Nov 13
+[hidden] Delivered
+[hidden] ✓
+[hidden] Received
+[hidden] ✓
+[hidden] Chef confirmed
+[hidden] ✓
+[hidden] Cooking
+[hidden] ✓
+[hidden] On the way
+[hidden] 5
+[hidden] Delivered
+[hidden] 2 × Ghormeh Sabzi
+[hidden] $37.00
+[hidden] 1 × Salad Shirazi
+[hidden] $7.50
+[hidden] 1 × Warm sangak (extra)
+[hidden] $2.00
+[hidden] $47.20
+[hidden] [button: Get help] [button: Order again]
+[hidden] ### Order SF-1027 · Farhad N.
+[hidden] Nov 8
+[hidden] Delivered
+[hidden] ✓
+[hidden] Received
+[hidden] ✓
+[hidden] Chef confirmed
+[hidden] ✓
+[hidden] Cooking
+[hidden] ✓
+[hidden] On the way
+[hidden] 5
+[hidden] Delivered
+[hidden] 1 × Joojeh Kabab
+[hidden] $20.50
+[hidden] 1 × Ash Reshteh
+[hidden] $11.00
+[hidden] $31.50
+[hidden] [button: Get help] [button: Order again]
+[hidden] ## Favourites
+[hidden] The dishes you keep coming back to.
+[hidden] ### No favourites yet
+[hidden] Tap the heart on any dish and it will wait for you here.
+[hidden] [button: Browse the menu]
+[hidden] ## Profile
+[hidden] M
+[hidden] ## Mehrdad K.
+[hidden] mehrdadkh@yahoo.com · +1 647-886-3734
+[hidden] Sofreh member since 2026 14 orders
+[hidden] ### Delivery addresses
+[hidden] Home
+[hidden] Richmond Hill, ON — default
+[hidden] Office
+[hidden] North York, ON
+[hidden] Add an address
+[hidden] [button: Add]
+[hidden] ### Payment
+[hidden] Visa
+[hidden] •••• 4242 · default
+[hidden] Apple Pay
+[hidden] Enabled on this device
+[hidden] ### Preferences
+[hidden] Order updates by text
+[hidden] [input checkbox: = on]
+[hidden] Weekly menu email
+[hidden] [input checkbox: = on]
+[hidden] Chef specials & offers
+[hidden] [input checkbox: = on]
+[hidden] Default spice level
+[hidden] [select: Default spice level = Medium* | Mild | Hot]
+[hidden] ### Support
+[hidden] Help with an order
+[hidden] [button: Contact support]
+[hidden] Become a Sofreh chef
+[hidden] [button: Learn more]
+[button: 0 items
+[hidden] Tap to review your basket
+[hidden] $0.00 ]
+[hidden] [button:
+[hidden] Home ] [button:
+[hidden] Orders ] [button:
+[hidden] Favourites ] [button:
+[hidden] Profile ]
+[hidden] ## Your basket
+[hidden] [button: ✕]

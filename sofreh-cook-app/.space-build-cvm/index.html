@@ -1,0 +1,2555 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>Sofreh — Cook App</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg:#FAF5EE; --surface:#FFFFFF; --surface2:#F3EDE2; --ink:#211A13; --ink2:#5C5142; --ink3:#8A7D6A;
+  --line:#E7DCCB; --saffron:#B96A00; --saffron-soft:#F7E8CF; --pom:#9E2B25; --pom-soft:#F9E3E0;
+  --herb:#3E6B34; --herb-soft:#E4EEDF; --gold:#D9A441;
+  --shadow:0 1px 2px rgba(60,40,10,.06),0 8px 24px -12px rgba(60,40,10,.18);
+  --r-card:14px; --r-btn:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#16120E; --surface:#211B15; --surface2:#2A231B;
+    --ink:#F2EADF; --ink2:#C9BBA6; --ink3:#9A8B74; --line:#3A3126;
+    --saffron:#E39A2E; --saffron-soft:#3A2C14; --pom:#E0786E; --pom-soft:#3D211E;
+    --herb:#8FC07E; --herb-soft:#24331F; --gold:#D9A441;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -12px rgba(0,0,0,.6);
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Manrope",system-ui,sans-serif;font-size:15px;line-height:1.5}
+h1,h2,h3,.serif{font-family:"Lora",Georgia,serif}
+button,[role="button"],select,input,textarea{font:inherit;color:inherit}
+button,[role="button"],select,summary,input:not([type="checkbox"]){min-height:2.25rem}
+img{display:block;max-width:100%}
+.fa{font-family:"Lora",serif;font-style:normal}
+
+/* ---------- App shell ---------- */
+.shell{display:flex;min-height:100dvh}
+.sidebar{width:248px;flex:0 0 248px;background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;position:sticky;top:0;height:100dvh;padding:20px 14px}
+.brand{display:flex;align-items:center;gap:10px;padding:2px 8px 18px}
+.brand-mark{width:38px;height:38px;border-radius:11px;background:var(--pom);color:#FFF7EA;display:grid;place-items:center;font-family:"Lora",serif;font-size:20px;font-weight:700}
+.brand b{font-family:"Lora",serif;font-size:21px;letter-spacing:.2px;display:block;line-height:1.1}
+.brand span{font-size:11.5px;color:var(--ink3);font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.nav{display:flex;flex-direction:column;gap:4px;margin-top:6px}
+.nav button{display:flex;align-items:center;gap:11px;width:100%;text-align:left;background:none;border:0;border-radius:var(--r-btn);padding:10px 12px;font-weight:600;color:var(--ink2);cursor:pointer;min-height:44px}
+.nav button svg{width:20px;height:20px;flex:0 0 20px}
+.nav button:hover{background:var(--surface2);color:var(--ink)}
+.nav button.active{background:var(--saffron-soft);color:var(--ink)}
+.nav button.active svg{color:var(--saffron)}
+.nav .badge{margin-left:auto;background:var(--pom);color:#fff;font-size:11px;font-weight:800;min-width:20px;height:20px;border-radius:999px;display:grid;place-items:center;padding:0 6px}
+.side-foot{margin-top:auto;border-top:1px solid var(--line);padding-top:14px}
+.kitchen-mini{display:flex;gap:10px;align-items:center;padding:4px 8px}
+.avatar{width:40px;height:40px;border-radius:50%;background:var(--herb);color:#fff;display:grid;place-items:center;font-weight:800;font-size:15px;flex:0 0 40px}
+.kitchen-mini b{display:block;font-size:14px;line-height:1.25}
+.kitchen-mini span{font-size:12px;color:var(--ink3)}
+.main{flex:1;min-width:0}
+.topbar{display:none}
+.content{max-width:1060px;margin:0 auto;padding:28px 28px 96px}
+.view{display:none}
+.view.active{display:block}
+
+/* ---------- Shared ---------- */
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--saffron)}
+.page-head{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;justify-content:space-between;margin-bottom:20px}
+.page-head h1{font-size:30px;margin:2px 0 4px;line-height:1.15}
+.page-head p{margin:0;color:var(--ink2);max-width:52ch}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-card);box-shadow:var(--shadow)}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:var(--r-btn);padding:8px 16px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;justify-content:center}
+.btn:hover{border-color:var(--ink3)}
+.btn.primary{background:var(--pom);border-color:var(--pom);color:#FFF7EA}
+.btn.primary:hover{background:#87231E}
+.btn.herb{background:var(--herb);border-color:var(--herb);color:#fff}
+.btn.ghost{border-color:transparent;background:transparent}
+.btn.small{padding:5px 12px;font-size:13.5px;min-height:36px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 14px;font-weight:700;font-size:13.5px;cursor:pointer;min-height:38px}
+.chip.active{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:800;letter-spacing:.03em;padding:3px 9px;border-radius:999px}
+.tag.new{background:var(--pom-soft);color:var(--pom)}
+.tag.cooking{background:var(--saffron-soft);color:var(--saffron)}
+.tag.ready{background:var(--herb-soft);color:var(--herb)}
+.tag.done{background:var(--surface2);color:var(--ink2)}
+.tag.off{background:var(--surface2);color:var(--ink3)}
+.dot{width:8px;height:8px;border-radius:50%;background:currentColor;display:inline-block}
+
+/* online switch */
+.switch{display:inline-flex;align-items:center;gap:10px;cursor:pointer;user-select:none}
+.switch input{position:absolute;opacity:0;width:0;height:0}
+.track{width:52px;height:30px;border-radius:999px;background:var(--line);position:relative;transition:background .2s;flex:0 0 52px}
+.track::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:left .2s}
+.switch input:checked + .track{background:var(--herb)}
+.switch input:checked + .track::after{left:25px}
+.switch input:focus-visible + .track{outline:2px solid var(--saffron);outline-offset:2px}
+
+/* ---------- Today ---------- */
+.status-banner{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;padding:16px 20px;margin-bottom:18px}
+.status-banner .left{display:flex;gap:14px;align-items:center}
+.status-banner h2{margin:0;font-size:19px}
+.status-banner p{margin:2px 0 0;color:var(--ink2);font-size:13.5px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.stat{padding:16px 18px}
+.stat .k{font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3)}
+.stat .v{font-family:"Lora",serif;font-size:30px;font-weight:700;margin:4px 0 2px;line-height:1.1}
+.stat .s{font-size:12.5px;color:var(--ink2)}
+.stat .s b{color:var(--herb)}
+.cols{display:grid;grid-template-columns:1.65fr 1fr;gap:18px;align-items:start}
+.section-title{display:flex;align-items:center;justify-content:space-between;margin:0 0 12px}
+.section-title h2{font-size:20px;margin:0}
+.section-title a{color:var(--saffron);font-weight:700;font-size:13.5px;text-decoration:none;cursor:pointer}
+.stack{display:flex;flex-direction:column;gap:12px}
+.mini-card{padding:14px 16px;display:flex;gap:12px;align-items:flex-start}
+.mini-card h3{margin:0 0 4px;font-size:16.5px}
+.mini-card p{margin:0;color:var(--ink2);font-size:13.5px}
+.timeline{padding:18px 20px}
+.timeline ul{list-style:none;margin:10px 0 0;padding:0}
+.timeline li{display:flex;gap:12px;padding:9px 0;border-top:1px dashed var(--line);font-size:14px}
+.timeline li:first-child{border-top:0}
+.timeline .t{font-weight:800;color:var(--saffron);flex:0 0 52px;font-variant-numeric:tabular-nums}
+.alert{display:flex;gap:12px;padding:14px 16px;border-radius:var(--r-card);background:var(--saffron-soft);border:1px solid var(--line);font-size:14px}
+.alert b{color:var(--saffron)}
+
+/* ---------- Orders ---------- */
+.order{padding:0;overflow:hidden}
+.order-top{display:flex;gap:14px;padding:16px 18px 12px;align-items:flex-start}
+.order-top .meta{flex:1;min-width:0}
+.order-top h3{margin:0;font-size:17px}
+.order-top .sub{color:var(--ink2);font-size:13px;margin-top:2px}
+.order-total{font-family:"Lora",serif;font-size:19px;font-weight:700;white-space:nowrap}
+.order-items{padding:0 18px 12px;display:flex;flex-direction:column;gap:6px}
+.order-items .row{display:flex;gap:10px;font-size:14px;align-items:baseline}
+.order-items .qty{font-weight:800;color:var(--saffron);flex:0 0 30px}
+.order-items .note{color:var(--ink3);font-size:12.5px}
+.order-note{margin:0 18px 12px;background:var(--surface2);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--ink2)}
+.order-actions{display:flex;flex-wrap:wrap;gap:8px;padding:12px 18px;border-top:1px solid var(--line);background:var(--surface)}
+.order-actions .spacer{flex:1}
+.pickup{font-size:13px;color:var(--ink2);display:flex;align-items:center;gap:6px}
+.empty{padding:36px 20px;text-align:center;color:var(--ink2)}
+.empty h3{margin:0 0 6px;color:var(--ink)}
+
+/* ---------- Menu ---------- */
+.menu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.dish{overflow:hidden;display:flex;flex-direction:column}
+.dish img{width:100%;height:168px;object-fit:cover}
+.dish .body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px;flex:1}
+.dish h3{margin:0;font-size:18px;display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.dish h3 .price{font-size:17px;color:var(--pom);white-space:nowrap}
+.dish .fa-name{color:var(--ink3);font-size:13px;margin-top:-6px}
+.dish p{margin:0;color:var(--ink2);font-size:13.5px}
+.dish .rowline{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;padding-top:6px}
+.stepper{display:inline-flex;align-items:center;gap:2px;border:1px solid var(--line);border-radius:999px;padding:2px}
+.stepper button{width:34px;height:34px;min-height:34px;border:0;background:var(--surface2);border-radius:50%;font-size:17px;font-weight:800;cursor:pointer;display:grid;place-items:center}
+.stepper .n{min-width:58px;text-align:center;font-weight:800;font-size:13.5px}
+.dish.soldout img{filter:grayscale(.7);opacity:.75}
+.form-card{padding:20px;margin-top:18px}
+.form-card h2{margin:0 0 4px;font-size:20px}
+.form-card p{margin:0 0 14px;color:var(--ink2);font-size:13.5px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{display:flex;flex-direction:column;gap:5px}
+.field.full{grid-column:1/-1}
+.field label{font-size:12.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--ink2)}
+.field input,.field select,.field textarea{border:1px solid var(--line);background:var(--surface);border-radius:var(--r-btn);padding:9px 12px;min-height:42px}
+.field textarea{min-height:74px;resize:vertical}
+
+/* ---------- Earnings ---------- */
+.earn-head{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:14px;margin-bottom:18px}
+.earn-big{padding:20px}
+.earn-big .k{font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3)}
+.earn-big .v{font-family:"Lora",serif;font-size:36px;font-weight:700;margin:6px 0 2px}
+.earn-big .s{font-size:13px;color:var(--ink2)}
+.chart-card{padding:20px;margin-bottom:18px}
+.chart-card .bar-wrap{display:flex;align-items:flex-end;gap:10px;height:170px;margin-top:18px;border-bottom:2px solid var(--line);padding:0 4px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end}
+.bar{width:100%;max-width:52px;background:var(--saffron);border-radius:6px 6px 0 0;min-height:4px}
+.bar.dim{background:var(--line)}
+.bar-lab{font-size:12px;color:var(--ink2);font-weight:700}
+.bar-val{font-size:12px;font-weight:800;font-variant-numeric:tabular-nums}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);padding:10px 14px;border-bottom:1px solid var(--line)}
+td{padding:11px 14px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right}
+
+/* ---------- Kitchen / profile ---------- */
+.profile-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:18px;align-items:start}
+.profile-card{padding:22px;text-align:center}
+.profile-card .avatar{width:76px;height:76px;font-size:28px;margin:0 auto 10px}
+.profile-card h2{margin:0;font-size:22px}
+.profile-card .loc{color:var(--ink2);font-size:13.5px}
+.stars{color:var(--gold);font-size:17px;letter-spacing:2px;margin:6px 0}
+.review{padding:14px 16px}
+.review p{margin:6px 0 0;color:var(--ink2);font-size:14px}
+.review .who{font-weight:800;font-size:13.5px}
+.hours-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px dashed var(--line);font-size:14px}
+.hours-row:first-of-type{border-top:0}
+.hours-row .day{flex:0 0 96px;font-weight:700}
+.hours-row input[type="time"]{border:1px solid var(--line);border-radius:8px;padding:5px 8px;background:var(--surface);min-height:36px}
+.checkline{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px dashed var(--line);font-size:14.5px;cursor:pointer;min-height:44px}
+.checkline input{width:19px;height:19px;accent-color:var(--pom)}
+
+/* bottom nav (mobile) */
+.bottomnav{display:none}
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:12px 20px;border-radius:999px;font-weight:700;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:60;box-shadow:var(--shadow);max-width:92vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media (max-width:900px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .cols,.profile-grid{grid-template-columns:1fr}
+  .earn-head{grid-template-columns:1fr}
+  .menu-grid{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  .sidebar{display:none}
+  .content{padding:16px 16px 110px}
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:40}
+  .topbar .brand{padding:0}
+  .bottomnav{display:flex;position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--line);z-index:50;padding:6px 4px calc(6px + env(safe-area-inset-bottom))}
+  .bottomnav button{flex:1;background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;font-weight:700;color:var(--ink3);padding:7px 2px;border-radius:10px;cursor:pointer;position:relative;min-height:52px}
+  .bottomnav button svg{width:21px;height:21px}
+  .bottomnav button.active{color:var(--pom)}
+  .bottomnav .badge{position:absolute;top:2px;right:calc(50% - 20px);background:var(--pom);color:#fff;font-size:10px;font-weight:800;min-width:17px;height:17px;border-radius:999px;display:grid;place-items:center;padding:0 4px}
+  .page-head h1{font-size:25px}
+  .form-grid{grid-template-columns:1fr}
+  .toast{bottom:86px}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+  <style data-hatch-cvm-bundle></style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- Sidebar (desktop) -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">س</div>
+      <div><b>Sofreh</b><span>Cook app</span></div>
+    </div>
+    <nav class="nav" id="sideNav" aria-label="Main"></nav>
+    <div class="side-foot">
+      <div class="kitchen-mini">
+        <div class="avatar">M</div>
+        <div><b>Mina's Kitchen</b><span>North York · 4.9 ★</span></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">س</div>
+        <div><b>Sofreh</b><span>Cook app</span></div>
+      </div>
+      <span class="tag ready" id="topStatus"><span class="dot"></span>Online</span>
+    </header>
+
+    <main class="content">
+
+      <!-- ============ VIEW: TODAY ============ -->
+      <section class="view active" id="view-today">
+        <div class="page-head">
+          <div>
+            <div class="eyebrow">Wednesday · Nov 18</div>
+            <h1>Salam, Mina 👋</h1>
+            <p>Here's your kitchen today — new orders, what's cooking, and what needs restocking.</p>
+          </div>
+        </div>
+
+        <div class="card status-banner">
+          <div class="left">
+            <span class="tag ready" id="statusTag" style="font-size:13px;padding:6px 12px"><span class="dot"></span><span id="statusText">You're online</span></span>
+            <div>
+              <h2 id="statusHead">Taking orders until 8:30 PM</h2>
+              <p id="statusSub">Customers within 6 km can order from your menu right now.</p>
+            </div>
+          </div>
+          <label class="switch">
+            <span style="font-weight:700;font-size:14px" id="switchLabel">Online</span>
+            <input type="checkbox" id="onlineToggle" checked />
+            <span class="track"></span>
+          </label>
+        </div>
+
+        <div class="stats">
+          <div class="card stat"><div class="k">Orders today</div><div class="v" id="statOrders">9</div><div class="s"><b>+3</b> vs yesterday</div></div>
+          <div class="card stat"><div class="k">Earned today</div><div class="v" id="statEarned">$186</div><div class="s">After Sofreh's 12% fee</div></div>
+          <div class="card stat"><div class="k">Rating</div><div class="v">4.9 ★</div><div class="s">From 212 reviews</div></div>
+          <div class="card stat"><div class="k">Portions left</div><div class="v" id="statPortions">—</div><div class="s">Across today's menu</div></div>
+        </div>
+
+        <div class="cols">
+          <div>
+            <div class="section-title"><h2>Needs your action</h2><a data-goto="orders">See all orders →</a></div>
+            <div class="stack" id="todayQueue"></div>
+            <div style="height:18px"></div>
+            <div class="alert"><div>⚠️</div><div><b>Tahchin is almost out.</b> Only <span id="alertTahchin">2</span> portions left and it's your most-ordered dish this week. Cook another tray or mark it sold out.</div></div>
+          </div>
+          <div class="card timeline">
+            <h2 style="margin:0;font-size:19px">Today's schedule</h2>
+            <ul>
+              <li><span class="t">11:30</span><span>Lunch pickup window opens</span></li>
+              <li><span class="t">13:00</span><span>Order #1042 — Sara M. pickup</span></li>
+              <li><span class="t">17:30</span><span>Dinner rush — most orders arrive</span></li>
+              <li><span class="t">18:15</span><span>Order #1048 — family tray, delivery</span></li>
+              <li><span class="t">20:30</span><span>Kitchen closes · last pickup</span></li>
+            </ul>
+            <div style="height:10px"></div>
+            <div class="section-title" style="margin-bottom:6px"><h2 style="font-size:17px">This week</h2></div>
+            <p style="margin:0;color:var(--ink2);font-size:14px">You're <b style="color:var(--herb)">18% ahead</b> of last week. Friday is your biggest day — consider adding a second batch of Ghormeh Sabzi.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ VIEW: ORDERS ============ -->
+      <section class="view" id="view-orders">
+        <div class="page-head">
+          <div>
+            <div class="eyebrow">Orders</div>
+            <h1>Order board</h1>
+            <p>Accept new orders, track what's on the stove, and hand off pickups — all in one place.</p>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px" id="orderFilters">
+          <button class="chip active" data-filter="all">All</button>
+          <button class="chip" data-filter="new">New <span id="chipNew"></span></button>
+          <button class="chip" data-filter="cooking">Cooking</button>
+          <button class="chip" data-filter="ready">Ready</button>
+          <button class="chip" data-filter="done">Completed</button>
+        </div>
+        <div class="stack" id="orderList"></div>
+      </section>
+
+      <!-- ============ VIEW: MENU ============ -->
+      <section class="view" id="view-menu">
+        <div class="page-head">
+          <div>
+            <div class="eyebrow">Menu</div>
+            <h1>Today's menu</h1>
+            <p>Set portions each morning, pause a dish when you sell out, and add new dishes anytime.</p>
+          </div>
+          <button class="btn primary" id="scrollAdd">+ Add a dish</button>
+        </div>
+        <div class="menu-grid" id="menuGrid"></div>
+
+        <div class="card form-card" id="addDishCard">
+          <h2>Add a new dish</h2>
+          <p>It appears on your public menu as soon as you save it. You can pause it anytime.</p>
+          <form id="addDishForm">
+            <div class="form-grid">
+              <div class="field"><label for="fName">Dish name (English)</label><input id="fName" required placeholder="e.g. Lubia Polo" /></div>
+              <div class="field"><label for="fFa">Name in Persian (optional)</label><input id="fFa" placeholder="لوبیا پلو" /></div>
+              <div class="field"><label for="fPrice">Price per portion (CAD)</label><input id="fPrice" type="number" min="1" step="0.5" required placeholder="18" /></div>
+              <div class="field"><label for="fPortions">Portions today</label><input id="fPortions" type="number" min="0" max="60" required placeholder="8" /></div>
+              <div class="field full"><label for="fDesc">Short description</label><textarea id="fDesc" placeholder="What makes yours special? Ingredients, spice level, what it comes with…"></textarea></div>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+              <button type="submit" class="btn primary">Save dish to menu</button>
+              <button type="reset" class="btn">Clear</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- ============ VIEW: EARNINGS ============ -->
+      <section class="view" id="view-earnings">
+        <div class="page-head">
+          <div>
+            <div class="eyebrow">Earnings</div>
+            <h1>Your earnings</h1>
+            <p>What you've made, what's on the way to your bank, and which dishes earn the most.</p>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="chip active" data-period="week">This week</button>
+            <button class="chip" data-period="month">This month</button>
+          </div>
+        </div>
+        <div class="earn-head">
+          <div class="card earn-big"><div class="k" id="earnK">Earned this week</div><div class="v" id="earnV">$742</div><div class="s" id="earnS">From 41 orders · avg $18.10 per order</div></div>
+          <div class="card earn-big"><div class="k">Next payout</div><div class="v">$518</div><div class="s">Arrives Friday, Nov 20 · TD ****4821</div></div>
+          <div class="card earn-big"><div class="k">Sofreh fee (12%)</div><div class="v" id="feeV">$101</div><div class="s">Covers payment, support &amp; delivery partners</div></div>
+        </div>
+        <div class="card chart-card">
+          <div class="section-title" style="margin:0"><h2 id="chartTitle">Daily earnings — this week</h2><span style="color:var(--ink2);font-size:13px" id="chartNote">Best day: Friday</span></div>
+          <div class="bar-wrap" id="chart"></div>
+        </div>
+        <div class="card" style="overflow:hidden">
+          <div class="section-title" style="padding:16px 18px 0"><h2>Top dishes</h2></div>
+          <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>Dish</th><th class="num">Portions sold</th><th class="num">Gross</th><th class="num">You keep</th></tr></thead>
+            <tbody id="topDishes"></tbody>
+          </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ VIEW: KITCHEN ============ -->
+      <section class="view" id="view-kitchen">
+        <div class="page-head">
+          <div>
+            <div class="eyebrow">My kitchen</div>
+            <h1>Kitchen profile</h1>
+            <p>This is what customers see on your Sofreh page — plus your hours and pickup settings.</p>
+          </div>
+        </div>
+        <div class="profile-grid">
+          <div class="stack">
+            <div class="card profile-card">
+              <div class="avatar">M</div>
+              <h2>Mina's Kitchen</h2>
+              <div class="loc">North York, Toronto · Cooking on Sofreh since March 2025</div>
+              <div class="stars" aria-label="4.9 out of 5 stars">★★★★★</div>
+              <div style="font-weight:800">4.9 · 212 reviews · 1,480 orders served</div>
+              <p style="color:var(--ink2);font-size:14px;margin:12px 0 0">Home-style Persian cooking the way my mother taught me in Shiraz — slow stews, real saffron, and tahdig with every rice dish.</p>
+              <div style="display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap">
+                <span class="tag cooking">Halal</span><span class="tag ready">Food-handler certified</span><span class="tag cooking">Vegetarian options</span>
+              </div>
+            </div>
+            <div class="card review">
+              <div class="who">Sara M. · ★★★★★ <span style="color:var(--ink3);font-weight:600">· 2 days ago</span></div>
+              <p>"The ghormeh sabzi tastes exactly like home. You can tell the herbs are fresh. Already ordered three times this month."</p>
+            </div>
+            <div class="card review">
+              <div class="who">Daniel K. · ★★★★★ <span style="color:var(--ink3);font-weight:600">· last week</span></div>
+              <p>"First time trying fesenjan — sweet, tangy, incredible with the saffron rice. Pickup was right on time."</p>
+            </div>
+          </div>
+          <div class="stack">
+            <div class="card" style="padding:20px">
+              <h2 style="margin:0 0 6px;font-size:19px">Opening hours</h2>
+              <div id="hoursList"></div>
+            </div>
+            <div class="card" style="padding:20px">
+              <h2 style="margin:0 0 4px;font-size:19px">Pickup &amp; delivery</h2>
+              <label class="checkline"><input type="checkbox" checked id="optPickup" /> Porch pickup from my address</label>
+              <label class="checkline"><input type="checkbox" checked id="optDelivery" /> Sofreh delivery partner (within 6 km)</label>
+              <label class="checkline"><input type="checkbox" id="optPreorder" /> Accept pre-orders for the next day</label>
+              <label class="checkline"><input type="checkbox" checked id="optLarge" /> Family trays &amp; party orders (48h notice)</label>
+              <div style="margin-top:14px"><button class="btn primary" id="saveKitchen">Save settings</button></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<nav class="bottomnav" id="bottomNav" aria-label="Main"></nav>
+<div class="toast" id="toast" role="status"></div>
+
+
+<script data-hatch-cvm-bundle>(() => {
+  var __defProp = Object.defineProperty;
+  var __getOwnPropNames = Object.getOwnPropertyNames;
+  var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+  var __hasOwnProp = Object.prototype.hasOwnProperty;
+  function __accessProp(key) {
+    return this[key];
+  }
+  var __toCommonJS = (from) => {
+    var entry = (__moduleCache ??= new WeakMap).get(from), desc;
+    if (entry)
+      return entry;
+    entry = __defProp({}, "__esModule", { value: true });
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (var key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(entry, key))
+          __defProp(entry, key, {
+            get: __accessProp.bind(from, key),
+            enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable
+          });
+    }
+    __moduleCache.set(from, entry);
+    return entry;
+  };
+  var __moduleCache;
+
+  // src/prelude.ts
+  var exports_prelude = {};
+
+  // src/tunnel-url.ts
+  var B64_CHUNK = 32768;
+  function computeSelfBaseDir(selfHref) {
+    if (!selfHref)
+      return "";
+    let h = selfHref;
+    const hash = h.indexOf("#");
+    if (hash >= 0)
+      h = h.slice(0, hash);
+    const q = h.indexOf("?");
+    if (q >= 0)
+      h = h.slice(0, q);
+    const slash = h.lastIndexOf("/");
+    return slash >= 0 ? h.slice(0, slash + 1) : "";
+  }
+  function isSelfOriginUrl(u, selfBaseDir, selfHref, objectUrls) {
+    if (!selfBaseDir || !u.startsWith(selfBaseDir))
+      return false;
+    if (u === selfHref)
+      return false;
+    return !objectUrls.has(u);
+  }
+  function isExternalUrl(u, selfBaseDir, selfHref, objectUrls) {
+    if (!u)
+      return false;
+    if (u.startsWith("#"))
+      return true;
+    if (isSelfOriginUrl(u, selfBaseDir, selfHref, objectUrls))
+      return false;
+    if (u.startsWith("data:") || u.startsWith("blob:"))
+      return true;
+    if (u.startsWith("about:") || u.startsWith("javascript:"))
+      return true;
+    if (u.startsWith("//"))
+      return true;
+    if (/^[a-z][a-z0-9+.-]*:/i.test(u)) {
+      return true;
+    }
+    return false;
+  }
+  function ownObjectUrl(scriptUrl, objectUrls) {
+    const href = typeof scriptUrl === "string" ? scriptUrl : scriptUrl instanceof URL ? scriptUrl.href : null;
+    return href !== null && href.startsWith("blob:") && objectUrls.has(href) ? href : null;
+  }
+  var WORKER_TUNNEL_SHIM = [
+    "self.__tunnel=self.__tunnel||{",
+    "fetch:function(){return self.fetch.apply(self,arguments)},",
+    "XHR:self.XMLHttpRequest,WebSocket:self.WebSocket,EventSource:self.EventSource,",
+    "Worker:self.Worker,import:function(s){return import(s)},",
+    "Image:function(w,h){return new Image(w,h)},",
+    "sendBeacon:function(){return false},",
+    "getStyle:function(x){if(x==null)return x;try{return x.style}catch(e){return undefined}},",
+    "setStyle:function(x,n,v){x.style[n]=v},",
+    "setUrlProp:function(x,n,v){x[n]=v;return v},",
+    "setAttr:function(x){return x.setAttribute.apply(x,[].slice.call(arguments,1))},",
+    "setAttrNS:function(x){return x.setAttributeNS.apply(x,[].slice.call(arguments,1))},",
+    "setInnerHTML:function(x,v,w){x[w||'innerHTML']=v},",
+    "setStyleText:function(x,v){x.textContent=v},",
+    "insertAdjacentHTML:function(x,p,v){return x.insertAdjacentHTML(p,v)},",
+    `_importMeta:{url:self.location.href}};
+`
+  ].join("");
+  function isWorkerScriptBlob(obj) {
+    return obj instanceof Blob && (obj.type === "" || /javascript|ecmascript/i.test(obj.type));
+  }
+  function workerScriptBlob(script) {
+    return new Blob([WORKER_TUNNEL_SHIM, script], { type: "text/javascript" });
+  }
+  function normalizeToRelPath(u, selfBaseDir) {
+    let s = u;
+    if (selfBaseDir && s.startsWith(selfBaseDir)) {
+      s = s.slice(selfBaseDir.length);
+    }
+    s = s.replace(/^\.\//, "");
+    s = s.replace(/^\/+/, "");
+    return s;
+  }
+  function blobInner(base, NativeURL) {
+    if (base == null)
+      return null;
+    const s = typeof base === "string" ? base : base instanceof NativeURL ? base.href : String(base);
+    return s.startsWith("blob:") ? s.slice("blob:".length) : null;
+  }
+  var OPAQUE_BLOB_ORIGIN = "https://hatch-cvm-opaque.invalid";
+  function isAbsoluteUrlString(s, NativeURL) {
+    try {
+      new NativeURL(s);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+  function resolveAgainstBlobBase(u, base, NativeURL) {
+    const inner = blobInner(base, NativeURL);
+    if (inner === null)
+      return null;
+    if (isAbsoluteUrlString(inner, NativeURL)) {
+      return new NativeURL("blob:" + new NativeURL(u, inner).href);
+    }
+    const slash = inner.indexOf("/");
+    const token = slash >= 0 ? inner.slice(0, slash) : inner;
+    const path = slash >= 0 ? inner.slice(slash) : "/";
+    const resolved = new NativeURL(u, OPAQUE_BLOB_ORIGIN + path);
+    return new NativeURL("blob:" + token + resolved.pathname + resolved.search + resolved.hash);
+  }
+  function resolveTunnelUrl(url, base, selfHref, NativeURL) {
+    const u = url == null ? "" : typeof url === "string" ? url : url instanceof NativeURL ? url.href : String(url);
+    const uAbsolute = /^[a-z][a-z0-9+.-]*:/i.test(u) || u.startsWith("//");
+    if (base !== undefined && base !== null && !uAbsolute) {
+      const viaBlob = resolveAgainstBlobBase(u, base, NativeURL);
+      if (viaBlob !== null)
+        return viaBlob;
+      return new NativeURL(u, base);
+    }
+    if (!uAbsolute && selfHref) {
+      const viaBlob = resolveAgainstBlobBase(u, selfHref, NativeURL);
+      if (viaBlob !== null)
+        return viaBlob;
+    }
+    return base === undefined ? new NativeURL(u) : new NativeURL(u, base);
+  }
+  function bytesToBase64(bytes) {
+    const u8 = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+    let s = "";
+    for (let i = 0;i < u8.length; i += B64_CHUNK) {
+      s += String.fromCharCode.apply(null, Array.from(u8.subarray(i, i + B64_CHUNK)));
+    }
+    return btoa(s);
+  }
+  function base64ToBytes(b64) {
+    const bin = atob(b64);
+    const out = new Uint8Array(bin.length);
+    for (let i = 0;i < bin.length; i++)
+      out[i] = bin.charCodeAt(i);
+    return out;
+  }
+  function importMetaUrl(selfHref, selfBaseDir) {
+    return selfBaseDir ? `${selfBaseDir}assets/cvm-bundle.js` : selfHref;
+  }
+
+  // src/download-links.ts
+  function installDownloadLinks(fetchAsset, isExternalUrl, revokeDelayMs) {
+    document.addEventListener("click", (event) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
+        return;
+      const anchor = event.composedPath().find((node) => node instanceof HTMLAnchorElement);
+      if (!anchor?.hasAttribute("download"))
+        return;
+      const href = anchor.getAttribute("href");
+      if (!href || isExternalUrl(href))
+        return;
+      event.preventDefault();
+      const filename = anchor.download || resourceFilename(href);
+      (async () => {
+        const response = await fetchAsset(href);
+        if (!response.ok) {
+          throw new Error(`Artifact download failed: HTTP ${response.status}`);
+        }
+        const url = URL.createObjectURL(await response.blob());
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        link.hidden = true;
+        document.body.appendChild(link);
+        try {
+          link.click();
+        } finally {
+          link.remove();
+          setTimeout(() => URL.revokeObjectURL(url), revokeDelayMs);
+        }
+      })().catch((error) => reportError(error));
+    });
+  }
+  function resourceFilename(href) {
+    const path = new URL(href, document.baseURI).pathname;
+    const name = path.slice(path.lastIndexOf("/") + 1);
+    try {
+      return decodeURIComponent(name);
+    } catch {
+      return name;
+    }
+  }
+
+  // src/fragment-links.ts
+  function installFragmentLinks() {
+    if (!location.href.startsWith("blob:null/"))
+      return;
+    const NativeURL = URL;
+    const pushState = history.pushState.bind(history);
+    const replaceState = history.replaceState.bind(history);
+    window.addEventListener("click", (event) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
+        return;
+      const anchor = event.composedPath().find((node) => node instanceof HTMLAnchorElement);
+      if (!anchor || anchor.hasAttribute("download"))
+        return;
+      const targetName = anchor.getAttribute("target") ?? document.querySelector("base[target]")?.getAttribute("target") ?? "";
+      if (targetName !== "" && targetName.toLowerCase() !== "_self")
+        return;
+      const href = anchor.getAttribute("href");
+      if (!href?.startsWith("#"))
+        return;
+      const oldURL = location.href;
+      const nextURL = new NativeURL(href, oldURL);
+      event.preventDefault();
+      const changed = nextURL.href !== oldURL;
+      if (changed) {
+        pushState(null, "", nextURL.href);
+      } else {
+        replaceState(null, "", nextURL.href);
+      }
+      window.dispatchEvent(new PopStateEvent("popstate", { state: null }));
+      const target = fragmentTarget(nextURL.hash);
+      if (target) {
+        target.scrollIntoView();
+        if (target !== document.documentElement && (target instanceof HTMLElement || target instanceof SVGElement)) {
+          const hadTabIndex = target.hasAttribute("tabindex");
+          if (!hadTabIndex)
+            target.setAttribute("tabindex", "-1");
+          target.focus({ preventScroll: true });
+          if (!hadTabIndex)
+            target.removeAttribute("tabindex");
+        }
+      }
+      if (changed) {
+        queueMicrotask(() => window.dispatchEvent(new HashChangeEvent("hashchange", {
+          oldURL,
+          newURL: nextURL.href
+        })));
+      }
+    });
+  }
+  function fragmentTarget(hash) {
+    const bytes = hash.slice(1).replace(/%([0-9a-f]{2})/gi, (_match, hex) => String.fromCharCode(parseInt(hex, 16)));
+    const fragment = new TextDecoder().decode(Uint8Array.from(bytes, (byte) => byte.charCodeAt(0)));
+    if (fragment === "")
+      return document.documentElement;
+    const idTarget = document.getElementById(fragment);
+    if (idTarget)
+      return idTarget;
+    const namedTarget = Array.from(document.getElementsByName(fragment)).find((node) => node instanceof HTMLAnchorElement);
+    return namedTarget ?? (fragment.toLowerCase() === "top" ? document.documentElement : null);
+  }
+
+  // src/prelude.ts
+  (function installTunnel() {
+    installFragmentLinks();
+    let port = null;
+    let portReadyResolve = null;
+    const portReady = new Promise((res) => {
+      portReadyResolve = res;
+    });
+    const pending = new Map;
+    const openWs = new Map;
+    function newId() {
+      return Math.random().toString(36).slice(2) + "-" + Date.now().toString(36);
+    }
+    function bytesToB64(bytes) {
+      return bytesToBase64(bytes);
+    }
+    function b64ToBytes(b64) {
+      return base64ToBytes(b64);
+    }
+    async function httpReq(method, path, body, headers) {
+      const p = port ?? await portReady;
+      const id = newId();
+      const headerArr = [];
+      if (headers) {
+        const h = new Headers(headers);
+        h.forEach((v, k) => headerArr.push([k, v]));
+      }
+      let bodyB64 = "";
+      if (body != null && body !== "") {
+        let bytes;
+        if (typeof body === "string") {
+          bytes = new TextEncoder().encode(body);
+        } else if (body instanceof ArrayBuffer) {
+          bytes = new Uint8Array(body);
+        } else if (body instanceof Uint8Array) {
+          bytes = body;
+        } else if (body instanceof Blob) {
+          bytes = new Uint8Array(await body.arrayBuffer());
+        } else if (body instanceof FormData) {
+          const boundary = "----HatchBoundary" + Math.random().toString(36).slice(2);
+          let s = "";
+          for (const [k, v] of body.entries()) {
+            s += `--${boundary}\r
+Content-Disposition: form-data; name="${k}"`;
+            if (v instanceof File) {
+              s += `; filename="${v.name}"\r
+Content-Type: ${v.type || "application/octet-stream"}\r
+\r
+`;
+              const fb = new Uint8Array(await v.arrayBuffer());
+              s += new TextDecoder("latin1").decode(fb);
+            } else {
+              s += `\r
+\r
+${v}`;
+            }
+            s += `\r
+`;
+          }
+          s += `--${boundary}--\r
+`;
+          bytes = new TextEncoder().encode(s);
+          headerArr.push([
+            "content-type",
+            `multipart/form-data; boundary=${boundary}`
+          ]);
+        } else {
+          bytes = new TextEncoder().encode(String(body));
+        }
+        bodyB64 = bytesToB64(bytes);
+      }
+      return new Promise((resolve, reject) => {
+        pending.set(id, {
+          resolve: (msg) => {
+            if (msg.error) {
+              reject(new Error(msg.error.message ?? "tunnel error"));
+              return;
+            }
+            resolve({
+              status: msg.status,
+              headers: msg.headers,
+              bytes: msg.bodyB64 ? b64ToBytes(msg.bodyB64) : new Uint8Array(0)
+            });
+          },
+          reject
+        });
+        p.postMessage({
+          type: "http.req",
+          id,
+          method,
+          path,
+          headers: headerArr,
+          bodyB64
+        });
+      });
+    }
+    async function tunnelFetch(input, init) {
+      let urlStr;
+      let method = init?.method ?? "GET";
+      let headers = init?.headers;
+      let body = init?.body;
+      if (input instanceof Request) {
+        urlStr = input.url;
+        method = init?.method ?? input.method;
+        headers = init?.headers ?? input.headers;
+        if (body == null && input.body) {
+          body = await input.arrayBuffer();
+        }
+      } else {
+        urlStr = String(input);
+      }
+      if (isExternalUrl2(urlStr)) {
+        return originalFetch(input, init);
+      }
+      const relPath = normalizeToRelPath2(urlStr);
+      const r = await httpReq(method, relPath, body ?? null, headers);
+      const respHeaders = new Headers;
+      for (const [k, v] of r.headers ?? [])
+        respHeaders.set(k, v);
+      return new Response(r.bytes, {
+        status: r.status,
+        headers: respHeaders
+      });
+    }
+
+    class TunnelWebSocket extends EventTarget {
+      readyState = 0;
+      static CONNECTING = 0;
+      static OPEN = 1;
+      static CLOSING = 2;
+      static CLOSED = 3;
+      CONNECTING = 0;
+      OPEN = 1;
+      CLOSING = 2;
+      CLOSED = 3;
+      url;
+      binaryType = "blob";
+      bufferedAmount = 0;
+      protocol = "";
+      extensions = "";
+      onopen = null;
+      onmessage = null;
+      onclose = null;
+      onerror = null;
+      _id;
+      constructor(urlIn, _protocols) {
+        super();
+        const urlStr = String(urlIn);
+        this.url = urlStr;
+        this._id = newId();
+        openWs.set(this._id, this);
+        const path = normalizeToRelPath2(urlStr);
+        (async () => {
+          const p = port ?? await portReady;
+          p.postMessage({ type: "ws.open", id: this._id, path });
+        })();
+      }
+      _handle(msg) {
+        if (msg.type === "ws.opened") {
+          this.readyState = 1;
+          const ev = new Event("open");
+          this.onopen?.(ev);
+          this.dispatchEvent(ev);
+        } else if (msg.type === "ws.message") {
+          const bytes = msg.dataB64 ? b64ToBytes(msg.dataB64) : new Uint8Array(0);
+          let data;
+          if (msg.binary) {
+            data = this.binaryType === "arraybuffer" ? bytes.buffer : new Blob([bytes]);
+          } else {
+            data = new TextDecoder().decode(bytes);
+          }
+          const ev = new MessageEvent("message", { data });
+          this.onmessage?.(ev);
+          this.dispatchEvent(ev);
+        } else if (msg.type === "ws.closed") {
+          this.readyState = 3;
+          const ev = new CloseEvent("close", {
+            code: msg.code ?? 1000,
+            reason: msg.reason ?? ""
+          });
+          this.onclose?.(ev);
+          this.dispatchEvent(ev);
+          openWs.delete(this._id);
+        } else if (msg.type === "ws.error") {
+          const ev = new Event("error");
+          this.onerror?.(ev);
+          this.dispatchEvent(ev);
+        }
+      }
+      send(data) {
+        (async () => {
+          const p = port ?? await portReady;
+          let bytes;
+          let binary = false;
+          if (typeof data === "string") {
+            bytes = new TextEncoder().encode(data);
+          } else if (data instanceof Blob) {
+            bytes = new Uint8Array(await data.arrayBuffer());
+            binary = true;
+          } else if (data instanceof ArrayBuffer) {
+            bytes = new Uint8Array(data);
+            binary = true;
+          } else if (ArrayBuffer.isView(data)) {
+            bytes = new Uint8Array(data.buffer, data.byteOffset, data.byteLength);
+            binary = true;
+          } else {
+            bytes = new TextEncoder().encode(String(data));
+          }
+          p.postMessage({
+            type: "ws.send",
+            id: this._id,
+            dataB64: bytesToB64(bytes),
+            binary
+          });
+        })();
+      }
+      close(code, reason) {
+        (async () => {
+          const p = port ?? await portReady;
+          p.postMessage({ type: "ws.close", id: this._id, code, reason });
+        })();
+      }
+      addEventListener(type, listener, options) {
+        super.addEventListener(type, listener, options);
+      }
+    }
+
+    class TunnelXHR extends EventTarget {
+      static UNSENT = 0;
+      static OPENED = 1;
+      static HEADERS_RECEIVED = 2;
+      static LOADING = 3;
+      static DONE = 4;
+      UNSENT = 0;
+      OPENED = 1;
+      HEADERS_RECEIVED = 2;
+      LOADING = 3;
+      DONE = 4;
+      readyState = 0;
+      status = 0;
+      statusText = "";
+      responseText = "";
+      response = null;
+      responseType = "";
+      responseURL = "";
+      withCredentials = false;
+      timeout = 0;
+      upload = new EventTarget;
+      onreadystatechange = null;
+      onload = null;
+      onerror = null;
+      onloadend = null;
+      onabort = null;
+      onprogress = null;
+      ontimeout = null;
+      _method = "GET";
+      _url = "";
+      _reqHeaders = [];
+      _respHeaders = [];
+      _aborted = false;
+      open(method, url) {
+        this._method = method;
+        this._url = url;
+        this.readyState = 1;
+        this.onreadystatechange?.();
+      }
+      setRequestHeader(name, value) {
+        this._reqHeaders.push([name, value]);
+      }
+      getAllResponseHeaders() {
+        return this._respHeaders.map(([k, v]) => `${k}: ${v}`).join(`\r
+`);
+      }
+      getResponseHeader(name) {
+        const lc = name.toLowerCase();
+        const hit = this._respHeaders.find(([k]) => k.toLowerCase() === lc);
+        return hit ? hit[1] : null;
+      }
+      abort() {
+        this._aborted = true;
+        this.readyState = 0;
+      }
+      send(body) {
+        if (isExternalUrl2(this._url)) {
+          const real = new originalXHR;
+          real.open(this._method, this._url);
+          for (const [k, v] of this._reqHeaders)
+            real.setRequestHeader(k, v);
+          real.onload = () => {
+            this.status = real.status;
+            this.responseText = real.responseText;
+            this.response = real.response;
+            this.readyState = 4;
+            this.onreadystatechange?.();
+            this.onload?.();
+            this.onloadend?.();
+            this.dispatchEvent(new Event("load"));
+          };
+          real.onerror = () => {
+            this.onerror?.();
+            this.dispatchEvent(new Event("error"));
+          };
+          real.send(body);
+          return;
+        }
+        const relPath = normalizeToRelPath2(this._url);
+        httpReq(this._method, relPath, body ?? null, this._reqHeaders).then((r) => {
+          if (this._aborted)
+            return;
+          this.status = r.status;
+          this._respHeaders = r.headers ?? [];
+          this.responseText = new TextDecoder().decode(r.bytes);
+          if (this.responseType === "arraybuffer") {
+            this.response = r.bytes.buffer;
+          } else if (this.responseType === "blob") {
+            this.response = new Blob([r.bytes]);
+          } else if (this.responseType === "json") {
+            try {
+              this.response = JSON.parse(this.responseText);
+            } catch {
+              this.response = null;
+            }
+          } else {
+            this.response = this.responseText;
+          }
+          this.readyState = 4;
+          this.onreadystatechange?.();
+          this.onload?.();
+          this.onloadend?.();
+          this.dispatchEvent(new Event("load"));
+        }, () => {
+          if (this._aborted)
+            return;
+          this.onerror?.();
+          this.dispatchEvent(new Event("error"));
+        });
+      }
+    }
+
+    class TunnelEventSource extends EventTarget {
+      static CONNECTING = 0;
+      static OPEN = 1;
+      static CLOSED = 2;
+      readyState = 0;
+      url;
+      withCredentials = false;
+      onopen = null;
+      onmessage = null;
+      onerror = null;
+      constructor(url) {
+        super();
+        this.url = String(url);
+        (async () => {
+          try {
+            const relPath = normalizeToRelPath2(this.url);
+            const r = await httpReq("GET", relPath, null, [
+              ["accept", "text/event-stream"]
+            ]);
+            this.readyState = 1;
+            this.onopen?.(new Event("open"));
+            const text = new TextDecoder().decode(r.bytes);
+            for (const block of text.split(/\n\n/)) {
+              const data = block.split(`
+`).filter((l) => l.startsWith("data:")).map((l) => l.slice(5).trim()).join(`
+`);
+              if (data) {
+                const ev = new MessageEvent("message", { data });
+                this.onmessage?.(ev);
+                this.dispatchEvent(ev);
+              }
+            }
+            this.readyState = 2;
+          } catch {
+            this.onerror?.(new Event("error"));
+          }
+        })();
+      }
+      close() {
+        this.readyState = 2;
+      }
+    }
+    const SELF_HREF = (() => {
+      try {
+        return globalThis.location?.href ?? "";
+      } catch {
+        return "";
+      }
+    })();
+    const SELF_BASE_DIR = computeSelfBaseDir(SELF_HREF);
+    const objectUrls = new Set;
+    const objectUrlScripts = new Map;
+    function isSelfOriginUrl2(u) {
+      return isSelfOriginUrl(u, SELF_BASE_DIR, SELF_HREF, objectUrls);
+    }
+    function isExternalUrl2(u) {
+      return isExternalUrl(u, SELF_BASE_DIR, SELF_HREF, objectUrls);
+    }
+    function normalizeToRelPath2(u) {
+      return normalizeToRelPath(u, SELF_BASE_DIR);
+    }
+    const URL_ATTRS = new Set([
+      "src",
+      "srcset",
+      "href",
+      "poster",
+      "action",
+      "formaction",
+      "data",
+      "background",
+      "cite",
+      "longdesc",
+      "usemap",
+      "manifest"
+    ]);
+    const URL_STYLE_PROPS = new Set([
+      "background",
+      "backgroundImage",
+      "background-image",
+      "borderImage",
+      "border-image",
+      "borderImageSource",
+      "border-image-source",
+      "listStyle",
+      "list-style",
+      "listStyleImage",
+      "list-style-image",
+      "cursor",
+      "mask",
+      "maskImage",
+      "mask-image",
+      "webkitMask",
+      "-webkit-mask",
+      "webkitMaskImage",
+      "-webkit-mask-image",
+      "content",
+      "src"
+    ]);
+    const __BLOB_CACHE_MAX = 256;
+    const __BLOB_REVOKE_DELAY_MS = 30000;
+    const blobCache = new Map;
+    const blobStats = {
+      created: 0,
+      revoked: 0,
+      hits: 0,
+      misses: 0,
+      inFlightRevokes: 0
+    };
+    function __evictIfOverCap() {
+      while (blobCache.size > __BLOB_CACHE_MAX) {
+        const oldestKey = blobCache.keys().next().value;
+        if (oldestKey === undefined)
+          break;
+        const ent = blobCache.get(oldestKey);
+        blobCache.delete(oldestKey);
+        blobStats.inFlightRevokes++;
+        const t = setTimeout(() => {
+          ent.url.then((u) => {
+            if (typeof u === "string" && u.startsWith("blob:")) {
+              try {
+                URL.revokeObjectURL(u);
+                blobStats.revoked++;
+              } catch {}
+            }
+          }).finally(() => {
+            blobStats.inFlightRevokes--;
+          });
+        }, __BLOB_REVOKE_DELAY_MS);
+        ent.pendingRevoke = t;
+      }
+    }
+    function resolveToBlobUrl(rel) {
+      if (isExternalUrl2(rel))
+        return Promise.resolve(rel);
+      const hashIdx = rel.indexOf("#");
+      const pathPart = hashIdx >= 0 ? rel.slice(0, hashIdx) : rel;
+      const frag = hashIdx >= 0 ? rel.slice(hashIdx) : "";
+      const key = normalizeToRelPath2(pathPart);
+      let ent = blobCache.get(key);
+      if (ent) {
+        if (ent.pendingRevoke != null) {
+          clearTimeout(ent.pendingRevoke);
+          ent.pendingRevoke = undefined;
+          blobStats.inFlightRevokes--;
+        }
+        blobCache.delete(key);
+        blobCache.set(key, ent);
+        blobStats.hits++;
+      } else {
+        blobStats.misses++;
+        const url = httpReq("GET", key, null).then((r) => {
+          const ctHeader = r.headers.find(([k]) => k.toLowerCase() === "content-type");
+          const ct = ctHeader?.[1] ?? "application/octet-stream";
+          const blob = new Blob([r.bytes], { type: ct });
+          blobStats.created++;
+          return URL.createObjectURL(blob);
+        });
+        ent = { url };
+        blobCache.set(key, ent);
+        __evictIfOverCap();
+      }
+      return frag ? ent.url.then((b) => b + frag) : ent.url;
+    }
+    const HATCH_PIXEL_PREFIX = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
+    const HATCH_FRAG = "#hatch=";
+    function isHatchPlaceholder(url) {
+      return url.indexOf(HATCH_PIXEL_PREFIX + HATCH_FRAG) === 0;
+    }
+    function unwrapHatchPlaceholder(url) {
+      if (!isHatchPlaceholder(url))
+        return null;
+      return decodeURIComponent(url.slice((HATCH_PIXEL_PREFIX + HATCH_FRAG).length));
+    }
+    async function rewriteCssTextAsync(text) {
+      const re = /url\(\s*(['"]?)([^'")]+)\1\s*\)/g;
+      const tasks = [];
+      let m;
+      while ((m = re.exec(text)) !== null) {
+        tasks.push({ match: m[0], index: m.index, url: m[2].trim() });
+      }
+      if (tasks.length === 0)
+        return text;
+      const resolved = await Promise.all(tasks.map(async (t) => {
+        if (t.url.startsWith("blob:"))
+          return t.url;
+        const unwrapped = unwrapHatchPlaceholder(t.url);
+        if (unwrapped != null) {
+          try {
+            return await resolveToBlobUrl(unwrapped);
+          } catch {
+            return t.url;
+          }
+        }
+        if (isExternalUrl2(t.url))
+          return t.url;
+        try {
+          return await resolveToBlobUrl(t.url);
+        } catch {
+          return t.url;
+        }
+      }));
+      let out = "";
+      let last = 0;
+      tasks.forEach((t, i) => {
+        out += text.slice(last, t.index);
+        out += `url("${resolved[i]}")`;
+        last = t.index + t.match.length;
+      });
+      out += text.slice(last);
+      return out;
+    }
+    function rewriteCssText(text) {
+      return rewriteCssTextAsync(text);
+    }
+    const mediaSourceLoads = new WeakMap;
+    window.addEventListener("error", (event) => {
+      const source = event.target;
+      if (!event.isTrusted || !(source instanceof HTMLSourceElement) || !(source.parentElement instanceof HTMLMediaElement) || source.hasAttribute("src"))
+        return;
+      const state = mediaSourceLoads.get(source);
+      if (state === "pending" || state === undefined && source.hasAttribute("data-hatch-src")) {
+        event.stopImmediatePropagation();
+      }
+    }, true);
+    function isElement(el) {
+      if (el instanceof Element)
+        return true;
+      const ownerWindow = el?.ownerDocument?.defaultView;
+      return ownerWindow != null && el instanceof ownerWindow.Element;
+    }
+    function setAttr(el, name, value, ...rest) {
+      if (!isElement(el)) {
+        return el.setAttribute(name, value, ...rest);
+      }
+      name = String(name);
+      if (value == null) {
+        if (name.toLowerCase() === "src" && el instanceof HTMLSourceElement) {
+          mediaSourceLoads.set(el, "settled");
+        }
+        try {
+          el.removeAttribute(name);
+        } catch {}
+        return;
+      }
+      const v = String(value);
+      const lcName = name.toLowerCase();
+      const tag = el.tagName?.toUpperCase();
+      if ((tag === "A" || tag === "BASE" || tag === "AREA") && lcName === "href") {
+        el.setAttribute(name, v);
+        return;
+      }
+      if (!URL_ATTRS.has(lcName) && lcName !== "style" && lcName !== "srcset") {
+        el.setAttribute(name, v);
+        return;
+      }
+      if (lcName === "srcset") {
+        const parts = v.split(",").map((s) => s.trim()).filter(Boolean);
+        Promise.all(parts.map(async (p) => {
+          const segs = p.split(/\s+/);
+          const url = segs[0];
+          const rest = segs.slice(1).join(" ");
+          if (isExternalUrl2(url))
+            return p;
+          const resolved = await resolveToBlobUrl(url);
+          return rest ? `${resolved} ${rest}` : resolved;
+        })).then((rebuilt) => {
+          try {
+            el.setAttribute("srcset", rebuilt.join(", "));
+          } catch {}
+        });
+        return;
+      }
+      if (URL_ATTRS.has(lcName)) {
+        const isMediaSource = tag === "SOURCE" && lcName === "src";
+        if (isExternalUrl2(v)) {
+          if (isMediaSource)
+            mediaSourceLoads.set(el, "settled");
+          el.setAttribute(name, v);
+          return;
+        }
+        if (isMediaSource)
+          mediaSourceLoads.set(el, "pending");
+        if (tag === "IMG" || tag === "VIDEO" && lcName === "poster") {
+          el.setAttribute(name, TRANSPARENT_PIXEL);
+        }
+        resolveToBlobUrl(v).then((blobUrl) => {
+          if (isMediaSource)
+            mediaSourceLoads.set(el, "settled");
+          try {
+            el.setAttribute(name, blobUrl);
+            if (isMediaSource) {
+              const media = el.parentElement;
+              if (media instanceof HTMLMediaElement && media.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
+                const nextSibling = el.nextSibling;
+                el.remove();
+                media.insertBefore(el, nextSibling);
+              }
+            }
+          } catch {}
+        }, () => {
+          if (isMediaSource) {
+            mediaSourceLoads.set(el, "settled");
+            el.dispatchEvent(new Event("error"));
+          }
+        });
+        return;
+      }
+      if (lcName === "style") {
+        setStyleAttr(el, v);
+        return;
+      }
+      el.setAttribute(name, v);
+    }
+    function setAttrNS(el, ns, name, value, ...rest) {
+      if (!isElement(el)) {
+        return el.setAttributeNS(ns, name, value, ...rest);
+      }
+      name = String(name);
+      if (value == null) {
+        try {
+          el.removeAttributeNS(ns ?? null, name);
+        } catch {}
+        return;
+      }
+      const v = String(value);
+      const lcName = name.split(":").pop().toLowerCase();
+      if (lcName === "href" && URL_ATTRS.has("href")) {
+        if (isExternalUrl2(v)) {
+          el.setAttributeNS(ns ?? null, name, v);
+          return;
+        }
+        resolveToBlobUrl(v).then((blobUrl) => {
+          try {
+            el.setAttributeNS(ns ?? null, name, blobUrl);
+          } catch {}
+        }, () => {});
+        return;
+      }
+      try {
+        el.setAttributeNS(ns ?? null, name, v);
+      } catch {}
+    }
+    function setUrlProp(el, name, value) {
+      if (isElement(el)) {
+        setAttr(el, name.toLowerCase(), value);
+      } else {
+        el[name] = value;
+      }
+      return value;
+    }
+    const TRANSPARENT_PIXEL = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
+    const HTML_TAG_ATTRS = {
+      img: ["src", "srcset", "poster"],
+      image: ["href"],
+      video: ["src", "poster"],
+      audio: ["src"],
+      source: ["src", "srcset"],
+      script: ["src"],
+      link: ["href"],
+      iframe: ["src"],
+      embed: ["src"],
+      object: ["data"],
+      track: ["src"],
+      input: ["src"],
+      form: ["action"],
+      button: ["formaction"],
+      use: ["href"]
+    };
+    function rewriteHtmlString(html) {
+      return html.replace(/<([a-zA-Z][a-zA-Z0-9-]*)\b([^>]*)>/g, (m, tag, attrs) => {
+        const lc = String(tag).toLowerCase();
+        const candidates = HTML_TAG_ATTRS[lc];
+        if (!candidates)
+          return m;
+        let out = attrs;
+        for (const a of candidates) {
+          const re = new RegExp(`\\b${a}\\s*=\\s*("([^"]*)"|'([^']*)'|([^\\s>]+))`, "i");
+          const matched = out.match(re);
+          if (!matched)
+            continue;
+          const value = matched[2] ?? matched[3] ?? matched[4] ?? "";
+          if (isExternalUrl2(value))
+            continue;
+          out = out.replace(re, `data-hatch-${a}="${value.replace(/"/g, "&quot;")}"`);
+        }
+        const styleRe = /\bstyle\s*=\s*("([^"]*)"|'([^']*)')/i;
+        const sm = out.match(styleRe);
+        if (sm) {
+          const value = sm[2] ?? sm[3] ?? "";
+          if (value.includes("url(")) {
+            out = out.replace(styleRe, `data-hatch-style="${value.replace(/"/g, "&quot;")}"`);
+          }
+        }
+        return `<${tag}${out}>`;
+      });
+    }
+    const HTML_URL_ATTRS_BY_TAG = {
+      IMG: ["src", "srcset", "poster"],
+      IMAGE: ["href"],
+      VIDEO: ["src", "poster"],
+      AUDIO: ["src"],
+      SOURCE: ["src", "srcset"],
+      SCRIPT: ["src"],
+      LINK: ["href"],
+      IFRAME: ["src"],
+      EMBED: ["src"],
+      OBJECT: ["data"],
+      TRACK: ["src"],
+      INPUT: ["src"],
+      FORM: ["action"],
+      BUTTON: ["formaction"],
+      USE: ["href", "xlink:href"]
+    };
+    function rewriteSubtreeForTunnel(root) {
+      if (!root)
+        return;
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT);
+      let n = walker.currentNode;
+      if (root.nodeType === 1)
+        processOne(root);
+      while (n = walker.nextNode()) {
+        processOne(n);
+      }
+    }
+    function processOne(el) {
+      const tag = (el.tagName ?? "").toUpperCase();
+      const attrs = HTML_URL_ATTRS_BY_TAG[tag];
+      if (attrs) {
+        for (const a of attrs) {
+          const v = el.getAttribute(a);
+          if (v == null)
+            continue;
+          if (isExternalUrl2(v))
+            continue;
+          el.setAttribute("data-hatch-" + a, v);
+          el.removeAttribute(a);
+        }
+      }
+      const style = el.getAttribute("style");
+      if (style && style.includes("url(")) {
+        el.setAttribute("data-hatch-style", style);
+        el.removeAttribute("style");
+      }
+    }
+    function parseAndCleanHtml(html) {
+      const tpl = document.createElement("template");
+      tpl.innerHTML = html;
+      rewriteSubtreeForTunnel(tpl.content);
+      return tpl.content;
+    }
+    function setInnerHTML(el, html, which = "innerHTML") {
+      const s = html == null ? "" : String(html);
+      if (which === "innerHTML" && typeof el.tagName === "string" && el.tagName.toUpperCase() === "TEMPLATE") {
+        try {
+          el.innerHTML = s;
+        } catch {}
+        return;
+      }
+      if (which === "outerHTML") {
+        const frag = parseAndCleanHtml(s);
+        const wrap = document.createElement("div");
+        wrap.appendChild(frag);
+        try {
+          el.outerHTML = wrap.innerHTML;
+        } catch {}
+        queueMicrotask(() => processDataHatchAttrs(document.body));
+        return;
+      }
+      const frag = parseAndCleanHtml(s);
+      try {
+        while (el.firstChild)
+          el.removeChild(el.firstChild);
+        el.appendChild(frag);
+      } catch {}
+      queueMicrotask(() => processDataHatchAttrs(el));
+    }
+    function insertAdjacentHTMLT(el, position, html) {
+      const s = html == null ? "" : String(html);
+      const frag = parseAndCleanHtml(s);
+      const wrap = document.createElement("template");
+      wrap.content.appendChild(frag);
+      try {
+        el.insertAdjacentHTML(position, wrap.innerHTML);
+      } catch {}
+      queueMicrotask(() => processDataHatchAttrs(document.body));
+    }
+    function processDataHatchAttrs(root) {
+      const SELECTORS = "[data-hatch-src], [data-hatch-href], [data-hatch-srcset], [data-hatch-poster], [data-hatch-action], [data-hatch-data], [data-hatch-style]";
+      root.querySelectorAll(SELECTORS).forEach((el) => {
+        const attrs = el.getAttributeNames();
+        for (const a of attrs) {
+          if (!a.startsWith("data-hatch-"))
+            continue;
+          const real = a.slice("data-hatch-".length);
+          const value = el.getAttribute(a) ?? "";
+          el.removeAttribute(a);
+          if (real === "style")
+            setStyleAttr(el, value);
+          else
+            setAttr(el, real, value);
+        }
+      });
+    }
+    const styleProxyCache = new WeakMap;
+    function getStyle(el) {
+      if (el == null)
+        return el;
+      let real;
+      try {
+        real = el.style;
+      } catch {
+        return;
+      }
+      if (real == null || typeof real !== "object" && typeof real !== "function") {
+        return real;
+      }
+      let proxy = styleProxyCache.get(real);
+      if (proxy)
+        return proxy;
+      proxy = new Proxy(real, {
+        get(target, prop, _receiver) {
+          const v = Reflect.get(target, prop, target);
+          if (typeof v === "function")
+            return v.bind(target);
+          return v;
+        },
+        set(target, prop, value) {
+          if (typeof prop === "string") {
+            setStyle(el, prop, value);
+            return true;
+          }
+          return Reflect.set(target, prop, value, target);
+        }
+      });
+      styleProxyCache.set(real, proxy);
+      return proxy;
+    }
+    function setStyle(el, propName, value) {
+      const v = value == null ? "" : String(value);
+      if (propName.startsWith("--")) {
+        rewriteCssText(v).then((rewritten) => {
+          try {
+            el.style.setProperty(propName, rewritten);
+          } catch {}
+        });
+        return;
+      }
+      if (URL_STYLE_PROPS.has(propName) && v.includes("url(")) {
+        rewriteCssText(v).then((rewritten) => {
+          try {
+            el.style[propName] = rewritten;
+          } catch {}
+        });
+        return;
+      }
+      try {
+        el.style[propName] = v;
+      } catch {}
+    }
+    function setStyleAttr(el, attrValue) {
+      if (!attrValue.includes("url(")) {
+        el.setAttribute("style", attrValue);
+        return;
+      }
+      rewriteCssText(attrValue).then((rewritten) => {
+        try {
+          el.setAttribute("style", rewritten);
+        } catch {}
+      });
+    }
+    function setStyleText(styleEl, text) {
+      if (!(styleEl instanceof HTMLStyleElement)) {
+        try {
+          styleEl.textContent = text;
+        } catch {}
+        return;
+      }
+      if (!text.includes("url(")) {
+        styleEl.textContent = text;
+        return;
+      }
+      rewriteCssText(text).then((rewritten) => {
+        try {
+          styleEl.textContent = rewritten;
+        } catch {}
+      });
+    }
+    function tunnelImage(_w, _h) {
+      const img = new originalImage;
+      const desc = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, "src");
+      if (desc?.set) {
+        const origSet = desc.set;
+        const origGet = desc.get;
+        Object.defineProperty(img, "src", {
+          configurable: true,
+          get() {
+            return origGet.call(img);
+          },
+          set(v) {
+            if (v == null)
+              return origSet.call(img, "");
+            const s = String(v);
+            if (isExternalUrl2(s))
+              return origSet.call(img, s);
+            resolveToBlobUrl(s).then((b) => origSet.call(img, b), () => origSet.call(img, s));
+          }
+        });
+      }
+      return img;
+    }
+    function tunnelSendBeacon(url, data) {
+      tunnelFetch(url, { method: "POST", body: data, keepalive: true }).catch(() => {});
+      return true;
+    }
+    function tunnelWorker(url, options) {
+      const own = ownObjectUrl(url, objectUrls);
+      if (own === null || typeof originalWorker !== "function") {
+        throw new Error("[__tunnel] new Worker() is not supported in Muse Spaces.");
+      }
+      const script = objectUrlScripts.get(own);
+      return new originalWorker(script === undefined ? own : originalCreateObjectURL(workerScriptBlob(script)), options);
+    }
+    function tunnelImport(spec) {
+      throw new Error("[__tunnel] dynamic import() of '" + String(spec) + "' is not supported in Muse Spaces.");
+    }
+    function installCssObserver() {
+      try {
+        const proto = window.CSSStyleSheet?.prototype;
+        if (proto) {
+          const origInsertRule = proto.insertRule;
+          proto.insertRule = function(rule, index) {
+            if (typeof rule === "string" && rule.includes("url(")) {
+              const idx = origInsertRule.call(this, rule, index);
+              rewriteCssText(rule).then((rewritten) => {
+                if (rewritten !== rule) {
+                  try {
+                    this.deleteRule(idx);
+                    origInsertRule.call(this, rewritten, idx);
+                  } catch {}
+                }
+              });
+              return idx;
+            }
+            return origInsertRule.call(this, rule, index);
+          };
+          const origReplace = proto.replace;
+          if (origReplace) {
+            proto.replace = function(text) {
+              if (typeof text === "string" && text.includes("url(")) {
+                return rewriteCssText(text).then((rewritten) => origReplace.call(this, rewritten));
+              }
+              return origReplace.call(this, text);
+            };
+          }
+          const origReplaceSync = proto.replaceSync;
+          if (origReplaceSync) {
+            proto.replaceSync = function(text) {
+              if (typeof text === "string" && text.includes("url(")) {
+                const ret = origReplaceSync.call(this, text);
+                rewriteCssText(text).then((rewritten) => {
+                  try {
+                    origReplaceSync.call(this, rewritten);
+                  } catch {}
+                });
+                return ret;
+              }
+              return origReplaceSync.call(this, text);
+            };
+          }
+        }
+      } catch (e) {}
+      function sweepSheet(sheet) {
+        try {
+          const rules = sheet.cssRules;
+          for (let i = 0;i < rules.length; i++) {
+            const rule = rules[i];
+            const txt = rule.cssText;
+            if (txt && (txt.includes(HATCH_FRAG) || txt.includes("url(") && !/url\(\s*["']?(blob:|https?:|data:image\/gif;base64,R0)/.test(txt))) {
+              rewriteCssText(txt).then((rewritten) => {
+                if (rewritten !== txt) {
+                  try {
+                    sheet.deleteRule(i);
+                    sheet.insertRule(rewritten, i);
+                  } catch {}
+                }
+              });
+            }
+          }
+        } catch {}
+      }
+      function sweepAll() {
+        for (const sheet of Array.from(document.styleSheets)) {
+          sweepSheet(sheet);
+        }
+      }
+      const mo = new MutationObserver((mutations) => {
+        for (const m of mutations) {
+          for (const node of Array.from(m.addedNodes)) {
+            if (node instanceof HTMLStyleElement) {
+              const txt = node.textContent ?? "";
+              if (txt.includes("url(")) {
+                rewriteCssText(txt).then((rewritten) => {
+                  if (rewritten !== txt) {
+                    try {
+                      node.textContent = rewritten;
+                    } catch {}
+                  }
+                });
+              }
+            } else if (node instanceof HTMLLinkElement && node.rel === "stylesheet") {
+              node.addEventListener("load", () => sweepSheet(node.sheet), { once: true });
+            }
+          }
+        }
+      });
+      mo.observe(document, { subtree: true, childList: true });
+      Promise.resolve().then(sweepAll);
+      setTimeout(sweepAll, 0);
+      setTimeout(sweepAll, 50);
+      setTimeout(sweepAll, 250);
+    }
+    function rewriteAuthoredHtml() {
+      const SELECTORS = "[data-hatch-src], [data-hatch-href], [data-hatch-srcset]";
+      document.querySelectorAll(SELECTORS).forEach((el) => {
+        const src = el.getAttribute("data-hatch-src");
+        const href = el.getAttribute("data-hatch-href");
+        const srcset = el.getAttribute("data-hatch-srcset");
+        if (src)
+          setAttr(el, "src", src);
+        if (href)
+          setAttr(el, "href", href);
+        if (srcset)
+          setAttr(el, "srcset", srcset);
+      });
+    }
+    let historyUrlWarned = false;
+    function warnHistoryUrlDropped(method, url) {
+      if (url === undefined || url === null)
+        return;
+      if (historyUrlWarned)
+        return;
+      historyUrlWarned = true;
+      try {
+        console.warn("[__tunnel] history." + method + "() was called with a URL; the URL was ignored. A Muse web artifact " + "renders in an opaque origin with no navigable URL of its own, so " + "the browser rejects any URL change. State kept in the URL will not " + "persist or survive a reload — keep it in component state, or in " + "the artifact's database through a server action.");
+      } catch {}
+    }
+    const originalFetch = globalThis.fetch?.bind(globalThis) ?? (() => {
+      throw new Error("no native fetch");
+    });
+    const originalXHR = globalThis.XMLHttpRequest;
+    const originalWorker = globalThis.Worker;
+    const originalCreateObjectURL = URL.createObjectURL.bind(URL);
+    const originalImage = globalThis.Image;
+    const tunnel = {
+      fetch: tunnelFetch,
+      XHR: TunnelXHR,
+      WebSocket: TunnelWebSocket,
+      EventSource: TunnelEventSource,
+      Image: tunnelImage,
+      Worker: tunnelWorker,
+      import: tunnelImport,
+      sendBeacon: tunnelSendBeacon,
+      setAttr,
+      setAttrNS,
+      setUrlProp,
+      setStyle,
+      getStyle,
+      setStyleAttr,
+      setStyleText,
+      setInnerHTML,
+      insertAdjacentHTML: insertAdjacentHTMLT,
+      rewriteCssText,
+      resolveToBlobUrl,
+      processDataHatchAttrs,
+      rewriteHtmlString,
+      _resolveUrlString: (v) => v,
+      _resolveCssValue: (v) => v,
+      _resolveCssText: (v) => v,
+      _resolveStyleProp: (v) => v,
+      _importMeta: {
+        get url() {
+          return importMetaUrl(SELF_HREF, SELF_BASE_DIR);
+        }
+      },
+      _state: {
+        get port() {
+          return port;
+        },
+        get inFlight() {
+          return pending.size;
+        },
+        get blobCacheSize() {
+          return blobCache.size;
+        },
+        get blobStats() {
+          return { ...blobStats };
+        }
+      }
+    };
+    globalThis.__tunnel = tunnel;
+    window.__tunnel = tunnel;
+    try {
+      globalThis.fetch = tunnelFetch;
+      window.fetch = tunnelFetch;
+      globalThis.XMLHttpRequest = TunnelXHR;
+      window.XMLHttpRequest = TunnelXHR;
+      globalThis.WebSocket = TunnelWebSocket;
+      window.WebSocket = TunnelWebSocket;
+      globalThis.EventSource = TunnelEventSource;
+      window.EventSource = TunnelEventSource;
+      const nav = globalThis.navigator;
+      if (nav && typeof nav.sendBeacon === "function") {
+        nav.sendBeacon = (url, data) => tunnelSendBeacon(url, data);
+      }
+      const NativeURL = globalThis.URL;
+      const TunnelURL = function(url, base) {
+        return resolveTunnelUrl(url, base, SELF_HREF, NativeURL);
+      };
+      TunnelURL.prototype = NativeURL.prototype;
+      for (const k of Object.getOwnPropertyNames(NativeURL)) {
+        if (k === "prototype" || k === "length" || k === "name")
+          continue;
+        try {
+          TunnelURL[k] = NativeURL[k];
+        } catch {}
+      }
+      globalThis.URL = TunnelURL;
+      window.URL = TunnelURL;
+    } catch {}
+    try {
+      const hist = globalThis.history;
+      if (hist && typeof hist.pushState === "function" && typeof hist.replaceState === "function") {
+        const nativePushState = hist.pushState.bind(hist);
+        const nativeReplaceState = hist.replaceState.bind(hist);
+        hist.pushState = function(state, title, url) {
+          warnHistoryUrlDropped("pushState", url);
+          return nativePushState(state, title ?? "");
+        };
+        hist.replaceState = function(state, title, url) {
+          warnHistoryUrlDropped("replaceState", url);
+          return nativeReplaceState(state, title ?? "");
+        };
+      }
+    } catch {}
+    try {
+      const nativeCreateObjectURL = URL.createObjectURL.bind(URL);
+      const nativeRevokeObjectURL = URL.revokeObjectURL.bind(URL);
+      URL.createObjectURL = function(obj) {
+        const created = nativeCreateObjectURL(obj);
+        try {
+          objectUrls.add(created);
+          if (isWorkerScriptBlob(obj))
+            objectUrlScripts.set(created, obj);
+        } catch {}
+        return created;
+      };
+      URL.revokeObjectURL = function(objectUrl) {
+        try {
+          objectUrls.delete(objectUrl);
+          objectUrlScripts.delete(objectUrl);
+        } catch {}
+        nativeRevokeObjectURL(objectUrl);
+      };
+    } catch {}
+    const announceEpoch = Math.random().toString(36).slice(2) + "-" + Date.now().toString(36);
+    let announceTimer = null;
+    function announce() {
+      try {
+        window.parent.postMessage({ type: "bundle:ready", epoch: announceEpoch }, "*");
+      } catch {}
+    }
+    function startAnnouncing() {
+      announce();
+      announceTimer = setInterval(() => {
+        if (port != null) {
+          if (announceTimer != null)
+            clearInterval(announceTimer);
+          announceTimer = null;
+          return;
+        }
+        announce();
+      }, 120);
+    }
+    function onParentMessage(ev) {
+      const data = ev.data;
+      if (!data || typeof data !== "object")
+        return;
+      if (data.type === "bundle:init-port" && ev.ports && ev.ports[0]) {
+        if (port != null)
+          return;
+        if (announceTimer != null) {
+          clearInterval(announceTimer);
+          announceTimer = null;
+        }
+        port = ev.ports[0];
+        port.onmessage = (pe) => {
+          const msg = pe.data;
+          if (!msg || typeof msg !== "object")
+            return;
+          if (msg.type === "http.res") {
+            const ent = pending.get(msg.id);
+            if (ent) {
+              pending.delete(msg.id);
+              ent.resolve(msg);
+            }
+          } else if (msg.type === "ws.opened" || msg.type === "ws.message" || msg.type === "ws.closed" || msg.type === "ws.error") {
+            openWs.get(msg.id)?._handle(msg);
+          }
+        };
+        port.start?.();
+        portReadyResolve?.(port);
+        installCssObserver();
+        rewriteAuthoredHtml();
+        try {
+          window.parent.postMessage({ type: "bundle:port-attached" }, "*");
+        } catch {}
+      }
+    }
+    window.addEventListener("message", onParentMessage);
+    installDownloadLinks(tunnelFetch, isExternalUrl2, __BLOB_REVOKE_DELAY_MS);
+    if (document.readyState === "complete" || document.readyState === "interactive") {
+      startAnnouncing();
+    } else {
+      document.addEventListener("DOMContentLoaded", startAnnouncing);
+    }
+  })();
+})();
+
+;
+var NAV = [{
+  id: 'today',
+  label: 'Today',
+  icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>'
+}, {
+  id: 'orders',
+  label: 'Orders',
+  icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>'
+}, {
+  id: 'menu',
+  label: 'Menu',
+  icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>'
+}, {
+  id: 'earnings',
+  label: 'Earnings',
+  icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>'
+}, {
+  id: 'kitchen',
+  label: 'Kitchen',
+  icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg>'
+}];
+var orders = [{
+  id: 1051,
+  name: 'Leila H.',
+  time: '12:42 PM',
+  when: 'Pickup · today 1:30 PM',
+  status: 'new',
+  total: 43.50,
+  note: 'Extra tahdig if you have it, please!',
+  items: [{
+    q: 2,
+    name: 'Ghormeh Sabzi + saffron rice',
+    note: ''
+  }, {
+    q: 1,
+    name: 'Shirazi salad',
+    note: ''
+  }]
+}, {
+  id: 1050,
+  name: 'Arman T.',
+  time: '12:31 PM',
+  when: 'Delivery · today 6:00 PM',
+  status: 'new',
+  total: 62.00,
+  note: '',
+  items: [{
+    q: 2,
+    name: 'Tahchin Morgh (chicken)',
+    note: ''
+  }, {
+    q: 1,
+    name: 'Mast-o-Khiar',
+    note: 'extra mint'
+  }]
+}, {
+  id: 1049,
+  name: 'Priya S.',
+  time: '12:05 PM',
+  when: 'Pickup · today 1:00 PM',
+  status: 'cooking',
+  total: 24.00,
+  note: 'First order — mild spice please.',
+  items: [{
+    q: 1,
+    name: 'Ash Reshteh (vegetarian)',
+    note: 'no onion topping'
+  }]
+}, {
+  id: 1048,
+  name: 'The Rahimi family',
+  time: '11:48 AM',
+  when: 'Delivery · today 6:15 PM',
+  status: 'cooking',
+  total: 118.00,
+  note: 'Family tray for 6. Two portions without walnuts (allergy).',
+  items: [{
+    q: 4,
+    name: 'Fesenjan + saffron rice',
+    note: '2 without walnuts'
+  }, {
+    q: 2,
+    name: 'Zereshk Polo ba Morgh',
+    note: ''
+  }, {
+    q: 1,
+    name: 'Family Shirazi salad',
+    note: ''
+  }]
+}, {
+  id: 1047,
+  name: 'Marcus L.',
+  time: '11:20 AM',
+  when: 'Pickup · today 12:45 PM',
+  status: 'ready',
+  total: 31.50,
+  note: '',
+  items: [{
+    q: 1,
+    name: 'Joojeh Kabab + rice',
+    note: ''
+  }, {
+    q: 1,
+    name: 'Doogh (mint yogurt drink)',
+    note: ''
+  }]
+}, {
+  id: 1046,
+  name: 'Sara M.',
+  time: '10:52 AM',
+  when: 'Picked up 11:40 AM',
+  status: 'done',
+  total: 38.00,
+  note: '',
+  items: [{
+    q: 2,
+    name: 'Gheymeh + rice',
+    note: ''
+  }]
+}, {
+  id: 1045,
+  name: 'Nima R.',
+  time: '10:15 AM',
+  when: 'Picked up 11:05 AM',
+  status: 'done',
+  total: 19.50,
+  note: '',
+  items: [{
+    q: 1,
+    name: 'Ghormeh Sabzi + saffron rice',
+    note: ''
+  }]
+}];
+var dishes = [{
+  name: 'Ghormeh Sabzi',
+  fa: 'قرمه‌سبزی',
+  price: 19.50,
+  portions: 9,
+  max: 14,
+  on: true,
+  img: 'assets/ghormeh.webp',
+  alt: 'Bowl of ghormeh sabzi herb stew with saffron rice',
+  desc: 'Slow-simmered herbs, beef, kidney beans and dried lime. Served with saffron basmati.'
+}, {
+  name: 'Tahchin Morgh',
+  fa: 'ته‌چین مرغ',
+  price: 21.00,
+  portions: 2,
+  max: 10,
+  on: true,
+  img: 'assets/tahchin.webp',
+  alt: 'Golden tahchin saffron rice cake with barberries',
+  desc: 'Crispy saffron yogurt rice layered with chicken, topped with barberries and pistachio.'
+}, {
+  name: 'Fesenjan',
+  fa: 'فسنجان',
+  price: 22.50,
+  portions: 6,
+  max: 8,
+  on: true,
+  img: 'assets/fesenjan.jpg',
+  alt: 'Fesenjan walnut and pomegranate stew',
+  desc: 'Chicken braised in walnut & pomegranate molasses — sweet, tangy, deep. With saffron rice.'
+}, {
+  name: 'Zereshk Polo ba Morgh',
+  fa: 'زرشک‌پلو با مرغ',
+  price: 20.00,
+  portions: 7,
+  max: 12,
+  on: true,
+  img: 'assets/zereshk.jpg',
+  alt: 'Zereshk polo barberry rice with chicken',
+  desc: 'Barberry rice with saffron chicken — the celebration dish, jewelled and bright.'
+}, {
+  name: 'Joojeh Kabab',
+  fa: 'جوجه‌کباب',
+  price: 23.00,
+  portions: 5,
+  max: 10,
+  on: true,
+  img: 'assets/joojeh.jpg',
+  alt: 'Joojeh kabab saffron chicken skewer with rice and grilled tomatoes',
+  desc: 'Saffron-and-yogurt marinated chicken, grilled with tomatoes. Rice and flatbread included.'
+}, {
+  name: 'Gheymeh',
+  fa: 'قیمه',
+  price: 18.00,
+  portions: 0,
+  max: 10,
+  on: true,
+  img: 'assets/gheymeh.jpg',
+  alt: 'Gheymeh split pea stew topped with crispy potato',
+  desc: 'Yellow split-pea and beef stew with dried lime, topped with crispy potato sticks.'
+}, {
+  name: 'Ash Reshteh',
+  fa: 'آش رشته',
+  price: 14.50,
+  portions: 8,
+  max: 12,
+  on: false,
+  img: 'assets/ash.jpg',
+  alt: 'Ash reshteh Persian noodle and herb soup',
+  desc: 'Hearty noodle, bean and herb soup with kashk and fried mint. Vegetarian. Back Friday.'
+}];
+var weekData = [{
+  d: 'Thu',
+  v: 96
+}, {
+  d: 'Fri',
+  v: 168
+}, {
+  d: 'Sat',
+  v: 154
+}, {
+  d: 'Sun',
+  v: 88
+}, {
+  d: 'Mon',
+  v: 64
+}, {
+  d: 'Tue',
+  v: 78
+}, {
+  d: 'Wed',
+  v: 94
+}];
+var monthData = [{
+  d: 'Wk 1',
+  v: 612
+}, {
+  d: 'Wk 2',
+  v: 688
+}, {
+  d: 'Wk 3',
+  v: 742
+}, {
+  d: 'Wk 4',
+  v: 704
+}];
+var hoursData = [['Monday', 'Closed', ''], ['Tuesday', '11:30', '20:30'], ['Wednesday', '11:30', '20:30'], ['Thursday', '11:30', '20:30'], ['Friday', '11:30', '21:00'], ['Saturday', '12:00', '21:00'], ['Sunday', '12:00', '18:00']];
+var currentView = 'today',
+  orderFilter = 'all',
+  online = true;
+function buildNav() {
+  var html = NAV.map(function (n) {
+    var badge = n.id === 'orders' ? '<span class="badge" data-navbadge style="display:none"></span>' : '';
+    return '<button data-nav="' + n.id + '" class="' + (n.id === currentView ? 'active' : '') + '">' + n.icon + '<span>' + n.label + '</span>' + badge + '</button>';
+  }).join('');
+  __tunnel.setInnerHTML(document.getElementById('sideNav'), html, "innerHTML");
+  __tunnel.setInnerHTML(document.getElementById('bottomNav'), html, "innerHTML");
+  document.querySelectorAll('[data-nav]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      goTo(b.getAttribute('data-nav'));
+    });
+  });
+}
+function goTo(id) {
+  currentView = id;
+  document.querySelectorAll('.view').forEach(function (v) {
+    v.classList.remove('active');
+  });
+  document.getElementById('view-' + id).classList.add('active');
+  document.querySelectorAll('[data-nav]').forEach(function (b) {
+    b.classList.toggle('active', b.getAttribute('data-nav') === id);
+  });
+  window.scrollTo({
+    top: 0
+  });
+}
+document.querySelectorAll('[data-goto]').forEach(function (a) {
+  a.addEventListener('click', function () {
+    goTo(a.getAttribute('data-goto'));
+  });
+});
+var toastTimer = null;
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function () {
+    t.classList.remove('show');
+  }, 2800);
+}
+function newCount() {
+  return orders.filter(function (o) {
+    return o.status === 'new';
+  }).length;
+}
+function statusTag(s) {
+  if (s === 'new') return '<span class="tag new"><span class="dot"></span>New</span>';
+  if (s === 'cooking') return '<span class="tag cooking"><span class="dot"></span>Cooking</span>';
+  if (s === 'ready') return '<span class="tag ready"><span class="dot"></span>Ready</span>';
+  return '<span class="tag done">Completed</span>';
+}
+function orderActions(o) {
+  if (o.status === 'new') return '<button class="btn primary small" data-act="accept" data-id="' + o.id + '">Accept order</button><button class="btn small" data-act="decline" data-id="' + o.id + '">Decline</button>';
+  if (o.status === 'cooking') return '<button class="btn herb small" data-act="ready" data-id="' + o.id + '">Mark ready for pickup</button>';
+  if (o.status === 'ready') return '<button class="btn small" data-act="done" data-id="' + o.id + '">Handed over ✓</button>';
+  return '<span style="font-size:13px;color:var(--ink3)">Paid · $' + o.total.toFixed(2) + ' · Sofreh fee $' + (o.total * 0.12).toFixed(2) + '</span>';
+}
+function orderCard(o, compact) {
+  var items = o.items.map(function (it) {
+    return '<div class="row"><span class="qty">' + it.q + ' ×</span><span>' + it.name + (it.note ? ' <span class="note">— ' + it.note + '</span>' : '') + '</span></div>';
+  }).join('');
+  return '<article class="card order">' + '<div class="order-top"><div class="meta"><h3>#' + o.id + ' · ' + o.name + ' ' + statusTag(o.status) + '</h3>' + '<div class="sub">Ordered ' + o.time + ' · ' + o.when + '</div></div>' + '<div class="order-total">$' + o.total.toFixed(2) + '</div></div>' + '<div class="order-items">' + items + '</div>' + (o.note ? '<div class="order-note">💬 "' + o.note + '"</div>' : '') + (compact ? '' : '<div class="order-actions"><span class="pickup">🧺 ' + o.when + '</span><span class="spacer"></span>' + orderActions(o) + '</div>') + '</article>';
+}
+function renderOrders() {
+  var list = orders.filter(function (o) {
+    return orderFilter === 'all' || o.status === orderFilter;
+  });
+  var el = document.getElementById('orderList');
+  __tunnel.setInnerHTML(el, list.length ? list.map(function (o) {
+    return orderCard(o, false);
+  }).join('') : '<div class="card empty"><h3>Nothing here right now</h3><p>No orders in this stage. New orders will appear here the moment they come in.</p></div>', "innerHTML");
+  el.querySelectorAll('[data-act]').forEach(function (b) {
+    b.addEventListener('click', onOrderAction);
+  });
+  var c = newCount();
+  document.getElementById('chipNew').textContent = c ? '(' + c + ')' : '';
+  document.querySelectorAll('[data-navbadge]').forEach(function (bd) {
+    __tunnel.setStyle(bd, "display", c ? 'grid' : 'none');
+    bd.textContent = c;
+  });
+  renderTodayQueue();
+  updateStats();
+}
+function onOrderAction(e) {
+  var btn = e.currentTarget,
+    id = +btn.getAttribute('data-id'),
+    act = btn.getAttribute('data-act');
+  var o = orders.find(function (x) {
+    return x.id === id;
+  });
+  if (!o) return;
+  if (act === 'accept') {
+    o.status = 'cooking';
+    toast('Order #' + id + ' accepted — time to cook! 🍳');
+  }
+  if (act === 'decline') {
+    orders = orders.filter(function (x) {
+      return x.id !== id;
+    });
+    toast('Order #' + id + ' declined. The customer was notified.');
+  }
+  if (act === 'ready') {
+    o.status = 'ready';
+    toast('Order #' + id + ' marked ready — ' + o.name.split(' ')[0] + ' got a notification.');
+  }
+  if (act === 'done') {
+    o.status = 'done';
+    toast('Order #' + id + ' completed. Nice work, Mina!');
+  }
+  renderOrders();
+}
+document.getElementById('orderFilters').addEventListener('click', function (e) {
+  var b = e.target.closest('[data-filter]');
+  if (!b) return;
+  orderFilter = b.getAttribute('data-filter');
+  this.querySelectorAll('.chip').forEach(function (c) {
+    c.classList.toggle('active', c === b);
+  });
+  renderOrders();
+});
+function renderTodayQueue() {
+  var q = orders.filter(function (o) {
+    return o.status === 'new' || o.status === 'cooking';
+  }).slice(0, 3);
+  var el = document.getElementById('todayQueue');
+  __tunnel.setInnerHTML(el, q.length ? q.map(function (o) {
+    return '<article class="card mini-card"><div style="flex:1;min-width:0"><h3>#' + o.id + ' · ' + o.name + ' ' + statusTag(o.status) + '</h3>' + '<p>' + o.items.map(function (i) {
+      return i.q + ' × ' + i.name;
+    }).join(' · ') + '</p>' + '<p style="margin-top:3px">' + o.when + ' · <b style="color:var(--ink)">$' + o.total.toFixed(2) + '</b></p></div>' + (o.status === 'new' ? '<button class="btn primary small" data-today-accept="' + o.id + '">Accept</button>' : '<button class="btn small" data-today-goto="1">View</button>') + '</article>';
+  }).join('') : '<div class="card empty"><h3>All caught up 🎉</h3><p>No orders waiting. Enjoy the quiet — dinner rush starts around 5:30 PM.</p></div>', "innerHTML");
+  el.querySelectorAll('[data-today-accept]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var o = orders.find(function (x) {
+        return x.id === +b.getAttribute('data-today-accept');
+      });
+      if (o) {
+        o.status = 'cooking';
+        toast('Order #' + o.id + ' accepted — time to cook! 🍳');
+        renderOrders();
+      }
+    });
+  });
+  el.querySelectorAll('[data-today-goto]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      goTo('orders');
+    });
+  });
+}
+function updateStats() {
+  var active = orders.filter(function (o) {
+    return o.status !== 'done';
+  }).length;
+  var done = orders.filter(function (o) {
+    return o.status === 'done';
+  });
+  var earned = 186 + done.reduce(function (s, o) {
+    return s;
+  }, 0);
+  document.getElementById('statOrders').textContent = orders.length + 4;
+  var left = dishes.filter(function (d) {
+    return d.on;
+  }).reduce(function (s, d) {
+    return s + d.portions;
+  }, 0);
+  document.getElementById('statPortions').textContent = left;
+  var tah = dishes.find(function (d) {
+    return d.name.indexOf('Tahchin') === 0;
+  });
+  if (tah) document.getElementById('alertTahchin').textContent = tah.portions;
+}
+document.getElementById('onlineToggle').addEventListener('change', function () {
+  online = this.checked;
+  document.getElementById('switchLabel').textContent = online ? 'Online' : 'Offline';
+  document.getElementById('statusText').textContent = online ? "You're online" : "You're offline";
+  document.getElementById('statusHead').textContent = online ? 'Taking orders until 8:30 PM' : 'Your kitchen is hidden from customers';
+  document.getElementById('statusSub').textContent = online ? 'Customers within 6 km can order from your menu right now.' : 'Orders already accepted still need to be finished. Go online again whenever you\'re ready.';
+  var tag = document.getElementById('statusTag');
+  tag.className = 'tag ' + (online ? 'ready' : 'off');
+  __tunnel.setStyle(tag, "fontSize", '13px');
+  __tunnel.setStyle(tag, "padding", '6px 12px');
+  var top = document.getElementById('topStatus');
+  top.className = 'tag ' + (online ? 'ready' : 'off');
+  __tunnel.setInnerHTML(top, '<span class="dot"></span>' + (online ? 'Online' : 'Offline'), "innerHTML");
+  toast(online ? 'You\'re online — customers can order now.' : 'You\'re offline. Take your time.');
+});
+function renderMenu() {
+  var grid = document.getElementById('menuGrid');
+  __tunnel.setInnerHTML(grid, dishes.map(function (d, i) {
+    var soldout = d.on && d.portions === 0;
+    return '<article class="card dish' + (soldout ? ' soldout' : '') + '">' + '<img src="' + d.img + '" alt="' + d.alt + '" loading="lazy" />' + '<div class="body"><h3>' + d.name + '<span class="price">$' + d.price.toFixed(2) + '</span></h3>' + '<div class="fa-name">' + d.fa + '</div><p>' + d.desc + '</p>' + '<div class="rowline"><div><div style="font-size:11.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3)">Portions left</div>' + '<div class="stepper"><button data-dec="' + i + '" aria-label="One less portion">−</button><span class="n">' + d.portions + ' / ' + d.max + '</span><button data-inc="' + i + '" aria-label="One more portion">+</button></div></div>' + '<div style="text-align:right"><div style="font-size:11.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px">' + (d.on ? soldout ? 'Sold out' : 'On menu' : 'Paused') + '</div>' + '<label class="switch"><input type="checkbox" data-dishon="' + i + '" ' + (d.on ? 'checked' : '') + ' /><span class="track" style="width:46px;height:27px"></span></label></div></div>' + '</div></article>';
+  }).join(''), "innerHTML");
+  grid.querySelectorAll('[data-inc]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var d = dishes[+b.getAttribute('data-inc')];
+      if (d.portions < d.max) {
+        d.portions++;
+      }
+      renderMenu();
+      updateStats();
+    });
+  });
+  grid.querySelectorAll('[data-dec]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var d = dishes[+b.getAttribute('data-dec')];
+      if (d.portions > 0) {
+        d.portions--;
+      }
+      renderMenu();
+      updateStats();
+    });
+  });
+  grid.querySelectorAll('[data-dishon]').forEach(function (c) {
+    c.addEventListener('change', function () {
+      var d = dishes[+c.getAttribute('data-dishon')];
+      d.on = c.checked;
+      toast(d.on ? d.name + ' is back on the menu.' : d.name + ' paused — customers can\'t order it.');
+      renderMenu();
+      updateStats();
+    });
+  });
+  updateStats();
+}
+document.getElementById('scrollAdd').addEventListener('click', function () {
+  document.getElementById('addDishCard').scrollIntoView({
+    behavior: 'smooth',
+    block: 'start'
+  });
+  document.getElementById('fName').focus({
+    preventScroll: true
+  });
+});
+document.getElementById('addDishForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+  var name = document.getElementById('fName').value.trim();
+  if (!name) return;
+  dishes.unshift({
+    name: name,
+    fa: document.getElementById('fFa').value.trim() || '—',
+    price: parseFloat(document.getElementById('fPrice').value) || 15,
+    portions: parseInt(document.getElementById('fPortions').value) || 0,
+    max: parseInt(document.getElementById('fPortions').value) || 10,
+    on: true,
+    img: 'assets/ghormeh.webp',
+    alt: 'Photo of ' + name,
+    desc: document.getElementById('fDesc').value.trim() || 'Fresh from Mina\'s kitchen today.'
+  });
+  this.reset();
+  renderMenu();
+  toast(name + ' added to today\'s menu ✓');
+  document.getElementById('menuGrid').scrollIntoView({
+    behavior: 'smooth'
+  });
+});
+function renderChart(data, title) {
+  var max = Math.max.apply(null, data.map(function (x) {
+    return x.v;
+  }));
+  __tunnel.setInnerHTML(document.getElementById('chart'), data.map(function (x, i) {
+    var h = Math.round(x.v / max * 100);
+    return '<div class="bar-col"><div class="bar-val">$' + x.v + '</div><div class="bar' + (i === data.length - 1 ? '' : ' dim') + '" style="height:' + h + '%"></div><div class="bar-lab">' + x.d + '</div></div>';
+  }).join(''), "innerHTML");
+  document.getElementById('chartTitle').textContent = title;
+}
+function renderTopDishes() {
+  var rows = [['Ghormeh Sabzi', 86, 1677], ['Tahchin Morgh', 64, 1344], ['Fesenjan', 41, 922], ['Joojeh Kabab', 38, 874], ['Zereshk Polo', 35, 700]];
+  __tunnel.setInnerHTML(document.getElementById('topDishes'), rows.map(function (r) {
+    return '<tr><td style="font-weight:700">' + r[0] + '</td><td class="num">' + r[1] + '</td><td class="num">$' + r[2].toLocaleString() + '</td><td class="num" style="font-weight:800">$' + Math.round(r[2] * 0.88).toLocaleString() + '</td></tr>';
+  }).join(''), "innerHTML");
+}
+document.querySelectorAll('[data-period]').forEach(function (b) {
+  b.addEventListener('click', function () {
+    document.querySelectorAll('[data-period]').forEach(function (x) {
+      x.classList.remove('active');
+    });
+    b.classList.add('active');
+    if (b.getAttribute('data-period') === 'week') {
+      renderChart(weekData, 'Daily earnings — this week');
+      document.getElementById('earnK').textContent = 'Earned this week';
+      document.getElementById('earnV').textContent = '$742';
+      document.getElementById('earnS').textContent = 'From 41 orders · avg $18.10 per order';
+      document.getElementById('feeV').textContent = '$101';
+      document.getElementById('chartNote').textContent = 'Best day: Friday';
+    } else {
+      renderChart(monthData, 'Weekly earnings — November');
+      document.getElementById('earnK').textContent = 'Earned this month';
+      document.getElementById('earnV').textContent = '$2,746';
+      document.getElementById('earnS').textContent = 'From 148 orders · avg $18.55 per order';
+      document.getElementById('feeV').textContent = '$375';
+      document.getElementById('chartNote').textContent = 'Best week: Week 3';
+    }
+  });
+});
+function renderHours() {
+  __tunnel.setInnerHTML(document.getElementById('hoursList'), hoursData.map(function (h, i) {
+    if (h[1] === 'Closed') return '<div class="hours-row"><span class="day">' + h[0] + '</span><span style="color:var(--pom);font-weight:700">Closed</span><span style="flex:1"></span><button class="btn small ghost" data-open-day="' + i + '">Open this day</button></div>';
+    return '<div class="hours-row"><span class="day">' + h[0] + '</span><input type="time" value="' + h[1] + '" aria-label="' + h[0] + ' opening time" /><span>to</span><input type="time" value="' + h[2] + '" aria-label="' + h[0] + ' closing time" /></div>';
+  }).join(''), "innerHTML");
+  document.querySelectorAll('[data-open-day]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var i = +b.getAttribute('data-open-day');
+      hoursData[i] = [hoursData[i][0], '11:30', '20:30'];
+      renderHours();
+      toast(hoursData[i][0] + ' added to your schedule.');
+    });
+  });
+}
+document.getElementById('saveKitchen').addEventListener('click', function () {
+  toast('Kitchen settings saved ✓ Customers see the update right away.');
+});
+buildNav();
+renderOrders();
+renderMenu();
+renderChart(weekData, 'Daily earnings — this week');
+renderTopDishes();
+renderHours();
+updateStats();</script>
+</body>
+</html>

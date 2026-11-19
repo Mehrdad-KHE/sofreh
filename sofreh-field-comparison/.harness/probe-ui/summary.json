@@ -1,0 +1,14 @@
+{
+  "schema_version": "hatch.probe_ui_summary.v1",
+  "slug": "sofreh-field-comparison",
+  "session_id": "bf1d3fe5-1250-4baa-a6aa-ca31b1bbbbcb",
+  "observes": 22,
+  "acts": 3,
+  "acts_ok": 3,
+  "interactive_nodes": 28,
+  "viewports_seen": [
+    "desktop",
+    "mobile"
+  ],
+  "findings": []
+}
