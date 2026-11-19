@@ -1,0 +1,8 @@
+{
+  "name": "@sofreh/customer-mobile",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/customerController.mjs",
+  "description": "Sofreh Stage 1 Separate Customer Mobile App (MapLibre + OpenFreeMap Discovery, en-CA LTR & fa-IR RTL, Simulated Checkout)"
+}

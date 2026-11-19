@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "Sofreh Cook",
+    "slug": "sofreh-cook",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "sofreh-cook",
+    "ios": {
+      "bundleIdentifier": "ca.sofreh.cook",
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "ca.sofreh.cook"
+    },
+    "extra": {
+      "appRole": "COOK",
+      "stage": "Stage 1",
+      "syntheticFixtureBadge": "TEST ONLY",
+      "supportedLocales": ["en-CA", "fa-IR"]
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "@sofreh/cook-mobile",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/cookController.mjs",
+  "description": "Sofreh Stage 1 Separate Cook Mobile App (Kitchen Management, Cook-Set Delivery Fee, Portion Caps, Order Queue, en-CA LTR & fa-IR RTL)"
+}

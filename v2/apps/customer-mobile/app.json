@@ -1,0 +1,24 @@
+{
+  "expo": {
+    "name": "Sofreh Customer",
+    "slug": "sofreh-customer",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "sofreh-customer",
+    "ios": {
+      "bundleIdentifier": "ca.sofreh.customer",
+      "supportsTablet": false
+    },
+    "android": {
+      "package": "ca.sofreh.customer"
+    },
+    "extra": {
+      "appRole": "CUSTOMER",
+      "stage": "Stage 1",
+      "syntheticFixtureBadge": "TEST ONLY",
+      "supportedLocales": ["en-CA", "fa-IR"],
+      "mapProvider": "MapLibre + OpenFreeMap",
+      "mapStyleUrl": "https://tiles.openfreemap.org/styles/liberty"
+    }
+  }
+}

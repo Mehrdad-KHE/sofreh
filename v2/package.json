@@ -1,0 +1,40 @@
+{
+  "name": "sofreh-stage1-v2",
+  "version": "1.0.0",
+  "private": true,
+  "main": "api/index.mjs",
+  "engines": {
+    "node": "24.x"
+  },
+  "description": "Sofreh Stage 1: Separate Customer & Cook Mobile Apps, Shared SQLite WAL/BEGIN IMMEDIATE Backend, MapLibre + OpenFreeMap Discovery, en-CA LTR & fa-IR RTL Localization",
+  "type": "module",
+  "workspaces": [
+    "packages/shared",
+    "packages/backend",
+    "apps/customer-mobile",
+    "apps/cook-mobile"
+  ],
+  "scripts": {
+    "prepare:identity": "node scripts/prepare-identity.mjs",
+    "start:accounts": "node --experimental-sqlite scripts/start-accounts.mjs",
+    "start:backend": "node --experimental-sqlite packages/backend/src/server.mjs",
+    "test": "node scripts/test-local.mjs",
+    "verify:typecheck": "node scripts/verify-stage1.mjs"
+  },
+  "dependencies": {
+    "@vercel/functions": "3.11.1",
+    "@vercel/queue": "0.11.0",
+    "libsql": "0.5.29",
+    "kysely": "0.29.8",
+    "better-auth": "1.7.18",
+    "sharp": "0.35.5",
+    "web-push": "4.0.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.3.11",
+    "@mui/material": "^7.3.11",
+    "esbuild": "^0.25.12",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  }
+}

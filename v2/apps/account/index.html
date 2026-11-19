@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Sofreh | Account</title>
+    <style>
+      @font-face {
+        font-family: Vazirmatn;
+        src: url("/assets/fonts/Vazirmatn-wght.woff2");
+        font-display: swap;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: #fff9ef;
+        color: #23392f;
+        font-family: Vazirmatn, system-ui;
+        line-height: 1.7;
+      }
+      main {
+        max-width: 470px;
+        margin: 6vh auto;
+        padding: 28px;
+      }
+      a {
+        color: #9c2940;
+      }
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      h1 {
+        font-size: 36px;
+      }
+      label {
+        display: block;
+        margin: 18px 0 6px;
+      }
+      input,
+      select,
+      button {
+        font: inherit;
+        min-height: 48px;
+        border: 1px solid #b7bfb4;
+        border-radius: 10px;
+        padding: 10px 12px;
+        width: 100%;
+        background: #fffdfa;
+        color: inherit;
+      }
+      button {
+        cursor: pointer;
+        background: #23392f;
+        color: white;
+        margin-top: 22px;
+        border-color: #23392f;
+        font-weight: 700;
+      }
+      button.secondary {
+        background: transparent;
+        color: #23392f;
+        margin-top: 12px;
+      }
+      button:disabled {
+        opacity: 0.6;
+      }
+      a:focus-visible,
+      input:focus-visible,
+      button:focus-visible,
+      select:focus-visible {
+        outline: 3px solid #9c2940;
+        outline-offset: 3px;
+      }
+      #language {
+        width: auto;
+        background: transparent;
+        color: #23392f;
+        border: 1px solid #b7bfb4;
+        margin: 0;
+      }
+      #message {
+        color: #95283e;
+        min-height: 28px;
+      }
+      small {
+        color: #5d6c62;
+      }
+      input[type="email"],
+      input[type="password"] {
+        direction: ltr;
+        text-align: start;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <a href="/en" id="home">Sofreh</a
+        ><button type="button" id="language">فارسی</button>
+      </header>
+      <h1 id="heading">Welcome back</h1>
+      <p id="intro">Sign in to your own Sofreh account.</p>
+      <form id="accountForm">
+        <div id="signupFields" hidden>
+          <label for="name" id="nameLabel">Your name</label
+          ><input id="name" autocomplete="name" maxlength="100" />
+        </div>
+        <label for="email" id="emailLabel">Email</label
+        ><input
+          id="email"
+          type="email"
+          autocomplete="username"
+          maxlength="254"
+          required
+        /><label for="password" id="passwordLabel">Password</label
+        ><input
+          id="password"
+          type="password"
+          autocomplete="current-password"
+          minlength="12"
+          maxlength="128"
+          required
+        /><small id="passwordHint">Use 12–128 characters.</small>
+        <div id="roleFields" hidden>
+          <label for="role" id="roleLabel">I am joining as</label
+          ><select id="role">
+            <option value="CUSTOMER">Customer</option>
+            <option value="COOK">Cook</option>
+          </select>
+        </div>
+        <p id="message" role="status" aria-live="polite"></p>
+        <button id="submit" type="submit">Sign in</button>
+      </form>
+      <button id="toggle" class="secondary" type="button">
+        Create an account
+      </button>
+    </main>
+    <script>
+      const $ = (id) => document.getElementById(id);
+      let fa = new URLSearchParams(location.search).get("locale") === "fa-IR",
+        signup = false,
+        finishing = false;
+      const tr = (en, persian) => (fa ? persian : en);
+      function render() {
+        document.documentElement.lang = fa ? "fa" : "en-CA";
+        document.documentElement.dir = fa ? "rtl" : "ltr";
+        $("home").textContent = tr("Sofreh", "سفره");
+        $("home").href = fa ? "/fa" : "/en";
+        $("language").textContent = fa ? "English" : "فارسی";
+        $("heading").textContent = finishing
+          ? tr("Choose your workspace", "فضای کارت را انتخاب کن")
+          : signup
+            ? tr("A seat at Sofreh", "به سفره خوش آمدی")
+            : tr("Welcome back", "خوش برگشتی");
+        $("intro").textContent = tr(
+          "Your account, kitchen and orders stay together.",
+          "حساب، آشپزخانه و سفارش‌هایت یک‌جا می‌مانند.",
+        );
+        $("nameLabel").textContent = tr("Your name", "نام شما");
+        $("emailLabel").textContent = tr("Email", "ایمیل");
+        $("passwordLabel").textContent = tr("Password", "گذرواژه");
+        $("passwordHint").textContent = tr(
+          "Use 12–128 characters.",
+          "بین ۱۲ تا ۱۲۸ نویسه وارد کنید.",
+        );
+        $("roleLabel").textContent = tr("I am joining as", "به عنوان");
+        $("role").options[0].text = tr("Customer", "مشتری");
+        $("role").options[1].text = tr("Cook", "آشپز");
+        $("signupFields").hidden = !signup || finishing;
+        $("roleFields").hidden = !signup && !finishing;
+        $("name").required = signup && !finishing;
+        $("email").disabled = finishing;
+        $("password").disabled = finishing;
+        $("password").autocomplete = signup
+          ? "new-password"
+          : "current-password";
+        $("submit").textContent = finishing
+          ? tr("Continue", "ادامه")
+          : signup
+            ? tr("Create account", "ساخت حساب")
+            : tr("Sign in", "ورود");
+        $("toggle").hidden = finishing;
+        $("toggle").textContent = signup
+          ? tr("I already have an account", "حساب دارم؛ ورود")
+          : tr("Create an account", "ساخت حساب");
+      }
+      async function call(url, body) {
+        const response = await fetch(url, {
+          method: body ? "POST" : "GET",
+          headers: body ? { "Content-Type": "application/json" } : {},
+          body: body ? JSON.stringify(body) : undefined,
+        });
+        const data = await response.json();
+        if (!response.ok)
+          throw Object.assign(new Error(), {
+            code: data.code || data.error?.code,
+            status: response.status,
+          });
+        return data;
+      }
+      function destination(profile) {
+        if (!new URLSearchParams(location.search).has('locale')) fa=profile.account.preferredLocale==='fa-IR';
+        location.replace(
+          "/app/" +
+            (profile.account.role === "COOK" ? "cook" : "customer") +
+            (fa ? "?locale=fa-IR" : ""),
+        );
+      }
+      $("language").onclick = () => {
+        fa = !fa;
+        render();
+      };
+      $("toggle").onclick = () => {
+        signup = !signup;
+        $("message").textContent = "";
+        render();
+      };
+      $("accountForm").onsubmit = async (event) => {
+        event.preventDefault();
+        $("submit").disabled = true;
+        $("message").textContent = "";
+        try {
+          if (!finishing) {
+            await call(
+              "/api/auth/" + (signup ? "sign-up/email" : "sign-in/email"),
+              {
+                name: $("name").value.trim(),
+                email: $("email").value.trim(),
+                password: $("password").value,
+              },
+            );
+            $("password").value = "";
+          }
+          let profile = await call("/api/account");
+          if (!profile.account) {
+            if (!signup && !finishing) {
+              finishing = true;
+              render();
+              return;
+            }
+            profile = await call("/api/account/setup", {
+              role: $("role").value,
+              locale: fa ? "fa-IR" : "en-CA",
+            });
+          }
+          destination(profile);
+        } catch (error) {
+          $("message").textContent =
+            error.status === 429
+              ? tr(
+                  "Too many attempts. Please wait a minute.",
+                  "تعداد تلاش‌ها زیاد است. یک دقیقه صبر کنید.",
+                )
+              : error.code === "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL"
+                ? tr(
+                    "An account already uses this email. Sign in.",
+                    "این ایمیل حساب دارد؛ وارد شوید.",
+                  )
+                : error.code === "INVALID_EMAIL_OR_PASSWORD"
+                  ? tr(
+                      "Email or password is incorrect.",
+                      "ایمیل یا گذرواژه درست نیست.",
+                    )
+                  : tr(
+                      "Could not continue. Check your details and connection.",
+                      "ادامه ممکن نشد؛ اطلاعات و اتصال را بررسی کنید.",
+                    );
+        } finally {
+          $("submit").disabled = false;
+        }
+      };
+      $('role').value = new URLSearchParams(location.search).get('role') === 'COOK' ? 'COOK' : 'CUSTOMER';
+      render();
+      call("/api/auth/get-session")
+        .then((session) => (session ? call("/api/account") : null))
+        .then((profile) => {
+          if (profile?.account) destination(profile);
+          else if (profile) {
+            finishing = true;
+            render();
+          }
+        })
+        .catch(() => {});
+    </script>
+  </body>
+</html>

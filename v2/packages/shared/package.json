@@ -1,0 +1,13 @@
+{
+  "name": "@sofreh/shared",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./src/index.mjs",
+  "types": "./src/types.ts",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./i18n": "./src/i18n.mjs",
+    "./fixtures": "./src/fixtures.mjs",
+    "./mapConfig": "./src/mapConfig.mjs"
+  }
+}

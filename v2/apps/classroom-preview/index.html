@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sofreh Classroom Sync Demo</title>
+  <style>
+    :root{font-family:Inter,system-ui,sans-serif;color:#173d35;background:#f7f3e8}body{margin:0}.top{padding:22px 5vw;background:#173d35;color:#fff}.top h1{margin:0 0 5px}.top p{margin:0;color:#dfe9dd}.demo{display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:24px 5vw}.panel{background:#fff;border:1px solid #d6dfd1;border-radius:18px;padding:20px;box-shadow:0 8px 22px #173d3512}.panel h2{margin-top:0}.badge{display:inline-block;border-radius:999px;background:#e6f0df;padding:5px 10px;font-size:12px}.dish{display:flex;justify-content:space-between;align-items:center;border-top:1px solid #e8eee5;padding:14px 0}.btn{border:0;border-radius:10px;background:#e28b45;color:#fff;padding:10px 14px;font-weight:700;cursor:pointer}.btn.secondary{background:#dfe9dd;color:#173d35}.order{background:#f4f8ef;border-radius:12px;padding:14px;margin-top:15px}.muted{color:#60756d}.steps{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.step{padding:6px 9px;border-radius:8px;background:#e9eee6;color:#62736c;font-size:13px}.step.active{background:#e28b45;color:white}.note{margin:0 5vw 24px;padding:13px 16px;border-left:4px solid #e28b45;background:#fff8ed}.empty{padding:28px 0;text-align:center;color:#82918a}@media(max-width:760px){.demo{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header class="top"><h1>Sofreh — Classroom Sync Demo</h1><p>Customer and Cook in one screen · synthetic data only · no real payment</p></header>
+  <main class="demo">
+    <section class="panel"><span class="badge">CUSTOMER</span><h2>Order a home-cooked dish</h2><div class="dish"><div><strong>Ghormeh Sabzi with Saffron Tahdig</strong><br><span class="muted">Maman Pari Kitchen · CA$18.50</span></div><button class="btn" id="place">Place demo order</button></div><div id="customerOrder" class="empty">No demo order yet.</div></section>
+    <section class="panel"><span class="badge">COOK</span><h2>Kitchen order queue</h2><div id="cookQueue" class="empty">No incoming demo orders.</div></section>
+  </main>
+  <p class="note"><strong>Classroom mode:</strong> this page synchronizes only inside this browser tab. It is a teaching/demo surface, not a production order system.</p>
+  <script>
+    const state={order:null,status:'PLACED'};const customer=document.querySelector('#customerOrder'),cook=document.querySelector('#cookQueue');
+    function render(){if(!state.order){customer.innerHTML='<div class="empty">No demo order yet.</div>';cook.innerHTML='<div class="empty">No incoming demo orders.</div>';return}customer.innerHTML=`<div class="order"><strong>${state.order}</strong><br><span class="muted">Status: ${state.status}</span><div class="steps"><span class="step active">1. Placed</span><span class="step ${state.status!=='PLACED'?'active':''}">2. Accepted</span><span class="step ${state.status==='PREPARING'?'active':''}">3. Preparing</span></div></div>`;cook.innerHTML=`<div class="order"><strong>${state.order}</strong><br><span class="muted">Status: ${state.status}</span><br><br><button class="btn secondary" id="accept">Accept demo order</button></div>`;document.querySelector('#accept').onclick=()=>{state.status='ACCEPTED';render()}}
+    document.querySelector('#place').onclick=()=>{state.order='Demo order · Ghormeh Sabzi · CA$18.50';state.status='PLACED';render()};render();
+  </script>
+</body>
+</html>

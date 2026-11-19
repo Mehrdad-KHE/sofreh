@@ -1,0 +1,13 @@
+{
+  "name": "@sofreh/backend",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./db": "./src/db.mjs",
+    "./privacy": "./src/privacy.mjs",
+    "./service": "./src/service.mjs",
+    "./server": "./src/server.mjs"
+  }
+}
