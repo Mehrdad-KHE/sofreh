@@ -4,11 +4,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="color-scheme" content="light dark" />
+<script>/* Theme: saved choice wins, else system day/night. */(function(){var t;try{t=localStorage.getItem("sofreh-theme");}catch(e){}if(t!=="dark"&&t!=="light"){try{t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}catch(e){t="light";}}document.documentElement.setAttribute("data-theme",t);})();</script>
+<script>/* Language: saved choice wins, else English. */(function(){var l;try{l=localStorage.getItem("sofreh-lang");}catch(e){}if(l==="fa"){document.documentElement.lang="fa";document.documentElement.dir="rtl";}})();</script>
     <link rel="icon" href="data:," />
     <title>Sofreh — Customer App</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Naskh+Arabic:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Naskh+Arabic:wght@500;600;700&family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <style>
       button, [role="button"], select, summary, input:not([type="checkbox"], [type="radio"]) { min-height: 2.25rem; }
       :root{
@@ -18,14 +20,12 @@
         --shadow:0 10px 30px rgba(29,36,32,.10); --shadow-sm:0 2px 10px rgba(29,36,32,.08);
         --r-lg:20px; --r-md:14px; --r-sm:10px;
       }
-      @media (prefers-color-scheme: dark){
-        :root{
+      :root[data-theme="dark"]{
           --bg:#14120e; --surface:#1f1c16; --surface-2:#2a261d; --ink:#f0ead9; --ink-2:#c9c2ae; --ink-3:#98917c;
           --line:#38332a; --green:#8fce9f; --green-2:#a8dcb4; --green-soft:#22392a; --saffron:#eda93a; --saffron-soft:#3d2f10;
           --pom:#ef9a93; --pom-soft:#402220; --gold:#e3b34e;
           --shadow:0 10px 30px rgba(0,0,0,.45); --shadow-sm:0 2px 10px rgba(0,0,0,.35);
         }
-      }
       html{ box-sizing:border-box; scroll-behavior:smooth; }
       *, *::before, *::after{ box-sizing:inherit; }
       body{ margin:0; background:var(--bg); color:var(--ink); font-family:"Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif; font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased; }
@@ -42,7 +42,7 @@
       .topbar-in{ max-width:1180px; margin:0 auto; padding:10px 16px; display:flex; align-items:center; gap:14px; }
       .brand{ display:flex; align-items:baseline; gap:8px; text-decoration:none; color:var(--ink); }
       .brand .word{ font-weight:800; font-size:1.45rem; letter-spacing:-.02em; color:var(--green); }
-      @media (prefers-color-scheme: dark){ .brand .word{ color:var(--green-2); } }
+      :root[data-theme="dark"] .brand .word{ color:var(--green-2); }
       .brand .fa{ font-size:1.15rem; color:var(--saffron); font-weight:700; }
       .loc{ display:flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; background:var(--surface); border:1px solid var(--line); font-size:.85rem; font-weight:600; min-height:2.25rem; }
       .loc small{ display:block; font-weight:500; color:var(--ink-3); font-size:.68rem; line-height:1.1; }
@@ -53,9 +53,9 @@
       .icon-btn{ position:relative; display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:50%; background:var(--surface); border:1px solid var(--line); flex:none; }
       .icon-btn .badge{ position:absolute; top:-4px; right:-4px; min-width:20px; height:20px; padding:0 5px; border-radius:999px; background:var(--pom); color:#fff; font-size:.72rem; font-weight:800; display:flex; align-items:center; justify-content:center; }
       .icon-btn .badge[hidden]{ display:none; }
-      @media (prefers-color-scheme: dark){ .icon-btn .badge{ color:#1d1210; background:var(--saffron); } }
+      :root[data-theme="dark"] .icon-btn .badge{ color:#1d1210; background:var(--saffron); }
       .avatar-dot{ width:44px; height:44px; border-radius:50%; background:var(--green); color:#fff; font-weight:800; display:flex; align-items:center; justify-content:center; flex:none; font-size:.95rem; }
-      @media (prefers-color-scheme: dark){ .avatar-dot{ background:var(--green-soft); color:var(--green-2); } }
+      :root[data-theme="dark"] .avatar-dot{ background:var(--green-soft); color:var(--green-2); }
       .search-mobile{ max-width:1180px; margin:0 auto; padding:0 16px 10px; position:relative; }
       .search-mobile input{ width:100%; padding:11px 14px 11px 42px; border-radius:999px; border:1px solid var(--line); background:var(--surface); font-size:.95rem; }
       .search-mobile svg{ position:absolute; left:30px; top:50%; transform:translateY(-50%); color:var(--ink-3); }
@@ -91,7 +91,7 @@
       .chips{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
       .chip{ padding:8px 13px; border-radius:999px; border:1px solid var(--line); background:var(--surface); font-weight:600; font-size:.87rem; min-height:2.5rem; display:inline-flex; align-items:center; gap:7px; }
       .chip[aria-pressed="true"]{ background:var(--green); border-color:var(--green); color:#fff; }
-      @media (prefers-color-scheme: dark){ .chip[aria-pressed="true"]{ background:var(--green-soft); color:var(--green-2); border-color:var(--green); } }
+      :root[data-theme="dark"] .chip[aria-pressed="true"]{ background:var(--green-soft); color:var(--green-2); border-color:var(--green); }
       .chip .fa{ font-size:.95rem; }
 
       /* ---------- Dish grid ---------- */
@@ -105,24 +105,24 @@
       .fav-btn{ position:absolute; top:8px; right:8px; width:40px; height:40px; border-radius:50%; background:var(--surface); box-shadow:var(--shadow-sm); display:flex; align-items:center; justify-content:center; }
       .fav-btn svg{ width:20px; height:20px; fill:none; stroke:var(--ink-2); stroke-width:2; }
       .fav-btn.on svg{ fill:var(--pom); stroke:var(--pom); }
-      @media (prefers-color-scheme: dark){ .fav-btn.on svg{ fill:var(--saffron); stroke:var(--saffron); } }
+      :root[data-theme="dark"] .fav-btn.on svg{ fill:var(--saffron); stroke:var(--saffron); }
       .card-body{ padding:14px 16px 16px; display:flex; flex-direction:column; gap:6px; flex:1; }
       .card-title{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
       .card-title h3{ font-size:1.05rem; font-weight:800; line-height:1.25; }
       .card-title .fa{ color:var(--ink-3); font-size:.95rem; font-weight:600; white-space:nowrap; padding-top:2px; }
       .price{ font-weight:800; color:var(--green); font-size:1.05rem; white-space:nowrap; }
-      @media (prefers-color-scheme: dark){ .price{ color:var(--green-2); } }
+      :root[data-theme="dark"] .price{ color:var(--green-2); }
       .chef-line{ display:flex; align-items:center; gap:8px; font-size:.87rem; color:var(--ink-2); }
       .chef-ava{ width:26px; height:26px; border-radius:50%; background:var(--saffron-soft); color:var(--gold); font-size:.68rem; font-weight:800; display:flex; align-items:center; justify-content:center; flex:none; border:1px solid var(--line); }
       .meta-line{ display:flex; flex-wrap:wrap; gap:6px 14px; font-size:.83rem; color:var(--ink-3); font-weight:600; }
       .meta-line .stars{ color:var(--gold); }
       .badges{ display:flex; flex-wrap:wrap; gap:6px; }
       .bdg{ font-size:.72rem; font-weight:700; padding:3px 9px; border-radius:999px; background:var(--green-soft); color:var(--green); }
-      @media (prefers-color-scheme: dark){ .bdg{ color:var(--green-2); } }
+      :root[data-theme="dark"] .bdg{ color:var(--green-2); }
       .bdg.hot{ background:var(--pom-soft); color:var(--pom); }
       .card-foot{ margin-top:auto; padding-top:10px; display:flex; gap:8px; }
       .btn-add{ flex:1; background:var(--green); color:#fff; border-radius:12px; padding:11px; font-weight:700; min-height:2.75rem; }
-      @media (prefers-color-scheme: dark){ .btn-add{ background:var(--green-soft); color:var(--green-2); border:1px solid var(--green); } }
+      :root[data-theme="dark"] .btn-add{ background:var(--green-soft); color:var(--green-2); border:1px solid var(--green); }
       .btn-view{ padding:11px 16px; border-radius:12px; border:1px solid var(--line); font-weight:700; background:var(--surface); min-height:2.75rem; }
       .empty{ text-align:center; padding:44px 20px; background:var(--surface); border:1px dashed var(--line); border-radius:var(--r-lg); color:var(--ink-2); }
       .empty h3{ color:var(--ink); font-size:1.1rem; margin-bottom:6px; }
@@ -150,7 +150,7 @@
       .bottomnav{ position:fixed; left:0; right:0; bottom:0; z-index:40; background:var(--surface); border-top:1px solid var(--line); display:flex; padding:6px 8px calc(6px + env(safe-area-inset-bottom)); }
       .bottomnav button{ flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; font-size:.68rem; font-weight:700; color:var(--ink-3); padding:7px 2px; border-radius:10px; min-height:52px; position:relative; }
       .bottomnav button[aria-current="page"]{ color:var(--green); }
-      @media (prefers-color-scheme: dark){ .bottomnav button[aria-current="page"]{ color:var(--green-2); } }
+      :root[data-theme="dark"] .bottomnav button[aria-current="page"]{ color:var(--green-2); }
       .bottomnav .nbadge{ position:absolute; top:2px; right:calc(50% - 20px); min-width:18px; height:18px; padding:0 4px; border-radius:999px; background:var(--pom); color:#fff; font-size:.65rem; font-weight:800; display:flex; align-items:center; justify-content:center; }
       @media (min-width:760px){ .bottomnav{ display:none; } }
       .topnav{ display:none; }
@@ -188,7 +188,7 @@
       .totals .grand{ font-size:1.08rem; font-weight:800; border-top:1px solid var(--line); padding-top:9px; margin-top:3px; }
       .totals .free{ color:var(--green); font-weight:700; }
       .btn-block{ width:100%; background:var(--green); color:#fff; border-radius:14px; padding:14px; font-weight:800; font-size:1rem; min-height:3.25rem; margin-top:12px; }
-      @media (prefers-color-scheme: dark){ .btn-block{ background:var(--green-soft); color:var(--green-2); border:1px solid var(--green); } }
+      :root[data-theme="dark"] .btn-block{ background:var(--green-soft); color:var(--green-2); border:1px solid var(--green); }
       .btn-block:disabled{ opacity:.45; cursor:not-allowed; }
       .field{ display:grid; gap:6px; margin-bottom:14px; }
       .field label{ font-size:.85rem; font-weight:700; }
@@ -197,12 +197,12 @@
       .seg{ display:flex; flex-wrap:wrap; gap:8px; }
       .seg button{ padding:9px 14px; border-radius:999px; border:1px solid var(--line); font-weight:600; font-size:.88rem; min-height:2.5rem; background:var(--surface); }
       .seg button[aria-pressed="true"]{ background:var(--green); color:#fff; border-color:var(--green); }
-      @media (prefers-color-scheme: dark){ .seg button[aria-pressed="true"]{ background:var(--green-soft); color:var(--green-2); } }
+      :root[data-theme="dark"] .seg button[aria-pressed="true"]{ background:var(--green-soft); color:var(--green-2); }
       .pay-note{ background:var(--saffron-soft); border-radius:12px; padding:11px 13px; font-size:.85rem; color:var(--ink-2); margin-bottom:14px; }
       .pay-note strong{ color:var(--ink); }
       .success{ text-align:center; padding:26px 8px; }
       .success .tick{ width:70px; height:70px; border-radius:50%; background:var(--green-soft); color:var(--green); display:flex; align-items:center; justify-content:center; margin:0 auto 16px; }
-      @media (prefers-color-scheme: dark){ .success .tick{ color:var(--green-2); } }
+      :root[data-theme="dark"] .success .tick{ color:var(--green-2); }
       .success h3{ font-size:1.3rem; font-weight:800; margin-bottom:6px; }
       .success p{ color:var(--ink-2); font-size:.93rem; }
 
@@ -232,7 +232,7 @@
       .order-top p{ font-size:.85rem; color:var(--ink-3); }
       .status-pill{ font-size:.76rem; font-weight:800; padding:5px 12px; border-radius:999px; background:var(--saffron-soft); color:var(--gold); white-space:nowrap; }
       .status-pill.done{ background:var(--green-soft); color:var(--green); }
-      @media (prefers-color-scheme: dark){ .status-pill.done{ color:var(--green-2); } }
+      :root[data-theme="dark"] .status-pill.done{ color:var(--green-2); }
       .order-items{ margin-top:12px; display:grid; gap:5px; font-size:.92rem; color:var(--ink-2); }
       .order-items div{ display:flex; justify-content:space-between; gap:10px; }
       .tracker{ margin-top:16px; }
@@ -286,189 +286,263 @@
         .cartbar{ bottom:86px; }
         .toast{ bottom:172px; }
       }
+    
+
+  /* ---------- Language toggle + RTL ---------- */
+  .langbtn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 14px;font:inherit;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;min-height:2.25rem;flex:none}
+  html[lang="fa"] body{ font-family:"Vazirmatn","Noto Naskh Arabic",system-ui,-apple-system,"Segoe UI",sans-serif; }
+  html[lang="fa"] h1, html[lang="fa"] h2, html[lang="fa"] h3, html[lang="fa"] h4{ font-family:"Vazirmatn",sans-serif; }
+  [dir="rtl"] .searchbar input{ padding:10px 42px 10px 14px; }
+  [dir="rtl"] .searchbar svg{ left:auto; right:14px; }
+  [dir="rtl"] .search-mobile input{ padding:11px 42px 11px 14px; }
+  [dir="rtl"] .search-mobile svg{ left:auto; right:30px; }
+  [dir="rtl"] .tag{ left:auto; right:10px; }
+  [dir="rtl"] .fav-btn{ right:auto; left:8px; }
+  [dir="rtl"] .icon-btn .badge{ right:auto; left:-4px; }
+  [dir="rtl"] .bottomnav .nbadge{ right:auto; left:calc(50% - 20px); }
+  [dir="rtl"] .topnav{ margin-left:0; margin-right:auto; }
+  [dir="rtl"] .ci-right{ margin-left:0; margin-right:auto; text-align:left; align-items:flex-start; }
+  [dir="rtl"] .prof-row .v{ text-align:left; }
+  [dir="rtl"] .switch .tr::after{ left:auto; right:3px; }
+  [dir="rtl"] .switch input:checked + .tr::after{ left:auto; right:25px; }
+  [dir="rtl"] .drawer{ right:auto; left:0; transform:translateX(-105%); }
+  [dir="rtl"] .drawer.open{ transform:translateX(0); }
+  [dir="rtl"] .track-fill{ left:auto; right:8%; }
+  [dir="rtl"] .modal-x{ right:auto; left:12px; }
+  [dir="rtl"] .cartbar{ text-align:right; }
+  [dir="rtl"] .chef-card{ text-align:right; }
+  [dir="rtl"] .card-title .fa{ white-space:normal; }
+
+  /* ---------- Manual light/dark theme toggle (same pattern as the Sofreh catalog) ---------- */
+  :root[data-theme="dark"]{ color-scheme: dark; }
+  :root[data-theme="light"]{ color-scheme: light; }
+  .themebtn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 14px;font:inherit;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;min-height:2.25rem;flex:none}
+  .themebtn svg{width:16px;height:16px;flex:none}
+  .themebtn .ico-sun{display:none}
+  :root[data-theme="dark"] .themebtn .ico-sun{display:block}
+  :root[data-theme="dark"] .themebtn .ico-moon{display:none}
+
+  /* ---------- Phone shell on wide screens: the app always presents as a phone ---------- */
+  @media (min-width:760px){
+    body{ background:var(--surface-2); }
+    .topbar{ max-width:432px; margin:0 auto; width:100%; border-inline:1px solid var(--line); box-shadow:0 0 44px rgba(20,16,8,.12); }
+    .topbar-in{ max-width:430px; }
+    .searchbar{ display:none; }
+    .topnav{ display:none; }
+    .search-mobile{ display:block; max-width:430px; }
+    main{ max-width:432px; width:100%; background:var(--bg); border-inline:1px solid var(--line); padding-bottom:110px; }
+    .grid{ grid-template-columns:1fr; }
+    .chef-grid{ grid-template-columns:1fr; }
+    .steps{ grid-template-columns:1fr; }
+    .hero-txt{ padding:96px 20px 20px; }
+    .hero-txt h1{ font-size:1.55rem; }
+    .bottomnav{ display:flex; left:50%; right:auto; transform:translateX(-50%); width:min(430px,100%); border-inline:1px solid var(--line); }
+    .cartbar{ display:none; }
+    .cartbar.show{ display:flex !important; left:50%; right:auto; transform:translateX(-50%); width:min(398px, calc(100% - 32px)); bottom:86px; }
+    .modal-card{ max-width:430px; }
+    .toast{ bottom:96px; }
+  }
+
+      /* ---------- Top bar compaction: brand + location + cart + language + theme + avatar must fit a phone width ---------- */
+      @media (max-width:759px){
+        .topbar-in{ gap:8px; padding:10px 12px; }
+        .themebtn{ padding:8px 9px; }
+        .themebtn #themeLabel{ display:none; }
+        .langbtn{ padding:8px 10px; }
+        .loc{ padding:5px 8px; min-width:0; }
+        .loc small{ display:none; }
+        .brand .word{ font-size:1.25rem; }
+      }
+      @media (min-width:760px){
+        .themebtn #themeLabel{ display:none; }
+        .topbar-in{ gap:10px; }
+        .loc{ min-width:0; }
+      }
     </style>
   </head>
   <body>
     <!-- ======================= TOP BAR ======================= -->
     <header class="topbar">
       <div class="topbar-in">
-        <a class="brand" href="#" data-nav="home" aria-label="Sofreh home">
+        <a class="brand" href="#" data-nav="home" aria-label="Sofreh home" data-i18n-aria="aria_home">
           <span class="word">Sofreh</span><span class="fa" lang="fa" dir="rtl">سفره</span>
         </a>
-        <button class="loc" id="locBtn" type="button" aria-label="Delivery location">
+        <button class="loc" id="locBtn" type="button" aria-label="Delivery location" data-i18n-aria="aria_loc">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 21s-7-5.5-7-11a7 7 0 1 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
-          <span><small>Deliver to</small><span id="locText">Richmond Hill</span></span>
+          <span><small data-i18n="deliver_to">Deliver to</small><span id="locText">Richmond Hill</span></span>
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
         </button>
         <div class="searchbar">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></svg>
-          <input id="searchDesk" type="search" placeholder="Search ghormeh sabzi, kebab, a chef…" aria-label="Search dishes and chefs" />
+          <input id="searchDesk" type="search" placeholder="Search ghormeh sabzi, kebab, a chef…" aria-label="Search dishes and chefs" data-i18n-ph="search_ph" data-i18n-aria="aria_search" />
         </div>
-        <nav class="topnav" aria-label="Main">
-          <button type="button" data-nav="home" aria-current="page">Home</button>
-          <button type="button" data-nav="orders">Orders</button>
-          <button type="button" data-nav="favorites">Favourites</button>
-          <button type="button" data-nav="profile">Profile</button>
+        <nav class="topnav" aria-label="Main" data-i18n-aria="aria_main">
+          <button type="button" data-nav="home" aria-current="page" data-i18n="nav_home">Home</button>
+          <button type="button" data-nav="orders" data-i18n="nav_orders">Orders</button>
+          <button type="button" data-nav="favorites" data-i18n="nav_fav">Favourites</button>
+          <button type="button" data-nav="profile" data-i18n="nav_profile">Profile</button>
         </nav>
-        <button class="icon-btn" id="cartBtn" type="button" aria-label="Open basket">
+        <button class="icon-btn" id="cartBtn" type="button" aria-label="Open basket" data-i18n-aria="aria_cart">
           <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 7h15l-1.5 9h-12z"/><path d="M6 7 5 3H2"/><circle cx="9" cy="20" r="1.6"/><circle cx="17" cy="20" r="1.6"/></svg>
           <span class="badge" id="cartBadge" hidden>0</span>
         </button>
-        <button class="avatar-dot" type="button" data-nav="profile" aria-label="Your profile">M</button>
+        <button class="langbtn" id="langToggle" type="button" aria-label="Switch to Persian">فارسی</button>
+        <button class="themebtn" id="themeToggle" type="button" aria-pressed="false" aria-label="Switch to dark theme (night)"><svg class="ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span id="themeLabel">Dark</span></button>
+        <button class="avatar-dot" type="button" data-nav="profile" aria-label="Your profile" data-i18n-aria="aria_profile">M</button>
       </div>
       <div class="search-mobile">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.8-3.8"/></svg>
-        <input id="searchMob" type="search" placeholder="Search ghormeh sabzi, kebab, a chef…" aria-label="Search dishes and chefs" />
+        <input id="searchMob" type="search" placeholder="Search ghormeh sabzi, kebab, a chef…" aria-label="Search dishes and chefs" data-i18n-ph="search_ph" data-i18n-aria="aria_search" />
       </div>
     </header>
 
     <main>
       <!-- ======================= HOME ======================= -->
-      <section class="view active" id="view-home" aria-label="Home">
+      <section class="view active" id="view-home" aria-label="Home" data-i18n-aria="nav_home">
         <div class="hero">
-          <img src="assets/hero.jpg" alt="A shared Persian sofreh spread with kebabs, saffron rice, stews and fresh herbs on a wooden table" />
+          <img id="heroImg" src="assets/hero.jpg" alt="A shared Persian sofreh spread with kebabs, saffron rice, stews and fresh herbs on a wooden table" data-i18n-alt="hero_alt" />
           <div class="hero-txt">
-            <h1>Real Persian home cooking, from kitchens near you</h1>
-            <p>Order from vetted home chefs across the GTA — slow-cooked stews, saffron rice with proper tahdig, and kebabs off the grill, delivered to your door.</p>
+            <h1 data-i18n="hero_h">Real Persian home cooking, from kitchens near you</h1>
+            <p data-i18n="hero_p">Order from vetted home chefs across the GTA — slow-cooked stews, saffron rice with proper tahdig, and kebabs off the grill, delivered to your door.</p>
             <div class="hero-cta">
-              <a class="btn btn-saffron" href="#menu">Browse today's menu</a>
-              <button class="btn btn-ghost" type="button" data-nav="orders">Track an order</button>
+              <a class="btn btn-saffron" href="#menu" data-i18n="hero_browse">Browse today's menu</a>
+              <button class="btn btn-ghost" type="button" data-nav="orders" data-i18n="hero_track">Track an order</button>
             </div>
             <div class="hero-stats">
-              <span>6 home chefs near you</span><span>★ 4.8 average rating</span><span>Delivery in 35–55 min</span>
+              <span data-i18n="hero_stat_chefs">6 home chefs near you</span><span data-i18n="hero_stat_rating">★ 4.8 average rating</span><span data-i18n="hero_stat_delivery">Delivery in 35–55 min</span>
             </div>
           </div>
         </div>
 
-        <div class="chips" id="catChips" role="group" aria-label="Categories"></div>
+        <div class="chips" id="catChips" role="group" aria-label="Categories" data-i18n-aria="aria_categories"></div>
 
         <div class="sec-head" id="menu">
           <div>
             <h2 id="menuTitle">Today's sofreh</h2>
             <p id="menuSub">Cooked today in small batches — when it's gone, it's gone.</p>
           </div>
-          <select class="sortsel" id="sortSel" aria-label="Sort dishes">
-            <option value="popular">Most popular</option>
-            <option value="priceAsc">Price: low to high</option>
-            <option value="priceDesc">Price: high to low</option>
-            <option value="fastest">Fastest delivery</option>
-            <option value="rating">Highest rated</option>
+          <select class="sortsel" id="sortSel" aria-label="Sort dishes" data-i18n-aria="aria_sort">
+            <option value="popular" data-i18n="sort_popular">Most popular</option>
+            <option value="priceAsc" data-i18n="sort_price_asc">Price: low to high</option>
+            <option value="priceDesc" data-i18n="sort_price_desc">Price: high to low</option>
+            <option value="fastest" data-i18n="sort_fastest">Fastest delivery</option>
+            <option value="rating" data-i18n="sort_rating">Highest rated</option>
           </select>
         </div>
         <div class="grid" id="dishGrid"></div>
         <div class="empty" id="noResults" hidden>
-          <h3>Nothing on the sofreh matches that</h3>
-          <p>Try a different search, or clear the category filter to see everything cooking today.</p>
-          <p style="margin-top:12px"><button class="btn-small" type="button" id="clearFilters">Clear search &amp; filters</button></p>
+          <h3 data-i18n="no_results_h">Nothing on the sofreh matches that</h3>
+          <p data-i18n="no_results_p">Try a different search, or clear the category filter to see everything cooking today.</p>
+          <p style="margin-top:12px"><button class="btn-small" type="button" id="clearFilters" data-i18n="clear_filters">Clear search &amp; filters</button></p>
         </div>
 
         <div class="sec-head">
           <div>
-            <h2>Meet the chefs</h2>
-            <p>Neighbours cooking the food they grew up with. Tap a chef to see only their dishes.</p>
+            <h2 data-i18n="chefs_h">Meet the chefs</h2>
+            <p data-i18n="chefs_p">Neighbours cooking the food they grew up with. Tap a chef to see only their dishes.</p>
           </div>
         </div>
         <div class="chef-grid" id="chefGrid"></div>
 
         <div class="sec-head">
-          <div><h2>How Sofreh works</h2></div>
+          <div><h2 data-i18n="how_h">How Sofreh works</h2></div>
         </div>
         <div class="steps">
-          <div class="step"><div class="num">1</div><h3>Pick a home chef</h3><p>Every chef is ID-verified and their kitchen is food-safety certified before the first order.</p></div>
-          <div class="step"><div class="num">2</div><h3>Order by 4 pm</h3><p>Dishes are cooked the same day in small batches. Choose a delivery window that suits your evening.</p></div>
-          <div class="step"><div class="num">3</div><h3>Dinner arrives hot</h3><p>Track your order from the chef's stove to your door, and rate the meal to help great chefs grow.</p></div>
+          <div class="step"><div class="num">1</div><h3 data-i18n="step1_h">Pick a home chef</h3><p data-i18n="step1_p">Every chef is ID-verified and their kitchen is food-safety certified before the first order.</p></div>
+          <div class="step"><div class="num">2</div><h3 data-i18n="step2_h">Order by 4 pm</h3><p data-i18n="step2_p">Dishes are cooked the same day in small batches. Choose a delivery window that suits your evening.</p></div>
+          <div class="step"><div class="num">3</div><h3 data-i18n="step3_h">Dinner arrives hot</h3><p data-i18n="step3_p">Track your order from the chef's stove to your door, and rate the meal to help great chefs grow.</p></div>
         </div>
 
         <footer>
-          <span>Sofreh — home-cooked Persian food in the Greater Toronto Area.</span>
-          <span>Prices in CAD. Delivery $3.95, free over $45.</span>
+          <span data-i18n="foot_line">Sofreh — home-cooked Persian food in the Greater Toronto Area.</span>
+          <span data-i18n="foot_prices">Prices in CAD. Delivery $3.95, free over $45.</span>
         </footer>
       </section>
 
       <!-- ======================= ORDERS ======================= -->
-      <section class="view" id="view-orders" aria-label="Your orders">
-        <div class="sec-head"><div><h2>Your orders</h2><p>Live tracking for today's order, and your recent meals below.</p></div></div>
+      <section class="view" id="view-orders" aria-label="Your orders" data-i18n-aria="orders_h">
+        <div class="sec-head"><div><h2 data-i18n="orders_h">Your orders</h2><p data-i18n="orders_p">Live tracking for today's order, and your recent meals below.</p></div></div>
         <div id="ordersList"></div>
       </section>
 
       <!-- ======================= FAVOURITES ======================= -->
-      <section class="view" id="view-favorites" aria-label="Favourites">
-        <div class="sec-head"><div><h2>Favourites</h2><p>The dishes you keep coming back to.</p></div></div>
+      <section class="view" id="view-favorites" aria-label="Favourites" data-i18n-aria="fav_h">
+        <div class="sec-head"><div><h2 data-i18n="fav_h">Favourites</h2><p data-i18n="fav_p">The dishes you keep coming back to.</p></div></div>
         <div class="grid" id="favGrid"></div>
         <div class="empty" id="favEmpty" hidden>
-          <h3>No favourites yet</h3>
-          <p>Tap the heart on any dish and it will wait for you here.</p>
-          <p style="margin-top:12px"><button class="btn-small" type="button" data-nav="home">Browse the menu</button></p>
+          <h3 data-i18n="fav_empty_h">No favourites yet</h3>
+          <p data-i18n="fav_empty_p">Tap the heart on any dish and it will wait for you here.</p>
+          <p style="margin-top:12px"><button class="btn-small" type="button" data-nav="home" data-i18n="browse_menu">Browse the menu</button></p>
         </div>
       </section>
 
       <!-- ======================= PROFILE ======================= -->
-      <section class="view" id="view-profile" aria-label="Profile">
-        <div class="sec-head"><div><h2>Profile</h2></div></div>
+      <section class="view" id="view-profile" aria-label="Profile" data-i18n-aria="profile_h">
+        <div class="sec-head"><div><h2 data-i18n="profile_h">Profile</h2></div></div>
         <div class="prof-head">
           <div class="avatar-dot" aria-hidden="true">M</div>
           <div>
             <h2>Mehrdad K.</h2>
             <p>mehrdadkh@yahoo.com · +1 647-886-3734</p>
-            <p style="margin-top:4px"><span class="bdg">Sofreh member since 2026</span> <span class="bdg">14 orders</span></p>
+            <p style="margin-top:4px"><span class="bdg" data-i18n="member_since">Sofreh member since 2026</span> <span class="bdg" data-i18n="orders_14">14 orders</span></p>
           </div>
         </div>
         <div class="prof-sec">
-          <h3>Delivery addresses</h3>
-          <div class="prof-row"><span class="k">Home</span><span class="v">Richmond Hill, ON — default</span></div>
-          <div class="prof-row"><span class="k">Office</span><span class="v">North York, ON</span></div>
-          <div class="prof-row"><span class="k">Add an address</span><button class="btn-small" type="button" id="addAddrBtn">Add</button></div>
+          <h3 data-i18n="addr_h">Delivery addresses</h3>
+          <div class="prof-row"><span class="k" data-i18n="addr_home">Home</span><span class="v" data-i18n="addr_home_v">Richmond Hill, ON — default</span></div>
+          <div class="prof-row"><span class="k" data-i18n="addr_office">Office</span><span class="v">North York, ON</span></div>
+          <div class="prof-row"><span class="k" data-i18n="addr_add_label">Add an address</span><button class="btn-small" type="button" id="addAddrBtn" data-i18n="add">Add</button></div>
         </div>
         <div class="prof-sec">
-          <h3>Payment</h3>
-          <div class="prof-row"><span class="k">Visa</span><span class="v">•••• 4242 · default</span></div>
-          <div class="prof-row"><span class="k">Apple Pay</span><span class="v">Enabled on this device</span></div>
+          <h3 data-i18n="pay_h">Payment</h3>
+          <div class="prof-row"><span class="k">Visa</span><span class="v" data-i18n="pay_default">•••• 4242 · default</span></div>
+          <div class="prof-row"><span class="k">Apple Pay</span><span class="v" data-i18n="pay_apple_v">Enabled on this device</span></div>
         </div>
         <div class="prof-sec">
-          <h3>Preferences</h3>
-          <div class="prof-row"><span class="k">Order updates by text</span><label class="switch"><input type="checkbox" id="prefSms" checked /><span class="tr"></span></label></div>
-          <div class="prof-row"><span class="k">Weekly menu email</span><label class="switch"><input type="checkbox" id="prefEmail" checked /><span class="tr"></span></label></div>
-          <div class="prof-row"><span class="k">Chef specials &amp; offers</span><label class="switch"><input type="checkbox" id="prefOffers" /><span class="tr"></span></label></div>
-          <div class="prof-row"><span class="k">Default spice level</span>
-            <select class="sortsel" id="prefSpice" aria-label="Default spice level"><option>Medium</option><option>Mild</option><option>Hot</option></select>
+          <h3 data-i18n="pref_h">Preferences</h3>
+          <div class="prof-row"><span class="k" data-i18n="pref_sms">Order updates by text</span><label class="switch"><input type="checkbox" id="prefSms" checked /><span class="tr"></span></label></div>
+          <div class="prof-row"><span class="k" data-i18n="pref_email">Weekly menu email</span><label class="switch"><input type="checkbox" id="prefEmail" checked /><span class="tr"></span></label></div>
+          <div class="prof-row"><span class="k" data-i18n="pref_offers">Chef specials &amp; offers</span><label class="switch"><input type="checkbox" id="prefOffers" /><span class="tr"></span></label></div>
+          <div class="prof-row"><span class="k" data-i18n="pref_spice">Default spice level</span>
+            <select class="sortsel" id="prefSpice" aria-label="Default spice level" data-i18n-aria="pref_spice"><option data-i18n="spice_medium">Medium</option><option data-i18n="spice_mild">Mild</option><option data-i18n="spice_hot">Hot</option></select>
           </div>
         </div>
         <div class="prof-sec">
-          <h3>Support</h3>
-          <div class="prof-row"><span class="k">Help with an order</span><button class="btn-small" type="button" id="helpBtn">Contact support</button></div>
-          <div class="prof-row"><span class="k">Become a Sofreh chef</span><button class="btn-small" type="button" id="chefApplyBtn">Learn more</button></div>
+          <h3 data-i18n="support_h">Support</h3>
+          <div class="prof-row"><span class="k" data-i18n="support_help">Help with an order</span><button class="btn-small" type="button" id="helpBtn" data-i18n="contact_support">Contact support</button></div>
+          <div class="prof-row"><span class="k" data-i18n="become_chef">Become a Sofreh chef</span><button class="btn-small" type="button" id="chefApplyBtn" data-i18n="learn_more">Learn more</button></div>
         </div>
       </section>
     </main>
 
     <!-- Floating basket bar (mobile) -->
     <button class="cartbar" id="cartBar" type="button">
-      <span><span id="cartBarCount">0 items</span><small>Tap to review your basket</small></span>
+      <span><span id="cartBarCount">0 items</span><small data-i18n="cartbar_review">Tap to review your basket</small></span>
       <span id="cartBarTotal">$0.00</span>
     </button>
 
     <!-- Bottom navigation (mobile) -->
-    <nav class="bottomnav" aria-label="Main">
+    <nav class="bottomnav" aria-label="Main" data-i18n-aria="aria_main">
       <button type="button" data-nav="home" aria-current="page">
-        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Home
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/></svg><span data-i18n="nav_home">Home</span>
       </button>
       <button type="button" data-nav="orders">
-        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>Orders
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg><span data-i18n="nav_orders">Orders</span>
       </button>
       <button type="button" data-nav="favorites">
-        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20.5C7 16.5 3 13.3 3 9.3A4.8 4.8 0 0 1 12 6a4.8 4.8 0 0 1 9 3.3c0 4-4 7.2-9 11.2z"/></svg>Favourites
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20.5C7 16.5 3 13.3 3 9.3A4.8 4.8 0 0 1 12 6a4.8 4.8 0 0 1 9 3.3c0 4-4 7.2-9 11.2z"/></svg><span data-i18n="nav_fav">Favourites</span>
       </button>
       <button type="button" data-nav="profile">
-        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-5.5 8-5.5s6.5 1.5 8 5.5"/></svg>Profile
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-5.5 8-5.5s6.5 1.5 8 5.5"/></svg><span data-i18n="nav_profile">Profile</span>
       </button>
     </nav>
 
     <!-- Basket / checkout drawer -->
     <div class="scrim" id="scrim"></div>
-    <aside class="drawer" id="drawer" aria-label="Basket and checkout" aria-hidden="true">
+    <aside class="drawer" id="drawer" aria-label="Basket and checkout" aria-hidden="true" data-i18n-aria="aria_basket">
       <div class="drawer-head">
         <h2 id="drawerTitle">Your basket</h2>
-        <button class="icon-btn" id="drawerClose" type="button" aria-label="Close basket" style="width:40px;height:40px">✕</button>
+        <button class="icon-btn" id="drawerClose" type="button" aria-label="Close basket" data-i18n-aria="aria_close_basket" style="width:40px;height:40px">✕</button>
       </div>
       <div class="drawer-body" id="drawerBody"></div>
       <div class="drawer-foot" id="drawerFoot"></div>
@@ -483,6 +557,111 @@
 
     <script>
     "use strict";
+
+    /* ==================== I18N ==================== */
+    var T = {
+      en:{ title:"Sofreh — Customer App", aria_home:"Sofreh home", aria_loc:"Delivery location", deliver_to:"Deliver to", search_ph:"Search ghormeh sabzi, kebab, a chef…", aria_search:"Search dishes and chefs",
+        nav_home:"Home", nav_orders:"Orders", nav_fav:"Favourites", nav_profile:"Profile", aria_cart:"Open basket", aria_profile:"Your profile", aria_main:"Main", aria_categories:"Categories", aria_basket:"Basket and checkout", aria_close_basket:"Close basket",
+        hero_alt:"A shared Persian sofreh spread with kebabs, saffron rice, stews and fresh herbs on a wooden table",
+        hero_h:"Real Persian home cooking, from kitchens near you", hero_p:"Order from vetted home chefs across the GTA — slow-cooked stews, saffron rice with proper tahdig, and kebabs off the grill, delivered to your door.",
+        hero_browse:"Browse today's menu", hero_track:"Track an order", hero_stat_chefs:"6 home chefs near you", hero_stat_rating:"★ 4.8 average rating", hero_stat_delivery:"Delivery in 35–55 min",
+        sort_popular:"Most popular", sort_price_asc:"Price: low to high", sort_price_desc:"Price: high to low", sort_fastest:"Fastest delivery", sort_rating:"Highest rated", aria_sort:"Sort dishes",
+        menu_title:"Today's sofreh", menu_sub:"Cooked today in small batches — when it's gone, it's gone.",
+        no_results_h:"Nothing on the sofreh matches that", no_results_p:"Try a different search, or clear the category filter to see everything cooking today.", clear_filters:"Clear search & filters",
+        chefs_h:"Meet the chefs", chefs_p:"Neighbours cooking the food they grew up with. Tap a chef to see only their dishes.",
+        how_h:"How Sofreh works", step1_h:"Pick a home chef", step1_p:"Every chef is ID-verified and their kitchen is food-safety certified before the first order.",
+        step2_h:"Order by 4 pm", step2_p:"Dishes are cooked the same day in small batches. Choose a delivery window that suits your evening.",
+        step3_h:"Dinner arrives hot", step3_p:"Track your order from the chef's stove to your door, and rate the meal to help great chefs grow.",
+        foot_line:"Sofreh — home-cooked Persian food in the Greater Toronto Area.", foot_prices:"Prices in CAD. Delivery $3.95, free over $45.",
+        orders_h:"Your orders", orders_p:"Live tracking for today's order, and your recent meals below.",
+        fav_h:"Favourites", fav_p:"The dishes you keep coming back to.", fav_empty_h:"No favourites yet", fav_empty_p:"Tap the heart on any dish and it will wait for you here.", browse_menu:"Browse the menu",
+        profile_h:"Profile", member_since:"Sofreh member since 2026", orders_14:"14 orders",
+        addr_h:"Delivery addresses", addr_home:"Home", addr_home_v:"Richmond Hill, ON — default", addr_office:"Office", addr_add_label:"Add an address", add:"Add",
+        pay_h:"Payment", pay_default:"•••• 4242 · default", pay_apple_v:"Enabled on this device",
+        pref_h:"Preferences", pref_sms:"Order updates by text", pref_email:"Weekly menu email", pref_offers:"Chef specials & offers", pref_spice:"Default spice level",
+        spice_medium:"Medium", spice_mild:"Mild", spice_hot:"Hot",
+        support_h:"Support", support_help:"Help with an order", contact_support:"Contact support", become_chef:"Become a Sofreh chef", learn_more:"Learn more",
+        cartbar_review:"Tap to review your basket",
+        by:"by", min:"min", reviews:"reviews", add_basket:"Add to basket", details:"Details", view_dish:"View", save_fav:"Save to favourites",
+        dishes_today:"dishes today", cooking_by:"Cooking by", results_for:"Results for", dish_singular:"dish", dish_plural:"dishes", cooking_near:"cooking today near you.",
+        showing_by:"Showing dishes by", removed_fav_suffix:" removed from favourites", saved_fav_suffix:" saved to favourites",
+        delivering_prefix:"Delivering to ", delivering_suffix:" — showing chefs nearby",
+        cooked_by:"Cooked by", ready_in:"Ready in ~", whats_in:"What's in it", make_yours:"Make it yours",
+        note_chef:"Note for the chef (optional)", note_chef_ph:"e.g. Less salt, extra herbs on the side…", qty:"Quantity", one_less:"One less", one_more:"One more", close_details:"Close details",
+        added_suffix:" added to your basket", item:"item", items:"items",
+        basket_title:"Your basket", basket_empty_h:"Your basket is empty", basket_empty_p:"The sofreh is full though — add something delicious.", each:"each", remove:"Remove",
+        free_del_intro:"Free delivery on orders over $45 — you are ", free_del_done:"there. Nice.", free_del_away:" away",
+        subtotal:"Subtotal", delivery:"Delivery", free:"Free", hst:"HST (13%)", total:"Total", go_checkout:"Go to checkout",
+        checkout:"Checkout", your_name:"Your name", delivery_address:"Delivery address", phone_driver:"Phone for the driver", delivery_window:"Delivery window", payment_label:"Payment",
+        pay_cash:"Cash at the door", driver_note:"Note for the driver (optional)", driver_note_ph:"e.g. Leave at the porch, please ring the bell",
+        pay_note_card:"<strong>Front-end demo:</strong> no real payment is taken. In the live app this step charges your saved card securely.",
+        pay_note_apple:"<strong>Front-end demo:</strong> no real payment is taken. In the live app, Apple Pay confirms here.",
+        pay_note_cash:"<strong>Pay at the door:</strong> please have cash or a card ready when the driver arrives.",
+        place_order:"Place order", back_basket:"Back to basket", fill_fields:"Please fill in your name, address and phone",
+        order_placed:"Order placed", order_prefix:"Order ", with_chef_suffix:" is with the chef", has_order:"has your order. Delivery window:", text_updates:"We will text updates as it moves from the stove to your door.",
+        track_order:"Track my order", keep_browsing:"Keep browsing", delivered_suffix:" delivered — enjoy your meal!",
+        no_orders_h:"No orders yet", no_orders_p:"Your first home-cooked dinner is a few taps away.", delivered:"Delivered", get_help:"Get help", order_again:"Order again", order_word:"Order",
+        support_reach_prefix:"Support will reach out about order ", not_today:"Those dishes are not cooking today",
+        addr_book_toast:"Address book opens here in the live app", support_chat_toast:"Support chat opens here in the live app", chef_apply_toast:"Chef applications open on the Sofreh chef site",
+        pref_updated:"Preference updated for this session", spice_prefix:"Default spice level: ",
+        spice0:"No heat", spice1:"Gently spiced", spice2:"Properly hot" },
+      fa:{ title:"Sofreh — اپ مشتری", aria_home:"خانهٔ Sofreh", aria_loc:"نشانی تحویل", deliver_to:"تحویل به", search_ph:"جستجو: قورمه‌سبزی، کباب، اسم آشپز…", aria_search:"جستجوی غذا و آشپز",
+        nav_home:"خانه", nav_orders:"سفارش‌ها", nav_fav:"علاقه‌مندی‌ها", nav_profile:"پروفایل", aria_cart:"بازکردن سبد", aria_profile:"پروفایل تو", aria_main:"اصلی", aria_categories:"دسته‌بندی‌ها", aria_basket:"سبد و پرداخت", aria_close_basket:"بستن سبد",
+        hero_alt:"سفرهٔ ایرانی پهن‌شده با کباب، برنج زعفرانی، خورش و سبزی تازه روی میز چوبی",
+        hero_h:"غذای خانگی واقعی ایرانی، از آشپزخانه‌های نزدیک تو", hero_p:"از آشپزهای خانگی تأییدشده در سراسر GTA سفارش بده؛ خورش‌های آرام‌پز، برنج زعفرانی با ته‌دیگ درست‌وحسابی و کباب تازه از روی گریل، دم در خانه‌ات.",
+        hero_browse:"دیدن منوی امروز", hero_track:"پیگیری سفارش", hero_stat_chefs:"۶ آشپز خانگی نزدیک تو", hero_stat_rating:"★ میانگین امتیاز ۴٫۸", hero_stat_delivery:"تحویل در ۳۵ تا ۵۵ دقیقه",
+        sort_popular:"محبوب‌ترین", sort_price_asc:"قیمت: کم به زیاد", sort_price_desc:"قیمت: زیاد به کم", sort_fastest:"سریع‌ترین تحویل", sort_rating:"بالاترین امتیاز", aria_sort:"مرتب‌سازی غذاها",
+        menu_title:"سفرهٔ امروز", menu_sub:"امروز در مقدار کم پخته شده؛ وقتی تمام شد، دیگر نیست.",
+        no_results_h:"چیزی روی سفره با این جستجو جور نیست", no_results_p:"جستجوی دیگری را امتحان کن یا فیلتر دسته‌بندی را بردار تا همهٔ غذاهای امروز را ببینی.", clear_filters:"پاک‌کردن جستجو و فیلترها",
+        chefs_h:"با آشپزها آشنا شو", chefs_p:"همسایه‌هایی که غذایی را می‌پزند که با آن بزرگ شده‌اند. روی هر آشپز بزن تا فقط غذاهای او را ببینی.",
+        how_h:"Sofreh چطور کار می‌کند", step1_h:"یک آشپز خانگی انتخاب کن", step1_p:"هویت همهٔ آشپزها بررسی شده و آشپزخانه‌شان پیش از اولین سفارش گواهی ایمنی غذا گرفته است.",
+        step2_h:"تا ساعت ۴ بعدازظهر سفارش بده", step2_p:"غذاها همان روز در مقدار کم پخته می‌شوند. بازهٔ تحویلی را انتخاب کن که به برنامهٔ روزت بخورد.",
+        step3_h:"غذات داغ می‌رسد", step3_p:"سفارشت را از اجاق آشپز تا دم در خانه دنبال کن و به غذا امتیاز بده تا آشپزهای خوب بیشتر دیده شوند.",
+        foot_line:"Sofreh — غذای خانگی ایرانی در تورنتوی بزرگ.", foot_prices:"قیمت‌ها به دلار کاناداست. ارسال ۳٫۹۵ دلار، برای سفارش بالای ۴۵ دلار رایگان.",
+        orders_h:"سفارش‌های تو", orders_p:"پیگیری زندهٔ سفارش امروز و غذاهای اخیرت در پایین.",
+        fav_h:"علاقه‌مندی‌ها", fav_p:"غذاهایی که همیشه برمی‌گردی سراغشان.", fav_empty_h:"هنوز علاقه‌مندی نداری", fav_empty_p:"روی قلب هر غذا بزن تا اینجا منتظرت بماند.", browse_menu:"دیدن منو",
+        profile_h:"پروفایل", member_since:"عضو Sofreh از ۲۰۲۶", orders_14:"۱۴ سفارش",
+        addr_h:"نشانی‌های تحویل", addr_home:"خانه", addr_home_v:"Richmond Hill, ON — پیش‌فرض", addr_office:"دفتر کار", addr_add_label:"افزودن نشانی", add:"افزودن",
+        pay_h:"پرداخت", pay_default:"•••• ۴۲۴۲ · پیش‌فرض", pay_apple_v:"روی این دستگاه فعال است",
+        pref_h:"ترجیحات", pref_sms:"خبررسانی سفارش با پیامک", pref_email:"ایمیل منوی هفتگی", pref_offers:"پیشنهادها و غذاهای ویژهٔ آشپزها", pref_spice:"سطح تندی پیش‌فرض",
+        spice_medium:"متوسط", spice_mild:"ملایم", spice_hot:"تند",
+        support_h:"پشتیبانی", support_help:"کمک دربارهٔ یک سفارش", contact_support:"تماس با پشتیبانی", become_chef:"آشپز Sofreh شو", learn_more:"بیشتر بدان",
+        cartbar_review:"برای بررسی سبدت بزن",
+        by:"از آشپز", min:"دقیقه", reviews:"نظر", add_basket:"افزودن به سبد", details:"جزئیات", view_dish:"دیدن", save_fav:"ذخیره در علاقه‌مندی‌ها",
+        dishes_today:"غذا امروز", cooking_by:"غذاهای", results_for:"نتیجه برای", dish_singular:"غذا", dish_plural:"غذا", cooking_near:"امروز نزدیک تو در حال پخت است.",
+        showing_by:"نمایش غذاهای", removed_fav_suffix:" از علاقه‌مندی‌ها حذف شد", saved_fav_suffix:" به علاقه‌مندی‌ها اضافه شد",
+        delivering_prefix:"تحویل به ", delivering_suffix:" — آشپزهای نزدیک نمایش داده می‌شوند",
+        cooked_by:"پختهٔ", ready_in:"آماده در حدود ", whats_in:"داخلش چیست", make_yours:"به سلیقهٔ خودت",
+        note_chef:"یادداشت برای آشپز (اختیاری)", note_chef_ph:"مثلاً: نمک کمتر، سبزی اضافه کنار غذا…", qty:"تعداد", one_less:"یکی کمتر", one_more:"یکی بیشتر", close_details:"بستن جزئیات",
+        added_suffix:" به سبدت اضافه شد", item:"قلم", items:"قلم",
+        basket_title:"سبد تو", basket_empty_h:"سبدت خالی است", basket_empty_p:"اما سفره پر است؛ یک چیز خوشمزه به آن اضافه کن.", each:"هر کدام", remove:"حذف",
+        free_del_intro:"ارسال برای سفارش‌های بالای ۴۵ دلار رایگان است — ", free_del_done:"به حدش رسیدی. عالیه.", free_del_away:" مانده تا برسی",
+        subtotal:"جمع جزء", delivery:"ارسال", free:"رایگان", hst:"مالیات HST (۱۳٪)", total:"مبلغ نهایی", go_checkout:"رفتن به پرداخت",
+        checkout:"پرداخت", your_name:"نام تو", delivery_address:"نشانی تحویل", phone_driver:"تلفن برای راننده", delivery_window:"بازهٔ تحویل", payment_label:"روش پرداخت",
+        pay_cash:"پرداخت نقدی دم در", driver_note:"یادداشت برای راننده (اختیاری)", driver_note_ph:"مثلاً: بگذار دم ایوان، لطفاً زنگ بزن",
+        pay_note_card:"<strong>نسخهٔ نمایشی:</strong> هیچ پرداخت واقعی انجام نمی‌شود. در نسخهٔ اصلی، این مرحله مبلغ را امن از کارت ذخیره‌شده‌ات برمی‌دارد.",
+        pay_note_apple:"<strong>نسخهٔ نمایشی:</strong> هیچ پرداخت واقعی انجام نمی‌شود. در نسخهٔ اصلی، Apple Pay همین‌جا تأیید می‌شود.",
+        pay_note_cash:"<strong>پرداخت دم در:</strong> وقتی راننده رسید، پول نقد یا کارتت را آماده داشته باش.",
+        place_order:"ثبت سفارش", back_basket:"برگشت به سبد", fill_fields:"لطفاً نام، نشانی و تلفنت را کامل کن",
+        order_placed:"سفارش ثبت شد", order_prefix:"سفارش ", with_chef_suffix:" دست آشپز است", has_order:"سفارشت را گرفته است. بازهٔ تحویل:", text_updates:"هر مرحله از اجاق تا دم در خانه را با پیامک خبرت می‌کنیم.",
+        track_order:"پیگیری سفارشم", keep_browsing:"ادامهٔ گشتن در منو", delivered_suffix:" تحویل شد — نوش جان!",
+        no_orders_h:"هنوز سفارشی نداده‌ای", no_orders_p:"اولین شام خانگی‌ات چند لمس فاصله دارد.", delivered:"تحویل شد", get_help:"کمک بگیر", order_again:"سفارش دوباره", order_word:"سفارش",
+        support_reach_prefix:"پشتیبانی دربارهٔ سفارش ", not_today:"آن غذاها امروز پخته نمی‌شوند",
+        addr_book_toast:"دفتر نشانی در نسخهٔ اصلی اینجا باز می‌شود", support_chat_toast:"گفت‌وگوی پشتیبانی در نسخهٔ اصلی اینجا باز می‌شود", chef_apply_toast:"درخواست آشپزی در سایت آشپزهای Sofreh باز می‌شود",
+        pref_updated:"ترجیحت برای این نشست به‌روز شد", spice_prefix:"سطح تندی پیش‌فرض: ",
+        spice0:"بدون تندی", spice1:"کمی تند", spice2:"حسابی تند" }
+    };
+    var lang = "en";
+    try { lang = localStorage.getItem("sofreh-lang") === "fa" ? "fa" : "en"; } catch(e){}
+    function t(k){ return (T[lang] && T[lang][k]) || T.en[k] || k; }
+    function dishName(d){ return lang === "fa" ? d.fa : d.name; }
+    function stepLabel(i){ return lang === "fa" ? STEPS_FA[i] : STEPS[i]; }
+    function slotLabel(v){ for (var i=0;i<SLOTS.length;i++) if (SLOTS[i].en===v) return lang==="fa" ? SLOTS[i].fa : SLOTS[i].en; return v; }
+    function localizeItemName(name){
+      for (var i=0;i<DISHES.length;i++){ var d=DISHES[i]; if (name.indexOf(d.name)===0) return dishName(d) + name.slice(d.name.length).replace("Warm sangak (extra)", lang==="fa" ? "سنگک گرم (اضافه)" : "Warm sangak (extra)"); }
+      if (name.indexOf("Warm sangak")===0) return lang==="fa" ? "سنگک گرم (اضافه)" : name;
+      return name;
+    }
     /* ==================== DATA ==================== */
     var CHEFS = [
       { id:"mahin",  name:"Mahin K.",  fa:"مهین",   area:"Richmond Hill", spec:"Slow-cooked stews & khoresh", rating:4.9, reviews:412, color:"#17452e", since:"Cooking on Sofreh since 2025" },
@@ -546,6 +725,52 @@
         ing:["Rice noodles","Rosewater","Lime","Pistachio","Rose petals"] }
     ];
     function dishById(id){ for (var i=0;i<DISHES.length;i++) if (DISHES[i].id===id) return DISHES[i]; return DISHES[0]; }
+    var DESC_FA = {
+      ghormeh:"خورش ملی ایران، همان‌طور که مهین از مادرش در رشت یاد گرفته: سبزی‌های سرخ‌شدهٔ فراوان، گوشت نرم، لوبیا قرمز و لیمو عمانی که شش ساعت آرام می‌پزد تا روغن بیندازد. با برنج باسماتی پف‌دار و یک تکه ته‌دیگ زعفرانی سرو می‌شود.",
+      fesenjan:"مرغی که آرام در سس براق گردو و رب انار پخته شده؛ هم‌زمان شیرین، ترش و پرمزه. پروین فسنجانش را کمی ترش‌تر درست می‌کند و رویش دانه‌های انار تازه می‌ریزد.",
+      gheimeh:"گوشت و لپه در سس گوجه با لیمو عمانی و نوک قاشقی دارچین، رویش سیب‌زمینی خلالی ترد و دست‌ساز. غذای راحت و خانگی، به سبک اصفهان.",
+      zereshk:"برنج زعفرانی نگین‌دار با زرشک ترش و خلال پسته، کنار ران مرغی که در گوجه و زعفران پخته تا از استخوان جدا شود. تخصص شب‌های جمعهٔ شیرین.",
+      platter:"همهٔ سفره در یک سینی برای چهار نفر: کباب کوبیده و جوجه، یک مرغ زعفرانی کامل، دو خورش روز، پلو نگین‌دار، سنگک گرم، سبزی خوردن و سالاد شیرازی. ساخته‌شده برای میز خانوادگی.",
+      tahdig:"گنج ته قابلمه: یک گرد کامل ته‌دیگ زعفرانی که بیرونش برشته و ترد و داخلش نرم است. رضا هر کدام را همان موقع سفارش از قالب درمی‌آورد؛ سر تردترین تکه‌اش همیشه بحث است.",
+      koobideh:"گوشت چرخ‌کردهٔ گوساله و گوسفند با پیاز رنده‌شده و سماق، با دست روی سیخ پهن زده و روی زغال واقعی کباب شده. دو سیخ روی برنج زعفرانی با گوجهٔ کبابی و لواش گرم.",
+      joojeh:"مرغی که یک شب در زعفران، ماست، لیمو و پیاز خوابانده شده و بعد لبه‌هایش روی گریل برشته می‌شود. با برنج زعفرانی، گوجهٔ کبابی و یک قاچ لیمو سرو می‌شود.",
+      ash:"آش غلیظ و پرسبزی با رشته، نخود، لوبیا قرمز و عدس، رویش کشک، نعناع‌داغ و کلی پیازداغ ترد. لیلا هر صبح یک قابلمهٔ بزرگ می‌پزد که بیشتر روزها تمام می‌شود.",
+      shirazi:"خیار، گوجه و پیاز قرمز ریز خردشده به سبک شیرازی، با نعناع خشک، روغن زیتون و آبغوره. همراه ترد و تازهٔ همهٔ خورش‌های پرمزه.",
+      sholeh:"شله‌زرد نرم و ابریشمی با زعفران و گلاب، با دارچین و خلال بادام و پسته با دست تزئین‌شده. نقش هر کاسهٔ پروین هر روز فرق می‌کند؛ هیچ دو کاسه‌ای شبیه هم نیست.",
+      faloodeh:"رشته‌های یخی برنج در شربت گلاب و لیمو، رویش پسته و گلبرگ رز. شیرین آن را به سبک شیراز سرو می‌کند؛ با آب لیموی تازه و اگر بخواهی، یک اسکوپ بستنی زعفرانی کنارش."
+    };
+    var ING_FA = {
+      ghormeh:["شنبلیله و سبزی‌ها","گوشت گوساله","لوبیا قرمز","لیمو عمانی","برنج باسماتی","ته‌دیگ زعفرانی"],
+      fesenjan:["گردو","رب انار","مرغ","پیاز","برنج باسماتی"],
+      gheimeh:["لپه زرد","گوشت گوساله","گوجه","لیمو عمانی","دارچین","سیب‌زمینی ترد"],
+      zereshk:["برنج باسماتی","زرشک","زعفران","مرغ","پسته","بادام"],
+      platter:["کوبیده و جوجه","مرغ زعفرانی","دو خورش","پلو نگین‌دار","سنگک","سبزی خوردن","سالاد شیرازی"],
+      tahdig:["برنج باسماتی","زعفران","ماست","کره"],
+      koobideh:["گوساله و گوسفند","پیاز","سماق","برنج زعفرانی","گوجهٔ کبابی","لواش"],
+      joojeh:["مرغ","زعفران","ماست","لیمو","برنج زعفرانی","گوجهٔ کبابی"],
+      ash:["رشته آش","سبزی","نخود","لوبیا قرمز","کشک","پیازداغ","نعناع‌داغ"],
+      shirazi:["خیار","گوجه","پیاز قرمز","نعناع خشک","آبغوره","روغن زیتون"],
+      sholeh:["برنج","زعفران","گلاب","بادام","پسته","دارچین"],
+      faloodeh:["رشته برنج","گلاب","لیمو","پسته","گلبرگ رز"]
+    };
+    var ALT_FA = {
+      ghormeh:"کاسه‌ای بخارکرده از قورمه‌سبزی با گوشت و لوبیا قرمز کنار برنج زعفرانی", fesenjan:"فسنجان مرغ در سس تیرهٔ گردو و انار با دانه‌های انار رویش",
+      gheimeh:"خورش قیمه با لپه و گوشت در کاسهٔ مسی، رویش سیب‌زمینی خلالی ترد", zereshk:"زرشک‌پلو با برنج زعفرانی، زرشک و ران مرغ برشته",
+      platter:"سینی کامل خانوادگی ایرانی با کباب، برنج زعفرانی، خورش، نان و سبزی تازه", tahdig:"ته‌دیگ زعفرانی طلایی با یک برش جداشده و برنج پف‌دار داخلش",
+      koobideh:"دو سیخ کباب کوبیده روی برنج زعفرانی با گوجهٔ کبابی", joojeh:"جوجه‌کباب زعفرانی طلایی با برنج و گوجهٔ کبابی",
+      ash:"کاسه‌ای آش رشته با کشک و پیازداغ رویش", shirazi:"سالاد شیرازی با خیار، گوجه و پیاز ریز خردشده و نعناع تازه",
+      sholeh:"شله‌زرد با نقش دارچین و خلال بادام رویش", faloodeh:"فالوده شیرازی با پسته و گلبرگ رز رویش"
+    };
+    var TAG_FA = { "Most loved":"محبوب‌ترین", "Chef's signature":"ویژهٔ آشپز", "Serves 4":"برای ۴ نفر", "Off the charcoal":"تازه از روی زغال", "Summer favourite":"محبوب تابستان" };
+    var BADGE_FA = { "gluten-free":"بدون گلوتن", "vegetarian":"گیاهی", "vegan":"وگان" };
+    var SPEC_FA = { mahin:"خورش‌های آرام‌پز و سنتی", parvin:"فسنجان و دسرهای زعفرانی", reza:"ته‌دیگ و سینی‌های خانوادگی", shirin:"پلوها و زرشک‌پلو", farhad:"کباب‌های زغالی", leila:"آش، سوپ و سالادهای تازه" };
+    var SINCE_FA = { mahin:"از سال ۲۰۲۵ در Sofreh آشپزی می‌کند", parvin:"از سال ۲۰۲۵ در Sofreh آشپزی می‌کند", reza:"از سال ۲۰۲۴ در Sofreh آشپزی می‌کند", shirin:"از سال ۲۰۲۵ در Sofreh آشپزی می‌کند", farhad:"از سال ۲۰۲۴ در Sofreh آشپزی می‌کند", leila:"از سال ۲۰۲۶ در Sofreh آشپزی می‌کند" };
+    function dishDesc(d){ return lang==="fa" ? (DESC_FA[d.id]||d.desc) : d.desc; }
+    function dishIng(d){ return lang==="fa" ? (ING_FA[d.id]||d.ing) : d.ing; }
+    function dishAlt(d){ return lang==="fa" ? (ALT_FA[d.id]||d.alt) : d.alt; }
+    function dishTag(d){ return lang==="fa" ? (TAG_FA[d.tag]||d.tag) : d.tag; }
+    function chefSpec(c){ return lang==="fa" ? (SPEC_FA[c.id]||c.spec) : c.spec; }
+    function chefSince(c){ return lang==="fa" ? (SINCE_FA[c.id]||c.since) : c.since; }
 
     var CATS = [
       { id:"all", label:"All", fa:"همه" },
@@ -557,12 +782,20 @@
       { id:"desserts", label:"Desserts", fa:"دسر" }
     ];
     var EXTRAS = [
-      { id:"ext-tahdig", label:"Extra tahdig", price:3.00 },
-      { id:"ext-mast", label:"Mast-o-khiar", price:4.00 },
-      { id:"ext-rice", label:"Extra saffron rice", price:2.50 },
-      { id:"ext-bread", label:"Warm sangak", price:2.00 }
+      { id:"ext-tahdig", label:"Extra tahdig", fa:"ته‌دیگ اضافه", price:3.00 },
+      { id:"ext-mast", label:"Mast-o-khiar", fa:"ماست و خیار", price:4.00 },
+      { id:"ext-rice", label:"Extra saffron rice", fa:"برنج زعفرانی اضافه", price:2.50 },
+      { id:"ext-bread", label:"Warm sangak", fa:"سنگک گرم", price:2.00 }
     ];
+    function extraLabel(x){ return lang==="fa" ? x.fa : x.label; }
     var STEPS = ["Received","Chef confirmed","Cooking","On the way","Delivered"];
+    var STEPS_FA = ["دریافت شد","آشپز تأیید کرد","در حال پخت","در راه است","تحویل شد"];
+    var SLOTS = [
+      { en:"Today, 5:30–6:00 pm", fa:"امروز، ۵:۳۰ تا ۶ عصر" },
+      { en:"Today, 6:30–7:00 pm", fa:"امروز، ۶:۳۰ تا ۷ عصر" },
+      { en:"Today, 7:30–8:00 pm", fa:"امروز، ۷:۳۰ تا ۸ شب" },
+      { en:"Tomorrow, 12:00–12:30 pm", fa:"فردا، ۱۲ تا ۱۲:۳۰ ظهر" }
+    ];
 
     /* ==================== STATE ==================== */
     var state = {
@@ -570,9 +803,9 @@
       favs:{ fesenjan:true, tahdig:true },
       cart:[], /* {key, dishId, name, unit, qty, note} */
       orders:[
-        { id:"SF-1042", date:"Last Friday · Nov 13", status:4, total:47.20, chef:"mahin",
+        { id:"SF-1042", date:"Last Friday · Nov 13", dateFa:"جمعهٔ پیش · ۱۳ نوامبر", status:4, total:47.20, chef:"mahin",
           items:[{name:"Ghormeh Sabzi", qty:2, price:18.50},{name:"Salad Shirazi", qty:1, price:7.50},{name:"Warm sangak (extra)", qty:1, price:2.00}] },
-        { id:"SF-1027", date:"Nov 8", status:4, total:31.50, chef:"farhad",
+        { id:"SF-1027", date:"Nov 8", dateFa:"۸ نوامبر", status:4, total:31.50, chef:"farhad",
           items:[{name:"Joojeh Kabab", qty:1, price:20.50},{name:"Ash Reshteh", qty:1, price:11.00}] }
       ],
       drawerStep:"cart", /* cart | checkout | done */
@@ -589,7 +822,7 @@
       var t = $("toast"); t.textContent = msg; t.classList.add("show");
       clearTimeout(toastTimer); toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 2400);
     }
-    function spiceText(n){ return n===0 ? "No heat" : n===1 ? "Gently spiced" : "Properly hot"; }
+    function spiceText(n){ return t(n===0 ? "spice0" : n===1 ? "spice1" : "spice2"); }
 
     /* ==================== NAVIGATION ==================== */
     function go(view){
@@ -614,7 +847,7 @@
     /* ==================== MENU ==================== */
     function renderCats(){
       $("catChips").innerHTML = CATS.map(function(c){
-        return '<button type="button" class="chip" data-cat="'+c.id+'" aria-pressed="'+(state.cat===c.id)+'">'+esc(c.label)+' <span class="fa" lang="fa" dir="rtl">'+c.fa+'</span></button>';
+        return '<button type="button" class="chip" data-cat="'+c.id+'" aria-pressed="'+(state.cat===c.id)+'">'+esc(lang==="fa" ? c.fa : c.label)+'</button>';
       }).join("");
       document.querySelectorAll("#catChips .chip").forEach(function(ch){
         ch.addEventListener("click", function(){ state.cat = ch.getAttribute("data-cat"); state.chefFilter = null; renderCats(); renderMenu(); });
@@ -643,22 +876,22 @@
       var chef = chefById(d.chef);
       var fav = state.favs[d.id] ? " on" : "";
       var badges = d.badges.map(function(b){
-        return '<span class="bdg">'+b.replace("-"," ")+'</span>';
+        return '<span class="bdg">'+(lang==="fa" ? (BADGE_FA[b]||b) : b.replace("-"," "))+'</span>';
       }).join("") + (d.spice>0 ? '<span class="bdg hot">'+spiceText(d.spice)+'</span>' : '');
       return '<article class="card">'
-        + '<div class="card-img" data-open="'+d.id+'" role="button" tabindex="0" aria-label="View '+esc(d.name)+'">'
-        +   '<img src="'+d.img+'" alt="'+esc(d.alt)+'" loading="lazy" />'
-        +   (d.tag ? '<span class="tag">'+esc(d.tag)+'</span>' : '')
-        +   '<button type="button" class="fav-btn'+fav+'" data-fav="'+d.id+'" aria-label="Save '+esc(d.name)+' to favourites" aria-pressed="'+(!!state.favs[d.id])+'">'
+        + '<div class="card-img" data-open="'+d.id+'" role="button" tabindex="0" aria-label="'+esc(t("view_dish"))+' '+esc(dishName(d))+'">'
+        +   '<img src="'+d.img+'" alt="'+esc(dishAlt(d))+'" loading="lazy" />'
+        +   (d.tag ? '<span class="tag">'+esc(dishTag(d))+'</span>' : '')
+        +   '<button type="button" class="fav-btn'+fav+'" data-fav="'+d.id+'" aria-label="'+esc(t("save_fav"))+': '+esc(dishName(d))+'" aria-pressed="'+(!!state.favs[d.id])+'">'
         +   '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5C7 16.5 3 13.3 3 9.3A4.8 4.8 0 0 1 12 6a4.8 4.8 0 0 1 9 3.3c0 4-4 7.2-9 11.2z"/></svg></button>'
         + '</div>'
         + '<div class="card-body">'
-        +   '<div class="card-title"><div><h3>'+esc(d.name)+'</h3><span class="fa" lang="fa" dir="rtl">'+d.fa+'</span></div><span class="price">'+money(d.price)+'</span></div>'
-        +   '<div class="chef-line"><span class="chef-ava" aria-hidden="true">'+initials(chef.name)+'</span><span>by <strong>'+esc(chef.name)+'</strong> · '+esc(chef.area)+'</span></div>'
-        +   '<div class="meta-line"><span><span class="stars">★</span> '+d.rating.toFixed(1)+' ('+d.reviews+')</span><span>'+d.mins+' min</span></div>'
+        +   '<div class="card-title"><div><h3>'+esc(dishName(d))+'</h3>'+(lang==="fa" ? '<span style="color:var(--ink-3);font-size:.9rem;font-weight:600">'+esc(d.name)+'</span>' : '<span class="fa" lang="fa" dir="rtl">'+d.fa+'</span>')+'</div><span class="price">'+money(d.price)+'</span></div>'
+        +   '<div class="chef-line"><span class="chef-ava" aria-hidden="true">'+initials(chef.name)+'</span><span>'+esc(t("by"))+' <strong>'+esc(chef.name)+'</strong> · '+esc(chef.area)+'</span></div>'
+        +   '<div class="meta-line"><span><span class="stars">★</span> '+d.rating.toFixed(1)+' ('+d.reviews+')</span><span>'+d.mins+' '+esc(t("min"))+'</span></div>'
         +   (badges ? '<div class="badges">'+badges+'</div>' : '')
-        +   '<div class="card-foot"><button type="button" class="btn-add" data-add="'+d.id+'">Add to basket</button>'
-        +   '<button type="button" class="btn-view" data-open="'+d.id+'">Details</button></div>'
+        +   '<div class="card-foot"><button type="button" class="btn-add" data-add="'+d.id+'">'+esc(t("add_basket"))+'</button>'
+        +   '<button type="button" class="btn-view" data-open="'+d.id+'">'+esc(t("details"))+'</button></div>'
         + '</div></article>';
     }
     function bindCards(root){
@@ -680,14 +913,14 @@
       bindCards($("dishGrid"));
       if (state.chefFilter){
         var c = chefById(state.chefFilter);
-        $("menuTitle").textContent = "Cooking by " + c.name;
-        $("menuSub").textContent = c.spec + " · " + c.area + " · ★ " + c.rating.toFixed(1) + " (" + c.reviews + " reviews)";
+        $("menuTitle").textContent = t("cooking_by") + " " + c.name;
+        $("menuSub").textContent = chefSpec(c) + " · " + c.area + " · ★ " + c.rating.toFixed(1) + " (" + c.reviews + " " + t("reviews") + ")";
       } else if (state.query){
-        $("menuTitle").textContent = "Results for “" + state.query + "”";
-        $("menuSub").textContent = list.length + (list.length===1 ? " dish" : " dishes") + " cooking today near you.";
+        $("menuTitle").textContent = t("results_for") + " “" + state.query + "”";
+        $("menuSub").textContent = list.length + " " + (list.length===1 ? t("dish_singular") : t("dish_plural")) + " " + t("cooking_near");
       } else {
-        $("menuTitle").textContent = "Today's sofreh";
-        $("menuSub").textContent = "Cooked today in small batches — when it's gone, it's gone.";
+        $("menuTitle").textContent = t("menu_title");
+        $("menuSub").textContent = t("menu_sub");
       }
     }
     function renderChefs(){
@@ -696,7 +929,7 @@
         return '<button type="button" class="chef-card" data-chef="'+c.id+'">'
           + '<span class="big-ava" style="background:'+c.color+'" aria-hidden="true">'+initials(c.name)+'</span>'
           + '<span><h3>'+esc(c.name)+' <span class="fa" lang="fa" dir="rtl" style="color:var(--ink-3);font-size:.9rem">'+c.fa+'</span></h3>'
-          + '<p>'+esc(c.spec)+'</p><p>'+esc(c.area)+' · '+count+' dishes today</p>'
+          + '<p>'+esc(chefSpec(c))+'</p><p>'+esc(c.area)+' · '+count+' '+esc(t("dishes_today"))+'</p>'
           + '<span class="stars">★ '+c.rating.toFixed(1)+' ('+c.reviews+')</span></span></button>';
       }).join("");
       document.querySelectorAll("[data-chef]").forEach(function(b){
@@ -705,13 +938,13 @@
           $("searchDesk").value = ""; $("searchMob").value = "";
           renderCats(); renderMenu();
           $("menu").scrollIntoView({ behavior:"smooth" });
-          toast("Showing dishes by " + chefById(state.chefFilter).name);
+          toast(t("showing_by") + " " + chefById(state.chefFilter).name);
         });
       });
     }
     function toggleFav(id){
-      if (state.favs[id]){ delete state.favs[id]; toast(dishById(id).name + " removed from favourites"); }
-      else { state.favs[id] = true; toast(dishById(id).name + " saved to favourites"); }
+      if (state.favs[id]){ delete state.favs[id]; toast(dishName(dishById(id)) + t("removed_fav_suffix")); }
+      else { state.favs[id] = true; toast(dishName(dishById(id)) + t("saved_fav_suffix")); }
       renderMenu(); if (state.view==="favorites") renderFavs();
     }
     function renderFavs(){
@@ -738,7 +971,7 @@
       var cur = areas.indexOf($("locText").textContent);
       var next = areas[(cur+1)%areas.length];
       $("locText").textContent = next;
-      toast("Delivering to " + next + " — showing chefs nearby");
+      toast(t("delivering_prefix") + next + t("delivering_suffix"));
     });
 
     /* ==================== DISH MODAL ==================== */
@@ -747,21 +980,21 @@
       modalDish = dishById(id); modalQty = 1; modalExtras = {};
       var d = modalDish, chef = chefById(d.chef);
       $("modalCard").innerHTML =
-          '<img src="'+d.img+'" alt="'+esc(d.alt)+'" />'
-        + '<button type="button" class="modal-x" id="modalClose" aria-label="Close details">✕</button>'
+          '<img src="'+d.img+'" alt="'+esc(dishAlt(d))+'" />'
+        + '<button type="button" class="modal-x" id="modalClose" aria-label="'+esc(t("close_details"))+'">✕</button>'
         + '<div class="modal-body">'
-        +   '<div class="card-title"><div><h2 id="modalName">'+esc(d.name)+'</h2><span class="fa fa-name" lang="fa" dir="rtl">'+d.fa+'</span></div><span class="price" style="font-size:1.3rem">'+money(d.price)+'</span></div>'
-        +   '<div class="chef-line" style="margin-top:10px"><span class="chef-ava" aria-hidden="true">'+initials(chef.name)+'</span><span>Cooked by <strong>'+esc(chef.name)+'</strong> · '+esc(chef.area)+' · '+esc(chef.since)+'</span></div>'
-        +   '<div class="meta-line" style="margin-top:8px"><span><span class="stars">★</span> '+d.rating.toFixed(1)+' ('+d.reviews+' reviews)</span><span>Ready in ~'+d.mins+' min</span><span>'+spiceText(d.spice)+'</span></div>'
-        +   '<p class="modal-desc">'+esc(d.desc)+'</p>'
-        +   '<p class="opt-label">What&#39;s in it</p><div class="ing">'+d.ing.map(function(i){return '<span>'+esc(i)+'</span>';}).join("")+'</div>'
-        +   '<p class="opt-label">Make it yours</p><div class="extra-row" id="extraRow">'
-        +     EXTRAS.map(function(x){ return '<button type="button" class="chip" data-extra="'+x.id+'" aria-pressed="false">'+esc(x.label)+' · +'+money(x.price)+'</button>'; }).join("")
+        +   '<div class="card-title"><div><h2 id="modalName">'+esc(dishName(d))+'</h2>'+(lang==="fa" ? '<span style="color:var(--ink-3);font-size:1rem">'+esc(d.name)+'</span>' : '<span class="fa fa-name" lang="fa" dir="rtl">'+d.fa+'</span>')+'</div><span class="price" style="font-size:1.3rem">'+money(d.price)+'</span></div>'
+        +   '<div class="chef-line" style="margin-top:10px"><span class="chef-ava" aria-hidden="true">'+initials(chef.name)+'</span><span>'+esc(t("cooked_by"))+' <strong>'+esc(chef.name)+'</strong> · '+esc(chef.area)+' · '+esc(chefSince(chef))+'</span></div>'
+        +   '<div class="meta-line" style="margin-top:8px"><span><span class="stars">★</span> '+d.rating.toFixed(1)+' ('+d.reviews+' '+esc(t("reviews"))+')</span><span>'+esc(t("ready_in"))+d.mins+' '+esc(t("min"))+'</span><span>'+spiceText(d.spice)+'</span></div>'
+        +   '<p class="modal-desc">'+esc(dishDesc(d))+'</p>'
+        +   '<p class="opt-label">'+esc(t("whats_in"))+'</p><div class="ing">'+dishIng(d).map(function(i){return '<span>'+esc(i)+'</span>';}).join("")+'</div>'
+        +   '<p class="opt-label">'+esc(t("make_yours"))+'</p><div class="extra-row" id="extraRow">'
+        +     EXTRAS.map(function(x){ return '<button type="button" class="chip" data-extra="'+x.id+'" aria-pressed="false">'+esc(extraLabel(x))+' · +'+money(x.price)+'</button>'; }).join("")
         +   '</div>'
-        +   '<div class="field" style="margin-top:18px"><label for="dishNote">Note for the chef (optional)</label>'
-        +   '<textarea id="dishNote" placeholder="e.g. Less salt, extra herbs on the side…"></textarea></div>'
-        +   '<div class="modal-foot"><span class="qty" aria-label="Quantity"><button type="button" id="qMinus" aria-label="One less">−</button><output id="qOut">1</output><button type="button" id="qPlus" aria-label="One more">+</button></span>'
-        +   '<button type="button" class="btn-add" id="modalAdd">Add to basket · <span id="modalTotal">'+money(d.price)+'</span></button></div>'
+        +   '<div class="field" style="margin-top:18px"><label for="dishNote">'+esc(t("note_chef"))+'</label>'
+        +   '<textarea id="dishNote" placeholder="'+esc(t("note_chef_ph"))+'"></textarea></div>'
+        +   '<div class="modal-foot"><span class="qty" aria-label="'+esc(t("qty"))+'"><button type="button" id="qMinus" aria-label="'+esc(t("one_less"))+'">−</button><output id="qOut">1</output><button type="button" id="qPlus" aria-label="'+esc(t("one_more"))+'">+</button></span>'
+        +   '<button type="button" class="btn-add" id="modalAdd">'+esc(t("add_basket"))+' · <span id="modalTotal">'+money(d.price)+'</span></button></div>'
         + '</div>';
       $("dishModal").classList.add("open");
       document.body.style.overflow = "hidden";
@@ -807,14 +1040,14 @@
       if (found) found.qty += qty;
       else state.cart.push({ key:key, dishId:dishId, name:d.name + (extraNames ? " + " + extraNames : ""), unit:d.price + extraSum, qty:qty, img:d.img, note:note||"" });
       syncCartUI();
-      toast(d.name + " added to your basket");
+      toast(dishName(d) + t("added_suffix"));
     }
     function syncCartUI(){
       var n = cartCount(), sub = cartSubtotal();
       var badge = $("cartBadge");
       badge.hidden = n===0; badge.textContent = n;
       $("cartBar").classList.toggle("show", n>0 && state.view==="home");
-      $("cartBarCount").textContent = n + (n===1 ? " item" : " items");
+      $("cartBarCount").textContent = n + " " + (n===1 ? t("item") : t("items"));
       $("cartBarTotal").textContent = money(sub);
       if ($("drawer").classList.contains("open") && state.drawerStep==="cart") renderCartStep();
     }
@@ -846,34 +1079,40 @@
     $("drawerClose").addEventListener("click", closeDrawer);
     $("scrim").addEventListener("click", closeDrawer);
 
+    function localizeCartName(name){
+      var out = localizeItemName(name);
+      EXTRAS.forEach(function(x){ out = out.split(x.label).join(extraLabel(x)); });
+      return out;
+    }
+    function freeDelText(){ return t("free_del_intro") + (cartSubtotal()>=45 ? t("free_del_done") : money(45-cartSubtotal()) + t("free_del_away")); }
     function totalsHTML(){
       var sub = cartSubtotal();
       var fee = sub===0 ? 0 : (sub>=45 ? 0 : 3.95);
       var tax = sub * 0.13;
       var total = sub + fee + tax;
       return { sub:sub, fee:fee, tax:tax, total:total,
-        html:'<div class="totals"><div><span>Subtotal</span><span>'+money(sub)+'</span></div>'
-          + '<div><span>Delivery</span><span>'+(fee===0 && sub>0 ? '<span class="free">Free</span>' : money(fee))+'</span></div>'
-          + '<div><span>HST (13%)</span><span>'+money(tax)+'</span></div>'
-          + '<div class="grand"><span>Total</span><span>'+money(total)+'</span></div></div>' };
+        html:'<div class="totals"><div><span>'+t("subtotal")+'</span><span>'+money(sub)+'</span></div>'
+          + '<div><span>'+t("delivery")+'</span><span>'+(fee===0 && sub>0 ? '<span class="free">'+t("free")+'</span>' : money(fee))+'</span></div>'
+          + '<div><span>'+t("hst")+'</span><span>'+money(tax)+'</span></div>'
+          + '<div class="grand"><span>'+t("total")+'</span><span>'+money(total)+'</span></div></div>' };
     }
     function renderCartStep(){
       state.drawerStep = "cart";
-      $("drawerTitle").textContent = "Your basket";
+      $("drawerTitle").textContent = t("basket_title");
       if (state.cart.length===0){
-        $("drawerBody").innerHTML = '<div class="empty" style="margin-top:10px"><h3>Your basket is empty</h3><p>The sofreh is full though — add something delicious.</p></div>';
-        $("drawerFoot").innerHTML = '<button type="button" class="btn-block" id="footBrowse">Browse the menu</button>';
+        $("drawerBody").innerHTML = '<div class="empty" style="margin-top:10px"><h3>'+t("basket_empty_h")+'</h3><p>'+t("basket_empty_p")+'</p></div>';
+        $("drawerFoot").innerHTML = '<button type="button" class="btn-block" id="footBrowse">'+t("browse_menu")+'</button>';
         $("footBrowse").addEventListener("click", function(){ closeDrawer(); go("home"); });
         return;
       }
       $("drawerBody").innerHTML = state.cart.map(function(i){
         return '<div class="cart-item"><img src="'+i.img+'" alt="" />'
-          + '<div><h4>'+esc(i.name)+'</h4><p class="ci-meta">'+money(i.unit)+' each'+(i.note ? ' · “'+esc(i.note)+'”' : '')+'</p>'
-          + '<span class="qty" style="margin-top:7px"><button type="button" data-dec="'+esc(i.key)+'" aria-label="One less">−</button><output>'+i.qty+'</output><button type="button" data-inc="'+esc(i.key)+'" aria-label="One more">+</button></span></div>'
-          + '<div class="ci-right"><span class="ci-price">'+money(i.unit*i.qty)+'</span><button type="button" class="remove-btn" data-rem="'+esc(i.key)+'">Remove</button></div></div>';
-      }).join("") + '<p style="font-size:.85rem;color:var(--ink-3);margin-top:14px">Free delivery on orders over $45 — you are ' + (cartSubtotal()>=45 ? 'there. Nice.' : money(45-cartSubtotal()) + ' away') + '</p>';
-      var t = totalsHTML();
-      $("drawerFoot").innerHTML = t.html + '<button type="button" class="btn-block" id="footCheckout">Go to checkout · '+money(t.total)+'</button>';
+          + '<div><h4>'+esc(localizeCartName(i.name))+'</h4><p class="ci-meta">'+money(i.unit)+' '+t("each")+(i.note ? ' · “'+esc(i.note)+'”' : '')+'</p>'
+          + '<span class="qty" style="margin-top:7px"><button type="button" data-dec="'+esc(i.key)+'" aria-label="'+esc(t("one_less"))+'">−</button><output>'+i.qty+'</output><button type="button" data-inc="'+esc(i.key)+'" aria-label="'+esc(t("one_more"))+'">+</button></span></div>'
+          + '<div class="ci-right"><span class="ci-price">'+money(i.unit*i.qty)+'</span><button type="button" class="remove-btn" data-rem="'+esc(i.key)+'">'+t("remove")+'</button></div></div>';
+      }).join("") + '<p style="font-size:.85rem;color:var(--ink-3);margin-top:14px">' + freeDelText() + '</p>';
+      var tt = totalsHTML();
+      $("drawerFoot").innerHTML = tt.html + '<button type="button" class="btn-block" id="footCheckout">'+t("go_checkout")+' · '+money(tt.total)+'</button>';
       document.querySelectorAll("[data-inc]").forEach(function(b){ b.addEventListener("click", function(){ changeQty(b.getAttribute("data-inc"), 1); }); });
       document.querySelectorAll("[data-dec]").forEach(function(b){ b.addEventListener("click", function(){ changeQty(b.getAttribute("data-dec"), -1); }); });
       document.querySelectorAll("[data-rem]").forEach(function(b){ b.addEventListener("click", function(){ removeItem(b.getAttribute("data-rem")); }); });
@@ -881,27 +1120,27 @@
     }
     function renderCheckoutStep(){
       state.drawerStep = "checkout";
-      $("drawerTitle").textContent = "Checkout";
-      var slots = ["Today, 5:30–6:00 pm","Today, 6:30–7:00 pm","Today, 7:30–8:00 pm","Tomorrow, 12:00–12:30 pm"];
+      $("drawerTitle").textContent = t("checkout");
+      var slots = SLOTS.map(function(x){ return x.en; });
       $("drawerBody").innerHTML =
-          '<div class="field"><label for="coName">Your name</label><input id="coName" value="Mehrdad K." autocomplete="name" /></div>'
-        + '<div class="field"><label for="coAddr">Delivery address</label><input id="coAddr" value="Richmond Hill, ON" autocomplete="street-address" /></div>'
-        + '<div class="field"><label for="coPhone">Phone for the driver</label><input id="coPhone" value="+1 647-886-3734" autocomplete="tel" inputmode="tel" /></div>'
-        + '<div class="field"><label>Delivery window</label><div class="seg" id="slotSeg">'
-        +   slots.map(function(s){ return '<button type="button" data-slot="'+s+'" aria-pressed="'+(state.slot===s)+'">'+s+'</button>'; }).join("") + '</div></div>'
-        + '<div class="field"><label>Payment</label><div class="seg" id="paySeg">'
+          '<div class="field"><label for="coName">'+t("your_name")+'</label><input id="coName" value="Mehrdad K." autocomplete="name" /></div>'
+        + '<div class="field"><label for="coAddr">'+t("delivery_address")+'</label><input id="coAddr" value="Richmond Hill, ON" autocomplete="street-address" /></div>'
+        + '<div class="field"><label for="coPhone">'+t("phone_driver")+'</label><input id="coPhone" value="+1 647-886-3734" autocomplete="tel" inputmode="tel" /></div>'
+        + '<div class="field"><label>'+t("delivery_window")+'</label><div class="seg" id="slotSeg">'
+        +   slots.map(function(sv){ return '<button type="button" data-slot="'+sv+'" aria-pressed="'+(state.slot===sv)+'">'+slotLabel(sv)+'</button>'; }).join("") + '</div></div>'
+        + '<div class="field"><label>'+t("payment_label")+'</label><div class="seg" id="paySeg">'
         +   '<button type="button" data-pay="card" aria-pressed="'+(state.payMethod==="card")+'">Visa •••• 4242</button>'
         +   '<button type="button" data-pay="apple" aria-pressed="'+(state.payMethod==="apple")+'">Apple Pay</button>'
-        +   '<button type="button" data-pay="cash" aria-pressed="'+(state.payMethod==="cash")+'">Cash at the door</button></div></div>'
+        +   '<button type="button" data-pay="cash" aria-pressed="'+(state.payMethod==="cash")+'">'+t("pay_cash")+'</button></div></div>'
         + '<div class="pay-note" id="payNote"></div>'
-        + '<div class="field"><label for="coNote">Note for the driver (optional)</label><textarea id="coNote" placeholder="e.g. Leave at the porch, please ring the bell"></textarea></div>';
+        + '<div class="field"><label for="coNote">'+t("driver_note")+'</label><textarea id="coNote" placeholder="'+esc(t("driver_note_ph"))+'"></textarea></div>';
       $("drawerFoot").innerHTML = totalsHTML().html
-        + '<button type="button" class="btn-block" id="footPlace">Place order</button>'
-        + '<button type="button" class="btn-small" id="footBack" style="width:100%;margin-top:8px">Back to basket</button>';
+        + '<button type="button" class="btn-block" id="footPlace">'+t("place_order")+'</button>'
+        + '<button type="button" class="btn-small" id="footBack" style="width:100%;margin-top:8px">'+t("back_basket")+'</button>';
       function payNote(){
-        $("payNote").innerHTML = state.payMethod==="card" ? "<strong>Front-end demo:</strong> no real payment is taken. In the live app this step charges your saved card securely."
-          : state.payMethod==="apple" ? "<strong>Front-end demo:</strong> no real payment is taken. In the live app, Apple Pay confirms here."
-          : "<strong>Pay at the door:</strong> please have cash or a card ready when the driver arrives.";
+        $("payNote").innerHTML = state.payMethod==="card" ? t("pay_note_card")
+          : state.payMethod==="apple" ? t("pay_note_apple")
+          : t("pay_note_cash");
       }
       payNote();
       document.querySelectorAll("[data-slot]").forEach(function(b){
@@ -922,10 +1161,10 @@
     }
     function placeOrder(){
       var name = $("coName").value.trim(), addr = $("coAddr").value.trim(), phone = $("coPhone").value.trim();
-      if (!name || !addr || !phone){ toast("Please fill in your name, address and phone"); return; }
-      var t = totalsHTML();
+      if (!name || !addr || !phone){ toast(t("fill_fields")); return; }
+      var tt = totalsHTML();
       var order = {
-        id:"SF-" + (orderSeq++), date:"Today · just now", status:0, total:t.total, live:true,
+        id:"SF-" + (orderSeq++), date:"Today · just now", dateFa:"امروز · همین الان", status:0, total:tt.total, live:true,
         slot:state.slot, chef: state.cart.length ? dishById(state.cart[0].dishId).chef : "mahin",
         items: state.cart.map(function(i){ return { name:i.name, qty:i.qty, price:i.unit }; })
       };
@@ -938,14 +1177,14 @@
     }
     function renderDoneStep(order){
       state.drawerStep = "done";
-      $("drawerTitle").textContent = "Order placed";
+      $("drawerTitle").textContent = t("order_placed");
       $("drawerBody").innerHTML = '<div class="success">'
         + '<div class="tick"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><path d="m4 12.5 5 5L20 6.5"/></svg></div>'
-        + '<h3>Order '+order.id+' is with the chef</h3>'
-        + '<p>'+esc(chefById(order.chef).name)+' has your order. Delivery window: <strong>'+esc(order.slot||"")+'</strong>.<br/>We will text updates as it moves from the stove to your door.</p>'
-        + '<p style="margin-top:14px"><strong>Total: '+money(order.total)+'</strong></p></div>';
-      $("drawerFoot").innerHTML = '<button type="button" class="btn-block" id="footTrack">Track my order</button>'
-        + '<button type="button" class="btn-small" id="footDone" style="width:100%;margin-top:8px">Keep browsing</button>';
+        + '<h3>'+t("order_prefix")+order.id+t("with_chef_suffix")+'</h3>'
+        + '<p>'+esc(chefById(order.chef).name)+' '+t("has_order")+' <strong>'+esc(slotLabel(order.slot||""))+'</strong>.<br/>'+t("text_updates")+'</p>'
+        + '<p style="margin-top:14px"><strong>'+t("total")+': '+money(order.total)+'</strong></p></div>';
+      $("drawerFoot").innerHTML = '<button type="button" class="btn-block" id="footTrack">'+t("track_order")+'</button>'
+        + '<button type="button" class="btn-small" id="footDone" style="width:100%;margin-top:8px">'+t("keep_browsing")+'</button>';
       $("footTrack").addEventListener("click", function(){ closeDrawer(); go("orders"); });
       $("footDone").addEventListener("click", closeDrawer);
     }
@@ -956,8 +1195,8 @@
           if (order.status < idx+1){
             order.status = idx+1;
             if (state.view==="orders") renderOrders();
-            if (order.status===4) toast("Order " + order.id + " delivered — enjoy your meal!");
-            else toast("Order " + order.id + ": " + STEPS[order.status]);
+            if (order.status===4) toast(t("order_prefix") + order.id + t("delivered_suffix"));
+            else toast(t("order_prefix") + order.id + ": " + stepLabel(order.status));
           }
         }, delays.slice(0, idx+1).reduce(function(a,b){return a+b;},0));
       });
@@ -969,25 +1208,25 @@
       var pct = order.status===0 ? 0 : (order.status/(STEPS.length-1))*84;
       return '<div class="tracker"><div class="track-steps"><span class="track-fill" style="width:'+pct+'%"></span>'
         + STEPS.map(function(s, i){
-            return '<div class="tstep'+(i<=order.status ? " hit" : "")+'"><span class="dot">'+(i<order.status ? "✓" : (i+1))+'</span><span>'+s+'</span></div>';
+            return '<div class="tstep'+(i<=order.status ? " hit" : "")+'"><span class="dot">'+(i<order.status ? "✓" : (i+1))+'</span><span>'+stepLabel(i)+'</span></div>';
           }).join("")
         + '</div></div>';
     }
     function renderOrders(){
       if (state.orders.length===0){
-        $("ordersList").innerHTML = '<div class="empty"><h3>No orders yet</h3><p>Your first home-cooked dinner is a few taps away.</p></div>';
+        $("ordersList").innerHTML = '<div class="empty"><h3>'+t("no_orders_h")+'</h3><p>'+t("no_orders_p")+'</p></div>';
         return;
       }
       $("ordersList").innerHTML = state.orders.map(function(o){
         var done = o.status>=4;
-        return '<article class="order-card"><div class="order-top"><div><h3>Order '+o.id+' · '+esc(chefById(o.chef).name)+'</h3>'
-          + '<p>'+esc(o.date)+(o.slot ? ' · '+esc(o.slot) : '')+'</p></div>'
-          + '<span class="status-pill'+(done ? " done" : "")+'">'+(done ? "Delivered" : STEPS[o.status])+'</span></div>'
+        return '<article class="order-card"><div class="order-top"><div><h3>'+t("order_word")+' '+o.id+' · '+esc(chefById(o.chef).name)+'</h3>'
+          + '<p>'+esc(lang==="fa" && o.dateFa ? o.dateFa : o.date)+(o.slot ? ' · '+esc(slotLabel(o.slot)) : '')+'</p></div>'
+          + '<span class="status-pill'+(done ? " done" : "")+'">'+(done ? t("delivered") : stepLabel(o.status))+'</span></div>'
           + trackerHTML(o)
-          + '<div class="order-items">'+o.items.map(function(i){ return '<div><span>'+i.qty+' × '+esc(i.name)+'</span><span>'+money(i.price*i.qty)+'</span></div>'; }).join("")+'</div>'
+          + '<div class="order-items">'+o.items.map(function(i){ return '<div><span>'+i.qty+' × '+esc(localizeItemName(i.name))+'</span><span>'+money(i.price*i.qty)+'</span></div>'; }).join("")+'</div>'
           + '<div class="order-foot"><span class="order-total">'+money(o.total)+'</span>'
-          + '<span style="display:flex;gap:8px"><button type="button" class="btn-small" data-help="'+o.id+'">Get help</button>'
-          + '<button type="button" class="btn-small" data-reorder="'+o.id+'">Order again</button></span></div></article>';
+          + '<span style="display:flex;gap:8px"><button type="button" class="btn-small" data-help="'+o.id+'">'+t("get_help")+'</button>'
+          + '<button type="button" class="btn-small" data-reorder="'+o.id+'">'+t("order_again")+'</button></span></div></article>';
       }).join("");
       document.querySelectorAll("[data-reorder]").forEach(function(b){
         b.addEventListener("click", function(){
@@ -998,22 +1237,47 @@
           o.items.forEach(function(it){
             DISHES.forEach(function(d){ if (it.name.indexOf(d.name)===0){ addToCart(d.id, it.qty, []); added++; } });
           });
-          if (added) openDrawer(); else toast("Those dishes are not cooking today");
+          if (added) openDrawer(); else toast(t("not_today"));
         });
       });
       document.querySelectorAll("[data-help]").forEach(function(b){
-        b.addEventListener("click", function(){ toast("Support will reach out about order " + b.getAttribute("data-help")); });
+        b.addEventListener("click", function(){ toast(t("support_reach_prefix") + b.getAttribute("data-help")); });
       });
     }
 
     /* ==================== PROFILE EXTRAS ==================== */
-    $("addAddrBtn").addEventListener("click", function(){ toast("Address book opens here in the live app"); });
-    $("helpBtn").addEventListener("click", function(){ toast("Support chat opens here in the live app"); });
-    $("chefApplyBtn").addEventListener("click", function(){ toast("Chef applications open on the Sofreh chef site"); });
+    $("addAddrBtn").addEventListener("click", function(){ toast(t("addr_book_toast")); });
+    $("helpBtn").addEventListener("click", function(){ toast(t("support_chat_toast")); });
+    $("chefApplyBtn").addEventListener("click", function(){ toast(t("chef_apply_toast")); });
     ["prefSms","prefEmail","prefOffers"].forEach(function(id){
-      $(id).addEventListener("change", function(){ toast("Preference updated for this session"); });
+      $(id).addEventListener("change", function(){ toast(t("pref_updated")); });
     });
-    $("prefSpice").addEventListener("change", function(){ toast("Default spice level: " + this.value); });
+    $("prefSpice").addEventListener("change", function(){ toast(t("spice_prefix") + this.value); });
+
+    /* ==================== LANGUAGE ==================== */
+    function applyLang(){
+      document.documentElement.lang = lang;
+      document.documentElement.dir = lang==="fa" ? "rtl" : "ltr";
+      try { localStorage.setItem("sofreh-lang", lang); } catch(e){}
+      var lb = $("langToggle");
+      lb.textContent = lang==="fa" ? "English" : "فارسی";
+      lb.setAttribute("aria-label", lang==="fa" ? "Switch to English" : "Switch to Persian");
+      document.title = t("title");
+      document.querySelectorAll("[data-i18n]").forEach(function(el){ var k=el.getAttribute("data-i18n"); if (T[lang][k]) el.textContent = T[lang][k]; });
+      document.querySelectorAll("[data-i18n-ph]").forEach(function(el){ var k=el.getAttribute("data-i18n-ph"); if (T[lang][k]) el.setAttribute("placeholder", T[lang][k]); });
+      document.querySelectorAll("[data-i18n-aria]").forEach(function(el){ var k=el.getAttribute("data-i18n-aria"); if (T[lang][k]) el.setAttribute("aria-label", T[lang][k]); });
+      document.querySelectorAll("[data-i18n-alt]").forEach(function(el){ var k=el.getAttribute("data-i18n-alt"); if (T[lang][k]) el.setAttribute("alt", T[lang][k]); });
+      if (window.__syncThemeBtn) window.__syncThemeBtn();
+      renderCats(); renderMenu(); renderChefs(); renderOrders();
+      if (state.view==="favorites") renderFavs();
+      syncCartUI();
+      if ($("drawer").classList.contains("open")){
+        if (state.drawerStep==="cart") renderCartStep();
+        else if (state.drawerStep==="checkout") renderCheckoutStep();
+      }
+      if ($("dishModal").classList.contains("open") && modalDish) openDish(modalDish.id);
+    }
+    $("langToggle").addEventListener("click", function(){ lang = lang==="fa" ? "en" : "fa"; applyLang(); });
 
     /* ==================== INIT ==================== */
     renderCats();
@@ -1021,6 +1285,30 @@
     renderChefs();
     renderOrders();
     syncCartUI();
+    applyLang();
     </script>
-  </body>
+  
+<script>
+/* ---------- theme toggle: light (day) / dark (night), saved across Sofreh pages ---------- */
+(function(){
+  var b = document.getElementById("themeToggle"); if(!b) return;
+  var l = document.getElementById("themeLabel");
+  function sync(){
+    var d = document.documentElement.getAttribute("data-theme")==="dark";
+    var fa = document.documentElement.lang==="fa";
+    b.setAttribute("aria-pressed", d ? "true" : "false");
+    b.setAttribute("aria-label", fa ? (d ? "حالت روشن (روز)" : "حالت تیره (شب)") : (d ? "Switch to light theme (day)" : "Switch to dark theme (night)"));
+    if(l) l.textContent = fa ? (d ? "روشن" : "تیره") : (d ? "Light" : "Dark");
+  }
+  b.addEventListener("click", function(){
+    var n = document.documentElement.getAttribute("data-theme")==="dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", n);
+    try{ localStorage.setItem("sofreh-theme", n); }catch(e){}
+    sync();
+  });
+  window.__syncThemeBtn = sync;
+  sync();
+})();
+</script>
+</body>
 </html>

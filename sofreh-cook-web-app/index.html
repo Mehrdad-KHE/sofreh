@@ -4,9 +4,11 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="light dark" />
+<script>/* Theme: saved choice wins, else system day/night. */(function(){var t;try{t=localStorage.getItem("sofreh-theme");}catch(e){}if(t!=="dark"&&t!=="light"){try{t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}catch(e){t="light";}}document.documentElement.setAttribute("data-theme",t);})();</script>
+<script>/* Language: saved choice wins, else English. */(function(){var l;try{l=localStorage.getItem("sofreh-lang");}catch(e){}if(l==="fa"){document.documentElement.lang="fa";document.documentElement.dir="rtl";}})();</script>
 <link rel="icon" href="data:," />
-<title>Sofreh for Cooks — Orders, Menu, Schedule &amp; Earnings</title>
-<meta name="description" content="The Sofreh cook web app: receive and manage orders on your computer, set your menu and cooking days, track portions, earnings and reviews. Built for Sofreh home cooks in Toronto and the GTA." />
+<title data-i18n-title>Sofreh for Cooks — Orders, Menu, Schedule &amp; Earnings</title>
+<meta name="description" id="metaDesc" content="The Sofreh cook web app: receive and manage orders on your computer, set your menu and cooking days, track portions, earnings and reviews. Built for Sofreh home cooks in Toronto and the GTA." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -18,16 +20,15 @@
     --line:#e6dcc8; --chip:#f3ecdc; --shadow:0 14px 34px rgba(23,50,38,.13);
     --radius:16px; color-scheme: light dark;
   }
-  @media (prefers-color-scheme: dark){
-    :root{ --bg:#0f1512; --surface:#18211b; --wash:#141d17; --ink:#edf3ee; --muted:#a7b7ab;
+  :root[data-theme="dark"]{ --bg:#0f1512; --surface:#18211b; --wash:#141d17; --ink:#edf3ee; --muted:#a7b7ab;
       --green:#4db58c; --green-deep:#0a2c20; --green-soft:#1b2f24; --saffron:#eda92e; --saffron-soft:#3a2d10;
       --pom:#e0786e; --pom-soft:#38201d; --line:#2b3a2f; --chip:#1f2b22; --shadow:0 14px 34px rgba(0,0,0,.45); }
-  }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
   @media (prefers-reduced-motion: reduce){ *{transition:none!important; animation:none!important} html{scroll-behavior:auto} }
   body{margin:0;background:var(--bg);color:var(--ink);font-family:"Vazirmatn",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.55;font-size:16px}
   h1,h2,h3{font-family:"Lora","Vazirmatn",Georgia,serif;line-height:1.2;margin:0}
+  html[lang="fa"] h1, html[lang="fa"] h2, html[lang="fa"] h3{font-family:"Vazirmatn",sans-serif;font-weight:800}
   img{display:block;max-width:100%}
   button,[role="button"],select,summary,input:not([type="checkbox"],[type="radio"]){min-height:2.75rem}
   :focus-visible{outline:3px solid var(--saffron);outline-offset:2px;border-radius:6px}
@@ -83,7 +84,7 @@
 
   /* ---------- Shared bits ---------- */
   .btn{background:var(--green);color:#fff;border:0;border-radius:12px;padding:11px 20px;font:inherit;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;justify-content:center;text-decoration:none}
-  @media (prefers-color-scheme: dark){ .btn{color:#08130d} }
+  :root[data-theme="dark"] .btn{color:#08130d}
   .btn:hover{filter:brightness(1.07)}
   .btn.saffron{background:var(--saffron);color:#261a00}
   .btn.ghost{background:transparent;color:var(--green);border:1.5px solid var(--green)}
@@ -101,15 +102,15 @@
   .link{color:var(--green);font-weight:700;background:none;border:0;font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:3px;padding:6px 2px;min-height:36px}
   .pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 11px;font-size:.8rem;font-weight:700;white-space:nowrap}
   .pill.new{background:var(--saffron-soft);color:#7a5200}
-  @media (prefers-color-scheme: dark){ .pill.new{color:#f5c86e} }
+  :root[data-theme="dark"] .pill.new{color:#f5c86e}
   .pill.cooking{background:#e7eefb;color:#274b8f}
-  @media (prefers-color-scheme: dark){ .pill.cooking{background:#1d2a44;color:#a9c4f5} }
+  :root[data-theme="dark"] .pill.cooking{background:#1d2a44;color:#a9c4f5}
   .pill.ready{background:var(--green-soft);color:var(--green-deep)}
-  @media (prefers-color-scheme: dark){ .pill.ready{color:#8fd3ae} }
+  :root[data-theme="dark"] .pill.ready{color:#8fd3ae}
   .pill.done{background:var(--chip);color:var(--muted)}
   .pill.declined{background:var(--pom-soft);color:var(--pom)}
   .pill.veg{background:#e2f0e4;color:#14532d}
-  @media (prefers-color-scheme: dark){ .pill.veg{background:#17301d;color:#9fd8ab} }
+  :root[data-theme="dark"] .pill.veg{background:#17301d;color:#9fd8ab}
   .toast{position:fixed;bottom:22px;inset-inline-start:50%;transform:translateX(-50%);background:var(--green-deep);color:#fff;padding:13px 22px;border-radius:999px;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .25s;z-index:90;max-width:calc(100% - 32px);text-align:center;font-weight:600}
   .toast.show{opacity:1}
 
@@ -145,7 +146,7 @@
   .timeline .dot.done{background:var(--green)}
   .timeline .dot.idle{background:var(--chip)}
   .timeline p{margin:0;font-size:.94rem}
-  .timeline p span{color:var(--muted);display:block;font-size:.87rem}
+  .timeline p span.sub{color:var(--muted);display:block;font-size:.87rem}
   .stock-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
   .stock-row:last-child{border-bottom:0}
   .stock-row img{width:46px;height:46px;border-radius:10px;object-fit:cover}
@@ -237,11 +238,28 @@
   .checklist li{display:flex;gap:11px;align-items:flex-start;font-size:.95rem}
   .checklist .tick{width:26px;height:26px;border-radius:50%;background:var(--green-soft);color:var(--green);display:grid;place-items:center;flex:none;font-weight:800}
   .checklist .tick.due{background:var(--saffron-soft);color:#7a5200}
-  @media (prefers-color-scheme: dark){ .checklist .tick.due{color:#f5c86e} }
+  :root[data-theme="dark"] .checklist .tick.due{color:#f5c86e}
   .banner{display:flex;gap:14px;align-items:flex-start;background:var(--saffron-soft);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:20px}
   .banner p{margin:0;font-size:.95rem}
   .banner.hidden{display:none}
   [hidden]{display:none!important}
+
+  /* ---------- Language toggle + RTL ---------- */
+  .langbtn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 15px;font:inherit;font-weight:700;cursor:pointer;min-height:2.25rem;flex:none}
+  html[dir="rtl"] .toast{transform:translateX(50%)}
+  html[dir="rtl"] .chart-wrap svg{direction:ltr}
+  html[dir="rtl"] .side .cookcard .cert svg{margin-top:2px}
+  html[dir="rtl"] table{direction:rtl}
+  html[dir="rtl"] .detail dl{direction:rtl}
+
+  /* ---------- Manual light/dark theme toggle (same pattern as the Sofreh catalog) ---------- */
+  :root[data-theme="dark"]{ color-scheme: dark; }
+  :root[data-theme="light"]{ color-scheme: light; }
+  .themebtn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 14px;font:inherit;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;min-height:2.25rem;flex:none}
+  .themebtn svg{width:16px;height:16px;flex:none}
+  .themebtn .ico-sun{display:none}
+  :root[data-theme="dark"] .themebtn .ico-sun{display:block}
+  :root[data-theme="dark"] .themebtn .ico-moon{display:none}
 </style>
 </head>
 <body>
@@ -250,31 +268,31 @@
   <!-- ============ SIDEBAR ============ -->
   <aside class="side">
     <a class="brand" href="#" data-goto="today">Sofreh <span class="dot" aria-hidden="true"></span> <span class="fa" lang="fa">سفره</span></a>
-    <p class="studio">Cook Studio — the web app for cooks, made for the big screen at home.</p>
-    <nav aria-label="Cook studio">
+    <p class="studio" data-i18n="studio">Cook Studio — the web app for cooks, made for the big screen at home.</p>
+    <nav data-i18n-aria="nav_aria" aria-label="Cook studio">
       <button class="navbtn" type="button" data-goto="today" aria-current="page">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
-        Today
+        <span data-i18n="nav_today">Today</span>
       </button>
       <button class="navbtn" type="button" data-goto="orders">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2z"/><path d="M9 7h6M9 11h6"/></svg>
-        Orders <span class="badge" id="navNewCount">2</span>
+        <span data-i18n="nav_orders">Orders</span> <span class="badge" id="navNewCount">2</span>
       </button>
       <button class="navbtn" type="button" data-goto="menu">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 3v7a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V3"/><path d="M6 3v18"/><path d="M20 15V3a5 5 0 0 0-4 5v7h4z"/><path d="M20 15v6"/></svg>
-        My menu
+        <span data-i18n="nav_menu">My menu</span>
       </button>
       <button class="navbtn" type="button" data-goto="schedule">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
-        Schedule
+        <span data-i18n="nav_schedule">Schedule</span>
       </button>
       <button class="navbtn" type="button" data-goto="earnings">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/><path d="M6 15h4"/></svg>
-        Earnings
+        <span data-i18n="nav_earnings">Earnings</span>
       </button>
       <button class="navbtn" type="button" data-goto="reviews">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.7 5.6 6.1.8-4.5 4.2 1.1 6-5.4-3-5.4 3 1.1-6L3.2 9.4l6.1-.8z"/></svg>
-        Reviews &amp; profile
+        <span data-i18n="nav_reviews">Reviews &amp; profile</span>
       </button>
     </nav>
     <div class="cookcard">
@@ -284,7 +302,7 @@
       </div>
       <p class="cert">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none;margin-top:2px"><path d="M20 6 9 17l-5-5"/></svg>
-        Ontario Food Handler Certificate on file · kitchen checklist passed
+        <span data-i18n="cert_line">Ontario Food Handler Certificate on file · kitchen checklist passed</span>
       </p>
     </div>
   </aside>
@@ -294,79 +312,81 @@
     <header class="topbar">
       <div>
         <h1 id="pageTitle">Today in your kitchen</h1>
-        <span class="date">Wednesday, November 18, 2026 · Richmond Hill</span>
+        <span class="date" data-i18n="top_date">Wednesday, November 18, 2026 · Richmond Hill</span>
       </div>
       <div class="spacer"></div>
       <label class="search">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        <input id="orderSearch" type="search" placeholder="Search…" aria-label="Search orders by customer or dish" />
+        <input id="orderSearch" type="search" placeholder="Search…" data-i18n-ph="search_ph" data-i18n-aria="search_aria" aria-label="Search orders by customer or dish" />
       </label>
-      <button class="iconbtn" type="button" id="bellBtn" aria-label="Notifications — 2 new orders">
+      <button class="iconbtn" type="button" id="bellBtn" data-i18n-aria="bell_aria" aria-label="Notifications — 2 new orders">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M10.3 21a2 2 0 0 0 3.4 0"/></svg>
         <span class="ping" id="bellPing" aria-hidden="true"></span>
       </button>
-      <button class="status-toggle" type="button" id="statusToggle" aria-pressed="true">
-        <span class="lamp" aria-hidden="true"></span><span id="statusLabel">Accepting orders</span>
+      <button class="langbtn" id="langToggle" type="button">فارسی</button>
+      <button class="themebtn" id="themeToggle" type="button" aria-pressed="false" aria-label="Switch to dark theme (night)"><svg class="ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span id="themeLabel">Dark</span></button>
+        <button class="status-toggle" type="button" id="statusToggle" aria-pressed="true">
+        <span class="lamp" aria-hidden="true"></span><span id="statusLabel" data-i18n="accepting">Accepting orders</span>
       </button>
     </header>
 
     <div class="content">
       <div class="banner hidden" id="pausedBanner" role="status">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="flex:none;margin-top:2px"><circle cx="12" cy="12" r="9"/><path d="M10 9v6M14 9v6"/></svg>
-        <p><b>You are paused.</b> Your dishes are hidden from today's menu and no new orders can come in. Orders already accepted still need cooking — tap “Accepting orders” above when you are ready to reopen.</p>
+        <p><b data-i18n="paused_b">You are paused.</b> <span data-i18n="paused_p">Your dishes are hidden from today's menu and no new orders can come in. Orders already accepted still need cooking — tap “Accepting orders” above when you are ready to reopen.</span></p>
       </div>
 
       <!-- ============ TODAY ============ -->
-      <section data-panel="today" aria-label="Today">
-        <div class="kpis" role="group" aria-label="Today at a glance">
-          <div class="kpi"><span class="lbl">Orders today</span><div class="val" id="kpiOrders">8</div><span class="note"><b id="kpiNew">2 new</b> waiting for your answer</span></div>
-          <div class="kpi"><span class="lbl">Portions to cook</span><div class="val" id="kpiPortions">22</div><span class="note">across <b>4 dishes</b> on today's menu</span></div>
-          <div class="kpi"><span class="lbl">Sales today</span><div class="val" id="kpiGross">$330.00</div><span class="note">you keep <b id="kpiKeep">$280.50</b> (85%)</span></div>
-          <div class="kpi"><span class="lbl">Your rating</span><div class="val">4.9 ★</div><span class="note">from <b>132 reviews</b> · top cook in Richmond Hill</span></div>
+      <section data-panel="today" data-i18n-aria="nav_today" aria-label="Today">
+        <div class="kpis" role="group" data-i18n-aria="glance_aria" aria-label="Today at a glance">
+          <div class="kpi"><span class="lbl" data-i18n="kpi_orders">Orders today</span><div class="val" id="kpiOrders">8</div><span class="note"><b id="kpiNew">2 new</b> <span data-i18n="kpi_waiting">waiting for your answer</span></span></div>
+          <div class="kpi"><span class="lbl" data-i18n="kpi_portions">Portions to cook</span><div class="val" id="kpiPortions">22</div><span class="note"><span data-i18n="kpi_across">across</span> <b data-i18n="kpi_4dishes">4 dishes</b> <span data-i18n="kpi_onmenu">on today's menu</span></span></div>
+          <div class="kpi"><span class="lbl" data-i18n="kpi_sales">Sales today</span><div class="val" id="kpiGross">$330.00</div><span class="note"><span data-i18n="kpi_youkeep">you keep</span> <b id="kpiKeep">$280.50</b> (85%)</span></div>
+          <div class="kpi"><span class="lbl" data-i18n="kpi_rating">Your rating</span><div class="val">4.9 ★</div><span class="note"><span data-i18n="kpi_from">from</span> <b data-i18n="kpi_132">132 reviews</b> <span data-i18n="kpi_topcook">· top cook in Richmond Hill</span></span></div>
         </div>
 
         <div class="today-grid" style="margin-top:20px">
           <div class="panel">
-            <h2>Needs your attention</h2>
-            <p class="sub">New orders first, then what is on the stove and what is waiting at the door.</p>
+            <h2 data-i18n="attn_h">Needs your attention</h2>
+            <p class="sub" data-i18n="attn_p">New orders first, then what is on the stove and what is waiting at the door.</p>
             <div id="todayQueue"></div>
             <div style="margin-top:16px">
-              <button class="btn ghost" type="button" data-goto="orders">See all of today's orders</button>
+              <button class="btn ghost" type="button" data-goto="orders" data-i18n="see_all_orders">See all of today's orders</button>
             </div>
           </div>
 
           <div style="display:grid;gap:20px">
             <div class="panel">
-              <h2>Today's cooking plan</h2>
-              <p class="sub">Wednesday — one of your regular cooking days.</p>
+              <h2 data-i18n="plan_h">Today's cooking plan</h2>
+              <p class="sub" data-i18n="plan_p">Wednesday — one of your regular cooking days.</p>
               <ol class="timeline">
-                <li><span class="t">09:00</span><span class="dotcol"><span class="dot done"></span></span><p>Herbs washed, ghormeh sabzi on the stove<span>Simmer until 15:30 — fenugreek in at the end</span></p></li>
-                <li><span class="t">11:30</span><span class="dotcol"><span class="dot done"></span></span><p>Gheymeh started, potatoes cut<span>Keep the straws dry until frying time</span></p></li>
-                <li><span class="t">14:00</span><span class="dotcol"><span class="dot"></span></span><p>Order cut-off for tonight<span>Menu closes; final portion count locked</span></p></li>
-                <li><span class="t">16:30</span><span class="dotcol"><span class="dot idle"></span></span><p>Seal &amp; label the 17:00 pickups<span>Cook name, ingredients and prep time on every label</span></p></li>
-                <li><span class="t">17:00</span><span class="dotcol"><span class="dot idle"></span></span><p>Pickup window 1 opens<span>3 orders · door code in each order</span></p></li>
-                <li><span class="t">18:00</span><span class="dotcol"><span class="dot idle"></span></span><p>Pickup window 2 opens<span>2 orders · 1 local delivery</span></p></li>
+                <li><span class="t">09:00</span><span class="dotcol"><span class="dot done"></span></span><p><span data-i18n="tl1">Herbs washed, ghormeh sabzi on the stove</span><span class="sub" data-i18n="tl1_s">Simmer until 15:30 — fenugreek in at the end</span></p></li>
+                <li><span class="t">11:30</span><span class="dotcol"><span class="dot done"></span></span><p><span data-i18n="tl2">Gheymeh started, potatoes cut</span><span class="sub" data-i18n="tl2_s">Keep the straws dry until frying time</span></p></li>
+                <li><span class="t">14:00</span><span class="dotcol"><span class="dot"></span></span><p><span data-i18n="tl3">Order cut-off for tonight</span><span class="sub" data-i18n="tl3_s">Menu closes; final portion count locked</span></p></li>
+                <li><span class="t">16:30</span><span class="dotcol"><span class="dot idle"></span></span><p><span data-i18n="tl4">Seal &amp; label the 17:00 pickups</span><span class="sub" data-i18n="tl4_s">Cook name, ingredients and prep time on every label</span></p></li>
+                <li><span class="t">17:00</span><span class="dotcol"><span class="dot idle"></span></span><p><span data-i18n="tl5">Pickup window 1 opens</span><span class="sub" data-i18n="tl5_s">3 orders · door code in each order</span></p></li>
+                <li><span class="t">18:00</span><span class="dotcol"><span class="dot idle"></span></span><p><span data-i18n="tl6">Pickup window 2 opens</span><span class="sub" data-i18n="tl6_s">2 orders · 1 local delivery</span></p></li>
               </ol>
             </div>
 
             <div class="panel">
-              <h2>Portions left today</h2>
-              <p class="sub">When a dish runs out it leaves the public menu on its own.</p>
+              <h2 data-i18n="stock_h">Portions left today</h2>
+              <p class="sub" data-i18n="stock_p">When a dish runs out it leaves the public menu on its own.</p>
               <div id="stockList"></div>
-              <button class="link" type="button" data-goto="menu" style="margin-top:10px">Adjust portions in My menu →</button>
+              <button class="link" type="button" data-goto="menu" style="margin-top:10px" data-i18n="adjust_portions">Adjust portions in My menu →</button>
             </div>
           </div>
         </div>
       </section>
 
       <!-- ============ ORDERS ============ -->
-      <section data-panel="orders" aria-label="Orders" hidden>
-        <div class="filters" role="group" aria-label="Filter orders by status">
-          <button class="fchip" type="button" data-filter="all" aria-pressed="true">All today</button>
-          <button class="fchip" type="button" data-filter="new" aria-pressed="false">New</button>
-          <button class="fchip" type="button" data-filter="cooking" aria-pressed="false">Cooking</button>
-          <button class="fchip" type="button" data-filter="ready" aria-pressed="false">Ready for pickup</button>
-          <button class="fchip" type="button" data-filter="done" aria-pressed="false">Completed</button>
+      <section data-panel="orders" data-i18n-aria="nav_orders" aria-label="Orders" hidden>
+        <div class="filters" role="group" data-i18n-aria="filter_aria" aria-label="Filter orders by status">
+          <button class="fchip" type="button" data-filter="all" aria-pressed="true" data-i18n="f_all">All today</button>
+          <button class="fchip" type="button" data-filter="new" aria-pressed="false" data-i18n="f_new">New</button>
+          <button class="fchip" type="button" data-filter="cooking" aria-pressed="false" data-i18n="f_cooking">Cooking</button>
+          <button class="fchip" type="button" data-filter="ready" aria-pressed="false" data-i18n="f_ready">Ready for pickup</button>
+          <button class="fchip" type="button" data-filter="done" aria-pressed="false" data-i18n="f_done">Completed</button>
         </div>
         <div class="orders-layout">
           <div id="ordersList"></div>
@@ -375,116 +395,116 @@
       </section>
 
       <!-- ============ MENU ============ -->
-      <section data-panel="menu" aria-label="My menu" hidden>
+      <section data-panel="menu" data-i18n-aria="nav_menu" aria-label="My menu" hidden>
         <div class="sec-head" style="margin-top:0">
-          <div><h2>Your dishes</h2><p>What neighbours see on the public menu today. Turn a dish off and it disappears within a minute; portions count down as orders land.</p></div>
+          <div><h2 data-i18n="dishes_h">Your dishes</h2><p data-i18n="dishes_p">What neighbours see on the public menu today. Turn a dish off and it disappears within a minute; portions count down as orders land.</p></div>
         </div>
         <div class="menu-grid" id="menuGrid"></div>
 
         <div class="panel" style="margin-top:22px">
-          <h2>Add a dish</h2>
-          <p class="sub">New dishes go live on your next cooking day, after the ingredient and allergen list is complete.</p>
+          <h2 data-i18n="add_h">Add a dish</h2>
+          <p class="sub" data-i18n="add_p">New dishes go live on your next cooking day, after the ingredient and allergen list is complete.</p>
           <form class="adddish" id="addDishForm">
-            <label class="fld">Dish name (English)
-              <input name="name" required placeholder="e.g. Zereshk Polo ba Morgh" />
+            <label class="fld"><span data-i18n="fld_name_en">Dish name (English)</span>
+              <input name="name" required data-i18n-ph="fld_name_en_ph" placeholder="e.g. Zereshk Polo ba Morgh" />
             </label>
-            <label class="fld">Dish name (Persian)
-              <input name="faname" placeholder="e.g. زرشک‌پلو با مرغ" />
+            <label class="fld"><span data-i18n="fld_name_fa">Dish name (Persian)</span>
+              <input name="faname" data-i18n-ph="fld_name_fa_ph" placeholder="e.g. زرشک‌پلو با مرغ" />
             </label>
-            <label class="fld">Price per single portion (CAD)
+            <label class="fld"><span data-i18n="fld_price">Price per single portion (CAD)</span>
               <input name="price" type="number" min="5" max="60" step="0.50" required placeholder="19.00" />
             </label>
-            <label class="fld">Portions per cooking day
+            <label class="fld"><span data-i18n="fld_portions">Portions per cooking day</span>
               <input name="portions" type="number" min="1" max="60" required placeholder="12" />
             </label>
-            <label class="fld full">Short description — ingredients and what makes yours yours
-              <textarea name="desc" required placeholder="Basmati rice, tart barberries, chicken braised in tomato and saffron…"></textarea>
+            <label class="fld full"><span data-i18n="fld_desc">Short description — ingredients and what makes yours yours</span>
+              <textarea name="desc" required data-i18n-ph="fld_desc_ph" placeholder="Basmati rice, tart barberries, chicken braised in tomato and saffron…"></textarea>
             </label>
-            <label class="fld">Photo
+            <label class="fld"><span data-i18n="fld_photo">Photo</span>
               <select name="photo">
-                <option value="assets/zereshk.jpg">Zereshk polo photo</option>
-                <option value="assets/tahchin.jpg">Tahchin photo</option>
-                <option value="assets/fesenjan.jpg">Fesenjan photo</option>
-                <option value="assets/baghali.jpg">Baghali polo photo</option>
-                <option value="assets/koobideh.webp">Kabab koobideh photo</option>
+                <option value="assets/zereshk.jpg" data-i18n="ph_zereshk">Zereshk polo photo</option>
+                <option value="assets/tahchin.jpg" data-i18n="ph_tahchin">Tahchin photo</option>
+                <option value="assets/fesenjan.jpg" data-i18n="ph_fesenjan">Fesenjan photo</option>
+                <option value="assets/baghali.jpg" data-i18n="ph_baghali">Baghali polo photo</option>
+                <option value="assets/koobideh.webp" data-i18n="ph_koobideh">Kabab koobideh photo</option>
               </select>
             </label>
-            <label class="fld">Allergens
+            <label class="fld"><span data-i18n="fld_allergens">Allergens</span>
               <select name="allergen">
-                <option>None to declare</option><option>Contains nuts</option>
-                <option>Contains dairy</option><option>Contains gluten</option><option>Contains egg</option>
+                <option value="None to declare" data-i18n="alg_none">None to declare</option><option value="Contains nuts" data-i18n="alg_nuts">Contains nuts</option>
+                <option value="Contains dairy" data-i18n="alg_dairy">Contains dairy</option><option value="Contains gluten" data-i18n="alg_gluten">Contains gluten</option><option value="Contains egg" data-i18n="alg_egg">Contains egg</option>
               </select>
             </label>
-            <div class="full"><button class="btn saffron" type="submit">Add dish to my menu</button></div>
+            <div class="full"><button class="btn saffron" type="submit" data-i18n="add_btn">Add dish to my menu</button></div>
           </form>
         </div>
       </section>
 
       <!-- ============ SCHEDULE ============ -->
-      <section data-panel="schedule" aria-label="Schedule" hidden>
+      <section data-panel="schedule" data-i18n-aria="nav_schedule" aria-label="Schedule" hidden>
         <div class="panel">
-          <h2>Your cooking week</h2>
-          <p class="sub">You choose your days — most Sofreh cooks cook three or four days a week. Changes apply from next week; this week's orders are never touched.</p>
+          <h2 data-i18n="week_h">Your cooking week</h2>
+          <p class="sub" data-i18n="week_p">You choose your days — most Sofreh cooks cook three or four days a week. Changes apply from next week; this week's orders are never touched.</p>
           <div class="week" id="weekGrid"></div>
         </div>
 
         <div class="today-grid" style="margin-top:20px">
           <div class="panel">
-            <h2>Pickup windows</h2>
-            <p class="sub">Neighbours pick a window when they order. Dinner windows work best — lunch only if you are home.</p>
+            <h2 data-i18n="windows_h">Pickup windows</h2>
+            <p class="sub" data-i18n="windows_p">Neighbours pick a window when they order. Dinner windows work best — lunch only if you are home.</p>
             <div class="checkrow" id="windowRow">
-              <label class="checkchip"><input type="checkbox" value="12:00 – 13:00" /> 12:00 – 13:00 · lunch</label>
+              <label class="checkchip"><input type="checkbox" value="12:00 – 13:00" /> <span data-i18n="win_lunch">12:00 – 13:00 · lunch</span></label>
               <label class="checkchip"><input type="checkbox" value="17:00 – 18:00" checked /> 17:00 – 18:00</label>
               <label class="checkchip"><input type="checkbox" value="18:00 – 19:00" checked /> 18:00 – 19:00</label>
               <label class="checkchip"><input type="checkbox" value="19:00 – 20:00" /> 19:00 – 20:00</label>
             </div>
-            <h3 style="margin:22px 0 8px;font-size:1.05rem">Local delivery</h3>
+            <h3 style="margin:22px 0 8px;font-size:1.05rem" data-i18n="delivery_h">Local delivery</h3>
             <div class="checkrow">
-              <label class="checkchip"><input type="checkbox" id="deliveryToggle" checked /> Offer delivery in Richmond Hill (+$4.95 to the customer, paid to the driver)</label>
+              <label class="checkchip"><input type="checkbox" id="deliveryToggle" checked /> <span data-i18n="delivery_chip">Offer delivery in Richmond Hill (+$4.95 to the customer, paid to the driver)</span></label>
             </div>
           </div>
           <div class="panel">
-            <h2>Daily capacity</h2>
-            <p class="sub">The most portions you will cook in one day, across all dishes. Sofreh stops taking orders when you hit it.</p>
+            <h2 data-i18n="cap_h">Daily capacity</h2>
+            <p class="sub" data-i18n="cap_p">The most portions you will cook in one day, across all dishes. Sofreh stops taking orders when you hit it.</p>
             <div class="rowline" style="display:flex;align-items:center;gap:14px">
               <span class="stepper">
-                <button type="button" id="capMinus" aria-label="Fewer portions">−</button>
+                <button type="button" id="capMinus" data-i18n-aria="cap_minus" aria-label="Fewer portions">−</button>
                 <b id="capVal">24</b>
-                <button type="button" id="capPlus" aria-label="More portions">+</button>
+                <button type="button" id="capPlus" data-i18n-aria="cap_plus" aria-label="More portions">+</button>
               </span>
-              <span style="color:var(--muted)">portions per cooking day</span>
+              <span style="color:var(--muted)" data-i18n="cap_unit">portions per cooking day</span>
             </div>
-            <h3 style="margin:22px 0 8px;font-size:1.05rem">Time off</h3>
-            <p style="color:var(--muted);margin:0 0 12px;font-size:.95rem">Pause a stretch — your regulars see “back on” with the date you pick.</p>
-            <label class="fld">Away until
+            <h3 style="margin:22px 0 8px;font-size:1.05rem" data-i18n="away_h">Time off</h3>
+            <p style="color:var(--muted);margin:0 0 12px;font-size:.95rem" data-i18n="away_p">Pause a stretch — your regulars see “back on” with the date you pick.</p>
+            <label class="fld"><span data-i18n="away_until">Away until</span>
               <input type="date" id="awayDate" value="2026-11-18" min="2026-11-18" />
             </label>
             <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
-              <button class="btn" type="button" id="saveSchedule">Save schedule</button>
-              <button class="btn quiet" type="button" id="resetSchedule">Reset to current week</button>
+              <button class="btn" type="button" id="saveSchedule" data-i18n="save_schedule">Save schedule</button>
+              <button class="btn quiet" type="button" id="resetSchedule" data-i18n="reset_schedule">Reset to current week</button>
             </div>
           </div>
         </div>
       </section>
 
       <!-- ============ EARNINGS ============ -->
-      <section data-panel="earnings" aria-label="Earnings" hidden>
-        <div class="kpis" role="group" aria-label="Earnings summary">
-          <div class="kpi"><span class="lbl">This week (Mon–Sun)</span><div class="val" id="weekGross">$612.50</div><span class="note">gross dish sales</span></div>
-          <div class="kpi"><span class="lbl">You keep (85%)</span><div class="val" id="weekKeep">$520.63</div><span class="note">after the 15% Sofreh commission</span></div>
-          <div class="kpi"><span class="lbl">Next payout</span><div class="val">Fri Nov 20</div><span class="note"><b id="payoutAmt">$520.63</b> to your bank account</span></div>
-          <div class="kpi"><span class="lbl">November so far</span><div class="val">$1,486.25</div><span class="note">your share · <b>74 orders</b> this month</span></div>
+      <section data-panel="earnings" data-i18n-aria="nav_earnings" aria-label="Earnings" hidden>
+        <div class="kpis" role="group" data-i18n-aria="earn_aria" aria-label="Earnings summary">
+          <div class="kpi"><span class="lbl" data-i18n="e_week">This week (Mon–Sun)</span><div class="val" id="weekGross">$612.50</div><span class="note" data-i18n="e_gross">gross dish sales</span></div>
+          <div class="kpi"><span class="lbl" data-i18n="e_keep">You keep (85%)</span><div class="val" id="weekKeep">$520.63</div><span class="note" data-i18n="e_after">after the 15% Sofreh commission</span></div>
+          <div class="kpi"><span class="lbl" data-i18n="e_next">Next payout</span><div class="val" data-i18n="e_next_date">Fri Nov 20</div><span class="note"><b id="payoutAmt">$520.63</b> <span data-i18n="e_tobank">to your bank account</span></span></div>
+          <div class="kpi"><span class="lbl" data-i18n="e_nov">November so far</span><div class="val">$1,486.25</div><span class="note"><span data-i18n="e_share">your share</span> · <b data-i18n="e_74">74 orders</b> <span data-i18n="e_month">this month</span></span></div>
         </div>
 
         <div class="earn-grid" style="margin-top:20px">
           <div class="panel chart-wrap">
-            <h2>Sales by cooking day</h2>
-            <p class="sub">Gross dish sales, last seven days. You cook Wed, Fri, Sat and Sun — the quiet bars are days off, not bad days.</p>
-            <svg viewBox="0 0 560 260" role="img" aria-label="Bar chart of gross sales: Thursday 0 dollars (day off), Friday 148 dollars, Saturday 186 dollars 50, Sunday 121 dollars, Monday 0 dollars (day off), Tuesday 0 dollars (day off), Wednesday today, updating live.">
+            <h2 data-i18n="chart_h">Sales by cooking day</h2>
+            <p class="sub" data-i18n="chart_p">Gross dish sales, last seven days. You cook Wed, Fri, Sat and Sun — the quiet bars are days off, not bad days.</p>
+            <svg viewBox="0 0 560 260" role="img" data-i18n-aria="chart_aria" aria-label="Bar chart of gross sales: Thursday 0 dollars (day off), Friday 148 dollars, Saturday 186 dollars 50, Sunday 121 dollars, Monday 0 dollars (day off), Tuesday 0 dollars (day off), Wednesday today, updating live.">
               <line x1="44" y1="216" x2="540" y2="216" stroke="var(--line)" stroke-width="2"/>
               <g font-family="Vazirmatn,sans-serif" font-size="12" fill="var(--muted)" text-anchor="middle">
-                <text x="80" y="238">Thu 12</text><text x="148" y="238">Fri 13</text><text x="216" y="238">Sat 14</text>
-                <text x="284" y="238">Sun 15</text><text x="352" y="238">Mon 16</text><text x="420" y="238">Tue 17</text><text x="488" y="238">Wed 18 · today</text>
+                <text x="80" y="238" data-i18n="cd_thu">Thu 12</text><text x="148" y="238" data-i18n="cd_fri">Fri 13</text><text x="216" y="238" data-i18n="cd_sat">Sat 14</text>
+                <text x="284" y="238" data-i18n="cd_sun">Sun 15</text><text x="352" y="238" data-i18n="cd_mon">Mon 16</text><text x="420" y="238" data-i18n="cd_tue">Tue 17</text><text x="488" y="238" data-i18n="cd_wed">Wed 18 · today</text>
               </g>
               <g>
                 <rect x="58" y="210" width="44" height="6" rx="3" fill="var(--chip)"/>
@@ -496,33 +516,33 @@
                 <rect id="todayBar" x="466" y="66" width="44" height="150" rx="6" fill="var(--saffron)"/>
               </g>
               <g font-family="Vazirmatn,sans-serif" font-size="12.5" font-weight="700" fill="var(--ink)" text-anchor="middle">
-                <text x="80" y="200">off</text><text x="148" y="68">$148</text><text x="216" y="32">$186.50</text>
-                <text x="284" y="93">$121</text><text x="352" y="200">off</text><text x="420" y="200">off</text>
+                <text x="80" y="200" data-i18n="off">off</text><text x="148" y="68">$148</text><text x="216" y="32">$186.50</text>
+                <text x="284" y="93">$121</text><text x="352" y="200" data-i18n="off">off</text><text x="420" y="200" data-i18n="off">off</text>
                 <text id="todayBarVal" x="488" y="56">$330</text>
               </g>
             </svg>
-            <p style="color:var(--muted);font-size:.9rem;margin:6px 0 0">Today's bar grows as orders are completed — watch it from the Orders tab.</p>
+            <p style="color:var(--muted);font-size:.9rem;margin:6px 0 0" data-i18n="chart_note">Today's bar grows as orders are completed — watch it from the Orders tab.</p>
           </div>
 
           <div style="display:grid;gap:20px">
             <div class="panel">
-              <h2>How a dollar splits</h2>
-              <p class="sub">The same split on every dish, shown on the public site too.</p>
-              <div class="fee-line"><span>Dish price</span><b>100% — set by you</b></div>
-              <div class="fee-line"><span>Paid to you, weekly</span><b>85%</b></div>
-              <div class="fee-line"><span>Sofreh commission</span><b>15%</b></div>
-              <div class="fee-line"><span>Customer service fee</span><b>10%, capped at $4 — not taken from you</b></div>
-              <div class="fee-line"><span>Delivery fee</span><b>$4.95 — goes to the driver</b></div>
+              <h2 data-i18n="split_h">How a dollar splits</h2>
+              <p class="sub" data-i18n="split_p">The same split on every dish, shown on the public site too.</p>
+              <div class="fee-line"><span data-i18n="fee_dish">Dish price</span><b data-i18n="fee_dish_b">100% — set by you</b></div>
+              <div class="fee-line"><span data-i18n="fee_paid">Paid to you, weekly</span><b data-i18n="fee_pct85">85%</b></div>
+              <div class="fee-line"><span data-i18n="fee_comm">Sofreh commission</span><b data-i18n="fee_pct15">15%</b></div>
+              <div class="fee-line"><span data-i18n="fee_svc">Customer service fee</span><b data-i18n="fee_svc_b">10%, capped at $4 — not taken from you</b></div>
+              <div class="fee-line"><span data-i18n="fee_del">Delivery fee</span><b data-i18n="fee_del_b">$4.95 — goes to the driver</b></div>
             </div>
             <div class="panel">
-              <h2>Recent payouts</h2>
-              <p class="sub">Fridays, to the bank account on file.</p>
-              <table aria-label="Recent payouts">
-                <thead><tr><th>Paid</th><th>Period</th><th class="num">Your share</th></tr></thead>
+              <h2 data-i18n="payouts_h">Recent payouts</h2>
+              <p class="sub" data-i18n="payouts_p">Fridays, to the bank account on file.</p>
+              <table data-i18n-aria="payouts_h" aria-label="Recent payouts">
+                <thead><tr><th data-i18n="th_paid">Paid</th><th data-i18n="th_period">Period</th><th class="num" data-i18n="th_share">Your share</th></tr></thead>
                 <tbody>
-                  <tr><td>Fri Nov 13</td><td>Nov 9 – 15</td><td class="num">$438.18</td></tr>
-                  <tr><td>Fri Nov 6</td><td>Nov 2 – 8</td><td class="num">$391.55</td></tr>
-                  <tr><td>Fri Oct 30</td><td>Oct 26 – Nov 1</td><td class="num">$402.90</td></tr>
+                  <tr><td data-i18n="pay1_d">Fri Nov 13</td><td data-i18n="pay1_p">Nov 9 – 15</td><td class="num">$438.18</td></tr>
+                  <tr><td data-i18n="pay2_d">Fri Nov 6</td><td data-i18n="pay2_p">Nov 2 – 8</td><td class="num">$391.55</td></tr>
+                  <tr><td data-i18n="pay3_d">Fri Oct 30</td><td data-i18n="pay3_p">Oct 26 – Nov 1</td><td class="num">$402.90</td></tr>
                 </tbody>
               </table>
             </div>
@@ -531,69 +551,69 @@
       </section>
 
       <!-- ============ REVIEWS & PROFILE ============ -->
-      <section data-panel="reviews" aria-label="Reviews and profile" hidden>
+      <section data-panel="reviews" data-i18n-aria="rev_aria" aria-label="Reviews and profile" hidden>
         <div class="rev-grid">
           <div style="display:grid;gap:20px">
             <div class="panel" style="text-align:center">
               <div style="font-family:'Lora',serif;font-size:3rem;font-weight:700;line-height:1">4.9</div>
-              <div class="stars" aria-label="Rated 4.9 of 5">★★★★★</div>
-              <p style="color:var(--muted);margin:8px 0 0">132 reviews · 96% five-star<br/>Neighbours mention: “tastes like home”, “generous portions”, “always on time”.</p>
+              <div class="stars" data-i18n-aria="rated_aria" aria-label="Rated 4.9 of 5">★★★★★</div>
+              <p style="color:var(--muted);margin:8px 0 0"><span data-i18n="rev_summary1">132 reviews · 96% five-star</span><br/><span data-i18n="rev_summary2">Neighbours mention: “tastes like home”, “generous portions”, “always on time”.</span></p>
             </div>
             <div class="panel">
-              <h2>Kitchen &amp; safety file</h2>
-              <p class="sub">What Sofreh verified before your first order — keep it current.</p>
+              <h2 data-i18n="safe_h">Kitchen &amp; safety file</h2>
+              <p class="sub" data-i18n="safe_p">What Sofreh verified before your first order — keep it current.</p>
               <ul class="checklist">
-                <li><span class="tick">✓</span><span><b>Ontario Food Handler Certificate</b><br/><span style="color:var(--muted)">Valid until March 2027 · certificate on file</span></span></li>
-                <li><span class="tick">✓</span><span><b>Kitchen onboarding checklist</b><br/><span style="color:var(--muted)">Passed September 2026 — fridge temperature, separation, labelling</span></span></li>
-                <li><span class="tick">✓</span><span><b>Ingredients &amp; allergens listed</b><br/><span style="color:var(--muted)">All 4 live dishes carry a full ingredient list</span></span></li>
-                <li><span class="tick due">!</span><span><b>Annual kitchen refresh</b><br/><span style="color:var(--muted)">Due January 2027 — a 20-minute video call, booked from here</span></span></li>
+                <li><span class="tick">✓</span><span><b data-i18n="chk1_b">Ontario Food Handler Certificate</b><br/><span style="color:var(--muted)" data-i18n="chk1_s">Valid until March 2027 · certificate on file</span></span></li>
+                <li><span class="tick">✓</span><span><b data-i18n="chk2_b">Kitchen onboarding checklist</b><br/><span style="color:var(--muted)" data-i18n="chk2_s">Passed September 2026 — fridge temperature, separation, labelling</span></span></li>
+                <li><span class="tick">✓</span><span><b data-i18n="chk3_b">Ingredients &amp; allergens listed</b><br/><span style="color:var(--muted)" data-i18n="chk3_s">All 4 live dishes carry a full ingredient list</span></span></li>
+                <li><span class="tick due">!</span><span><b data-i18n="chk4_b">Annual kitchen refresh</b><br/><span style="color:var(--muted)" data-i18n="chk4_s">Due January 2027 — a 20-minute video call, booked from here</span></span></li>
               </ul>
-              <button class="btn ghost small" type="button" id="bookRefresh" style="margin-top:16px">Book the January refresh</button>
+              <button class="btn ghost small" type="button" id="bookRefresh" style="margin-top:16px" data-i18n="book_refresh">Book the January refresh</button>
             </div>
             <div class="panel">
-              <h2>Your public profile</h2>
-              <p class="sub">Shown beside every dish you sell.</p>
+              <h2 data-i18n="profile_h">Your public profile</h2>
+              <p class="sub" data-i18n="profile_p">Shown beside every dish you sell.</p>
               <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px">
                 <span class="avatar" style="width:56px;height:56px;font-size:1.3rem" aria-hidden="true">M</span>
-                <div><b style="font-size:1.1rem">Maryam · Richmond Hill</b><br/><span style="color:var(--muted)">Cooking on Sofreh since September 2026</span></div>
+                <div><b style="font-size:1.1rem">Maryam · Richmond Hill</b><br/><span style="color:var(--muted)" data-i18n="profile_since">Cooking on Sofreh since September 2026</span></div>
               </div>
-              <p style="margin:0;color:var(--muted)">“Cooking ghormeh sabzi the way my mother taught me in Tehran — fenugreek measured by eye, never by spoon.”</p>
-              <button class="link" type="button" id="editProfileBtn">Edit profile text</button>
+              <p style="margin:0;color:var(--muted)" id="profileQuote">“Cooking ghormeh sabzi the way my mother taught me in Tehran — fenugreek measured by eye, never by spoon.”</p>
+              <button class="link" type="button" id="editProfileBtn" data-i18n="edit_profile">Edit profile text</button>
               <form id="profileForm" hidden>
-                <label class="fld">Profile text
+                <label class="fld"><span data-i18n="fld_profile">Profile text</span>
                   <textarea id="profileText">Cooking ghormeh sabzi the way my mother taught me in Tehran — fenugreek measured by eye, never by spoon.</textarea>
                 </label>
-                <button class="btn small" type="submit" style="margin-top:10px">Save profile</button>
+                <button class="btn small" type="submit" style="margin-top:10px" data-i18n="save_profile">Save profile</button>
               </form>
             </div>
           </div>
 
           <div class="panel">
-            <h2>Latest reviews</h2>
-            <p class="sub">Reviews appear under your dishes on the public site, with your reply if you add one.</p>
+            <h2 data-i18n="reviews_h">Latest reviews</h2>
+            <p class="sub" data-i18n="reviews_p">Reviews appear under your dishes on the public site, with your reply if you add one.</p>
             <div id="reviewList">
               <article class="review">
-                <div class="who"><span class="avatar pom" style="width:36px;height:36px;font-size:.95rem" aria-hidden="true">N</span><b>Niloofar R.</b><span class="stars">★★★★★</span><span class="when">Sun Nov 15 · Ghormeh Sabzi</span></div>
-                <p>I have not tasted ghormeh sabzi like this since my grandmother's house in Shiraz. The dried lime is right, the herbs are dark and bitter in the right way. Ordered the family size for Friday again.</p>
+                <div class="who"><span class="avatar pom" style="width:36px;height:36px;font-size:.95rem" aria-hidden="true">N</span><b>Niloofar R.</b><span class="stars">★★★★★</span><span class="when" data-i18n="rev1_when">Sun Nov 15 · Ghormeh Sabzi</span></div>
+                <p data-i18n="rev1">I have not tasted ghormeh sabzi like this since my grandmother's house in Shiraz. The dried lime is right, the herbs are dark and bitter in the right way. Ordered the family size for Friday again.</p>
               </article>
               <article class="review">
-                <div class="who"><span class="avatar saf" style="width:36px;height:36px;font-size:.95rem" aria-hidden="true">J</span><b>James T.</b><span class="stars">★★★★★</span><span class="when">Sat Nov 14 · Ash Reshteh</span></div>
-                <p>First time trying ash reshteh — Maryam wrote a little note in the bag explaining the kashk and mint oil. Thick, generous, and it reheated perfectly the next day.</p>
+                <div class="who"><span class="avatar saf" style="width:36px;height:36px;font-size:.95rem" aria-hidden="true">J</span><b>James T.</b><span class="stars">★★★★★</span><span class="when" data-i18n="rev2_when">Sat Nov 14 · Ash Reshteh</span></div>
+                <p data-i18n="rev2">First time trying ash reshteh — Maryam wrote a little note in the bag explaining the kashk and mint oil. Thick, generous, and it reheated perfectly the next day.</p>
               </article>
               <article class="review">
-                <div class="who"><span class="avatar" style="width:36px;height:36px;font-size:.95rem" aria-hidden="true">P</span><b>Parisa A.</b><span class="stars">★★★★☆</span><span class="when">Fri Nov 13 · Kookoo Sabzi</span></div>
-                <p>Beautiful kookoo, deep green and full of barberries. Only wish there were a lunch pickup window on Fridays — dinner worked out fine in the end.</p>
-                <button class="link replyBtn" type="button">Reply to Parisa</button>
+                <div class="who"><span class="avatar" style="width:36px;height:36px;font-size:.95rem" aria-hidden="true">P</span><b>Parisa A.</b><span class="stars">★★★★☆</span><span class="when" data-i18n="rev3_when">Fri Nov 13 · Kookoo Sabzi</span></div>
+                <p data-i18n="rev3">Beautiful kookoo, deep green and full of barberries. Only wish there were a lunch pickup window on Fridays — dinner worked out fine in the end.</p>
+                <button class="link replyBtn" type="button" data-i18n="reply_to">Reply to Parisa</button>
                 <form class="replyForm" hidden>
-                  <label class="fld">Your reply
-                    <textarea placeholder="Thank you, Parisa…"></textarea>
+                  <label class="fld"><span data-i18n="fld_reply">Your reply</span>
+                    <textarea data-i18n-ph="reply_ph" placeholder="Thank you, Parisa…"></textarea>
                   </label>
-                  <button class="btn small" type="submit" style="margin-top:8px">Post reply</button>
+                  <button class="btn small" type="submit" style="margin-top:8px" data-i18n="post_reply">Post reply</button>
                 </form>
               </article>
               <article class="review">
-                <div class="who"><span class="avatar pom" style="width:36px;height:36px;font-size:.95rem" aria-hidden="true">D</span><b>Daniel K.</b><span class="stars">★★★★★</span><span class="when">Wed Nov 11 · Gheymeh</span></div>
-                <p>The crispy potato straws on the gheymeh are a small thing that changes everything. Pickup was ready two minutes early, still steaming.</p>
+                <div class="who"><span class="avatar pom" style="width:36px;height:36px;font-size:.95rem" aria-hidden="true">D</span><b>Daniel K.</b><span class="stars">★★★★★</span><span class="when" data-i18n="rev4_when">Wed Nov 11 · Gheymeh</span></div>
+                <p data-i18n="rev4">The crispy potato straws on the gheymeh are a small thing that changes everything. Pickup was ready two minutes early, still steaming.</p>
               </article>
             </div>
           </div>
@@ -610,41 +630,51 @@
 (function(){
   "use strict";
   var money = function(n){ return "$" + n.toFixed(2); };
+  /* ---------- I18N: every visible string, FA/EN ---------- */
+  var lang = "en";
+  try { lang = localStorage.getItem("sofreh-lang") === "fa" ? "fa" : "en"; } catch(e) {}
+  var T = {
+    en:{ doc_title:"Sofreh for Cooks — Orders, Menu, Schedule & Earnings", meta_desc:"The Sofreh cook web app: receive and manage orders on your computer, set your menu and cooking days, track portions, earnings and reviews. Built for Sofreh home cooks in Toronto and the GTA.", studio:"Cook Studio — the web app for cooks, made for the big screen at home.", nav_aria:"Cook studio", nav_today:"Today", nav_orders:"Orders", nav_menu:"My menu", nav_schedule:"Schedule", nav_earnings:"Earnings", nav_reviews:"Reviews & profile", cert_line:"Ontario Food Handler Certificate on file · kitchen checklist passed", top_date:"Wednesday, November 18, 2026 · Richmond Hill", search_ph:"Search…", search_aria:"Search orders by customer or dish", bell_aria:"Notifications — 2 new orders", accepting:"Accepting orders", paused:"Paused", paused_b:"You are paused.", paused_p:"Your dishes are hidden from today's menu and no new orders can come in. Orders already accepted still need cooking — tap “Accepting orders” above when you are ready to reopen.", title_today:"Today in your kitchen", title_orders:"Orders", title_menu:"My menu", title_schedule:"Schedule & availability", title_earnings:"Earnings & payouts", title_reviews:"Reviews & profile", glance_aria:"Today at a glance", kpi_orders:"Orders today", kpi_waiting:"waiting for your answer", kpi_portions:"Portions to cook", kpi_across:"across", kpi_4dishes:"4 dishes", kpi_onmenu:"on today's menu", kpi_sales:"Sales today", kpi_youkeep:"you keep", kpi_rating:"Your rating", kpi_from:"from", kpi_132:"132 reviews", kpi_topcook:"· top cook in Richmond Hill", new_suffix:" new", attn_h:"Needs your attention", attn_p:"New orders first, then what is on the stove and what is waiting at the door.", see_all_orders:"See all of today's orders", plan_h:"Today's cooking plan", plan_p:"Wednesday — one of your regular cooking days.", tl1:"Herbs washed, ghormeh sabzi on the stove", tl1_s:"Simmer until 15:30 — fenugreek in at the end", tl2:"Gheymeh started, potatoes cut", tl2_s:"Keep the straws dry until frying time", tl3:"Order cut-off for tonight", tl3_s:"Menu closes; final portion count locked", tl4:"Seal & label the 17:00 pickups", tl4_s:"Cook name, ingredients and prep time on every label", tl5:"Pickup window 1 opens", tl5_s:"3 orders · door code in each order", tl6:"Pickup window 2 opens", tl6_s:"2 orders · 1 local delivery", stock_h:"Portions left today", stock_p:"When a dish runs out it leaves the public menu on its own.", adjust_portions:"Adjust portions in My menu →", filter_aria:"Filter orders by status", f_all:"All today", f_new:"New", f_cooking:"Cooking", f_ready:"Ready for pickup", f_done:"Completed", dishes_h:"Your dishes", dishes_p:"What neighbours see on the public menu today. Turn a dish off and it disappears within a minute; portions count down as orders land.", add_h:"Add a dish", add_p:"New dishes go live on your next cooking day, after the ingredient and allergen list is complete.", fld_name_en:"Dish name (English)", fld_name_en_ph:"e.g. Zereshk Polo ba Morgh", fld_name_fa:"Dish name (Persian)", fld_name_fa_ph:"e.g. زرشک‌پلو با مرغ", fld_price:"Price per single portion (CAD)", fld_portions:"Portions per cooking day", fld_desc:"Short description — ingredients and what makes yours yours", fld_desc_ph:"Basmati rice, tart barberries, chicken braised in tomato and saffron…", fld_photo:"Photo", ph_zereshk:"Zereshk polo photo", ph_tahchin:"Tahchin photo", ph_fesenjan:"Fesenjan photo", ph_baghali:"Baghali polo photo", ph_koobideh:"Kabab koobideh photo", fld_allergens:"Allergens", alg_none:"None to declare", alg_nuts:"Contains nuts", alg_dairy:"Contains dairy", alg_gluten:"Contains gluten", alg_egg:"Contains egg", add_btn:"Add dish to my menu", week_h:"Your cooking week", week_p:"You choose your days — most Sofreh cooks cook three or four days a week. Changes apply from next week; this week's orders are never touched.", windows_h:"Pickup windows", windows_p:"Neighbours pick a window when they order. Dinner windows work best — lunch only if you are home.", win_lunch:"12:00 – 13:00 · lunch", delivery_h:"Local delivery", delivery_chip:"Offer delivery in Richmond Hill (+$4.95 to the customer, paid to the driver)", cap_h:"Daily capacity", cap_p:"The most portions you will cook in one day, across all dishes. Sofreh stops taking orders when you hit it.", cap_minus:"Fewer portions", cap_plus:"More portions", cap_unit:"portions per cooking day", away_h:"Time off", away_p:"Pause a stretch — your regulars see “back on” with the date you pick.", away_until:"Away until", save_schedule:"Save schedule", reset_schedule:"Reset to current week", earn_aria:"Earnings summary", e_week:"This week (Mon–Sun)", e_gross:"gross dish sales", e_keep:"You keep (85%)", e_after:"after the 15% Sofreh commission", e_next:"Next payout", e_next_date:"Fri Nov 20", e_tobank:"to your bank account", e_nov:"November so far", e_share:"your share", e_74:"74 orders", e_month:"this month", chart_h:"Sales by cooking day", chart_p:"Gross dish sales, last seven days. You cook Wed, Fri, Sat and Sun — the quiet bars are days off, not bad days.", chart_aria:"Bar chart of gross sales: Thursday 0 dollars (day off), Friday 148 dollars, Saturday 186 dollars 50, Sunday 121 dollars, Monday 0 dollars (day off), Tuesday 0 dollars (day off), Wednesday today, updating live.", cd_thu:"Thu 12", cd_fri:"Fri 13", cd_sat:"Sat 14", cd_sun:"Sun 15", cd_mon:"Mon 16", cd_tue:"Tue 17", cd_wed:"Wed 18 · today", off:"off", chart_note:"Today's bar grows as orders are completed — watch it from the Orders tab.", split_h:"How a dollar splits", split_p:"The same split on every dish, shown on the public site too.", fee_dish:"Dish price", fee_dish_b:"100% — set by you", fee_paid:"Paid to you, weekly", fee_pct85:"85%", fee_comm:"Sofreh commission", fee_pct15:"15%", fee_svc:"Customer service fee", fee_svc_b:"10%, capped at $4 — not taken from you", fee_del:"Delivery fee", fee_del_b:"$4.95 — goes to the driver", payouts_h:"Recent payouts", payouts_p:"Fridays, to the bank account on file.", th_paid:"Paid", th_period:"Period", th_share:"Your share", pay1_d:"Fri Nov 13", pay1_p:"Nov 9 – 15", pay2_d:"Fri Nov 6", pay2_p:"Nov 2 – 8", pay3_d:"Fri Oct 30", pay3_p:"Oct 26 – Nov 1", rev_aria:"Reviews and profile", rated_aria:"Rated 4.9 of 5", rev_summary1:"132 reviews · 96% five-star", rev_summary2:"Neighbours mention: “tastes like home”, “generous portions”, “always on time”.", safe_h:"Kitchen & safety file", safe_p:"What Sofreh verified before your first order — keep it current.", chk1_b:"Ontario Food Handler Certificate", chk1_s:"Valid until March 2027 · certificate on file", chk2_b:"Kitchen onboarding checklist", chk2_s:"Passed September 2026 — fridge temperature, separation, labelling", chk3_b:"Ingredients & allergens listed", chk3_s:"All 4 live dishes carry a full ingredient list", chk4_b:"Annual kitchen refresh", chk4_s:"Due January 2027 — a 20-minute video call, booked from here", book_refresh:"Book the January refresh", profile_h:"Your public profile", profile_p:"Shown beside every dish you sell.", profile_since:"Cooking on Sofreh since September 2026", profile_quote:"“Cooking ghormeh sabzi the way my mother taught me in Tehran — fenugreek measured by eye, never by spoon.”", edit_profile:"Edit profile text", fld_profile:"Profile text", save_profile:"Save profile", reviews_h:"Latest reviews", reviews_p:"Reviews appear under your dishes on the public site, with your reply if you add one.", rev1_when:"Sun Nov 15 · Ghormeh Sabzi", rev1:"I have not tasted ghormeh sabzi like this since my grandmother's house in Shiraz. The dried lime is right, the herbs are dark and bitter in the right way. Ordered the family size for Friday again.", rev2_when:"Sat Nov 14 · Ash Reshteh", rev2:"First time trying ash reshteh — Maryam wrote a little note in the bag explaining the kashk and mint oil. Thick, generous, and it reheated perfectly the next day.", rev3_when:"Fri Nov 13 · Kookoo Sabzi", rev3:"Beautiful kookoo, deep green and full of barberries. Only wish there were a lunch pickup window on Fridays — dinner worked out fine in the end.", rev4_when:"Wed Nov 11 · Gheymeh", rev4:"The crispy potato straws on the gheymeh are a small thing that changes everything. Pickup was ready two minutes early, still steaming.", reply_to:"Reply to Parisa", fld_reply:"Your reply", reply_ph:"Thank you, Parisa…", post_reply:"Post reply", status_new:"● New — answer needed", status_cooking:"On the stove", status_ready_pickup:"Ready for pickup", status_ready_driver:"Ready for the driver", status_done:"Completed", status_declined:"Declined", pickup_window:"Pickup window", details_btn:"Details", accept_btn:"Accept & start cooking", decline_btn:"Decline", ready_pickup_btn:"Mark ready for pickup", ready_driver_btn:"Mark ready for the driver", confirm_pickup_btn:"Confirm pickup", confirm_driver_btn:"Confirm driver handoff", today_empty:"Everything is cooked, picked up, or still to come. New orders will land here the moment they are placed.", orders_empty:"No orders in this group today. Try another filter above.", detail_h:"Order detail", detail_pick:"Pick an order to see it here.", order_word:"Order", dt_customer:"Customer", dt_dish:"Dish", dt_size:"Size & qty", dt_window:"Pickup window", dt_fulfil:"Fulfilment", dt_total:"Order total", dt_commission:"Sofreh commission (15%)", dt_receive:"You receive", cust_note:"Customer note:", no_note:"No note from the customer. The sealed bag gets your standard label: cook name, ingredients, prep time.", your_reply:"Your reply:", toast_accepted:"Order #{id} accepted — {name} can see it is on the stove.", toast_declined:"Order #{id} declined. {name} was refunded in full and told kindly.", toast_ready_pickup:"Order #{id} marked ready — {name} got the pickup message.", toast_ready_driver:"Order #{id} marked ready — the driver has been called for handoff.", toast_complete_pickup:"Pickup confirmed for #{id}. {amt} added to your Friday payout.", toast_complete_driver:"Driver handoff confirmed for #{id}. {amt} added to your Friday payout.", toast_live:"You are live — your dishes are back on today's menu.", toast_paused:"Paused. Your menu is hidden until you reopen.", veg_pill:"Vegetarian", live_today:"Live today", off_today:"Off today", single_word:"single", family_word:"family", portions_today:"Portions today", left_after:"left after orders", on_menu:"On today's public menu", hidden_menu:"Hidden from the public menu", fewer_aria:"One fewer portion of", more_aria:"One more portion of", left_word:"left", portions_left_aria:"{left} of {total} portions left", photo_suffix:" — photo chosen by the cook", toast_portion_floor:"You already have orders for {n} portions of {dish} — portions can't drop below that.", toast_back_on:"{dish} is back on today's public menu.", toast_hidden:"{dish} is hidden. Orders already placed still stand.", toast_added:"{dish} added. It goes live on your next cooking day, once you switch it on above.", day_cooking:"Cooking · up to {cap} portions", day_off:"Day off", make_off:"Make day off", cook_day:"Cook this day", toast_sched_a:"Schedule saved — cooking {days}; pickups {wins}; capacity {cap} portions.", sched_none:"none", toast_reset:"Back to your current week: Wed, Fri, Sat, Sun.", toast_reply:"Reply posted — it now sits under Parisa's review on the public site.", toast_profile:"Profile saved — neighbours see the new text beside your dishes.", toast_refresh:"Refresh booked — Sofreh will confirm a January video-call time by email." },
+    fa:{ doc_title:"Sofreh برای آشپزها — سفارش‌ها، منو، برنامه و درآمد", meta_desc:"اپ آشپز سفره: سفارش‌ها را روی رایانه بگیر و مدیریت کن، منو و روزهای پختت را تنظیم کن و پرس‌ها، درآمد و نظرها را ببین. ساخته‌شده برای آشپزهای خانگی سفره در تورنتو و GTA.", studio:"استودیوی آشپز — اپ آشپزها، ساخته‌شده برای صفحهٔ بزرگ خانه.", nav_aria:"استودیوی آشپز", nav_today:"امروز", nav_orders:"سفارش‌ها", nav_menu:"منوی من", nav_schedule:"برنامه", nav_earnings:"درآمد", nav_reviews:"نظرها و پروفایل", cert_line:"گواهی بهداشت مواد غذایی انتاریو در پرونده است · چک‌لیست آشپزخانه گذرانده شده", top_date:"چهارشنبه، 18 نوامبر 2026 · Richmond Hill", search_ph:"جستجو…", search_aria:"جستجوی سفارش‌ها بر اساس مشتری یا غذا", bell_aria:"اعلان‌ها — 2 سفارش جدید", accepting:"سفارش می‌پذیرم", paused:"متوقف", paused_b:"متوقف شده‌ای.", paused_p:"غذاهایت از منوی امروز پنهان‌اند و سفارش تازه‌ای نمی‌آید. سفارش‌های پذیرفته‌شده هنوز باید پخته شوند — وقتی آمادهٔ بازگشایی بودی، بالا روی «سفارش می‌پذیرم» بزن.", title_today:"امروز در آشپزخانهٔ تو", title_orders:"سفارش‌ها", title_menu:"منوی من", title_schedule:"برنامه و دسترس‌پذیری", title_earnings:"درآمد و پرداخت‌ها", title_reviews:"نظرها و پروفایل", glance_aria:"امروز در یک نگاه", kpi_orders:"سفارش‌های امروز", kpi_waiting:"منتظر پاسخ توست", kpi_portions:"پرس برای پخت", kpi_across:"از", kpi_4dishes:"4 غذا", kpi_onmenu:"در منوی امروز", kpi_sales:"فروش امروز", kpi_youkeep:"سهم تو", kpi_rating:"امتیاز تو", kpi_from:"از", kpi_132:"132 نظر", kpi_topcook:"· آشپز برتر Richmond Hill", new_suffix:" جدید", attn_h:"نیازمند توجه تو", attn_p:"اول سفارش‌های تازه، بعد آنچه روی گاز است و آنچه دم در منتظر است.", see_all_orders:"دیدن همهٔ سفارش‌های امروز", plan_h:"برنامهٔ پخت امروز", plan_p:"چهارشنبه — یکی از روزهای ثابت پخت تو.", tl1:"سبزی‌ها شسته شد، قورمه‌سبزی روی گاز است", tl1_s:"تا 15:30 آرام بپزد — شنبلیله آخر کار اضافه شود", tl2:"قیمه شروع شد، سیب‌زمینی‌ها بریده شد", tl2_s:"خلال‌ها تا وقت سرخ‌کردن خشک بمانند", tl3:"پایان مهلت سفارش امروز", tl3_s:"منو بسته می‌شود؛ تعداد نهایی پرس‌ها قطعی می‌شود", tl4:"بستن و برچسب‌زدن تحویل‌های 17:00", tl4_s:"نام آشپز، مواد و زمان آماده‌سازی روی هر برچسب", tl5:"بازهٔ تحویل 1 باز می‌شود", tl5_s:"3 سفارش · کد در در هر سفارش", tl6:"بازهٔ تحویل 2 باز می‌شود", tl6_s:"2 سفارش · 1 ارسال محلی", stock_h:"پرس‌های باقی‌ماندهٔ امروز", stock_p:"وقتی غذایی تمام شود، خودش از منوی عمومی خارج می‌شود.", adjust_portions:"تنظیم پرس‌ها در منوی من ←", filter_aria:"فیلتر سفارش‌ها بر اساس وضعیت", f_all:"همهٔ امروز", f_new:"جدید", f_cooking:"در حال پخت", f_ready:"آمادهٔ تحویل", f_done:"تکمیل‌شده", dishes_h:"غذاهای تو", dishes_p:"آنچه همسایه‌ها امروز در منوی عمومی می‌بینند. غذایی را خاموش کن و ظرف یک دقیقه ناپدید می‌شود؛ با هر سفارش، از پرس‌ها کم می‌شود.", add_h:"افزودن غذا", add_p:"غذاهای تازه در روز پخت بعدی تو فعال می‌شوند، بعد از کامل‌شدن فهرست مواد و حساسیت‌ها.", fld_name_en:"نام غذا (انگلیسی)", fld_name_en_ph:"مثلاً: Zereshk Polo ba Morgh", fld_name_fa:"نام غذا (فارسی)", fld_name_fa_ph:"مثلاً: زرشک‌پلو با مرغ", fld_price:"قیمت هر پرس تکی (دلار کانادا)", fld_portions:"پرس در هر روز پخت", fld_desc:"توضیح کوتاه — مواد و آنچه غذایت را مال تو می‌کند", fld_desc_ph:"برنج باسماتی، زرشک ترش، مرغ پخته در گوجه و زعفران…", fld_photo:"عکس", ph_zereshk:"عکس زرشک‌پلو", ph_tahchin:"عکس ته چین", ph_fesenjan:"عکس فسنجان", ph_baghali:"عکس باقالی‌پلو", ph_koobideh:"عکس کباب کوبیده", fld_allergens:"حساسیت‌ها", alg_none:"موردی برای اعلام نیست", alg_nuts:"مغزها دارد", alg_dairy:"لبنیات دارد", alg_gluten:"گلوتن دارد", alg_egg:"تخم‌مرغ دارد", add_btn:"افزودن غذا به منوی من", week_h:"هفتهٔ پخت تو", week_p:"روزها را خودت انتخاب می‌کنی — بیشتر آشپزهای سفره سه یا چهار روز در هفته می‌پزند. تغییرات از هفتهٔ بعد اعمال می‌شود؛ سفارش‌های این هفته هرگز دست نمی‌خورند.", windows_h:"بازه‌های تحویل", windows_p:"همسایه‌ها هنگام سفارش یک بازه انتخاب می‌کنند. بازه‌های شام بهتر جواب می‌دهند — ناهار فقط اگر خانه‌ای.", win_lunch:"12:00 – 13:00 · ناهار", delivery_h:"ارسال محلی", delivery_chip:"ارسال در Richmond Hill پیشنهاد بده (+4.95 دلار برای مشتری، پرداخت به راننده)", cap_h:"ظرفیت روزانه", cap_p:"بیشترین پرسی که در یک روز، از همهٔ غذاها، می‌پزی. وقتی به آن برسی، سفره دیگر سفارش نمی‌گیرد.", cap_minus:"پرس کمتر", cap_plus:"پرس بیشتر", cap_unit:"پرس در هر روز پخت", away_h:"مرخصی", away_p:"یک بازه را متوقف کن — مشتری‌های ثابتت «برمی‌گردم» را با تاریخی که انتخاب می‌کنی می‌بینند.", away_until:"مرخصی تا", save_schedule:"ذخیرهٔ برنامه", reset_schedule:"بازنشانی به هفتهٔ فعلی", earn_aria:"خلاصهٔ درآمد", e_week:"این هفته (دوشنبه تا یکشنبه)", e_gross:"فروش ناخالص غذاها", e_keep:"سهم تو (85%)", e_after:"بعد از کمیسیون 15٪ سفره", e_next:"پرداخت بعدی", e_next_date:"جمعه 20 نوامبر", e_tobank:"به حساب بانکی تو", e_nov:"نوامبر تا اینجا", e_share:"سهم تو", e_74:"74 سفارش", e_month:"در این ماه", chart_h:"فروش بر اساس روز پخت", chart_p:"فروش ناخالص غذاها در هفت روز گذشته. تو چهارشنبه، جمعه، شنبه و یکشنبه می‌پزی — ستون‌های خالی روزهای تعطیل‌اند، نه روزهای بد.", chart_aria:"نمودار ستونی فروش ناخالص: پنجشنبه 0 دلار (تعطیل)، جمعه 148 دلار، شنبه 186 دلار و 50 سنت، یکشنبه 121 دلار، دوشنبه 0 دلار (تعطیل)، سه‌شنبه 0 دلار (تعطیل)، چهارشنبه امروز، به‌صورت زنده به‌روز می‌شود.", cd_thu:"پنجشنبه 12", cd_fri:"جمعه 13", cd_sat:"شنبه 14", cd_sun:"یکشنبه 15", cd_mon:"دوشنبه 16", cd_tue:"سه‌شنبه 17", cd_wed:"چهارشنبه 18 · امروز", off:"تعطیل", chart_note:"ستون امروز با تکمیل سفارش‌ها رشد می‌کند — از زبانهٔ سفارش‌ها تماشایش کن.", split_h:"هر دلار چطور تقسیم می‌شود", split_p:"همین تقسیم برای همهٔ غذاها، در سایت عمومی هم نشان داده می‌شود.", fee_dish:"قیمت غذا", fee_dish_b:"100% — خودت تعیین می‌کنی", fee_paid:"پرداخت هفتگی به تو", fee_pct85:"85%", fee_comm:"کمیسیون سفره", fee_pct15:"15%", fee_svc:"هزینهٔ خدمات مشتری", fee_svc_b:"10%، حداکثر 4 دلار — از تو کم نمی‌شود", fee_del:"هزینهٔ ارسال", fee_del_b:"4.95 دلار — به راننده می‌رسد", payouts_h:"پرداخت‌های اخیر", payouts_p:"جمعه‌ها، به حساب بانکی ثبت‌شده.", th_paid:"تاریخ پرداخت", th_period:"دوره", th_share:"سهم تو", pay1_d:"جمعه 13 نوامبر", pay1_p:"9 تا 15 نوامبر", pay2_d:"جمعه 6 نوامبر", pay2_p:"2 تا 8 نوامبر", pay3_d:"جمعه 30 اکتبر", pay3_p:"26 اکتبر تا 1 نوامبر", rev_aria:"نظرها و پروفایل", rated_aria:"امتیاز 4.9 از 5", rev_summary1:"132 نظر · 96% پنج‌ستاره", rev_summary2:"همسایه‌ها می‌گویند: «مزهٔ خانه می‌دهد»، «پرس‌های سخاوتمندانه»، «همیشه سر وقت».", safe_h:"پروندهٔ آشپزخانه و ایمنی", safe_p:"آنچه سفره پیش از اولین سفارشت بررسی کرد — به‌روزش نگه دار.", chk1_b:"گواهی بهداشت مواد غذایی انتاریو", chk1_s:"معتبر تا مارس 2027 · گواهی در پرونده است", chk2_b:"چک‌لیست ورود آشپزخانه", chk2_s:"گذرانده‌شده در سپتامبر 2026 — دمای یخچال، جداسازی، برچسب‌زنی", chk3_b:"مواد و حساسیت‌ها فهرست شده‌اند", chk3_s:"هر 4 غذای فعال فهرست کامل مواد دارند", chk4_b:"بازآموزی سالانهٔ آشپزخانه", chk4_s:"موعد ژانویه 2027 — یک تماس ویدیویی 20 دقیقه‌ای، از همین‌جا رزرو می‌شود", book_refresh:"رزرو بازآموزی ژانویه", profile_h:"پروفایل عمومی تو", profile_p:"کنار هر غذایی که می‌فروشی نشان داده می‌شود.", profile_since:"از سپتامبر 2026 در سفره می‌پزد", profile_quote:"«قورمه‌سبزی را همان‌طور می‌پزم که مادرم در تهران یادم داد — شنبلیله را چشمی اندازه می‌گیرم، نه با قاشق.»", edit_profile:"ویرایش متن پروفایل", fld_profile:"متن پروفایل", save_profile:"ذخیرهٔ پروفایل", reviews_h:"تازه‌ترین نظرها", reviews_p:"نظرها زیر غذاهایت در سایت عمومی می‌آیند، با پاسخ تو اگر چیزی بنویسی.", rev1_when:"یکشنبه 15 نوامبر · قورمه‌سبزی", rev1:"از خانهٔ مادربزرگم در شیراز تا امروز قورمه‌سبزی به این مزه نخورده بودم. لیمو عمانی‌اش درست است و سبزی‌اش تیره و به‌اندازه تلخ. دوباره سایز خانوادگی را برای جمعه سفارش دادم.", rev2_when:"شنبه 14 نوامبر · آش رشته", rev2:"اولین بار بود آش رشته می‌خوردم — مریم یادداشت کوچکی در کیسه گذاشته بود و کشک و نعناع‌داغ را توضیح داده بود. غلیظ و پرملات بود و فردایش هم عالی گرم شد.", rev3_when:"جمعه 13 نوامبر · کوکو سبزی", rev3:"کوکوی زیبا، سبز تیره و پر از زرشک. فقط ای کاش جمعه‌ها بازهٔ تحویل ناهار هم بود — در نهایت شام هم خوب از آب درآمد.", rev4_when:"چهارشنبه 11 نوامبر · خورش قیمه", rev4:"سیب‌زمینی‌های خلالی ترد روی قیمه چیز کوچکی است که همه‌چیز را عوض می‌کند. تحویل دو دقیقه زودتر آماده بود و هنوز بخار می‌کرد.", reply_to:"پاسخ به پریسا", fld_reply:"پاسخ تو", reply_ph:"ممنون، پریسا…", post_reply:"ثبت پاسخ", status_new:"● جدید — پاسخ لازم است", status_cooking:"روی گاز", status_ready_pickup:"آمادهٔ تحویل", status_ready_driver:"آماده برای راننده", status_done:"تکمیل‌شده", status_declined:"رد شده", pickup_window:"بازهٔ تحویل", details_btn:"جزئیات", accept_btn:"قبول و شروع پخت", decline_btn:"رد کردن", ready_pickup_btn:"آمادهٔ تحویل است", ready_driver_btn:"آماده برای راننده است", confirm_pickup_btn:"تأیید تحویل", confirm_driver_btn:"تأیید تحویل به راننده", today_empty:"همه‌چیز پخته و تحویل شده، یا هنوز در راه است. سفارش‌های تازه به‌محض ثبت، همین‌جا می‌نشینند.", orders_empty:"امروز در این گروه سفارشی نیست. فیلتر دیگری را در بالا امتحان کن.", detail_h:"جزئیات سفارش", detail_pick:"سفارشی را انتخاب کن تا این‌جا ببینیش.", order_word:"سفارش", dt_customer:"مشتری", dt_dish:"غذا", dt_size:"اندازه و تعداد", dt_window:"بازهٔ تحویل", dt_fulfil:"نحوهٔ تحویل", dt_total:"مبلغ سفارش", dt_commission:"کمیسیون سفره (15%)", dt_receive:"دریافتی تو", cust_note:"یادداشت مشتری:", no_note:"مشتری یادداشتی نگذاشته است. کیسهٔ پلمب‌شده برچسب استاندارد تو را می‌گیرد: نام آشپز، مواد و زمان آماده‌سازی.", your_reply:"پاسخ تو:", toast_accepted:"سفارش #{id} پذیرفته شد — {name} می‌بیند که روی گاز است.", toast_declined:"سفارش #{id} رد شد. مبلغ {name} کامل برگردانده شد و با مهربانی به او گفته شد.", toast_ready_pickup:"سفارش #{id} آماده علامت خورد — پیام تحویل برای {name} رفت.", toast_ready_driver:"سفارش #{id} آماده علامت خورد — راننده برای تحویل‌گرفتن خبر شد.", toast_complete_pickup:"تحویل سفارش #{id} تأیید شد. {amt} به پرداخت جمعه‌ات اضافه شد.", toast_complete_driver:"تحویل سفارش #{id} به راننده تأیید شد. {amt} به پرداخت جمعه‌ات اضافه شد.", toast_live:"فعال شدی — غذاهایت به منوی امروز برگشتند.", toast_paused:"متوقف شد. منویت تا بازگشایی پنهان می‌ماند.", veg_pill:"گیاهی", live_today:"امروز فعال", off_today:"امروز خاموش", single_word:"تکی", family_word:"خانوادگی", portions_today:"پرس‌های امروز", left_after:"بعد از سفارش‌ها مانده", on_menu:"در منوی عمومی امروز", hidden_menu:"پنهان از منوی عمومی", fewer_aria:"یک پرس کمتر از", more_aria:"یک پرس بیشتر از", left_word:"مانده", portions_left_aria:"{left} از {total} پرس مانده", photo_suffix:" — عکس انتخابی آشپز", toast_portion_floor:"از قبل برای {n} پرس از {dish} سفارش داری — پرس‌ها نمی‌توانند از آن کمتر شوند.", toast_back_on:"{dish} به منوی عمومی امروز برگشت.", toast_hidden:"{dish} پنهان شد. سفارش‌های قبلی سر جایشان هستند.", toast_added:"{dish} اضافه شد. در روز پخت بعدی تو فعال می‌شود، وقتی بالایش روشنش کنی.", day_cooking:"در حال پخت · تا {cap} پرس", day_off:"روز تعطیل", make_off:"تعطیلش کن", cook_day:"این روز بپز", toast_sched_a:"برنامه ذخیره شد — پخت: {days}؛ تحویل‌ها: {wins}؛ ظرفیت {cap} پرس.", sched_none:"هیچ‌کدام", toast_reset:"به هفتهٔ فعلی برگشت: چهارشنبه، جمعه، شنبه، یکشنبه.", toast_reply:"پاسخ ثبت شد — حالا زیر نظر پریسا در سایت عمومی می‌نشیند.", toast_profile:"پروفایل ذخیره شد — همسایه‌ها متن تازه را کنار غذاهایت می‌بینند.", toast_refresh:"بازآموزی رزرو شد — سفره زمان تماس ویدیویی ژانویه را با ایمیل تأیید می‌کند." }
+  };
+  function t(k){ return (T[lang] && T[lang][k]) || T.en[k] || k; }
+  function tpl(k, o){ var x = t(k); for (var key in o) x = x.split("{"+key+"}").join(o[key]); return x; }
+
 
   /* ---------- Data ---------- */
   var DISHES = [
     { id:"ghormeh", name:"Ghormeh Sabzi", faname:"قورمه‌سبزی", img:"assets/ghormeh.webp",
-      alt:"Ghormeh sabzi — dark green herb stew with beef and kidney beans, served with saffron rice",
-      desc:"Slow-simmered herbs, beef, kidney beans and dried lime, with saffron rice.",
-      price:18.50, family:64, planned:20, live:true, tags:["Beef","Saffron rice included"] },
+      alt:"Ghormeh sabzi — dark green herb stew with beef and kidney beans, served with saffron rice", altFa:"قورمه‌سبزی — خورش سبزی سبز تیره با گوشت و لوبیا قرمز، با برنج زعفرانی",
+      desc:"Slow-simmered herbs, beef, kidney beans and dried lime, with saffron rice.", descFa:"سبزی آرام‌پز، گوشت، لوبیا قرمز و لیمو عمانی، با برنج زعفرانی.",
+      price:18.50, family:64, planned:20, live:true, tags:["Beef","Saffron rice included"], tagsFa:["گوشت گوساله","برنج زعفرانی دارد"] },
     { id:"gheymeh", name:"Gheymeh", faname:"خورش قیمه", img:"assets/gheymeh.jpg",
-      alt:"Gheymeh — tomato stew with split peas, beef, dried lime and crispy potato straws",
-      desc:"Tomato and split-pea stew with beef and dried lime, topped with crispy potato straws.",
-      price:17.50, family:61, planned:14, live:true, tags:["Beef","Saffron rice included"] },
+      alt:"Gheymeh — tomato stew with split peas, beef, dried lime and crispy potato straws", altFa:"قیمه — خورش گوجه با لپه، گوشت، لیمو عمانی و سیب‌زمینی خلالی ترد",
+      desc:"Tomato and split-pea stew with beef and dried lime, topped with crispy potato straws.", descFa:"خورش گوجه و لپه با گوشت و لیمو عمانی، رویش سیب‌زمینی خلالی ترد.",
+      price:17.50, family:61, planned:14, live:true, tags:["Beef","Saffron rice included"], tagsFa:["گوشت گوساله","برنج زعفرانی دارد"] },
     { id:"ash", name:"Ash Reshteh", faname:"آش رشته", img:"assets/ash.jpg",
-      alt:"Ash reshteh — thick herb, bean and noodle soup with kashk and crispy onions",
-      desc:"Thick herb, bean and noodle soup with kashk, mint oil and crispy onions.",
-      price:13.50, family:46, planned:16, live:true, tags:["Vegetarian","Freezes well"], veg:true },
+      alt:"Ash reshteh — thick herb, bean and noodle soup with kashk and crispy onions", altFa:"آش رشته — آش غلیظ سبزی، حبوبات و رشته با کشک و پیازداغ",
+      desc:"Thick herb, bean and noodle soup with kashk, mint oil and crispy onions.", descFa:"آش غلیظ سبزی، حبوبات و رشته با کشک، نعناع‌داغ و پیازداغ.",
+      price:13.50, family:46, planned:16, live:true, tags:["Vegetarian","Freezes well"], tagsFa:["گیاهی","برای فریزر مناسب است"], veg:true },
     { id:"kookoo", name:"Kookoo Sabzi", faname:"کوکو سبزی", img:"assets/kookoo.jpg",
-      alt:"Kookoo sabzi — green herb frittata with barberries and walnuts, sliced",
-      desc:"Dense herb frittata with barberries and walnuts, with sangak and pickled garlic.",
-      price:14.00, family:48, planned:10, live:true, tags:["Vegetarian","Contains walnuts"], veg:true }
+      alt:"Kookoo sabzi — green herb frittata with barberries and walnuts, sliced", altFa:"کوکو سبزی — کوکوی سبزی با زرشک و گردو، برش‌خورده",
+      desc:"Dense herb frittata with barberries and walnuts, with sangak and pickled garlic.", descFa:"کوکوی پرسبزی با زرشک و گردو، با نان سنگک و سیرترشی.",
+      price:14.00, family:48, planned:10, live:true, tags:["Vegetarian","Contains walnuts"], tagsFa:["گیاهی","گردو دارد"], veg:true }
   ];
 
   var ORDERS = [
-    { id:1042, customer:"Sara M.", dish:"ghormeh", dishName:"Ghormeh Sabzi", size:"Single", qty:2, portions:2, window:"17:00 – 18:00", total:37.00, status:"new", time:"Ordered 10:42 am", note:"", delivery:"Pickup" },
-    { id:1041, customer:"Daniel K.", dish:"gheymeh", dishName:"Gheymeh", size:"Family (feeds 4)", qty:1, portions:4, window:"17:00 – 18:00", total:61.00, status:"new", time:"Ordered 10:15 am", note:"Extra crispy potatoes on the side, please — last time they were perfect.", delivery:"Pickup" },
-    { id:1040, customer:"Niloofar R.", dish:"ghormeh", dishName:"Ghormeh Sabzi", size:"Family (feeds 4)", qty:1, portions:4, window:"18:00 – 19:00", total:64.00, status:"cooking", time:"Ordered 9:58 am", note:"", delivery:"Pickup" },
-    { id:1039, customer:"James T.", dish:"ash", dishName:"Ash Reshteh", size:"Single", qty:3, portions:3, window:"18:00 – 19:00", total:40.50, status:"cooking", time:"Ordered 9:31 am", note:"One portion without kashk — dairy allergy in the family.", delivery:"Delivery · Richmond Hill" },
-    { id:1038, customer:"Parisa A.", dish:"kookoo", dishName:"Kookoo Sabzi", size:"Single", qty:2, portions:2, window:"17:00 – 18:00", total:28.00, status:"ready", time:"Ordered 9:04 am", note:"", delivery:"Pickup" },
-    { id:1037, customer:"Michael B.", dish:"ghormeh", dishName:"Ghormeh Sabzi", size:"Single", qty:1, portions:1, window:"17:00 – 18:00", total:18.50, status:"done", time:"Picked up 12:20 pm", note:"", delivery:"Pickup" },
-    { id:1036, customer:"Leila H.", dish:"gheymeh", dishName:"Gheymeh", size:"Single", qty:2, portions:2, window:"17:00 – 18:00", total:35.00, status:"done", time:"Picked up 12:05 pm", note:"", delivery:"Pickup" },
-    { id:1035, customer:"Omar S.", dish:"ash", dishName:"Ash Reshteh", size:"Family (feeds 4)", qty:1, portions:4, window:"18:00 – 19:00", total:46.00, status:"done", time:"Delivered 12:40 pm", note:"", delivery:"Delivery · Richmond Hill" }
+    { id:1042, customer:"Sara M.", dish:"ghormeh", dishName:"Ghormeh Sabzi", size:"Single", sizeFa:"تکی", qty:2, portions:2, window:"17:00 – 18:00", total:37.00, status:"new", time:"Ordered 10:42 am", timeFa:"سفارش ساعت 10:42 صبح", note:"", noteFa:"", delivery:"Pickup", deliveryFa:"تحویل حضوری" },
+    { id:1041, customer:"Daniel K.", dish:"gheymeh", dishName:"Gheymeh", size:"Family (feeds 4)", sizeFa:"خانوادگی (برای 4 نفر)", qty:1, portions:4, window:"17:00 – 18:00", total:61.00, status:"new", time:"Ordered 10:15 am", timeFa:"سفارش ساعت 10:15 صبح", note:"Extra crispy potatoes on the side, please — last time they were perfect.", noteFa:"لطفاً سیب‌زمینی سرخ‌شدهٔ ترد اضافه کنار غذا باشد — دفعهٔ پیش عالی بود.", delivery:"Pickup", deliveryFa:"تحویل حضوری" },
+    { id:1040, customer:"Niloofar R.", dish:"ghormeh", dishName:"Ghormeh Sabzi", size:"Family (feeds 4)", sizeFa:"خانوادگی (برای 4 نفر)", qty:1, portions:4, window:"18:00 – 19:00", total:64.00, status:"cooking", time:"Ordered 9:58 am", timeFa:"سفارش ساعت 9:58 صبح", note:"", noteFa:"", delivery:"Pickup", deliveryFa:"تحویل حضوری" },
+    { id:1039, customer:"James T.", dish:"ash", dishName:"Ash Reshteh", size:"Single", sizeFa:"تکی", qty:3, portions:3, window:"18:00 – 19:00", total:40.50, status:"cooking", time:"Ordered 9:31 am", timeFa:"سفارش ساعت 9:31 صبح", note:"One portion without kashk — dairy allergy in the family.", noteFa:"یک پرس بدون کشک — در خانواده حساسیت به لبنیات داریم.", delivery:"Delivery · Richmond Hill", deliveryFa:"ارسال · Richmond Hill" },
+    { id:1038, customer:"Parisa A.", dish:"kookoo", dishName:"Kookoo Sabzi", size:"Single", sizeFa:"تکی", qty:2, portions:2, window:"17:00 – 18:00", total:28.00, status:"ready", time:"Ordered 9:04 am", timeFa:"سفارش ساعت 9:04 صبح", note:"", noteFa:"", delivery:"Pickup", deliveryFa:"تحویل حضوری" },
+    { id:1037, customer:"Michael B.", dish:"ghormeh", dishName:"Ghormeh Sabzi", size:"Single", sizeFa:"تکی", qty:1, portions:1, window:"17:00 – 18:00", total:18.50, status:"done", time:"Picked up 12:20 pm", timeFa:"تحویل گرفته شد ساعت 12:20 ظهر", note:"", noteFa:"", delivery:"Pickup", deliveryFa:"تحویل حضوری" },
+    { id:1036, customer:"Leila H.", dish:"gheymeh", dishName:"Gheymeh", size:"Single", sizeFa:"تکی", qty:2, portions:2, window:"17:00 – 18:00", total:35.00, status:"done", time:"Picked up 12:05 pm", timeFa:"تحویل گرفته شد ساعت 12:05 ظهر", note:"", noteFa:"", delivery:"Pickup", deliveryFa:"تحویل حضوری" },
+    { id:1035, customer:"Omar S.", dish:"ash", dishName:"Ash Reshteh", size:"Family (feeds 4)", sizeFa:"خانوادگی (برای 4 نفر)", qty:1, portions:4, window:"18:00 – 19:00", total:46.00, status:"done", time:"Delivered 12:40 pm", timeFa:"تحویل داده شد ساعت 12:40 ظهر", note:"", noteFa:"", delivery:"Delivery · Richmond Hill", deliveryFa:"ارسال · Richmond Hill" }
   ];
 
   var WEEK = [
-    { d:"Mon", on:false, cap:24 }, { d:"Tue", on:false, cap:24 }, { d:"Wed", on:true, cap:24 },
-    { d:"Thu", on:false, cap:24 }, { d:"Fri", on:true, cap:24 }, { d:"Sat", on:true, cap:30 }, { d:"Sun", on:true, cap:20 }
+    { d:"Mon", f:"دوشنبه", on:false, cap:24 }, { d:"Tue", f:"سه‌شنبه", on:false, cap:24 }, { d:"Wed", f:"چهارشنبه", on:true, cap:24 },
+    { d:"Thu", f:"پنجشنبه", on:false, cap:24 }, { d:"Fri", f:"جمعه", on:true, cap:24 }, { d:"Sat", f:"شنبه", on:true, cap:30 }, { d:"Sun", f:"یکشنبه", on:true, cap:20 }
   ];
 
   var state = { view:"today", filter:"all", selected:1042, accepting:true, query:"" };
@@ -659,15 +689,14 @@
   }
 
   /* ---------- View switching ---------- */
-  var TITLES = { today:"Today in your kitchen", orders:"Orders", menu:"My menu", schedule:"Schedule & availability", earnings:"Earnings & payouts", reviews:"Reviews & profile" };
   function goto(view){
     state.view = view;
-    document.querySelectorAll("[data-panel]").forEach(function(p){ p.hidden = p.getAttribute("data-panel") !== view; });
+    document.querySelectorAll("[data-panel]").forEach(function(pn){ pn.hidden = pn.getAttribute("data-panel") !== view; });
     document.querySelectorAll(".navbtn").forEach(function(b){
       if (b.getAttribute("data-goto") === view) b.setAttribute("aria-current","page");
       else b.removeAttribute("aria-current");
     });
-    document.getElementById("pageTitle").textContent = TITLES[view];
+    document.getElementById("pageTitle").textContent = t("title_" + view);
     window.scrollTo({ top:0, behavior:"smooth" });
   }
   document.querySelectorAll("[data-goto]").forEach(function(el){
@@ -676,14 +705,25 @@
 
   /* ---------- Helpers ---------- */
   function dishById(id){ for (var i=0;i<DISHES.length;i++) if (DISHES[i].id===id) return DISHES[i]; return null; }
+  function dName(d){ return (lang==="fa" && d.faname) ? d.faname : d.name; }
+  function dName2(d){ return (lang==="fa" && d.faname) ? d.name : (d.faname || ""); }
+  function dDesc(d){ return (lang==="fa" && d.descFa) ? d.descFa : d.desc; }
+  function dAlt(d){ return (lang==="fa" && d.altFa) ? d.altFa : d.alt; }
+  function dTags(d){ var arr = (lang==="fa" && d.tagsFa) ? d.tagsFa : d.tags; return arr.map(tagText); }
+  var ALG_KEYS = { "None to declare":"alg_none", "Contains nuts":"alg_nuts", "Contains dairy":"alg_dairy", "Contains gluten":"alg_gluten", "Contains egg":"alg_egg" };
+  function tagText(x){ if (lang==="fa" && ALG_KEYS[x]) return t(ALG_KEYS[x]); return x; }
+  function oSize(o){ return (lang==="fa" && o.sizeFa) ? o.sizeFa : o.size; }
+  function oTime(o){ return (lang==="fa" && o.timeFa) ? o.timeFa : o.time; }
+  function oNote(o){ return (lang==="fa" && o.noteFa) ? o.noteFa : o.note; }
+  function oDelivery(o){ return (lang==="fa" && o.deliveryFa) ? o.deliveryFa : o.delivery; }
   function soldPortions(dishId){
     var n = 0;
     ORDERS.forEach(function(o){ if (o.dish===dishId && o.status!=="declined") n += o.portions; });
     return n;
   }
   function pill(status, delivery){
-    var readyLabel = (delivery && delivery.indexOf("Delivery") === 0) ? "Ready for the driver" : "Ready for pickup";
-    var map = { new:["new","● New — answer needed"], cooking:["cooking","On the stove"], ready:["ready",readyLabel], done:["done","Completed"], declined:["declined","Declined"] };
+    var readyLabel = (delivery && delivery.indexOf("Delivery") === 0) ? t("status_ready_driver") : t("status_ready_pickup");
+    var map = { new:["new", t("status_new")], cooking:["cooking", t("status_cooking")], ready:["ready", readyLabel], done:["done", t("status_done")], declined:["declined", t("status_declined")] };
     var m = map[status]; return '<span class="pill '+m[0]+'">'+m[1]+'</span>';
   }
   function activeOrders(){ return ORDERS.filter(function(o){ return o.status!=="done" && o.status!=="declined"; }); }
@@ -692,23 +732,23 @@
     var d = dishById(o.dish);
     var html = '<article class="order-card" data-order="'+o.id+'">' +
       '<img src="'+d.img+'" alt="" width="74" height="74" />' +
-      '<div class="grow"><h3>#'+o.id+' · '+o.dishName+' — '+o.size+' × '+o.qty+'</h3>' +
-      '<div class="meta">'+o.customer+' · Pickup window '+o.window+' · '+o.delivery+'<br/>'+o.time+'</div>' +
-      (o.note ? '<p class="note-line">“'+o.note+'”</p>' : '') +
+      '<div class="grow"><h3>#'+o.id+' · '+dName(d)+' — '+oSize(o)+' × '+o.qty+'</h3>' +
+      '<div class="meta">'+o.customer+' · '+t("pickup_window")+' '+o.window+' · '+oDelivery(o)+'<br/>'+oTime(o)+'</div>' +
+      (oNote(o) ? '<p class="note-line">“'+oNote(o)+'”</p>' : '') +
       '<div class="actions">'+ actionsFor(o, compact) +'</div></div>' +
       '<div class="side-info"><span class="amt">'+money(o.total)+'</span>'+ pill(o.status, o.delivery) +'</div></article>';
     return html;
   }
   function actionsFor(o, compact){
-    var view = '<button class="btn quiet small" type="button" data-act="view" data-id="'+o.id+'">Details</button>';
+    var view = '<button class="btn quiet small" type="button" data-act="view" data-id="'+o.id+'">'+t("details_btn")+'</button>';
     if (o.status === "new") return view +
-      '<button class="btn small" type="button" data-act="accept" data-id="'+o.id+'">Accept &amp; start cooking</button>' +
-      '<button class="btn danger small" type="button" data-act="decline" data-id="'+o.id+'">Decline</button>';
+      '<button class="btn small" type="button" data-act="accept" data-id="'+o.id+'">'+t("accept_btn")+'</button>' +
+      '<button class="btn danger small" type="button" data-act="decline" data-id="'+o.id+'">'+t("decline_btn")+'</button>';
     var isDelivery = o.delivery.indexOf("Delivery") === 0;
     if (o.status === "cooking") return view +
-      '<button class="btn saffron small" type="button" data-act="ready" data-id="'+o.id+'">'+(isDelivery ? "Mark ready for the driver" : "Mark ready for pickup")+'</button>';
+      '<button class="btn saffron small" type="button" data-act="ready" data-id="'+o.id+'">'+(isDelivery ? t("ready_driver_btn") : t("ready_pickup_btn"))+'</button>';
     if (o.status === "ready") return view +
-      '<button class="btn small" type="button" data-act="complete" data-id="'+o.id+'">'+(isDelivery ? "Confirm driver handoff" : "Confirm pickup")+'</button>';
+      '<button class="btn small" type="button" data-act="complete" data-id="'+o.id+'">'+(isDelivery ? t("confirm_driver_btn") : t("confirm_pickup_btn"))+'</button>';
     return view;
   }
 
@@ -719,7 +759,7 @@
     var portions = 0; todays.forEach(function(o){ portions += o.portions; });
     var gross = 0; todays.forEach(function(o){ gross += o.total; });
     document.getElementById("kpiOrders").textContent = todays.length;
-    document.getElementById("kpiNew").textContent = news + (news===1 ? " new" : " new");
+    document.getElementById("kpiNew").textContent = news + t("new_suffix");
     document.getElementById("kpiPortions").textContent = portions;
     document.getElementById("kpiGross").textContent = money(gross);
     document.getElementById("kpiKeep").textContent = money(gross * 0.85);
@@ -743,8 +783,8 @@
       var left = Math.max(0, d.planned - soldPortions(d.id));
       var pct = d.planned ? Math.round(left / d.planned * 100) : 0;
       return '<div class="stock-row"><img src="'+d.img+'" alt="" width="46" height="46" />' +
-        '<div style="flex:1;min-width:0"><b>'+d.name+'</b><div class="bar" role="img" aria-label="'+left+' of '+d.planned+' portions left"><i style="width:'+pct+'%" class="'+(left<=3?"low":"")+'"></i></div></div>' +
-        '<b>'+left+' left</b></div>';
+        '<div style="flex:1;min-width:0"><b>'+dName(d)+'</b><div class="bar" role="img" aria-label="'+tpl("portions_left_aria", {left:left, total:d.planned})+'"><i style="width:'+pct+'%" class="'+(left<=3?"low":"")+'"></i></div></div>' +
+        '<b>'+left+' '+t("left_word")+'</b></div>';
     }).join("");
   }
 
@@ -752,13 +792,15 @@
   function matchesQuery(o){
     if (!state.query) return true;
     var q = state.query.toLowerCase();
-    return (o.customer + " " + o.dishName + " #" + o.id).toLowerCase().indexOf(q) > -1;
+    var d = dishById(o.dish);
+    var hay = (o.customer + " " + o.dishName + " " + (d ? d.name + " " + (d.faname||"") : "") + " #" + o.id).toLowerCase();
+    return hay.indexOf(q) > -1;
   }
   function renderToday(){
     var list = activeOrders().filter(matchesQuery);
     var el = document.getElementById("todayQueue");
     el.innerHTML = list.length ? list.map(function(o){ return orderCard(o, true); }).join("")
-      : '<div class="emptybox">Everything is cooked, picked up, or still to come. New orders will land here the moment they are placed.</div>';
+      : '<div class="emptybox">'+t("today_empty")+'</div>';
   }
   function renderOrders(){
     var list = ORDERS.filter(function(o){
@@ -767,27 +809,26 @@
     });
     var el = document.getElementById("ordersList");
     el.innerHTML = list.length ? list.map(function(o){ return orderCard(o, false); }).join("")
-      : '<div class="emptybox">No orders in this group today. Try another filter above.</div>';
+      : '<div class="emptybox">'+t("orders_empty")+'</div>';
     renderDetail();
   }
   function renderDetail(){
     var o = null;
     for (var i=0;i<ORDERS.length;i++) if (ORDERS[i].id === state.selected) o = ORDERS[i];
     var box = document.getElementById("orderDetail");
-    if (!o){ box.innerHTML = "<h2>Order detail</h2><p class='sub'>Pick an order to see it here.</p>"; return; }
+    if (!o){ box.innerHTML = "<h2>"+t("detail_h")+"</h2><p class='sub'>"+t("detail_pick")+"</p>"; return; }
     var d = dishById(o.dish);
-    var fee = Math.min(o.total * 0.15, o.total);
-    box.innerHTML = '<h2>Order #'+o.id+'</h2><p class="sub">'+o.time+' · '+pill(o.status, o.delivery)+'</p>' +
-      '<img src="'+d.img+'" alt="'+d.alt+'" style="width:100%;aspect-ratio:16/8;object-fit:cover;border-radius:12px" />' +
-      '<dl><dt>Customer</dt><dd>'+o.customer+'</dd>' +
-      '<dt>Dish</dt><dd>'+o.dishName+' <span class="fa-name" lang="fa">'+d.faname+'</span></dd>' +
-      '<dt>Size &amp; qty</dt><dd>'+o.size+' × '+o.qty+'</dd>' +
-      '<dt>Pickup window</dt><dd>'+o.window+'</dd>' +
-      '<dt>Fulfilment</dt><dd>'+o.delivery+'</dd>' +
-      '<dt>Order total</dt><dd>'+money(o.total)+'</dd>' +
-      '<dt>Sofreh commission (15%)</dt><dd>−'+money(o.total*0.15)+'</dd>' +
-      '<dt>You receive</dt><dd style="color:var(--green)">'+money(o.total*0.85)+'</dd></dl>' +
-      (o.note ? '<p class="msg"><b>Customer note:</b> “'+o.note+'”</p>' : '<p class="msg">No note from the customer. The sealed bag gets your standard label: cook name, ingredients, prep time.</p>') +
+    box.innerHTML = '<h2>'+t("order_word")+' #'+o.id+'</h2><p class="sub">'+oTime(o)+' · '+pill(o.status, o.delivery)+'</p>' +
+      '<img src="'+d.img+'" alt="'+dAlt(d)+'" style="width:100%;aspect-ratio:16/8;object-fit:cover;border-radius:12px" />' +
+      '<dl><dt>'+t("dt_customer")+'</dt><dd>'+o.customer+'</dd>' +
+      '<dt>'+t("dt_dish")+'</dt><dd>'+dName(d)+' <span class="fa-name" lang="'+(lang==="fa"?"en":"fa")+'">'+dName2(d)+'</span></dd>' +
+      '<dt>'+t("dt_size")+'</dt><dd>'+oSize(o)+' × '+o.qty+'</dd>' +
+      '<dt>'+t("dt_window")+'</dt><dd>'+o.window+'</dd>' +
+      '<dt>'+t("dt_fulfil")+'</dt><dd>'+oDelivery(o)+'</dd>' +
+      '<dt>'+t("dt_total")+'</dt><dd>'+money(o.total)+'</dd>' +
+      '<dt>'+t("dt_commission")+'</dt><dd>−'+money(o.total*0.15)+'</dd>' +
+      '<dt>'+t("dt_receive")+'</dt><dd style="color:var(--green)">'+money(o.total*0.85)+'</dd></dl>' +
+      (oNote(o) ? '<p class="msg"><b>'+t("cust_note")+'</b> “'+oNote(o)+'”</p>' : '<p class="msg">'+t("no_note")+'</p>') +
       '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">'+ actionsFor(o, false) +'</div>';
   }
 
@@ -805,10 +846,10 @@
     var o = null; for (var i=0;i<ORDERS.length;i++) if (ORDERS[i].id===id) o = ORDERS[i];
     if (!o) return;
     if (act === "view"){ state.selected = id; if (state.view !== "orders") goto("orders"); renderOrders(); }
-    if (act === "accept") setStatus(id, "cooking", "Order #"+id+" accepted — "+o.customer.split(" ")[0]+" can see it is on the stove.");
-    if (act === "decline") setStatus(id, "declined", "Order #"+id+" declined. "+o.customer.split(" ")[0]+" was refunded in full and told kindly.");
-    if (act === "ready") setStatus(id, "ready", "Order #"+id+" marked ready — "+(o.delivery.indexOf("Delivery")===0 ? "the driver has been called for handoff." : o.customer.split(" ")[0]+" got the pickup message."));
-    if (act === "complete") setStatus(id, "done", (o.delivery.indexOf("Delivery")===0 ? "Driver handoff confirmed for #" : "Pickup confirmed for #")+id+". "+money(o.total*0.85)+" added to your Friday payout.");
+    if (act === "accept") setStatus(id, "cooking", tpl("toast_accepted", {id:id, name:o.customer.split(" ")[0]}));
+    if (act === "decline") setStatus(id, "declined", tpl("toast_declined", {id:id, name:o.customer.split(" ")[0]}));
+    if (act === "ready") setStatus(id, "ready", o.delivery.indexOf("Delivery")===0 ? tpl("toast_ready_driver", {id:id}) : tpl("toast_ready_pickup", {id:id, name:o.customer.split(" ")[0]}));
+    if (act === "complete") setStatus(id, "done", tpl(o.delivery.indexOf("Delivery")===0 ? "toast_complete_driver" : "toast_complete_pickup", {id:id, amt:money(o.total*0.85)}));
   });
 
   /* filters + search */
@@ -833,12 +874,12 @@
   /* ---------- Status toggle ---------- */
   document.getElementById("statusToggle").addEventListener("click", function(){
     state.accepting = !state.accepting;
-    var t = document.getElementById("statusToggle");
-    t.classList.toggle("paused", !state.accepting);
-    t.setAttribute("aria-pressed", state.accepting ? "true" : "false");
-    document.getElementById("statusLabel").textContent = state.accepting ? "Accepting orders" : "Paused";
+    var tg = document.getElementById("statusToggle");
+    tg.classList.toggle("paused", !state.accepting);
+    tg.setAttribute("aria-pressed", state.accepting ? "true" : "false");
+    document.getElementById("statusLabel").textContent = state.accepting ? t("accepting") : t("paused");
     document.getElementById("pausedBanner").classList.toggle("hidden", state.accepting);
-    toast(state.accepting ? "You are live — your dishes are back on today's menu." : "Paused. Your menu is hidden until you reopen.");
+    toast(state.accepting ? t("toast_live") : t("toast_paused"));
   });
 
   /* ---------- Menu ---------- */
@@ -847,25 +888,25 @@
     grid.innerHTML = DISHES.map(function(d){
       var left = Math.max(0, d.planned - soldPortions(d.id));
       return '<article class="dish'+(d.live?"":" off")+'" data-dish="'+d.id+'">' +
-        '<div class="ph"><img src="'+d.img+'" alt="'+d.alt+'" loading="lazy" /></div>' +
-        '<div class="bd"><div class="rowline"><h3>'+d.name+'</h3><span class="fa-name" lang="fa">'+d.faname+'</span>' +
-        (d.veg ? '<span class="pill veg">Vegetarian</span>' : '') +
-        '<span style="margin-inline-start:auto" class="pill '+(d.live?"ready":"done")+'">'+(d.live?"Live today":"Off today")+'</span></div>' +
-        '<p>'+d.desc+'</p>' +
-        '<div class="rowline"><span class="price">'+money(d.price)+'</span><span style="color:var(--muted)">single · family '+money(d.family)+'</span></div>' +
-        '<div class="rowline"><span style="font-weight:600">Portions today</span>' +
-        '<span class="stepper"><button type="button" data-step="-1" data-id="'+d.id+'" aria-label="One fewer portion of '+d.name+'">−</button><b>'+d.planned+'</b><button type="button" data-step="1" data-id="'+d.id+'" aria-label="One more portion of '+d.name+'">+</button></span>' +
-        '<span style="color:var(--muted)">'+left+' left after orders</span></div>' +
-        '<div class="rowline"><label class="switch"><input type="checkbox" data-live="'+d.id+'" '+(d.live?"checked":"")+' aria-label="Show '+d.name+' on today\'s menu" /><span class="track"></span></label>' +
-        '<span style="font-weight:600">'+(d.live?"On today's public menu":"Hidden from the public menu")+'</span>' +
-        '<span style="margin-inline-start:auto;color:var(--muted);font-size:.88rem">'+d.tags.join(" · ")+'</span></div>' +
+        '<div class="ph"><img src="'+d.img+'" alt="'+dAlt(d)+'" loading="lazy" /></div>' +
+        '<div class="bd"><div class="rowline"><h3>'+dName(d)+'</h3><span class="fa-name" lang="'+(lang==="fa"?"en":"fa")+'">'+dName2(d)+'</span>' +
+        (d.veg ? '<span class="pill veg">'+t("veg_pill")+'</span>' : '') +
+        '<span style="margin-inline-start:auto" class="pill '+(d.live?"ready":"done")+'">'+(d.live?t("live_today"):t("off_today"))+'</span></div>' +
+        '<p>'+dDesc(d)+'</p>' +
+        '<div class="rowline"><span class="price">'+money(d.price)+'</span><span style="color:var(--muted)">'+t("single_word")+' · '+t("family_word")+' '+money(d.family)+'</span></div>' +
+        '<div class="rowline"><span style="font-weight:600">'+t("portions_today")+'</span>' +
+        '<span class="stepper"><button type="button" data-step="-1" data-id="'+d.id+'" aria-label="'+t("fewer_aria")+' '+dName(d)+'">−</button><b>'+d.planned+'</b><button type="button" data-step="1" data-id="'+d.id+'" aria-label="'+t("more_aria")+' '+dName(d)+'">+</button></span>' +
+        '<span style="color:var(--muted)">'+left+' '+t("left_after")+'</span></div>' +
+        '<div class="rowline"><label class="switch"><input type="checkbox" data-live="'+d.id+'" '+(d.live?"checked":"")+' aria-label="'+dName(d)+'" /><span class="track"></span></label>' +
+        '<span style="font-weight:600">'+(d.live?t("on_menu"):t("hidden_menu"))+'</span>' +
+        '<span style="margin-inline-start:auto;color:var(--muted);font-size:.88rem">'+dTags(d).join(" · ")+'</span></div>' +
         '</div></article>';
     }).join("");
     grid.querySelectorAll("[data-step]").forEach(function(b){
       b.addEventListener("click", function(){
         var d = dishById(b.getAttribute("data-id"));
         var next = d.planned + parseInt(b.getAttribute("data-step"), 10);
-        if (next < soldPortions(d.id)) { toast("You already have orders for "+soldPortions(d.id)+" portions of "+d.name+" — portions can't drop below that."); return; }
+        if (next < soldPortions(d.id)) { toast(tpl("toast_portion_floor", {n:soldPortions(d.id), dish:dName(d)})); return; }
         if (next > 60) return;
         d.planned = next; renderMenu(); renderStock();
       });
@@ -874,7 +915,7 @@
       sw.addEventListener("change", function(){
         var d = dishById(sw.getAttribute("data-live"));
         d.live = sw.checked; renderMenu();
-        toast(d.live ? d.name+" is back on today's public menu." : d.name+" is hidden. Orders already placed still stand.");
+        toast(d.live ? tpl("toast_back_on", {dish:dName(d)}) : tpl("toast_hidden", {dish:dName(d)}));
       });
     });
   }
@@ -885,14 +926,15 @@
     if (!name) return;
     DISHES.push({
       id: "dish" + Date.now(), name: name, faname: (f.get("faname")||"").toString().trim(),
-      img: f.get("photo").toString(), alt: name + " — photo chosen by the cook",
-      desc: (f.get("desc")||"").toString().trim(), price: parseFloat(f.get("price")) || 15,
+      img: f.get("photo").toString(), alt: name + t("photo_suffix"), altFa: name + t("photo_suffix"),
+      desc: (f.get("desc")||"").toString().trim(), descFa: (f.get("desc")||"").toString().trim(),
+      price: parseFloat(f.get("price")) || 15,
       family: Math.round((parseFloat(f.get("price")) || 15) * 3.4), planned: parseInt(f.get("portions"),10) || 10,
       live: false, tags: [f.get("allergen").toString()]
     });
     e.target.reset();
     renderMenu(); renderStock();
-    toast(name+" added. It goes live on your next cooking day, once you switch it on above.");
+    toast(tpl("toast_added", {dish:name}));
     goto("menu");
   });
 
@@ -900,9 +942,9 @@
   function renderWeek(){
     var grid = document.getElementById("weekGrid");
     grid.innerHTML = WEEK.map(function(w, i){
-      return '<div class="day'+(w.on?" on":"")+'"><b>'+w.d+'</b>' +
-        '<span class="cap">'+(w.on ? "Cooking · up to "+w.cap+" portions" : "Day off")+'</span>' +
-        '<button class="btn '+(w.on?"quiet":"ghost")+' small" type="button" data-day="'+i+'">'+(w.on?"Make day off":"Cook this day")+'</button></div>';
+      return '<div class="day'+(w.on?" on":"")+'"><b>'+(lang==="fa" ? w.f : w.d)+'</b>' +
+        '<span class="cap">'+(w.on ? tpl("day_cooking", {cap:w.cap}) : t("day_off"))+'</span>' +
+        '<button class="btn '+(w.on?"quiet":"ghost")+' small" type="button" data-day="'+i+'">'+(w.on?t("make_off"):t("cook_day"))+'</button></div>';
     }).join("");
     grid.querySelectorAll("[data-day]").forEach(function(b){
       b.addEventListener("click", function(){
@@ -916,15 +958,15 @@
   document.getElementById("capMinus").addEventListener("click", function(){ if (capacity > 4){ capacity -= 2; renderCap(); } });
   document.getElementById("capPlus").addEventListener("click", function(){ if (capacity < 48){ capacity += 2; renderCap(); } });
   document.getElementById("saveSchedule").addEventListener("click", function(){
-    var days = WEEK.filter(function(w){ return w.on; }).map(function(w){ return w.d; }).join(", ");
+    var days = WEEK.filter(function(w){ return w.on; }).map(function(w){ return lang==="fa" ? w.f : w.d; }).join(", ");
     var wins = [];
     document.querySelectorAll("#windowRow input:checked").forEach(function(c){ wins.push(c.value); });
-    toast("Schedule saved — cooking "+days+"; pickups "+(wins.join(" & ") || "none")+"; capacity "+capacity+" portions.");
+    toast(tpl("toast_sched_a", {days:days, wins:(wins.join(" & ") || t("sched_none")), cap:capacity}));
   });
   document.getElementById("resetSchedule").addEventListener("click", function(){
-    WEEK = [ {d:"Mon",on:false,cap:24},{d:"Tue",on:false,cap:24},{d:"Wed",on:true,cap:24},{d:"Thu",on:false,cap:24},{d:"Fri",on:true,cap:24},{d:"Sat",on:true,cap:30},{d:"Sun",on:true,cap:20} ];
+    WEEK = [ {d:"Mon",f:"دوشنبه",on:false,cap:24},{d:"Tue",f:"سه‌شنبه",on:false,cap:24},{d:"Wed",f:"چهارشنبه",on:true,cap:24},{d:"Thu",f:"پنجشنبه",on:false,cap:24},{d:"Fri",f:"جمعه",on:true,cap:24},{d:"Sat",f:"شنبه",on:true,cap:30},{d:"Sun",f:"یکشنبه",on:true,cap:20} ];
     capacity = 24; document.getElementById("capVal").textContent = 24; renderWeek();
-    toast("Back to your current week: Wed, Fri, Sat, Sun.");
+    toast(t("toast_reset"));
   });
 
   /* ---------- Reviews & profile ---------- */
@@ -942,10 +984,10 @@
       if (!txt) return;
       var p = document.createElement("p");
       p.className = "msg"; p.style.cssText = "background:var(--green-soft);border-radius:10px;padding:10px 12px;margin-top:10px";
-      p.innerHTML = "<b>Your reply:</b> " + txt.replace(/</g,"&lt;");
+      p.innerHTML = "<b>"+t("your_reply")+"</b> " + txt.replace(/</g,"&lt;");
       form.parentElement.appendChild(p);
       form.hidden = true;
-      toast("Reply posted — it now sits under Parisa's review on the public site.");
+      toast(t("toast_reply"));
     });
   });
   document.getElementById("editProfileBtn").addEventListener("click", function(){
@@ -953,15 +995,69 @@
   });
   document.getElementById("profileForm").addEventListener("submit", function(e){
     e.preventDefault();
-    toast("Profile saved — neighbours see the new text beside your dishes.");
+    toast(t("toast_profile"));
     e.target.hidden = true;
   });
   document.getElementById("bookRefresh").addEventListener("click", function(){
-    toast("Refresh booked — Sofreh will confirm a January video-call time by email.");
+    toast(t("toast_refresh"));
+  });
+
+  /* ---------- Language: apply, persist, re-render ---------- */
+  var profileEdited = false;
+  document.getElementById("profileText").addEventListener("input", function(){ profileEdited = true; });
+  document.getElementById("profileForm").addEventListener("submit", function(){
+    var q = document.getElementById("profileQuote");
+    if (q) q.textContent = "“" + document.getElementById("profileText").value + "”";
+  });
+  function applyLang(){
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === "fa" ? "rtl" : "ltr";
+    try { localStorage.setItem("sofreh-lang", lang); } catch(e) {}
+    document.title = t("doc_title");
+    var md = document.getElementById("metaDesc"); if (md) md.setAttribute("content", t("meta_desc"));
+    document.getElementById("langToggle").textContent = lang === "fa" ? "English" : "فارسی";
+    document.querySelectorAll("[data-i18n]").forEach(function(el){ var k = el.getAttribute("data-i18n"); if (T[lang][k]) el.textContent = T[lang][k]; });
+    document.querySelectorAll("[data-i18n-ph]").forEach(function(el){ var k = el.getAttribute("data-i18n-ph"); if (T[lang][k]) el.setAttribute("placeholder", T[lang][k]); });
+    document.querySelectorAll("[data-i18n-aria]").forEach(function(el){ var k = el.getAttribute("data-i18n-aria"); if (T[lang][k]) el.setAttribute("aria-label", T[lang][k]); });
+    document.getElementById("statusLabel").textContent = state.accepting ? t("accepting") : t("paused");
+    document.getElementById("pageTitle").textContent = t("title_" + state.view);
+    if (!profileEdited){
+      document.getElementById("profileQuote").textContent = t("profile_quote");
+      document.getElementById("profileText").value = t("profile_quote").replace(/[“”]/g, "");
+    }
+    if (window.__syncThemeBtn) window.__syncThemeBtn();
+    refreshKPIs(); renderToday(); renderOrders(); renderMenu(); renderWeek();
+  }
+  document.getElementById("langToggle").addEventListener("click", function(){
+    lang = lang === "en" ? "fa" : "en";
+    applyLang();
   });
 
   /* ---------- Init ---------- */
-  refreshKPIs(); renderToday(); renderOrders(); renderMenu(); renderWeek();
+  applyLang();
+})();
+</script>
+
+<script>
+/* ---------- theme toggle: light (day) / dark (night), saved across Sofreh pages ---------- */
+(function(){
+  var b = document.getElementById("themeToggle"); if(!b) return;
+  var l = document.getElementById("themeLabel");
+  function sync(){
+    var d = document.documentElement.getAttribute("data-theme")==="dark";
+    var fa = document.documentElement.lang==="fa";
+    b.setAttribute("aria-pressed", d ? "true" : "false");
+    b.setAttribute("aria-label", fa ? (d ? "حالت روشن (روز)" : "حالت تیره (شب)") : (d ? "Switch to light theme (day)" : "Switch to dark theme (night)"));
+    if(l) l.textContent = fa ? (d ? "روشن" : "تیره") : (d ? "Light" : "Dark");
+  }
+  b.addEventListener("click", function(){
+    var n = document.documentElement.getAttribute("data-theme")==="dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", n);
+    try{ localStorage.setItem("sofreh-theme", n); }catch(e){}
+    sync();
+  });
+  window.__syncThemeBtn = sync;
+  sync();
 })();
 </script>
 </body>

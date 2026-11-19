@@ -17,7 +17,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Vazirmatn:wght@400;500;700;800&display=swap" rel="stylesheet" />
 <script>
 /* Theme: start from the visitor's system day/night setting; the header toggle overrides it for this visit. */
-(function(){var t="light";try{if(window.matchMedia("(prefers-color-scheme: dark)").matches)t="dark";}catch(e){}document.documentElement.setAttribute("data-theme",t);})();
+(function(){var t;try{t=localStorage.getItem("sofreh-theme");}catch(e){}if(t!=="dark"&&t!=="light"){t="light";try{if(window.matchMedia("(prefers-color-scheme: dark)").matches)t="dark";}catch(e){}}document.documentElement.setAttribute("data-theme",t);})();
 </script>
 <script type="application/ld+json">
 {
@@ -232,6 +232,17 @@
   .final p{color:#f6d9d6;max-width:36rem;margin:0 auto 24px}
   .final .btn{background:#fff;color:var(--pom)}
 
+
+  /* ---------- Interactive phone previews ---------- */
+  .phones{display:grid;grid-template-columns:repeat(2,minmax(0,375px));justify-content:center;gap:34px;margin-top:26px}
+  .phonefig{margin:0;text-align:center}
+  .phone{border:11px solid #14181a;border-radius:46px;overflow:hidden;background:#000;box-shadow:var(--shadow);width:100%;max-width:375px;margin:0 auto}
+  .phone iframe{width:100%;height:680px;border:0;display:block;background:var(--bg)}
+  .phonefig figcaption{margin-top:14px;display:grid;gap:5px;justify-items:center}
+  .phonefig figcaption strong{font-size:1.08rem}
+  .phonefig figcaption span{color:var(--muted);font-size:.93rem}
+  .phonefig figcaption a{font-weight:700}
+  @media (max-width:860px){ .phones{grid-template-columns:minmax(0,375px)} .phone iframe{height:620px} }
   footer.site{border-top:1px solid var(--line);padding:40px 0 30px;background:var(--wash)}
   .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:26px}
   @media (max-width:800px){ .foot-grid{grid-template-columns:1fr 1fr} }
@@ -663,6 +674,33 @@
     </div>
   </section>
 
+
+  <!-- MOBILE APPS — INTERACTIVE PHONE PREVIEWS -->
+  <section id="apps" aria-labelledby="apps-h">
+    <div class="wrap">
+      <h2 id="apps-h" data-i18n="apps_h">Sofreh on your phone — try the mobile apps right here</h2>
+      <p data-i18n="apps_p" style="color:var(--muted);max-width:62ch">These are the real Sofreh mobile apps for customers and cooks, live inside the phones below. Scroll and tap inside a phone — it works exactly like the app on your own phone. No download needed.</p>
+      <div class="phones">
+        <figure class="phonefig">
+          <div class="phone"><iframe src="customer-app/" title="Sofreh Customer App — mobile preview" loading="lazy"></iframe></div>
+          <figcaption>
+            <strong data-i18n="apps_customer">Customer App — mobile</strong>
+            <span data-i18n="apps_customer_p">Browse today's dishes and order from cooks near you.</span>
+            <a href="customer-app/" data-i18n="apps_open_customer">Open the Customer App full screen</a>
+          </figcaption>
+        </figure>
+        <figure class="phonefig">
+          <div class="phone"><iframe src="cook-app/" title="Sofreh Cook App — mobile preview" loading="lazy"></iframe></div>
+          <figcaption>
+            <strong data-i18n="apps_cook">Cook App — mobile</strong>
+            <span data-i18n="apps_cook_p">See orders, portions and earnings the way a Sofreh cook does.</span>
+            <a href="cook-app/" data-i18n="apps_open_cook">Open the Cook App full screen</a>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
   <!-- FINAL CTA -->
   <section class="final">
     <div class="wrap">
@@ -701,7 +739,7 @@
     <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:24px 0 4px">
       <span><img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83" alt="Download on the App Store" style="height:44px;display:block" loading="lazy" /></span>
       <span><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" style="height:44px;display:block" loading="lazy" /></span>
-      <span data-i18n="apps_soon" style="color:var(--muted);font-size:.92rem">Sofreh apps for customers and cooks — coming soon.</span>
+      <span data-i18n="apps_soon" style="color:var(--muted);font-size:.92rem">The Sofreh mobile apps are live on this page — try them in the phones above, no download needed. Store apps are coming soon.</span>
     </div>
     <div class="legal">
       <span>© 2026 Sofreh · Toronto, Ontario</span>
@@ -951,6 +989,7 @@
   themeBtn.addEventListener("click", function(){
     var next = document.documentElement.getAttribute("data-theme")==="dark" ? "light" : "dark";
     document.documentElement.setAttribute("data-theme", next);
+    try{ localStorage.setItem("sofreh-theme", next); }catch(e){}
     syncThemeBtn();
   });
   syncThemeBtn();
@@ -996,9 +1035,9 @@
       about_h:"درباره سفره",
       cta_h:"قابلمه‌های امروز همین حالا روی گازند.", cta_p:"تا ساعت ۲ سفارش بده تا غذات از آشپزخانه یک همسایه، ساعت شش روی سفره‌ات باشد — امروز پخته، چند خیابان آن‌طرف‌تر.",
       cta_btn:"منوی امروز را ببین",
-      foot_about:"غذای خانگی ایرانی از آشپزهای محله دارای گواهی، در سراسر منطقه تورنتوی بزرگ.", apps_soon:"اپ‌های سفره برای مشتری و آشپز — به‌زودی.",
+      foot_about:"غذای خانگی ایرانی از آشپزهای محله دارای گواهی، در سراسر منطقه تورنتوی بزرگ.", apps_soon:"نسخه موبایل سفره برای مشتری و آشپز همین‌جا روی صفحه است — بدون دانلود، داخل گوشی‌های پایین امتحانش کن.", apps_h:"سفره روی گوشی تو — اپ‌های موبایل را همین‌جا امتحان کن", apps_p:"این‌ها اپ‌های واقعی موبایل سفره‌اند برای مشتری و آشپز، زنده داخل گوشی‌های پایین. داخل گوشی بالا و پایین برو و بزن — دقیقاً مثل اپ روی گوشی خودت کار می‌کند. دانلود لازم نیست.", apps_customer:"اپ مشتری — موبایل", apps_customer_p:"غذاهای امروز را ببین و از آشپزهای نزدیک سفارش بده.", apps_open_customer:"اپ مشتری را تمام‌صفحه باز کن", apps_cook:"اپ آشپز — موبایل", apps_cook_p:"سفارش‌ها، پرس‌ها و درآمد را همان‌طور که آشپز سفره می‌بیند ببین.", apps_open_cook:"اپ آشپز را تمام‌صفحه باز کن",
       foot_explore:"گشت‌وگذار", foot_hoods:"محله‌ها", foot_company:"شرکت", foot_contact:"تماس با ما",
-      legal_terms:"شرایط استفاده", legal_privacy:"حریم خصوصی", legal_a11y:"دسترسی‌پذیری",
+      about_p1:"<strong>سفره بازار محله‌ای غذای خانگی ایرانی در تورنتوی کاناداست.</strong> مهرداد خیراللهی، حسابدار و تورنتویی قدیمی، آن را بعد از سال‌ها دیدن آشپزهای خانگی بااستعداد جامعه ایرانی ساخت؛ کسانی که برای خانواده می‌پختند در حالی که همسایه‌ها در شهر دنبال غذایی با طعم خانه می‌گشتند.", about_p2:"نام سفره از همان سفره‌ای می‌آید که روی زمین یا میز پهن می‌شود و غذای ایرانی دورش تقسیم می‌شود. بازار سفره هم همین‌طور کار می‌کند: آشپزی در ریچموند هیل، نورث یورک، تورن‌هیل، اسکاربرو، مرکز تورنتو یا میسیساگا غذاهایی را که می‌پزد می‌گذارد و آدم‌های نزدیک یک پرس یا یک سینی خانوادگی سفارش می‌دهند، برای تحویل حضوری یا ارسال محلی. هر آشپز گواهی دارد، هر غذا مواد و حساسیت‌زاهایش را نوشته و هر قیمت — با همه هزینه‌ها — قبل از پرداخت معلوم است.", legal_terms:"شرایط استفاده", legal_privacy:"حریم خصوصی", legal_a11y:"دسترسی‌پذیری",
       legal_note:"صفحه‌های کامل قوانین با عرضه عمومی می‌آیند؛ تعهدهای بالا — هزینه، لغو و بهداشت غذا — شرایط پایلوت‌اند.",
       size:"سایز", single:"تک‌نفره", family:"خانوادگی (۴ نفر)", qty:"تعداد", pickup:"بازه تحویل",
       subtotal:"جمع جزء", fee:"هزینه خدمات (۱۰٪، حداکثر ۴ دلار)", total:"جمع — پرداخت هنگام تحویل",

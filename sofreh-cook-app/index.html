@@ -4,11 +4,13 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="light dark" />
+<script>/* Theme: saved choice wins, else system day/night. */(function(){var t;try{t=localStorage.getItem("sofreh-theme");}catch(e){}if(t!=="dark"&&t!=="light"){try{t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}catch(e){t="light";}}document.documentElement.setAttribute("data-theme",t);})();</script>
+<script>/* Language: saved choice wins, else English. */(function(){var l;try{l=localStorage.getItem("sofreh-lang");}catch(e){}if(l==="fa"){document.documentElement.lang="fa";document.documentElement.dir="rtl";}})();</script>
 <link rel="icon" href="data:," />
 <title>Sofreh — Cook App</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700;800&family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 <style>
 :root{
   --bg:#FAF5EE; --surface:#FFFFFF; --surface2:#F3EDE2; --ink:#211A13; --ink2:#5C5142; --ink3:#8A7D6A;
@@ -17,15 +19,13 @@
   --shadow:0 1px 2px rgba(60,40,10,.06),0 8px 24px -12px rgba(60,40,10,.18);
   --r-card:14px; --r-btn:10px;
 }
-@media (prefers-color-scheme: dark){
-  :root{
+:root[data-theme="dark"]{
     --bg:#16120E; --surface:#211B15; --surface2:#2A231B;
     --ink:#F2EADF; --ink2:#C9BBA6; --ink3:#9A8B74; --line:#3A3126;
     --saffron:#E39A2E; --saffron-soft:#3A2C14; --pom:#E0786E; --pom-soft:#3D211E;
     --herb:#8FC07E; --herb-soft:#24331F; --gold:#D9A441;
     --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -12px rgba(0,0,0,.6);
   }
-}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Manrope",system-ui,sans-serif;font-size:15px;line-height:1.5}
@@ -224,6 +224,57 @@ td.num,th.num{text-align:right}
   .toast{bottom:86px}
 }
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
+
+  /* ---------- Manual light/dark theme toggle (same pattern as the Sofreh catalog) ---------- */
+  :root[data-theme="dark"]{ color-scheme: dark; }
+  :root[data-theme="light"]{ color-scheme: light; }
+  .themebtn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 14px;font:inherit;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;min-height:2.25rem;flex:none}
+  .themebtn svg{width:16px;height:16px;flex:none}
+  .themebtn .ico-sun{display:none}
+  :root[data-theme="dark"] .themebtn .ico-sun{display:block}
+  :root[data-theme="dark"] .themebtn .ico-moon{display:none}
+
+/* ---------- Phone shell on wide screens: the app always presents as a phone ---------- */
+@media (min-width:761px){
+  body{ background:var(--surface2); }
+  .shell{ display:block; max-width:430px; margin:0 auto; border-inline:1px solid var(--line); box-shadow:0 0 44px rgba(20,16,8,.14); background:var(--bg); min-height:100dvh; }
+  .sidebar{ display:none; }
+  .topbar{ display:flex; align-items:center; justify-content:space-between; padding:12px 16px; background:var(--surface); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:40; }
+  .topbar .brand{ padding:0; }
+  .content{ padding:16px 16px 110px; }
+  .bottomnav{ display:flex; position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:min(430px,100%); background:var(--surface); border-top:1px solid var(--line); border-inline:1px solid var(--line); z-index:50; padding:6px 4px calc(6px + env(safe-area-inset-bottom)); }
+  .bottomnav button{ flex:1; background:none; border:0; display:flex; flex-direction:column; align-items:center; gap:2px; font-size:11px; font-weight:700; color:var(--ink3); padding:7px 2px; border-radius:10px; cursor:pointer; position:relative; min-height:52px; }
+  .bottomnav button svg{ width:21px; height:21px; }
+  .bottomnav button.active{ color:var(--pom); }
+  .bottomnav .badge{ position:absolute; top:2px; right:calc(50% - 20px); background:var(--pom); color:#fff; font-size:10px; font-weight:800; min-width:17px; height:17px; border-radius:999px; display:grid; place-items:center; padding:0 4px; }
+  .stats{ grid-template-columns:repeat(2,1fr); }
+  .cols, .profile-grid{ grid-template-columns:1fr; }
+  .menu-grid{ grid-template-columns:1fr; }
+  .form-grid{ grid-template-columns:1fr; }
+  .earn-head{ grid-template-columns:1fr; }
+  .page-head h1{ font-size:25px; }
+  .toast{ bottom:86px; }
+}
+
+  /* ---------- Language toggle + Persian (FA) / RTL ---------- */
+  .langbtn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 14px;font:inherit;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;min-height:2.25rem;flex:none}
+  .topbar{gap:8px;flex-wrap:wrap}
+  .fa-name{font-family:"Vazirmatn",sans-serif}
+  html[lang="fa"] body{font-family:"Vazirmatn",system-ui,sans-serif}
+  html[lang="fa"] h1,html[lang="fa"] h2,html[lang="fa"] h3,html[lang="fa"] .serif,
+  html[lang="fa"] .brand b,html[lang="fa"] .stat .v,html[lang="fa"] .order-total,
+  html[lang="fa"] .earn-big .v{font-family:"Vazirmatn",sans-serif;font-weight:800}
+  [dir="rtl"] .sidebar{border-right:0;border-left:1px solid var(--line)}
+  [dir="rtl"] .nav button{text-align:right}
+  [dir="rtl"] .nav .badge{margin-left:0;margin-right:auto}
+  [dir="rtl"] th{text-align:right}
+  [dir="rtl"] td.num,[dir="rtl"] th.num{text-align:left}
+  [dir="rtl"] .track::after{left:auto;right:3px}
+  [dir="rtl"] .switch input:checked + .track::after{left:auto;right:25px}
+  [dir="rtl"] .bottomnav .badge{right:auto;left:calc(50% - 20px)}
+  [dir="rtl"] .dish [style*="text-align:right"]{text-align:left!important}
+  [dir="rtl"] .timeline .t{flex-basis:52px}
+  [dir="rtl"] .order-actions .pickup{margin-inline-end:4px}
 </style>
 </head>
 <body>
@@ -233,13 +284,14 @@ td.num,th.num{text-align:right}
   <aside class="sidebar">
     <div class="brand">
       <div class="brand-mark">س</div>
-      <div><b>Sofreh</b><span>Cook app</span></div>
+      <div><b>Sofreh</b><span data-i18n="brand_cook_app">Cook app</span></div>
     </div>
     <nav class="nav" id="sideNav" aria-label="Main"></nav>
     <div class="side-foot">
+      <button class="langbtn" id="langToggleSide" type="button" style="margin:0 8px 12px">فارسی</button>
       <div class="kitchen-mini">
         <div class="avatar">M</div>
-        <div><b>Mina's Kitchen</b><span>North York · 4.9 ★</span></div>
+        <div><b data-i18n="profile_name">Mina's Kitchen</b><span data-i18n="kitchen_mini_loc">North York · 4.9 ★</span></div>
       </div>
     </div>
   </aside>
@@ -248,8 +300,10 @@ td.num,th.num{text-align:right}
     <header class="topbar">
       <div class="brand">
         <div class="brand-mark">س</div>
-        <div><b>Sofreh</b><span>Cook app</span></div>
+        <div><b>Sofreh</b><span data-i18n="brand_cook_app">Cook app</span></div>
       </div>
+      <button class="themebtn" id="themeToggle" type="button" aria-pressed="false" aria-label="Switch to dark theme (night)"><svg class="ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span id="themeLabel">Dark</span></button>
+        <button class="langbtn" id="langToggle" type="button">فارسی</button>
       <span class="tag ready" id="topStatus"><span class="dot"></span>Online</span>
     </header>
 
@@ -259,9 +313,9 @@ td.num,th.num{text-align:right}
       <section class="view active" id="view-today">
         <div class="page-head">
           <div>
-            <div class="eyebrow">Wednesday · Nov 18</div>
-            <h1>Salam, Mina 👋</h1>
-            <p>Here's your kitchen today — new orders, what's cooking, and what needs restocking.</p>
+            <div class="eyebrow" data-i18n="today_eyebrow">Wednesday · Nov 18</div>
+            <h1 data-i18n="today_h1">Salam, Mina 👋</h1>
+            <p data-i18n="today_p">Here's your kitchen today — new orders, what's cooking, and what needs restocking.</p>
           </div>
         </div>
 
@@ -281,31 +335,31 @@ td.num,th.num{text-align:right}
         </div>
 
         <div class="stats">
-          <div class="card stat"><div class="k">Orders today</div><div class="v" id="statOrders">9</div><div class="s"><b>+3</b> vs yesterday</div></div>
-          <div class="card stat"><div class="k">Earned today</div><div class="v" id="statEarned">$186</div><div class="s">After Sofreh's 12% fee</div></div>
-          <div class="card stat"><div class="k">Rating</div><div class="v">4.9 ★</div><div class="s">From 212 reviews</div></div>
-          <div class="card stat"><div class="k">Portions left</div><div class="v" id="statPortions">—</div><div class="s">Across today's menu</div></div>
+          <div class="card stat"><div class="k" data-i18n="stat_orders">Orders today</div><div class="v" id="statOrders">9</div><div class="s"><b>+3</b> <span data-i18n="stat_orders_sub">vs yesterday</span></div></div>
+          <div class="card stat"><div class="k" data-i18n="stat_earned">Earned today</div><div class="v" id="statEarned">$186</div><div class="s" data-i18n="stat_earned_sub">After Sofreh's 12% fee</div></div>
+          <div class="card stat"><div class="k" data-i18n="stat_rating">Rating</div><div class="v">4.9 ★</div><div class="s" data-i18n="stat_rating_sub">From 212 reviews</div></div>
+          <div class="card stat"><div class="k" data-i18n="stat_portions">Portions left</div><div class="v" id="statPortions">—</div><div class="s" data-i18n="stat_portions_sub">Across today's menu</div></div>
         </div>
 
         <div class="cols">
           <div>
-            <div class="section-title"><h2>Needs your action</h2><a data-goto="orders">See all orders →</a></div>
+            <div class="section-title"><h2 data-i18n="needs_action">Needs your action</h2><a data-goto="orders" data-i18n="see_all_orders">See all orders →</a></div>
             <div class="stack" id="todayQueue"></div>
             <div style="height:18px"></div>
-            <div class="alert"><div>⚠️</div><div><b>Tahchin is almost out.</b> Only <span id="alertTahchin">2</span> portions left and it's your most-ordered dish this week. Cook another tray or mark it sold out.</div></div>
+            <div class="alert"><div>⚠️</div><div><b data-i18n="alert_title">Tahchin is almost out.</b> <span data-i18n="alert_pre">Only</span> <span id="alertTahchin">2</span> <span data-i18n="alert_post">portions left and it's your most-ordered dish this week. Cook another tray or mark it sold out.</span></div></div>
           </div>
           <div class="card timeline">
-            <h2 style="margin:0;font-size:19px">Today's schedule</h2>
+            <h2 style="margin:0;font-size:19px" data-i18n="sched_title">Today's schedule</h2>
             <ul>
-              <li><span class="t">11:30</span><span>Lunch pickup window opens</span></li>
-              <li><span class="t">13:00</span><span>Order #1042 — Sara M. pickup</span></li>
-              <li><span class="t">17:30</span><span>Dinner rush — most orders arrive</span></li>
-              <li><span class="t">18:15</span><span>Order #1048 — family tray, delivery</span></li>
-              <li><span class="t">20:30</span><span>Kitchen closes · last pickup</span></li>
+              <li><span class="t">11:30</span><span data-i18n="sched_1">Lunch pickup window opens</span></li>
+              <li><span class="t">13:00</span><span data-i18n="sched_2">Order #1042 — Sara M. pickup</span></li>
+              <li><span class="t">17:30</span><span data-i18n="sched_3">Dinner rush — most orders arrive</span></li>
+              <li><span class="t">18:15</span><span data-i18n="sched_4">Order #1048 — family tray, delivery</span></li>
+              <li><span class="t">20:30</span><span data-i18n="sched_5">Kitchen closes · last pickup</span></li>
             </ul>
             <div style="height:10px"></div>
-            <div class="section-title" style="margin-bottom:6px"><h2 style="font-size:17px">This week</h2></div>
-            <p style="margin:0;color:var(--ink2);font-size:14px">You're <b style="color:var(--herb)">18% ahead</b> of last week. Friday is your biggest day — consider adding a second batch of Ghormeh Sabzi.</p>
+            <div class="section-title" style="margin-bottom:6px"><h2 style="font-size:17px" data-i18n="week_title">This week</h2></div>
+            <p style="margin:0;color:var(--ink2);font-size:14px"><span data-i18n="week_pre">You're</span> <b style="color:var(--herb)" data-i18n="week_ahead">18% ahead</b> <span data-i18n="week_post">of last week. Friday is your biggest day — consider adding a second batch of Ghormeh Sabzi.</span></p>
           </div>
         </div>
       </section>
@@ -314,17 +368,17 @@ td.num,th.num{text-align:right}
       <section class="view" id="view-orders">
         <div class="page-head">
           <div>
-            <div class="eyebrow">Orders</div>
-            <h1>Order board</h1>
-            <p>Accept new orders, track what's on the stove, and hand off pickups — all in one place.</p>
+            <div class="eyebrow" data-i18n="orders_eyebrow">Orders</div>
+            <h1 data-i18n="orders_h">Order board</h1>
+            <p data-i18n="orders_p">Accept new orders, track what's on the stove, and hand off pickups — all in one place.</p>
           </div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px" id="orderFilters">
-          <button class="chip active" data-filter="all">All</button>
-          <button class="chip" data-filter="new">New <span id="chipNew"></span></button>
-          <button class="chip" data-filter="cooking">Cooking</button>
-          <button class="chip" data-filter="ready">Ready</button>
-          <button class="chip" data-filter="done">Completed</button>
+          <button class="chip active" data-filter="all" data-i18n="filter_all">All</button>
+          <button class="chip" data-filter="new"><span data-i18n="filter_new">New</span> <span id="chipNew"></span></button>
+          <button class="chip" data-filter="cooking" data-i18n="filter_cooking">Cooking</button>
+          <button class="chip" data-filter="ready" data-i18n="filter_ready">Ready</button>
+          <button class="chip" data-filter="done" data-i18n="filter_done">Completed</button>
         </div>
         <div class="stack" id="orderList"></div>
       </section>
@@ -333,28 +387,28 @@ td.num,th.num{text-align:right}
       <section class="view" id="view-menu">
         <div class="page-head">
           <div>
-            <div class="eyebrow">Menu</div>
-            <h1>Today's menu</h1>
-            <p>Set portions each morning, pause a dish when you sell out, and add new dishes anytime.</p>
+            <div class="eyebrow" data-i18n="menu_eyebrow">Menu</div>
+            <h1 data-i18n="menu_h">Today's menu</h1>
+            <p data-i18n="menu_p">Set portions each morning, pause a dish when you sell out, and add new dishes anytime.</p>
           </div>
-          <button class="btn primary" id="scrollAdd">+ Add a dish</button>
+          <button class="btn primary" id="scrollAdd" data-i18n="add_dish_btn">+ Add a dish</button>
         </div>
         <div class="menu-grid" id="menuGrid"></div>
 
         <div class="card form-card" id="addDishCard">
-          <h2>Add a new dish</h2>
-          <p>It appears on your public menu as soon as you save it. You can pause it anytime.</p>
+          <h2 data-i18n="add_h">Add a new dish</h2>
+          <p data-i18n="add_p">It appears on your public menu as soon as you save it. You can pause it anytime.</p>
           <form id="addDishForm">
             <div class="form-grid">
-              <div class="field"><label for="fName">Dish name (English)</label><input id="fName" required placeholder="e.g. Lubia Polo" /></div>
-              <div class="field"><label for="fFa">Name in Persian (optional)</label><input id="fFa" placeholder="لوبیا پلو" /></div>
-              <div class="field"><label for="fPrice">Price per portion (CAD)</label><input id="fPrice" type="number" min="1" step="0.5" required placeholder="18" /></div>
-              <div class="field"><label for="fPortions">Portions today</label><input id="fPortions" type="number" min="0" max="60" required placeholder="8" /></div>
-              <div class="field full"><label for="fDesc">Short description</label><textarea id="fDesc" placeholder="What makes yours special? Ingredients, spice level, what it comes with…"></textarea></div>
+              <div class="field"><label for="fName" data-i18n="f_name">Dish name (English)</label><input id="fName" required placeholder="e.g. Lubia Polo" data-i18n-ph="f_name_ph" /></div>
+              <div class="field"><label for="fFa" data-i18n="f_fa">Name in Persian (optional)</label><input id="fFa" placeholder="لوبیا پلو" /></div>
+              <div class="field"><label for="fPrice" data-i18n="f_price">Price per portion (CAD)</label><input id="fPrice" type="number" min="1" step="0.5" required placeholder="18" /></div>
+              <div class="field"><label for="fPortions" data-i18n="f_portions">Portions today</label><input id="fPortions" type="number" min="0" max="60" required placeholder="8" /></div>
+              <div class="field full"><label for="fDesc" data-i18n="f_desc">Short description</label><textarea id="fDesc" placeholder="What makes yours special? Ingredients, spice level, what it comes with…" data-i18n-ph="f_desc_ph"></textarea></div>
             </div>
             <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
-              <button type="submit" class="btn primary">Save dish to menu</button>
-              <button type="reset" class="btn">Clear</button>
+              <button type="submit" class="btn primary" data-i18n="save_dish">Save dish to menu</button>
+              <button type="reset" class="btn" data-i18n="clear_btn">Clear</button>
             </div>
           </form>
         </div>
@@ -364,29 +418,29 @@ td.num,th.num{text-align:right}
       <section class="view" id="view-earnings">
         <div class="page-head">
           <div>
-            <div class="eyebrow">Earnings</div>
-            <h1>Your earnings</h1>
-            <p>What you've made, what's on the way to your bank, and which dishes earn the most.</p>
+            <div class="eyebrow" data-i18n="earn_eyebrow">Earnings</div>
+            <h1 data-i18n="earn_h">Your earnings</h1>
+            <p data-i18n="earn_p">What you've made, what's on the way to your bank, and which dishes earn the most.</p>
           </div>
           <div style="display:flex;gap:8px">
-            <button class="chip active" data-period="week">This week</button>
-            <button class="chip" data-period="month">This month</button>
+            <button class="chip active" data-period="week" data-i18n="period_week">This week</button>
+            <button class="chip" data-period="month" data-i18n="period_month">This month</button>
           </div>
         </div>
         <div class="earn-head">
           <div class="card earn-big"><div class="k" id="earnK">Earned this week</div><div class="v" id="earnV">$742</div><div class="s" id="earnS">From 41 orders · avg $18.10 per order</div></div>
-          <div class="card earn-big"><div class="k">Next payout</div><div class="v">$518</div><div class="s">Arrives Friday, Nov 20 · TD ****4821</div></div>
-          <div class="card earn-big"><div class="k">Sofreh fee (12%)</div><div class="v" id="feeV">$101</div><div class="s">Covers payment, support &amp; delivery partners</div></div>
+          <div class="card earn-big"><div class="k" data-i18n="earn_next">Next payout</div><div class="v">$518</div><div class="s" data-i18n="earn_next_sub">Arrives Friday, Nov 20 · TD ****4821</div></div>
+          <div class="card earn-big"><div class="k" data-i18n="earn_fee">Sofreh fee (12%)</div><div class="v" id="feeV">$101</div><div class="s" data-i18n="earn_fee_sub">Covers payment, support &amp; delivery partners</div></div>
         </div>
         <div class="card chart-card">
           <div class="section-title" style="margin:0"><h2 id="chartTitle">Daily earnings — this week</h2><span style="color:var(--ink2);font-size:13px" id="chartNote">Best day: Friday</span></div>
           <div class="bar-wrap" id="chart"></div>
         </div>
         <div class="card" style="overflow:hidden">
-          <div class="section-title" style="padding:16px 18px 0"><h2>Top dishes</h2></div>
+          <div class="section-title" style="padding:16px 18px 0"><h2 data-i18n="top_dishes">Top dishes</h2></div>
           <div style="overflow-x:auto">
           <table>
-            <thead><tr><th>Dish</th><th class="num">Portions sold</th><th class="num">Gross</th><th class="num">You keep</th></tr></thead>
+            <thead><tr><th data-i18n="th_dish">Dish</th><th class="num" data-i18n="th_portions">Portions sold</th><th class="num" data-i18n="th_gross">Gross</th><th class="num" data-i18n="th_keep">You keep</th></tr></thead>
             <tbody id="topDishes"></tbody>
           </table>
           </div>
@@ -397,45 +451,45 @@ td.num,th.num{text-align:right}
       <section class="view" id="view-kitchen">
         <div class="page-head">
           <div>
-            <div class="eyebrow">My kitchen</div>
-            <h1>Kitchen profile</h1>
-            <p>This is what customers see on your Sofreh page — plus your hours and pickup settings.</p>
+            <div class="eyebrow" data-i18n="kitchen_eyebrow">My kitchen</div>
+            <h1 data-i18n="kitchen_h">Kitchen profile</h1>
+            <p data-i18n="kitchen_p">This is what customers see on your Sofreh page — plus your hours and pickup settings.</p>
           </div>
         </div>
         <div class="profile-grid">
           <div class="stack">
             <div class="card profile-card">
               <div class="avatar">M</div>
-              <h2>Mina's Kitchen</h2>
-              <div class="loc">North York, Toronto · Cooking on Sofreh since March 2025</div>
+              <h2 data-i18n="profile_name">Mina's Kitchen</h2>
+              <div class="loc" data-i18n="profile_loc">North York, Toronto · Cooking on Sofreh since March 2025</div>
               <div class="stars" aria-label="4.9 out of 5 stars">★★★★★</div>
-              <div style="font-weight:800">4.9 · 212 reviews · 1,480 orders served</div>
-              <p style="color:var(--ink2);font-size:14px;margin:12px 0 0">Home-style Persian cooking the way my mother taught me in Shiraz — slow stews, real saffron, and tahdig with every rice dish.</p>
+              <div style="font-weight:800" data-i18n="profile_stats">4.9 · 212 reviews · 1,480 orders served</div>
+              <p style="color:var(--ink2);font-size:14px;margin:12px 0 0" data-i18n="profile_bio">Home-style Persian cooking the way my mother taught me in Shiraz — slow stews, real saffron, and tahdig with every rice dish.</p>
               <div style="display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap">
-                <span class="tag cooking">Halal</span><span class="tag ready">Food-handler certified</span><span class="tag cooking">Vegetarian options</span>
+                <span class="tag cooking" data-i18n="tag_halal">Halal</span><span class="tag ready" data-i18n="tag_cert">Food-handler certified</span><span class="tag cooking" data-i18n="tag_veg">Vegetarian options</span>
               </div>
             </div>
             <div class="card review">
-              <div class="who">Sara M. · ★★★★★ <span style="color:var(--ink3);font-weight:600">· 2 days ago</span></div>
-              <p>"The ghormeh sabzi tastes exactly like home. You can tell the herbs are fresh. Already ordered three times this month."</p>
+              <div class="who">Sara M. · ★★★★★ <span style="color:var(--ink3);font-weight:600" data-i18n="review1_when">· 2 days ago</span></div>
+              <p data-i18n="review1_text">"The ghormeh sabzi tastes exactly like home. You can tell the herbs are fresh. Already ordered three times this month."</p>
             </div>
             <div class="card review">
-              <div class="who">Daniel K. · ★★★★★ <span style="color:var(--ink3);font-weight:600">· last week</span></div>
-              <p>"First time trying fesenjan — sweet, tangy, incredible with the saffron rice. Pickup was right on time."</p>
+              <div class="who">Daniel K. · ★★★★★ <span style="color:var(--ink3);font-weight:600" data-i18n="review2_when">· last week</span></div>
+              <p data-i18n="review2_text">"First time trying fesenjan — sweet, tangy, incredible with the saffron rice. Pickup was right on time."</p>
             </div>
           </div>
           <div class="stack">
             <div class="card" style="padding:20px">
-              <h2 style="margin:0 0 6px;font-size:19px">Opening hours</h2>
+              <h2 style="margin:0 0 6px;font-size:19px" data-i18n="hours_h">Opening hours</h2>
               <div id="hoursList"></div>
             </div>
             <div class="card" style="padding:20px">
-              <h2 style="margin:0 0 4px;font-size:19px">Pickup &amp; delivery</h2>
-              <label class="checkline"><input type="checkbox" checked id="optPickup" /> Porch pickup from my address</label>
-              <label class="checkline"><input type="checkbox" checked id="optDelivery" /> Sofreh delivery partner (within 6 km)</label>
-              <label class="checkline"><input type="checkbox" id="optPreorder" /> Accept pre-orders for the next day</label>
-              <label class="checkline"><input type="checkbox" checked id="optLarge" /> Family trays &amp; party orders (48h notice)</label>
-              <div style="margin-top:14px"><button class="btn primary" id="saveKitchen">Save settings</button></div>
+              <h2 style="margin:0 0 4px;font-size:19px" data-i18n="pickup_h">Pickup &amp; delivery</h2>
+              <label class="checkline"><input type="checkbox" checked id="optPickup" /> <span data-i18n="opt_pickup">Porch pickup from my address</span></label>
+              <label class="checkline"><input type="checkbox" checked id="optDelivery" /> <span data-i18n="opt_delivery">Sofreh delivery partner (within 6 km)</span></label>
+              <label class="checkline"><input type="checkbox" id="optPreorder" /> <span data-i18n="opt_preorder">Accept pre-orders for the next day</span></label>
+              <label class="checkline"><input type="checkbox" checked id="optLarge" /> <span data-i18n="opt_large">Family trays &amp; party orders (48h notice)</span></label>
+              <div style="margin-top:14px"><button class="btn primary" id="saveKitchen" data-i18n="save_settings">Save settings</button></div>
             </div>
           </div>
         </div>
@@ -449,51 +503,170 @@ td.num,th.num{text-align:right}
 <div class="toast" id="toast" role="status"></div>
 
 <script>
+/* ================= I18N — same pattern as the Sofreh customer web app ================= */
+var T = {
+  en:{ doc_title:"Sofreh — Cook App", brand_cook_app:"Cook app", kitchen_mini_loc:"North York · 4.9 ★",
+    today_eyebrow:"Wednesday · Nov 18", today_h1:"Salam, Mina 👋", today_p:"Here's your kitchen today — new orders, what's cooking, and what needs restocking.",
+    stat_orders:"Orders today", stat_orders_sub:"vs yesterday", stat_earned:"Earned today", stat_earned_sub:"After Sofreh's 12% fee", stat_rating:"Rating", stat_rating_sub:"From 212 reviews", stat_portions:"Portions left", stat_portions_sub:"Across today's menu",
+    needs_action:"Needs your action", see_all_orders:"See all orders →", alert_title:"Tahchin is almost out.", alert_pre:"Only", alert_post:"portions left and it's your most-ordered dish this week. Cook another tray or mark it sold out.",
+    sched_title:"Today's schedule", sched_1:"Lunch pickup window opens", sched_2:"Order #1042 — Sara M. pickup", sched_3:"Dinner rush — most orders arrive", sched_4:"Order #1048 — family tray, delivery", sched_5:"Kitchen closes · last pickup",
+    week_title:"This week", week_pre:"You're", week_ahead:"18% ahead", week_post:"of last week. Friday is your biggest day — consider adding a second batch of Ghormeh Sabzi.",
+    orders_eyebrow:"Orders", orders_h:"Order board", orders_p:"Accept new orders, track what's on the stove, and hand off pickups — all in one place.",
+    filter_all:"All", filter_new:"New", filter_cooking:"Cooking", filter_ready:"Ready", filter_done:"Completed",
+    menu_eyebrow:"Menu", menu_h:"Today's menu", menu_p:"Set portions each morning, pause a dish when you sell out, and add new dishes anytime.", add_dish_btn:"+ Add a dish",
+    add_h:"Add a new dish", add_p:"It appears on your public menu as soon as you save it. You can pause it anytime.",
+    f_name:"Dish name (English)", f_name_ph:"e.g. Lubia Polo", f_fa:"Name in Persian (optional)", f_price:"Price per portion (CAD)", f_portions:"Portions today", f_desc:"Short description", f_desc_ph:"What makes yours special? Ingredients, spice level, what it comes with…", save_dish:"Save dish to menu", clear_btn:"Clear",
+    earn_eyebrow:"Earnings", earn_h:"Your earnings", earn_p:"What you've made, what's on the way to your bank, and which dishes earn the most.", period_week:"This week", period_month:"This month",
+    earn_next:"Next payout", earn_next_sub:"Arrives Friday, Nov 20 · TD ****4821", earn_fee:"Sofreh fee (12%)", earn_fee_sub:"Covers payment, support & delivery partners",
+    top_dishes:"Top dishes", th_dish:"Dish", th_portions:"Portions sold", th_gross:"Gross", th_keep:"You keep",
+    kitchen_eyebrow:"My kitchen", kitchen_h:"Kitchen profile", kitchen_p:"This is what customers see on your Sofreh page — plus your hours and pickup settings.",
+    profile_name:"Mina's Kitchen", profile_loc:"North York, Toronto · Cooking on Sofreh since March 2025", profile_stats:"4.9 · 212 reviews · 1,480 orders served",
+    profile_bio:"Home-style Persian cooking the way my mother taught me in Shiraz — slow stews, real saffron, and tahdig with every rice dish.",
+    tag_halal:"Halal", tag_cert:"Food-handler certified", tag_veg:"Vegetarian options",
+    review1_when:"· 2 days ago", review1_text:"\"The ghormeh sabzi tastes exactly like home. You can tell the herbs are fresh. Already ordered three times this month.\"",
+    review2_when:"· last week", review2_text:"\"First time trying fesenjan — sweet, tangy, incredible with the saffron rice. Pickup was right on time.\"",
+    hours_h:"Opening hours", pickup_h:"Pickup & delivery", opt_pickup:"Porch pickup from my address", opt_delivery:"Sofreh delivery partner (within 6 km)", opt_preorder:"Accept pre-orders for the next day", opt_large:"Family trays & party orders (48h notice)", save_settings:"Save settings",
+    nav_today:"Today", nav_orders:"Orders", nav_menu:"Menu", nav_earnings:"Earnings", nav_kitchen:"Kitchen", main_nav:"Main",
+    status_new:"New", status_cooking:"Cooking", status_ready:"Ready", status_done:"Completed",
+    act_accept:"Accept order", act_accept_short:"Accept", act_decline:"Decline", act_ready:"Mark ready for pickup", act_handed:"Handed over ✓", act_view:"View",
+    ordered:"Ordered", pickup_word:"Pickup", delivery_word:"Delivery", picked_up:"Picked up", today_word:"today",
+    empty_orders_h:"Nothing here right now", empty_orders_p:"No orders in this stage. New orders will appear here the moment they come in.",
+    queue_empty_h:"All caught up 🎉", queue_empty_p:"No orders waiting. Enjoy the quiet — dinner rush starts around 5:30 PM.",
+    portions_left:"Portions left", on_menu:"On menu", sold_out:"Sold out", paused:"Paused", less_portion:"One less portion", more_portion:"One more portion",
+    earn_week_k:"Earned this week", earn_week_s:"From 41 orders · avg $18.10 per order", earn_month_k:"Earned this month", earn_month_s:"From 148 orders · avg $18.55 per order",
+    chart_week_title:"Daily earnings — this week", chart_month_title:"Weekly earnings — November", chart_best_day:"Best day: Friday", chart_best_week:"Best week: Week 3",
+    closed:"Closed", open_this_day:"Open this day", to_word:"to", open_aria:"opening time", close_aria:"closing time",
+    switch_online:"Online", switch_offline:"Offline", status_online_text:"You're online", status_offline_text:"You're offline",
+    status_online_head:"Taking orders until 8:30 PM", status_offline_head:"Your kitchen is hidden from customers",
+    status_online_sub:"Customers within 6 km can order from your menu right now.", status_offline_sub:"Orders already accepted still need to be finished. Go online again whenever you're ready.",
+    top_online:"Online", top_offline:"Offline",
+    toast_online:"You're online — customers can order now.", toast_offline:"You're offline. Take your time.", toast_kitchen_saved:"Kitchen settings saved ✓ Customers see the update right away.",
+    fresh_desc:"Fresh from Mina's kitchen today.", photo_of:"Photo of " },
+  fa:{ doc_title:"Sofreh — اپلیکیشن آشپز", brand_cook_app:"اپلیکیشن آشپز", kitchen_mini_loc:"نورث‌یورک · ۴٫۹ ★",
+    today_eyebrow:"چهارشنبه · ۱۸ نوامبر", today_h1:"سلام، مینا 👋", today_p:"آشپزخانه‌ات امروز این‌طور است — سفارش‌های تازه، چه چیزی روی گاز است و چه چیزی باید دوباره آماده شود.",
+    stat_orders:"سفارش‌های امروز", stat_orders_sub:"نسبت به دیروز", stat_earned:"درآمد امروز", stat_earned_sub:"بعد از کارمزد ۱۲٪ Sofreh", stat_rating:"امتیاز", stat_rating_sub:"از ۲۱۲ دیدگاه", stat_portions:"پرس‌های مانده", stat_portions_sub:"در سراسر منوی امروز",
+    needs_action:"نیازمند اقدام تو", see_all_orders:"دیدن همهٔ سفارش‌ها ←", alert_title:"ته چین دارد تمام می‌شود.", alert_pre:"فقط", alert_post:"پرس مانده و این پرفروش‌ترین غذای این هفتهٔ توست. یک سینی دیگر بپز یا آن را تمام‌شده علامت بزن.",
+    sched_title:"برنامهٔ امروز", sched_1:"بازهٔ تحویل ناهار باز می‌شود", sched_2:"سفارش ۱۰۴۲ — تحویل سارا م.", sched_3:"شلوغی شام — بیشتر سفارش‌ها می‌رسند", sched_4:"سفارش ۱۰۴۸ — سینی خانوادگی، ارسال", sched_5:"آشپزخانه بسته می‌شود · آخرین تحویل",
+    week_title:"این هفته", week_pre:"تو", week_ahead:"۱۸٪ جلوتر", week_post:"از هفتهٔ گذشته هستی. جمعه بزرگ‌ترین روز توست — یک قابلمهٔ دیگر قرمه‌سبزی اضافه کن.",
+    orders_eyebrow:"سفارش‌ها", orders_h:"تابلوی سفارش‌ها", orders_p:"سفارش‌های تازه را بپذیر، وضعیت غذاهای روی گاز را دنبال کن و تحویل‌ها را انجام بده — همه در یک جا.",
+    filter_all:"همه", filter_new:"تازه", filter_cooking:"در حال پخت", filter_ready:"آماده", filter_done:"تکمیل‌شده",
+    menu_eyebrow:"منو", menu_h:"منوی امروز", menu_p:"هر صبح تعداد پرس‌ها را مشخص کن، وقتی غذایی تمام شد متوقفش کن و هر وقت خواستی غذای تازه اضافه کن.", add_dish_btn:"+ افزودن غذا",
+    add_h:"افزودن غذای تازه", add_p:"به‌محض ذخیره‌کردن، در منوی عمومی‌ات دیده می‌شود. هر وقت خواستی می‌توانی متوقفش کنی.",
+    f_name:"نام غذا (انگلیسی)", f_name_ph:"مثلاً Lubia Polo", f_fa:"نام به فارسی (اختیاری)", f_price:"قیمت هر پرس (دلار کانادا)", f_portions:"پرس‌های امروز", f_desc:"توضیح کوتاه", f_desc_ph:"چه چیزی غذایت را خاص می‌کند؟ مواد، میزان تندی، چه چیزی همراهش است…", save_dish:"ذخیرهٔ غذا در منو", clear_btn:"پاک‌کردن",
+    earn_eyebrow:"درآمد", earn_h:"درآمد تو", earn_p:"چه‌قدر ساخته‌ای، چه چیزی در راه بانک توست و کدام غذاها بیشترین درآمد را دارند.", period_week:"این هفته", period_month:"این ماه",
+    earn_next:"پرداخت بعدی", earn_next_sub:"جمعه ۲۰ نوامبر می‌رسد · TD ****4821", earn_fee:"کارمزد Sofreh (۱۲٪)", earn_fee_sub:"پرداخت، پشتیبانی و همکاران ارسال را پوشش می‌دهد",
+    top_dishes:"غذاهای برتر", th_dish:"غذا", th_portions:"پرس‌های فروخته‌شده", th_gross:"فروش ناخالص", th_keep:"سهم تو",
+    kitchen_eyebrow:"آشپزخانهٔ من", kitchen_h:"مشخصات آشپزخانه", kitchen_p:"این همان چیزی است که مشتری‌ها در صفحهٔ Sofreh تو می‌بینند — به‌همراه ساعت‌ها و تنظیمات تحویل.",
+    profile_name:"آشپزخانهٔ مینا", profile_loc:"نورث‌یورک، تورنتو · از مارس ۲۰۲۵ در Sofreh می‌پزد", profile_stats:"۴٫۹ · ۲۱۲ دیدگاه · ۱٬۴۸۰ سفارش سرو شده",
+    profile_bio:"پخت‌وپز خانگی ایرانی، همان‌طور که مادرم در شیراز یادم داد — خورش‌های آرام‌پز، زعفران واقعی و ته‌دیگ همراه هر غذای برنجی.",
+    tag_halal:"حلال", tag_cert:"دارای گواهی بهداشت مواد غذایی", tag_veg:"گزینه‌های گیاهی",
+    review1_when:"· ۲ روز پیش", review1_text:"«قرمه‌سبزی دقیقاً مزهٔ خانه را می‌دهد. معلوم است سبزی‌ها تازه‌اند. این ماه سه بار سفارش داده‌ام.»",
+    review2_when:"· هفتهٔ گذشته", review2_text:"«اولین بار بود فسنجان می‌خوردم — ترش و شیرین، با برنج زعفرانی فوق‌العاده بود. تحویل دقیقاً سر وقت انجام شد.»",
+    hours_h:"ساعت‌های کاری", pickup_h:"تحویل و ارسال", opt_pickup:"تحویل از ایوان خانه‌ام", opt_delivery:"همکار ارسال Sofreh (تا شعاع ۶ کیلومتر)", opt_preorder:"پذیرش پیش‌سفارش برای روز بعد", opt_large:"سینی خانوادگی و سفارش مهمانی (با اطلاع ۴۸ ساعته)", save_settings:"ذخیرهٔ تنظیمات",
+    nav_today:"امروز", nav_orders:"سفارش‌ها", nav_menu:"منو", nav_earnings:"درآمد", nav_kitchen:"آشپزخانه", main_nav:"اصلی",
+    status_new:"تازه", status_cooking:"در حال پخت", status_ready:"آماده", status_done:"تکمیل‌شده",
+    act_accept:"پذیرفتن سفارش", act_accept_short:"پذیرفتن", act_decline:"رد کردن", act_ready:"علامت آماده برای تحویل", act_handed:"تحویل داده شد ✓", act_view:"دیدن",
+    ordered:"سفارش داده شد", pickup_word:"تحویل حضوری", delivery_word:"ارسال", picked_up:"تحویل گرفته شد", today_word:"امروز",
+    empty_orders_h:"فعلاً چیزی اینجا نیست", empty_orders_p:"در این مرحله سفارشی نیست. سفارش‌های تازه به‌محض رسیدن همین‌جا دیده می‌شوند.",
+    queue_empty_h:"همه‌چیز مرتب است 🎉", queue_empty_p:"سفارشی منتظر نیست. از آرامش لذت ببر — شلوغی شام از حدود ۵:۳۰ بعدازظهر شروع می‌شود.",
+    portions_left:"پرس‌های مانده", on_menu:"در منو", sold_out:"تمام شد", paused:"متوقف", less_portion:"یک پرس کمتر", more_portion:"یک پرس بیشتر",
+    earn_week_k:"درآمد این هفته", earn_week_s:"از ۴۱ سفارش · میانگین ۱۸٫۱۰ دلار برای هر سفارش", earn_month_k:"درآمد این ماه", earn_month_s:"از ۱۴۸ سفارش · میانگین ۱۸٫۵۵ دلار برای هر سفارش",
+    chart_week_title:"درآمد روزانه — این هفته", chart_month_title:"درآمد هفتگی — نوامبر", chart_best_day:"بهترین روز: جمعه", chart_best_week:"بهترین هفته: هفتهٔ ۳",
+    closed:"بسته", open_this_day:"بازکردن در این روز", to_word:"تا", open_aria:"ساعت شروع", close_aria:"ساعت پایان",
+    switch_online:"آنلاین", switch_offline:"آفلاین", status_online_text:"آنلاین هستی", status_offline_text:"آفلاین هستی",
+    status_online_head:"تا ساعت ۸:۳۰ شب سفارش می‌گیری", status_offline_head:"آشپزخانه‌ات از دید مشتری‌ها پنهان است",
+    status_online_sub:"مشتری‌های تا شعاع ۶ کیلومتر همین حالا می‌توانند از منویت سفارش بدهند.", status_offline_sub:"سفارش‌های پذیرفته‌شده هنوز باید تمام شوند. هر وقت آماده بودی دوباره آنلاین شو.",
+    top_online:"آنلاین", top_offline:"آفلاین",
+    toast_online:"آنلاین شدی — مشتری‌ها حالا می‌توانند سفارش بدهند.", toast_offline:"آفلاین شدی. وقت بگذار.", toast_kitchen_saved:"تنظیمات آشپزخانه ذخیره شد ✓ مشتری‌ها همین حالا به‌روزرسانی را می‌بینند.",
+    fresh_desc:"امروز تازه از آشپزخانهٔ مینا پخته شده.", photo_of:"عکس " }
+};
+var lang = "en";
+try { lang = localStorage.getItem("sofreh-lang") || (document.documentElement.lang === "fa" ? "fa" : "en"); } catch(e) { lang = document.documentElement.lang === "fa" ? "fa" : "en"; }
+if (lang !== "fa") lang = "en";
+function t(k){ return (T[lang] && T[lang][k]) || T.en[k] || k; }
+
 var NAV = [
-  {id:'today',   label:'Today',    icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>'},
-  {id:'orders',  label:'Orders',   icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>'},
-  {id:'menu',    label:'Menu',     icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>'},
-  {id:'earnings',label:'Earnings', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>'},
-  {id:'kitchen', label:'Kitchen',  icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg>'}
+  {id:'today',   key:'nav_today',    icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>'},
+  {id:'orders',  key:'nav_orders',   icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>'},
+  {id:'menu',    key:'nav_menu',     icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>'},
+  {id:'earnings',key:'nav_earnings', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>'},
+  {id:'kitchen', key:'nav_kitchen',  icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg>'}
 ];
 
+var ITEM_NAMES = {
+  ghormeh_rice:{en:'Ghormeh Sabzi + saffron rice', fa:'قرمه‌سبزی + برنج زعفرانی'},
+  shirazi:{en:'Shirazi salad', fa:'سالاد شیرازی'},
+  tahchin_item:{en:'Tahchin Morgh (chicken)', fa:'ته چین مرغ'},
+  mast:{en:'Mast-o-Khiar', fa:'ماست و خیار'},
+  ash_item:{en:'Ash Reshteh (vegetarian)', fa:'آش رشته (گیاهی)'},
+  fesenjan_rice:{en:'Fesenjan + saffron rice', fa:'فسنجان + برنج زعفرانی'},
+  zereshk_item:{en:'Zereshk Polo ba Morgh', fa:'زرشک‌پلو با مرغ'},
+  family_shirazi:{en:'Family Shirazi salad', fa:'سالاد شیرازی خانوادگی'},
+  joojeh_rice:{en:'Joojeh Kabab + rice', fa:'جوجه‌کباب + برنج'},
+  doogh:{en:'Doogh (mint yogurt drink)', fa:'دوغ (نوشیدنی ماست و نعناع)'},
+  gheymeh_rice:{en:'Gheymeh + rice', fa:'قیمه + برنج'}
+};
+var ITEM_NOTES = {
+  extra_mint:{en:'extra mint', fa:'نعناع اضافه'},
+  no_onion:{en:'no onion topping', fa:'بدون پیازداغ'},
+  two_no_walnuts:{en:'2 without walnuts', fa:'۲ پرس بدون گردو'}
+};
+var ORDER_NOTES = {
+  tahdig:{en:'Extra tahdig if you have it, please!', fa:'اگر ته‌دیگ اضافه دارید، لطفاً بگذارید!'},
+  first_mild:{en:'First order — mild spice please.', fa:'اولین سفارشم است — لطفاً کم‌تند باشد.'},
+  family_allergy:{en:'Family tray for 6. Two portions without walnuts (allergy).', fa:'سینی خانوادگی برای ۶ نفر. دو پرس بدون گردو (حساسیت).'}
+};
+function itemName(it){ var n = ITEM_NAMES[it.item]; return n ? (lang==='fa' ? n.fa : n.en) : it.item; }
+function itemNote(it){ if(!it.note) return ''; var n = ITEM_NOTES[it.note]; return n ? (lang==='fa' ? n.fa : n.en) : it.note; }
+function orderNote(o){ if(!o.note) return ''; var n = ORDER_NOTES[o.note]; return n ? (lang==='fa' ? n.fa : n.en) : o.note; }
+function fmtTime(time, ampm){ return lang==='fa' ? time + ' ' + (ampm==='PM' ? 'بعدازظهر' : 'قبل‌ازظهر') : time + ' ' + ampm; }
+function fmtWhen(o){
+  if(o.whenType==='pickedup') return t('picked_up') + ' ' + fmtTime(o.whenTime, o.whenAmpm);
+  return (o.whenType==='delivery' ? t('delivery_word') : t('pickup_word')) + ' · ' + t('today_word') + ' ' + fmtTime(o.whenTime, o.whenAmpm);
+}
+
 var orders = [
-  {id:1051, name:'Leila H.', time:'12:42 PM', when:'Pickup · today 1:30 PM', status:'new', total:43.50, note:'Extra tahdig if you have it, please!', items:[{q:2,name:'Ghormeh Sabzi + saffron rice',note:''},{q:1,name:'Shirazi salad',note:''}]},
-  {id:1050, name:'Arman T.', time:'12:31 PM', when:'Delivery · today 6:00 PM', status:'new', total:62.00, note:'', items:[{q:2,name:'Tahchin Morgh (chicken)',note:''},{q:1,name:'Mast-o-Khiar',note:'extra mint'}]},
-  {id:1049, name:'Priya S.', time:'12:05 PM', when:'Pickup · today 1:00 PM', status:'cooking', total:24.00, note:'First order — mild spice please.', items:[{q:1,name:'Ash Reshteh (vegetarian)',note:'no onion topping'}]},
-  {id:1048, name:'The Rahimi family', time:'11:48 AM', when:'Delivery · today 6:15 PM', status:'cooking', total:118.00, note:'Family tray for 6. Two portions without walnuts (allergy).', items:[{q:4,name:'Fesenjan + saffron rice',note:'2 without walnuts'},{q:2,name:'Zereshk Polo ba Morgh',note:''},{q:1,name:'Family Shirazi salad',note:''}]},
-  {id:1047, name:'Marcus L.', time:'11:20 AM', when:'Pickup · today 12:45 PM', status:'ready', total:31.50, note:'', items:[{q:1,name:'Joojeh Kabab + rice',note:''},{q:1,name:'Doogh (mint yogurt drink)',note:''}]},
-  {id:1046, name:'Sara M.', time:'10:52 AM', when:'Picked up 11:40 AM', status:'done', total:38.00, note:'', items:[{q:2,name:'Gheymeh + rice',note:''}]},
-  {id:1045, name:'Nima R.', time:'10:15 AM', when:'Picked up 11:05 AM', status:'done', total:19.50, note:'', items:[{q:1,name:'Ghormeh Sabzi + saffron rice',note:''}]}
+  {id:1051, name:'Leila H.', time:'12:42', ampm:'PM', whenType:'pickup', whenTime:'1:30', whenAmpm:'PM', status:'new', total:43.50, note:'tahdig', items:[{q:2,item:'ghormeh_rice',note:null},{q:1,item:'shirazi',note:null}]},
+  {id:1050, name:'Arman T.', time:'12:31', ampm:'PM', whenType:'delivery', whenTime:'6:00', whenAmpm:'PM', status:'new', total:62.00, note:null, items:[{q:2,item:'tahchin_item',note:null},{q:1,item:'mast',note:'extra_mint'}]},
+  {id:1049, name:'Priya S.', time:'12:05', ampm:'PM', whenType:'pickup', whenTime:'1:00', whenAmpm:'PM', status:'cooking', total:24.00, note:'first_mild', items:[{q:1,item:'ash_item',note:'no_onion'}]},
+  {id:1048, name:'The Rahimi family', time:'11:48', ampm:'AM', whenType:'delivery', whenTime:'6:15', whenAmpm:'PM', status:'cooking', total:118.00, note:'family_allergy', items:[{q:4,item:'fesenjan_rice',note:'two_no_walnuts'},{q:2,item:'zereshk_item',note:null},{q:1,item:'family_shirazi',note:null}]},
+  {id:1047, name:'Marcus L.', time:'11:20', ampm:'AM', whenType:'pickup', whenTime:'12:45', whenAmpm:'PM', status:'ready', total:31.50, note:null, items:[{q:1,item:'joojeh_rice',note:null},{q:1,item:'doogh',note:null}]},
+  {id:1046, name:'Sara M.', time:'10:52', ampm:'AM', whenType:'pickedup', whenTime:'11:40', whenAmpm:'AM', status:'done', total:38.00, note:null, items:[{q:2,item:'gheymeh_rice',note:null}]},
+  {id:1045, name:'Nima R.', time:'10:15', ampm:'AM', whenType:'pickedup', whenTime:'11:05', whenAmpm:'AM', status:'done', total:19.50, note:null, items:[{q:1,item:'ghormeh_rice',note:null}]}
 ];
 
 var dishes = [
-  {name:'Ghormeh Sabzi', fa:'قرمه‌سبزی', price:19.50, portions:9, max:14, on:true, img:'assets/ghormeh.webp', alt:'Bowl of ghormeh sabzi herb stew with saffron rice', desc:'Slow-simmered herbs, beef, kidney beans and dried lime. Served with saffron basmati.'},
-  {name:'Tahchin Morgh', fa:'ته‌چین مرغ', price:21.00, portions:2, max:10, on:true, img:'assets/tahchin.webp', alt:'Golden tahchin saffron rice cake with barberries', desc:'Crispy saffron yogurt rice layered with chicken, topped with barberries and pistachio.'},
-  {name:'Fesenjan', fa:'فسنجان', price:22.50, portions:6, max:8, on:true, img:'assets/fesenjan.jpg', alt:'Fesenjan walnut and pomegranate stew', desc:'Chicken braised in walnut & pomegranate molasses — sweet, tangy, deep. With saffron rice.'},
-  {name:'Zereshk Polo ba Morgh', fa:'زرشک‌پلو با مرغ', price:20.00, portions:7, max:12, on:true, img:'assets/zereshk.jpg', alt:'Zereshk polo barberry rice with chicken', desc:'Barberry rice with saffron chicken — the celebration dish, jewelled and bright.'},
-  {name:'Joojeh Kabab', fa:'جوجه‌کباب', price:23.00, portions:5, max:10, on:true, img:'assets/joojeh.jpg', alt:'Joojeh kabab saffron chicken skewer with rice and grilled tomatoes', desc:'Saffron-and-yogurt marinated chicken, grilled with tomatoes. Rice and flatbread included.'},
-  {name:'Gheymeh', fa:'قیمه', price:18.00, portions:0, max:10, on:true, img:'assets/gheymeh.jpg', alt:'Gheymeh split pea stew topped with crispy potato', desc:'Yellow split-pea and beef stew with dried lime, topped with crispy potato sticks.'},
-  {name:'Ash Reshteh', fa:'آش رشته', price:14.50, portions:8, max:12, on:false, img:'assets/ash.jpg', alt:'Ash reshteh Persian noodle and herb soup', desc:'Hearty noodle, bean and herb soup with kashk and fried mint. Vegetarian. Back Friday.'}
+  {name:'Ghormeh Sabzi', fa:'قرمه‌سبزی', price:19.50, portions:9, max:14, on:true, img:'assets/ghormeh.webp', alt:'Bowl of ghormeh sabzi herb stew with saffron rice', altFa:'کاسهٔ قرمه‌سبزی با برنج زعفرانی', desc:'Slow-simmered herbs, beef, kidney beans and dried lime. Served with saffron basmati.', descFa:'سبزی‌های آرام‌پز، گوشت، لوبیا قرمز و لیمو عمانی. با برنج باسماتی زعفرانی سرو می‌شود.'},
+  {name:'Tahchin Morgh', fa:'ته چین مرغ', price:21.00, portions:2, max:10, on:true, img:'assets/tahchin.webp', alt:'Golden tahchin saffron rice cake with barberries', altFa:'ته چین طلایی با زرشک', desc:'Crispy saffron yogurt rice layered with chicken, topped with barberries and pistachio.', descFa:'برنج زعفرانی ترد با ماست، لایه‌لایه با مرغ، رویش زرشک و پسته.'},
+  {name:'Fesenjan', fa:'فسنجان', price:22.50, portions:6, max:8, on:true, img:'assets/fesenjan.jpg', alt:'Fesenjan walnut and pomegranate stew', altFa:'خورش فسنجان گردو و انار', desc:'Chicken braised in walnut & pomegranate molasses — sweet, tangy, deep. With saffron rice.', descFa:'مرغ پخته در گردو و رب انار — ترش و شیرین و عمیق. با برنج زعفرانی.'},
+  {name:'Zereshk Polo ba Morgh', fa:'زرشک‌پلو با مرغ', price:20.00, portions:7, max:12, on:true, img:'assets/zereshk.jpg', alt:'Zereshk polo barberry rice with chicken', altFa:'زرشک‌پلو با مرغ', desc:'Barberry rice with saffron chicken — the celebration dish, jewelled and bright.', descFa:'برنج زرشکی با مرغ زعفرانی — غذای مجلسی، درخشان و پررنگ.'},
+  {name:'Joojeh Kabab', fa:'جوجه‌کباب', price:23.00, portions:5, max:10, on:true, img:'assets/joojeh.jpg', alt:'Joojeh kabab saffron chicken skewer with rice and grilled tomatoes', altFa:'جوجه‌کباب زعفرانی با برنج و گوجهٔ کبابی', desc:'Saffron-and-yogurt marinated chicken, grilled with tomatoes. Rice and flatbread included.', descFa:'مرغ مرینیت‌شده با زعفران و ماست، کباب‌شده با گوجه. برنج و نان هم همراهش است.'},
+  {name:'Gheymeh', fa:'قیمه', price:18.00, portions:0, max:10, on:true, img:'assets/gheymeh.jpg', alt:'Gheymeh split pea stew topped with crispy potato', altFa:'خورش قیمه با سیب‌زمینی خلالی ترد', desc:'Yellow split-pea and beef stew with dried lime, topped with crispy potato sticks.', descFa:'خورش لپه و گوشت با لیمو عمانی، رویش سیب‌زمینی خلالی ترد.'},
+  {name:'Ash Reshteh', fa:'آش رشته', price:14.50, portions:8, max:12, on:false, img:'assets/ash.jpg', alt:'Ash reshteh Persian noodle and herb soup', altFa:'آش رشته با سبزی و کشک', desc:'Hearty noodle, bean and herb soup with kashk and fried mint. Vegetarian. Back Friday.', descFa:'سوپ غلیظ رشته، حبوبات و سبزی با کشک و نعناع‌داغ. گیاهی. جمعه برمی‌گردد.'}
 ];
+function dishDisplayName(d){ return lang==='fa' ? (d.fa && d.fa !== '—' ? d.fa : d.name) : d.name; }
+function dishSubName(d){ return lang==='fa' ? d.name : (d.fa || ''); }
 
-var weekData = [{d:'Thu',v:96},{d:'Fri',v:168},{d:'Sat',v:154},{d:'Sun',v:88},{d:'Mon',v:64},{d:'Tue',v:78},{d:'Wed',v:94}];
-var monthData = [{d:'Wk 1',v:612},{d:'Wk 2',v:688},{d:'Wk 3',v:742},{d:'Wk 4',v:704}];
-var hoursData = [['Monday','Closed',''],['Tuesday','11:30','20:30'],['Wednesday','11:30','20:30'],['Thursday','11:30','20:30'],['Friday','11:30','21:00'],['Saturday','12:00','21:00'],['Sunday','12:00','18:00']];
+var weekData = [{d:'Thu',dFa:'پنج‌شنبه',v:96},{d:'Fri',dFa:'جمعه',v:168},{d:'Sat',dFa:'شنبه',v:154},{d:'Sun',dFa:'یک‌شنبه',v:88},{d:'Mon',dFa:'دوشنبه',v:64},{d:'Tue',dFa:'سه‌شنبه',v:78},{d:'Wed',dFa:'چهارشنبه',v:94}];
+var monthData = [{d:'Wk 1',dFa:'هفتهٔ ۱',v:612},{d:'Wk 2',dFa:'هفتهٔ ۲',v:688},{d:'Wk 3',dFa:'هفتهٔ ۳',v:742},{d:'Wk 4',dFa:'هفتهٔ ۴',v:704}];
+var hoursData = [{en:'Monday',fa:'دوشنبه',open:null,close:null},{en:'Tuesday',fa:'سه‌شنبه',open:'11:30',close:'20:30'},{en:'Wednesday',fa:'چهارشنبه',open:'11:30',close:'20:30'},{en:'Thursday',fa:'پنج‌شنبه',open:'11:30',close:'20:30'},{en:'Friday',fa:'جمعه',open:'11:30',close:'21:00'},{en:'Saturday',fa:'شنبه',open:'12:00',close:'21:00'},{en:'Sunday',fa:'یک‌شنبه',open:'12:00',close:'18:00'}];
+function dayName(h){ return lang==='fa' ? h.fa : h.en; }
 
-var currentView='today', orderFilter='all', online=true;
+var currentView='today', orderFilter='all', online=true, currentPeriod='week';
 
 /* ---------- nav ---------- */
 function buildNav(){
   var html = NAV.map(function(n){
     var badge = n.id==='orders' ? '<span class="badge" data-navbadge style="display:none"></span>' : '';
-    return '<button data-nav="'+n.id+'" class="'+(n.id===currentView?'active':'')+'">'+n.icon+'<span>'+n.label+'</span>'+badge+'</button>';
+    return '<button data-nav="'+n.id+'" class="'+(n.id===currentView?'active':'')+'">'+n.icon+'<span>'+t(n.key)+'</span>'+badge+'</button>';
   }).join('');
   document.getElementById('sideNav').innerHTML = html;
   document.getElementById('bottomNav').innerHTML = html;
   document.querySelectorAll('[data-nav]').forEach(function(b){
     b.addEventListener('click', function(){ goTo(b.getAttribute('data-nav')); });
   });
+  var c = newCount();
+  document.querySelectorAll('[data-navbadge]').forEach(function(bd){ bd.style.display = c ? 'grid' : 'none'; bd.textContent = c; });
 }
 function goTo(id){
   currentView=id;
@@ -509,42 +682,51 @@ document.querySelectorAll('[data-goto]').forEach(function(a){
 /* ---------- toast ---------- */
 var toastTimer=null;
 function toast(msg){
-  var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
-  clearTimeout(toastTimer); toastTimer=setTimeout(function(){ t.classList.remove('show'); }, 2800);
+  var el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(function(){ el.classList.remove('show'); }, 2800);
+}
+function toastOrder(id, kind, firstName){
+  if(kind==='accept') return lang==='fa' ? 'سفارش شمارهٔ '+id+' پذیرفته شد — وقت پختن است! 🍳' : 'Order #'+id+' accepted — time to cook! 🍳';
+  if(kind==='decline') return lang==='fa' ? 'سفارش شمارهٔ '+id+' رد شد. به مشتری اطلاع داده شد.' : 'Order #'+id+' declined. The customer was notified.';
+  if(kind==='ready') return lang==='fa' ? 'سفارش شمارهٔ '+id+' آماده شد — به '+firstName+' اطلاع داده شد.' : 'Order #'+id+' marked ready — '+firstName+' got a notification.';
+  return lang==='fa' ? 'سفارش شمارهٔ '+id+' کامل شد. آفرین، مینا!' : 'Order #'+id+' completed. Nice work, Mina!';
 }
 
 /* ---------- orders ---------- */
 function newCount(){ return orders.filter(function(o){return o.status==='new';}).length; }
-function statusTag(s){
-  if(s==='new') return '<span class="tag new"><span class="dot"></span>New</span>';
-  if(s==='cooking') return '<span class="tag cooking"><span class="dot"></span>Cooking</span>';
-  if(s==='ready') return '<span class="tag ready"><span class="dot"></span>Ready</span>';
-  return '<span class="tag done">Completed</span>';
+function statusTag(st){
+  if(st==='new') return '<span class="tag new"><span class="dot"></span>'+t('status_new')+'</span>';
+  if(st==='cooking') return '<span class="tag cooking"><span class="dot"></span>'+t('status_cooking')+'</span>';
+  if(st==='ready') return '<span class="tag ready"><span class="dot"></span>'+t('status_ready')+'</span>';
+  return '<span class="tag done">'+t('status_done')+'</span>';
 }
 function orderActions(o){
-  if(o.status==='new') return '<button class="btn primary small" data-act="accept" data-id="'+o.id+'">Accept order</button><button class="btn small" data-act="decline" data-id="'+o.id+'">Decline</button>';
-  if(o.status==='cooking') return '<button class="btn herb small" data-act="ready" data-id="'+o.id+'">Mark ready for pickup</button>';
-  if(o.status==='ready') return '<button class="btn small" data-act="done" data-id="'+o.id+'">Handed over ✓</button>';
-  return '<span style="font-size:13px;color:var(--ink3)">Paid · $'+o.total.toFixed(2)+' · Sofreh fee $'+(o.total*0.12).toFixed(2)+'</span>';
+  if(o.status==='new') return '<button class="btn primary small" data-act="accept" data-id="'+o.id+'">'+t('act_accept')+'</button><button class="btn small" data-act="decline" data-id="'+o.id+'">'+t('act_decline')+'</button>';
+  if(o.status==='cooking') return '<button class="btn herb small" data-act="ready" data-id="'+o.id+'">'+t('act_ready')+'</button>';
+  if(o.status==='ready') return '<button class="btn small" data-act="done" data-id="'+o.id+'">'+t('act_handed')+'</button>';
+  var paid = lang==='fa' ? 'پرداخت شد · $'+o.total.toFixed(2)+' · کارمزد Sofreh $'+(o.total*0.12).toFixed(2) : 'Paid · $'+o.total.toFixed(2)+' · Sofreh fee $'+(o.total*0.12).toFixed(2);
+  return '<span style="font-size:13px;color:var(--ink3)">'+paid+'</span>';
 }
 function orderCard(o, compact){
   var items = o.items.map(function(it){
-    return '<div class="row"><span class="qty">'+it.q+' ×</span><span>'+it.name+(it.note?' <span class="note">— '+it.note+'</span>':'')+'</span></div>';
+    var note = itemNote(it);
+    return '<div class="row"><span class="qty">'+it.q+' ×</span><span>'+itemName(it)+(note?' <span class="note">— '+note+'</span>':'')+'</span></div>';
   }).join('');
+  var note = orderNote(o);
   return '<article class="card order">'
     + '<div class="order-top"><div class="meta"><h3>#'+o.id+' · '+o.name+' '+statusTag(o.status)+'</h3>'
-    + '<div class="sub">Ordered '+o.time+' · '+o.when+'</div></div>'
+    + '<div class="sub">'+t('ordered')+' '+fmtTime(o.time, o.ampm)+' · '+fmtWhen(o)+'</div></div>'
     + '<div class="order-total">$'+o.total.toFixed(2)+'</div></div>'
     + '<div class="order-items">'+items+'</div>'
-    + (o.note ? '<div class="order-note">💬 "'+o.note+'"</div>' : '')
-    + (compact ? '' : '<div class="order-actions"><span class="pickup">🧺 '+o.when+'</span><span class="spacer"></span>'+orderActions(o)+'</div>')
+    + (note ? '<div class="order-note">💬 "'+note+'"</div>' : '')
+    + (compact ? '' : '<div class="order-actions"><span class="pickup">🧺 '+fmtWhen(o)+'</span><span class="spacer"></span>'+orderActions(o)+'</div>')
     + '</article>';
 }
 function renderOrders(){
   var list = orders.filter(function(o){ return orderFilter==='all' || o.status===orderFilter; });
   var el = document.getElementById('orderList');
   el.innerHTML = list.length ? list.map(function(o){return orderCard(o,false);}).join('')
-    : '<div class="card empty"><h3>Nothing here right now</h3><p>No orders in this stage. New orders will appear here the moment they come in.</p></div>';
+    : '<div class="card empty"><h3>'+t('empty_orders_h')+'</h3><p>'+t('empty_orders_p')+'</p></div>';
   el.querySelectorAll('[data-act]').forEach(function(b){ b.addEventListener('click', onOrderAction); });
   var c = newCount();
   document.getElementById('chipNew').textContent = c ? '('+c+')' : '';
@@ -556,10 +738,10 @@ function renderOrders(){
 function onOrderAction(e){
   var btn=e.currentTarget, id=+btn.getAttribute('data-id'), act=btn.getAttribute('data-act');
   var o=orders.find(function(x){return x.id===id;}); if(!o) return;
-  if(act==='accept'){ o.status='cooking'; toast('Order #'+id+' accepted — time to cook! 🍳'); }
-  if(act==='decline'){ orders=orders.filter(function(x){return x.id!==id;}); toast('Order #'+id+' declined. The customer was notified.'); }
-  if(act==='ready'){ o.status='ready'; toast('Order #'+id+' marked ready — '+o.name.split(' ')[0]+' got a notification.'); }
-  if(act==='done'){ o.status='done'; toast('Order #'+id+' completed. Nice work, Mina!'); }
+  if(act==='accept'){ o.status='cooking'; toast(toastOrder(id,'accept')); }
+  if(act==='decline'){ orders=orders.filter(function(x){return x.id!==id;}); toast(toastOrder(id,'decline')); }
+  if(act==='ready'){ o.status='ready'; toast(toastOrder(id,'ready', o.name.split(' ')[0])); }
+  if(act==='done'){ o.status='done'; toast(toastOrder(id,'done')); }
   renderOrders();
 }
 document.getElementById('orderFilters').addEventListener('click', function(e){
@@ -575,44 +757,44 @@ function renderTodayQueue(){
   var el=document.getElementById('todayQueue');
   el.innerHTML = q.length ? q.map(function(o){
     return '<article class="card mini-card"><div style="flex:1;min-width:0"><h3>#'+o.id+' · '+o.name+' '+statusTag(o.status)+'</h3>'
-      + '<p>'+o.items.map(function(i){return i.q+' × '+i.name;}).join(' · ')+'</p>'
-      + '<p style="margin-top:3px">'+o.when+' · <b style="color:var(--ink)">$'+o.total.toFixed(2)+'</b></p></div>'
+      + '<p>'+o.items.map(function(i){return i.q+' × '+itemName(i);}).join(' · ')+'</p>'
+      + '<p style="margin-top:3px">'+fmtWhen(o)+' · <b style="color:var(--ink)">$'+o.total.toFixed(2)+'</b></p></div>'
       + (o.status==='new'
-        ? '<button class="btn primary small" data-today-accept="'+o.id+'">Accept</button>'
-        : '<button class="btn small" data-today-goto="1">View</button>')
+        ? '<button class="btn primary small" data-today-accept="'+o.id+'">'+t('act_accept_short')+'</button>'
+        : '<button class="btn small" data-today-goto="1">'+t('act_view')+'</button>')
       + '</article>';
-  }).join('') : '<div class="card empty"><h3>All caught up 🎉</h3><p>No orders waiting. Enjoy the quiet — dinner rush starts around 5:30 PM.</p></div>';
+  }).join('') : '<div class="card empty"><h3>'+t('queue_empty_h')+'</h3><p>'+t('queue_empty_p')+'</p></div>';
   el.querySelectorAll('[data-today-accept]').forEach(function(b){
     b.addEventListener('click', function(){
       var o=orders.find(function(x){return x.id===+b.getAttribute('data-today-accept');});
-      if(o){ o.status='cooking'; toast('Order #'+o.id+' accepted — time to cook! 🍳'); renderOrders(); }
+      if(o){ o.status='cooking'; toast(toastOrder(o.id,'accept')); renderOrders(); }
     });
   });
   el.querySelectorAll('[data-today-goto]').forEach(function(b){ b.addEventListener('click', function(){ goTo('orders'); }); });
 }
 function updateStats(){
-  var active = orders.filter(function(o){return o.status!=='done';}).length;
-  var done = orders.filter(function(o){return o.status==='done';});
-  var earned = 186 + done.reduce(function(s,o){return s;},0);
   document.getElementById('statOrders').textContent = orders.length + 4;
-  var left = dishes.filter(function(d){return d.on;}).reduce(function(s,d){return s+d.portions;},0);
+  var left = dishes.filter(function(d){return d.on;}).reduce(function(sum,d){return sum+d.portions;},0);
   document.getElementById('statPortions').textContent = left;
   var tah = dishes.find(function(d){return d.name.indexOf('Tahchin')===0;});
   if(tah) document.getElementById('alertTahchin').textContent = tah.portions;
 }
 
 /* ---------- online toggle ---------- */
-document.getElementById('onlineToggle').addEventListener('change', function(){
-  online = this.checked;
-  document.getElementById('switchLabel').textContent = online ? 'Online' : 'Offline';
-  document.getElementById('statusText').textContent = online ? "You're online" : "You're offline";
-  document.getElementById('statusHead').textContent = online ? 'Taking orders until 8:30 PM' : 'Your kitchen is hidden from customers';
-  document.getElementById('statusSub').textContent = online ? 'Customers within 6 km can order from your menu right now.' : 'Orders already accepted still need to be finished. Go online again whenever you\'re ready.';
+function renderOnline(){
+  document.getElementById('switchLabel').textContent = online ? t('switch_online') : t('switch_offline');
+  document.getElementById('statusText').textContent = online ? t('status_online_text') : t('status_offline_text');
+  document.getElementById('statusHead').textContent = online ? t('status_online_head') : t('status_offline_head');
+  document.getElementById('statusSub').textContent = online ? t('status_online_sub') : t('status_offline_sub');
   var tag=document.getElementById('statusTag');
   tag.className = 'tag ' + (online ? 'ready' : 'off'); tag.style.fontSize='13px'; tag.style.padding='6px 12px';
   var top=document.getElementById('topStatus');
-  top.className='tag '+(online?'ready':'off'); top.innerHTML='<span class="dot"></span>'+(online?'Online':'Offline');
-  toast(online ? 'You\'re online — customers can order now.' : 'You\'re offline. Take your time.');
+  top.className='tag '+(online?'ready':'off'); top.innerHTML='<span class="dot"></span>'+(online ? t('top_online') : t('top_offline'));
+}
+document.getElementById('onlineToggle').addEventListener('change', function(){
+  online = this.checked;
+  renderOnline();
+  toast(online ? t('toast_online') : t('toast_offline'));
 });
 
 /* ---------- menu ---------- */
@@ -620,19 +802,23 @@ function renderMenu(){
   var grid=document.getElementById('menuGrid');
   grid.innerHTML = dishes.map(function(d,i){
     var soldout = d.on && d.portions===0;
+    var mainName = dishDisplayName(d), subName = dishSubName(d);
+    var desc = lang==='fa' ? (d.descFa || d.desc) : d.desc;
+    var alt = lang==='fa' ? (d.altFa || d.alt) : d.alt;
+    var statusTxt = d.on ? (soldout ? t('sold_out') : t('on_menu')) : t('paused');
     return '<article class="card dish'+(soldout?' soldout':'')+'">'
-      + '<img src="'+d.img+'" alt="'+d.alt+'" loading="lazy" />'
-      + '<div class="body"><h3>'+d.name+'<span class="price">$'+d.price.toFixed(2)+'</span></h3>'
-      + '<div class="fa-name">'+d.fa+'</div><p>'+d.desc+'</p>'
-      + '<div class="rowline"><div><div style="font-size:11.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3)">Portions left</div>'
-      + '<div class="stepper"><button data-dec="'+i+'" aria-label="One less portion">−</button><span class="n">'+d.portions+' / '+d.max+'</span><button data-inc="'+i+'" aria-label="One more portion">+</button></div></div>'
-      + '<div style="text-align:right"><div style="font-size:11.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px">'+(d.on ? (soldout?'Sold out':'On menu') : 'Paused')+'</div>'
+      + '<img src="'+d.img+'" alt="'+alt+'" loading="lazy" />'
+      + '<div class="body"><h3>'+mainName+'<span class="price">$'+d.price.toFixed(2)+'</span></h3>'
+      + '<div class="fa-name">'+subName+'</div><p>'+desc+'</p>'
+      + '<div class="rowline"><div><div style="font-size:11.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3)">'+t('portions_left')+'</div>'
+      + '<div class="stepper"><button data-dec="'+i+'" aria-label="'+t('less_portion')+'">−</button><span class="n">'+d.portions+' / '+d.max+'</span><button data-inc="'+i+'" aria-label="'+t('more_portion')+'">+</button></div></div>'
+      + '<div style="text-align:right"><div style="font-size:11.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px">'+statusTxt+'</div>'
       + '<label class="switch"><input type="checkbox" data-dishon="'+i+'" '+(d.on?'checked':'')+' /><span class="track" style="width:46px;height:27px"></span></label></div></div>'
       + '</div></article>';
   }).join('');
   grid.querySelectorAll('[data-inc]').forEach(function(b){ b.addEventListener('click', function(){ var d=dishes[+b.getAttribute('data-inc')]; if(d.portions<d.max){d.portions++;} renderMenu(); updateStats(); }); });
   grid.querySelectorAll('[data-dec]').forEach(function(b){ b.addEventListener('click', function(){ var d=dishes[+b.getAttribute('data-dec')]; if(d.portions>0){d.portions--;} renderMenu(); updateStats(); }); });
-  grid.querySelectorAll('[data-dishon]').forEach(function(c){ c.addEventListener('change', function(){ var d=dishes[+c.getAttribute('data-dishon')]; d.on=c.checked; toast(d.on ? d.name+' is back on the menu.' : d.name+' paused — customers can\'t order it.'); renderMenu(); updateStats(); }); });
+  grid.querySelectorAll('[data-dishon]').forEach(function(c){ c.addEventListener('change', function(){ var d=dishes[+c.getAttribute('data-dishon')]; d.on=c.checked; toast(d.on ? (lang==='fa' ? dishDisplayName(d)+' به منو برگشت.' : d.name+' is back on the menu.') : (lang==='fa' ? dishDisplayName(d)+' متوقف شد — مشتری‌ها نمی‌توانند سفارشش بدهند.' : d.name+' paused — customers can\'t order it.')); renderMenu(); updateStats(); }); });
   updateStats();
 }
 document.getElementById('scrollAdd').addEventListener('click', function(){
@@ -642,11 +828,13 @@ document.getElementById('scrollAdd').addEventListener('click', function(){
 document.getElementById('addDishForm').addEventListener('submit', function(e){
   e.preventDefault();
   var name=document.getElementById('fName').value.trim(); if(!name) return;
-  dishes.unshift({ name:name, fa:document.getElementById('fFa').value.trim()||'—', price:parseFloat(document.getElementById('fPrice').value)||15,
+  var faName=document.getElementById('fFa').value.trim()||'—';
+  var descVal=document.getElementById('fDesc').value.trim();
+  dishes.unshift({ name:name, fa:faName, price:parseFloat(document.getElementById('fPrice').value)||15,
     portions:parseInt(document.getElementById('fPortions').value)||0, max:parseInt(document.getElementById('fPortions').value)||10, on:true,
-    img:'assets/ghormeh.webp', alt:'Photo of '+name, desc:document.getElementById('fDesc').value.trim()||'Fresh from Mina\'s kitchen today.' });
+    img:'assets/ghormeh.webp', alt:t('photo_of')+name, altFa:t('photo_of')+name, desc:descVal||t('fresh_desc'), descFa:descVal||t('fresh_desc') });
   this.reset(); renderMenu();
-  toast(name+' added to today\'s menu ✓');
+  toast(lang==='fa' ? name+' به منوی امروز اضافه شد ✓' : name+' added to today\'s menu ✓');
   document.getElementById('menuGrid').scrollIntoView({behavior:'smooth'});
 });
 
@@ -655,52 +843,98 @@ function renderChart(data, title){
   var max=Math.max.apply(null, data.map(function(x){return x.v;}));
   document.getElementById('chart').innerHTML = data.map(function(x,i){
     var h=Math.round(x.v/max*100);
-    return '<div class="bar-col"><div class="bar-val">$'+x.v+'</div><div class="bar'+(i===data.length-1?'':' dim')+'" style="height:'+h+'%"></div><div class="bar-lab">'+x.d+'</div></div>';
+    var lab = lang==='fa' ? x.dFa : x.d;
+    return '<div class="bar-col"><div class="bar-val">$'+x.v+'</div><div class="bar'+(i===data.length-1?'':' dim')+'" style="height:'+h+'%"></div><div class="bar-lab">'+lab+'</div></div>';
   }).join('');
   document.getElementById('chartTitle').textContent = title;
 }
 function renderTopDishes(){
-  var rows=[['Ghormeh Sabzi',86,1677],['Tahchin Morgh',64,1344],['Fesenjan',41,922],['Joojeh Kabab',38,874],['Zereshk Polo',35,700]];
+  var rows=[['Ghormeh Sabzi','قرمه‌سبزی',86,1677],['Tahchin Morgh','ته چین مرغ',64,1344],['Fesenjan','فسنجان',41,922],['Joojeh Kabab','جوجه‌کباب',38,874],['Zereshk Polo','زرشک‌پلو',35,700]];
   document.getElementById('topDishes').innerHTML = rows.map(function(r){
-    return '<tr><td style="font-weight:700">'+r[0]+'</td><td class="num">'+r[1]+'</td><td class="num">$'+r[2].toLocaleString()+'</td><td class="num" style="font-weight:800">$'+Math.round(r[2]*0.88).toLocaleString()+'</td></tr>';
+    return '<tr><td style="font-weight:700">'+(lang==='fa' ? r[1] : r[0])+'</td><td class="num">'+r[2]+'</td><td class="num">$'+r[3].toLocaleString()+'</td><td class="num" style="font-weight:800">$'+Math.round(r[3]*0.88).toLocaleString()+'</td></tr>';
   }).join('');
 }
+function renderPeriod(period){
+  currentPeriod = period;
+  document.querySelectorAll('[data-period]').forEach(function(x){ x.classList.toggle('active', x.getAttribute('data-period')===period); });
+  if(period==='week'){
+    renderChart(weekData, t('chart_week_title'));
+    document.getElementById('earnK').textContent=t('earn_week_k');
+    document.getElementById('earnV').textContent='$742';
+    document.getElementById('earnS').textContent=t('earn_week_s');
+    document.getElementById('feeV').textContent='$101';
+    document.getElementById('chartNote').textContent=t('chart_best_day');
+  } else {
+    renderChart(monthData, t('chart_month_title'));
+    document.getElementById('earnK').textContent=t('earn_month_k');
+    document.getElementById('earnV').textContent='$2,746';
+    document.getElementById('earnS').textContent=t('earn_month_s');
+    document.getElementById('feeV').textContent='$375';
+    document.getElementById('chartNote').textContent=t('chart_best_week');
+  }
+}
 document.querySelectorAll('[data-period]').forEach(function(b){
-  b.addEventListener('click', function(){
-    document.querySelectorAll('[data-period]').forEach(function(x){x.classList.remove('active');});
-    b.classList.add('active');
-    if(b.getAttribute('data-period')==='week'){
-      renderChart(weekData,'Daily earnings — this week');
-      document.getElementById('earnK').textContent='Earned this week';
-      document.getElementById('earnV').textContent='$742';
-      document.getElementById('earnS').textContent='From 41 orders · avg $18.10 per order';
-      document.getElementById('feeV').textContent='$101';
-      document.getElementById('chartNote').textContent='Best day: Friday';
-    } else {
-      renderChart(monthData,'Weekly earnings — November');
-      document.getElementById('earnK').textContent='Earned this month';
-      document.getElementById('earnV').textContent='$2,746';
-      document.getElementById('earnS').textContent='From 148 orders · avg $18.55 per order';
-      document.getElementById('feeV').textContent='$375';
-      document.getElementById('chartNote').textContent='Best week: Week 3';
-    }
-  });
+  b.addEventListener('click', function(){ renderPeriod(b.getAttribute('data-period')); });
 });
 
 /* ---------- kitchen ---------- */
 function renderHours(){
   document.getElementById('hoursList').innerHTML = hoursData.map(function(h,i){
-    if(h[1]==='Closed') return '<div class="hours-row"><span class="day">'+h[0]+'</span><span style="color:var(--pom);font-weight:700">Closed</span><span style="flex:1"></span><button class="btn small ghost" data-open-day="'+i+'">Open this day</button></div>';
-    return '<div class="hours-row"><span class="day">'+h[0]+'</span><input type="time" value="'+h[1]+'" aria-label="'+h[0]+' opening time" /><span>to</span><input type="time" value="'+h[2]+'" aria-label="'+h[0]+' closing time" /></div>';
+    var dn = dayName(h);
+    if(!h.open) return '<div class="hours-row"><span class="day">'+dn+'</span><span style="color:var(--pom);font-weight:700">'+t('closed')+'</span><span style="flex:1"></span><button class="btn small ghost" data-open-day="'+i+'">'+t('open_this_day')+'</button></div>';
+    return '<div class="hours-row"><span class="day">'+dn+'</span><input type="time" value="'+h.open+'" aria-label="'+dn+' '+t('open_aria')+'" /><span>'+t('to_word')+'</span><input type="time" value="'+h.close+'" aria-label="'+dn+' '+t('close_aria')+'" /></div>';
   }).join('');
   document.querySelectorAll('[data-open-day]').forEach(function(b){
-    b.addEventListener('click', function(){ var i=+b.getAttribute('data-open-day'); hoursData[i]=[hoursData[i][0],'11:30','20:30']; renderHours(); toast(hoursData[i][0]+' added to your schedule.'); });
+    b.addEventListener('click', function(){ var i=+b.getAttribute('data-open-day'); hoursData[i].open='11:30'; hoursData[i].close='20:30'; renderHours(); toast(lang==='fa' ? dayName(hoursData[i])+' به برنامه‌ات اضافه شد.' : dayName(hoursData[i])+' added to your schedule.'); });
   });
 }
-document.getElementById('saveKitchen').addEventListener('click', function(){ toast('Kitchen settings saved ✓ Customers see the update right away.'); });
+document.getElementById('saveKitchen').addEventListener('click', function(){ toast(t('toast_kitchen_saved')); });
+
+/* ---------- language ---------- */
+function applyLang(){
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang==='fa' ? 'rtl' : 'ltr';
+  try{ localStorage.setItem('sofreh-lang', lang); }catch(e){}
+  document.title = t('doc_title');
+  var lt=document.getElementById('langToggle'); if(lt) lt.textContent = lang==='fa' ? 'English' : 'فارسی';
+  var lts=document.getElementById('langToggleSide'); if(lts) lts.textContent = lang==='fa' ? 'English' : 'فارسی';
+  document.querySelectorAll('[data-i18n]').forEach(function(el){ var k=el.getAttribute('data-i18n'); if (T[lang][k]) el.textContent = T[lang][k]; });
+  document.querySelectorAll('[data-i18n-ph]').forEach(function(el){ var k=el.getAttribute('data-i18n-ph'); if (T[lang][k]) el.setAttribute('placeholder', T[lang][k]); });
+  var _sn=document.getElementById('sideNav'); if(_sn) _sn.setAttribute('aria-label', t('main_nav'));
+  var _bn=document.getElementById('bottomNav'); if(_bn) _bn.setAttribute('aria-label', t('main_nav'));
+  var _stars=document.querySelector('.profile-card .stars'); if(_stars) _stars.setAttribute('aria-label', lang==='fa' ? '۴٫۹ از ۵ ستاره' : '4.9 out of 5 stars');
+  if (window.__syncThemeBtn) window.__syncThemeBtn();
+  buildNav(); renderOnline(); renderOrders(); renderMenu(); renderPeriod(currentPeriod); renderTopDishes(); renderHours();
+}
+function toggleLang(){ lang = lang==='en' ? 'fa' : 'en'; applyLang(); }
+var _lt=document.getElementById('langToggle'); if(_lt) _lt.addEventListener('click', toggleLang);
+var _lts=document.getElementById('langToggleSide'); if(_lts) _lts.addEventListener('click', toggleLang);
 
 /* ---------- init ---------- */
-buildNav(); renderOrders(); renderMenu(); renderChart(weekData,'Daily earnings — this week'); renderTopDishes(); renderHours(); updateStats();
+applyLang();
+</script>
+
+<script>
+/* ---------- theme toggle: light (day) / dark (night), saved across Sofreh pages ---------- */
+(function(){
+  var b = document.getElementById("themeToggle"); if(!b) return;
+  var l = document.getElementById("themeLabel");
+  function sync(){
+    var d = document.documentElement.getAttribute("data-theme")==="dark";
+    var fa = document.documentElement.lang==="fa";
+    b.setAttribute("aria-pressed", d ? "true" : "false");
+    b.setAttribute("aria-label", fa ? (d ? "حالت روشن (روز)" : "حالت تیره (شب)") : (d ? "Switch to light theme (day)" : "Switch to dark theme (night)"));
+    if(l) l.textContent = fa ? (d ? "روشن" : "تیره") : (d ? "Light" : "Dark");
+  }
+  b.addEventListener("click", function(){
+    var n = document.documentElement.getAttribute("data-theme")==="dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", n);
+    try{ localStorage.setItem("sofreh-theme", n); }catch(e){}
+    sync();
+  });
+  window.__syncThemeBtn = sync;
+  sync();
+})();
 </script>
 </body>
 </html>
